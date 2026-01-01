@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Building2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import {
@@ -26,11 +26,7 @@ export default function OperationalMetricsPage() {
     },
   });
 
-  useEffect(() => {
-    loadMetrics();
-  }, [filters]);
-
-  const loadMetrics = async () => {
+  const loadMetrics = useCallback(async () => {
     setLoading(true);
     try {
       const data = await analyticsService.getOperationalMetrics(filters);
@@ -40,7 +36,11 @@ export default function OperationalMetricsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadMetrics();
+  }, [loadMetrics]);
 
   return (
     <div className="min-h-screen bg-gray-50">

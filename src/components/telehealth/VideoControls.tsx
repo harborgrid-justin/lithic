@@ -90,7 +90,7 @@ export function VideoControls({
       </Button>
 
       <Button
-        variant="destructive"
+        variant="danger"
         size="lg"
         className="rounded-full w-14 h-14 ml-4"
         onClick={onEndCall}

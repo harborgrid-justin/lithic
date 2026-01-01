@@ -53,7 +53,7 @@ export function DrugAlerts({
       <CardContent className="space-y-4">
         {/* Allergy Conflicts */}
         {allergyConflicts.map((conflict, idx) => (
-          <Alert key={`allergy-${idx}`} variant="destructive">
+          <Alert key={`allergy-${idx}`} variant="danger">
             <Pill className="h-4 w-4" />
             <AlertTitle>Drug-Allergy Conflict</AlertTitle>
             <AlertDescription>

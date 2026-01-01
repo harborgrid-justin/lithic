@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ExecutiveDashboard } from "@/components/analytics/ExecutiveDashboard";
 import { KPICards } from "@/components/analytics/KPICards";
 import { ExportDialog } from "@/components/analytics/ExportDialog";
@@ -17,11 +17,7 @@ export default function ExecutivePage() {
     end: new Date(),
   });
 
-  useEffect(() => {
-    loadExecutiveData();
-  }, [dateRange]);
-
-  const loadExecutiveData = async () => {
+  const loadExecutiveData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -39,7 +35,11 @@ export default function ExecutivePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    loadExecutiveData();
+  }, [loadExecutiveData]);
 
   const handleRefresh = () => {
     loadExecutiveData();

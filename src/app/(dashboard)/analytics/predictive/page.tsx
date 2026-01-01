@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PredictiveCharts } from "@/components/analytics/PredictiveCharts";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,11 +36,7 @@ export default function PredictivePage() {
     { value: "90", label: "90 Days" },
   ];
 
-  useEffect(() => {
-    loadPredictiveData();
-  }, [selectedMetric, forecastPeriod]);
-
-  const loadPredictiveData = async () => {
+  const loadPredictiveData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -60,7 +56,11 @@ export default function PredictivePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedMetric, forecastPeriod]);
+
+  useEffect(() => {
+    loadPredictiveData();
+  }, [loadPredictiveData]);
 
   const handleRefresh = () => {
     loadPredictiveData();

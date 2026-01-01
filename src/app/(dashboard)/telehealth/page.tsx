@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Video, Calendar, Clock, User, FileText, Play } from "lucide-react";
+import { Video, Calendar, Clock, User, FileText, Play, Phone, MessageSquare, Users } from "lucide-react";
 import { formatDateTime, formatDate, formatTime } from "@/lib/utils";
 import { SessionSummary, SessionStatus, SessionType } from "@/types/telehealth";
+import { useCommunicationStore } from "@/stores/communication-store";
+import { VideoCall } from "@/components/communication/VideoCall";
 import Link from "next/link";
 
 export default function TelehealthDashboard() {
@@ -21,10 +23,32 @@ export default function TelehealthDashboard() {
   );
   const [recentSessions, setRecentSessions] = useState<SessionSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeCall, setActiveCall] = useState<string | null>(null);
+
+  const {
+    initialize,
+    isConnected,
+    initiateCall,
+    activeCalls,
+    incomingCall,
+    answerCall,
+    rejectCall,
+    endCall,
+  } = useCommunicationStore();
 
   useEffect(() => {
     loadSessions();
+    initializeCommunication();
   }, []);
+
+  const initializeCommunication = async () => {
+    try {
+      const userId = 'current-user-id'; // Replace with actual user ID
+      await initialize(userId);
+    } catch (error) {
+      console.error('Failed to initialize communication:', error);
+    }
+  };
 
   const loadSessions = async () => {
     try {
@@ -76,6 +100,87 @@ export default function TelehealthDashboard() {
     return <Badge variant="outline">{type.replace(/_/g, " ")}</Badge>;
   };
 
+  const handleStartCall = async (sessionId: string) => {
+    try {
+      await initiateCall([sessionId], 'VIDEO' as any);
+      setActiveCall(sessionId);
+    } catch (error) {
+      console.error('Failed to start call:', error);
+    }
+  };
+
+  const handleEndCall = async () => {
+    if (activeCall) {
+      await endCall(activeCall);
+      setActiveCall(null);
+    }
+  };
+
+  const handleAnswerIncoming = async () => {
+    if (incomingCall) {
+      await answerCall(incomingCall.id);
+      setActiveCall(incomingCall.id);
+    }
+  };
+
+  const handleRejectIncoming = async () => {
+    if (incomingCall) {
+      await rejectCall(incomingCall.id);
+    }
+  };
+
+  // Show active video call
+  if (activeCall) {
+    return (
+      <div className="h-[calc(100vh-4rem)]">
+        <VideoCall callId={activeCall} onEndCall={handleEndCall} />
+      </div>
+    );
+  }
+
+  // Show incoming call notification
+  if (incomingCall) {
+    return (
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-background">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Phone className="h-6 w-6 animate-pulse text-green-500" />
+              Incoming Video Call
+            </CardTitle>
+            <CardDescription>
+              {incomingCall.metadata?.patientName || 'Unknown caller'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                {incomingCall.metadata?.visitType || 'Virtual consultation'}
+              </p>
+              <div className="flex gap-4">
+                <Button
+                  className="flex-1"
+                  size="lg"
+                  onClick={handleAnswerIncoming}
+                >
+                  <Video className="mr-2 h-4 w-4" />
+                  Answer
+                </Button>
+                <Button
+                  variant="danger"
+                  size="lg"
+                  onClick={handleRejectIncoming}
+                >
+                  Decline
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -94,14 +199,28 @@ export default function TelehealthDashboard() {
           <h1 className="text-3xl font-bold">Telehealth</h1>
           <p className="text-gray-600 mt-1">
             Manage your virtual consultations
+            {isConnected && (
+              <span className="ml-2 inline-flex items-center">
+                <span className="mr-1 h-2 w-2 rounded-full bg-green-500" />
+                Connected
+              </span>
+            )}
           </p>
         </div>
-        <Button asChild>
-          <Link href="/telehealth/new-session">
-            <Video className="h-4 w-4 mr-2" />
-            New Session
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/communication/messages">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Messages
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/telehealth/new-session">
+              <Video className="h-4 w-4 mr-2" />
+              New Session
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -197,16 +316,17 @@ export default function TelehealthDashboard() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button asChild variant="outline">
+                    <Button asChild variant="outline" size="sm">
                       <Link href={`/telehealth/session/${session.id}`}>
                         View Details
                       </Link>
                     </Button>
-                    <Button asChild>
-                      <Link href={`/telehealth/room/${session.id}`}>
-                        <Play className="h-4 w-4 mr-2" />
-                        Start Session
-                      </Link>
+                    <Button
+                      size="sm"
+                      onClick={() => handleStartCall(session.id)}
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      Start Session
                     </Button>
                   </div>
                 </div>

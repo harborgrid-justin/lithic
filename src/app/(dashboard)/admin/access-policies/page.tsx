@@ -21,10 +21,10 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  DialogDescription as _DialogDescription,
+  DialogFooter as _DialogFooter,
+  DialogHeader as _DialogHeader,
+  DialogTitle as _DialogTitle,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,

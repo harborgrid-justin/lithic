@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DollarSign, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import {
@@ -25,11 +25,7 @@ export default function FinancialMetricsPage() {
     },
   });
 
-  useEffect(() => {
-    loadMetrics();
-  }, [filters]);
-
-  const loadMetrics = async () => {
+  const loadMetrics = useCallback(async () => {
     setLoading(true);
     try {
       const data = await analyticsService.getFinancialMetrics(filters);
@@ -39,7 +35,11 @@ export default function FinancialMetricsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadMetrics();
+  }, [loadMetrics]);
 
   return (
     <div className="min-h-screen bg-gray-50">

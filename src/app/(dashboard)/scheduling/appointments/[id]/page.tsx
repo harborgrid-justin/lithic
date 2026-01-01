@@ -213,7 +213,7 @@ export default function AppointmentDetailPage() {
             Edit
           </Button>
           <Button
-            variant="destructive"
+            variant="danger"
             onClick={() => setShowCancelDialog(true)}
             disabled={actionLoading}
           >
@@ -390,7 +390,7 @@ export default function AppointmentDetailPage() {
               Keep Appointment
             </Button>
             <Button
-              variant="destructive"
+              variant="danger"
               onClick={handleCancel}
               disabled={actionLoading}
             >

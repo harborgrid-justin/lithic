@@ -22,12 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert as _Alert, AlertDescription as _AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import {
   Loader2,
   Plus,
-  Settings,
+  Settings as _Settings,
   Shield,
   CheckCircle2,
   XCircle,
@@ -314,7 +314,7 @@ export default function SSOAdminPage() {
                           }
                         />
                         <Button
-                          variant="destructive"
+                          variant="danger"
                           size="sm"
                           onClick={() => deleteProvider(provider.id)}
                         >

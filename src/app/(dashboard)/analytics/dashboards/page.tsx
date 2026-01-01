@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Plus, Layout, Edit, Trash2, Share2, ArrowLeft } from "lucide-react";
 import { Dashboard, analyticsService } from "@/services/analytics.service";
@@ -12,11 +12,7 @@ export default function DashboardsPage() {
     "all" | "quality" | "financial" | "operational" | "population" | "custom"
   >("all");
 
-  useEffect(() => {
-    loadDashboards();
-  }, [filter]);
-
-  const loadDashboards = async () => {
+  const loadDashboards = useCallback(async () => {
     setLoading(true);
     try {
       const data = await analyticsService.getDashboards(
@@ -28,7 +24,11 @@ export default function DashboardsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    loadDashboards();
+  }, [loadDashboards]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this dashboard?")) return;

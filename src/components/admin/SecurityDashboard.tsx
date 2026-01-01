@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -122,7 +122,7 @@ export default function SecurityDashboard() {
       </div>
 
       {analytics?.summary?.failedLogins > 10 && (
-        <Alert variant="destructive">
+        <Alert variant="danger">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
             High number of failed login attempts detected. Review security logs

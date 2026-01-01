@@ -64,7 +64,7 @@ export default function ResultViewer({
   const getFlagBadge = (flag: string, isCritical: boolean) => {
     if (isCritical) {
       return (
-        <Badge variant="destructive" className="gap-1">
+        <Badge variant="danger" className="gap-1">
           <AlertTriangle className="h-3 w-3" />
           CRITICAL
         </Badge>

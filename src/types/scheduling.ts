@@ -441,3 +441,48 @@ export interface AppointmentSummary {
   chiefComplaint: string | null;
   roomName: string | null;
 }
+
+// ============================================================================
+// Enterprise Scheduling Types
+// ============================================================================
+
+export interface ScheduleMetrics {
+  providerId: string;
+  date: Date;
+  totalSlots: number;
+  bookedSlots: number;
+  availableSlots: number;
+  utilizationRate: number;
+  noShowCount: number;
+  cancelledCount: number;
+  avgAppointmentDuration: number;
+}
+
+export interface ProviderProductivity {
+  providerId: string;
+  providerName: string;
+  period: {
+    start: Date;
+    end: Date;
+  };
+  totalAppointments: number;
+  completedAppointments: number;
+  cancelledAppointments: number;
+  noShowAppointments: number;
+  avgAppointmentsPerDay: number;
+  utilizationRate: number;
+  revenueGenerated: number;
+  patientsSeen: number;
+}
+
+export interface BlockScheduleTemplate {
+  id: string;
+  name: string;
+  appointmentType: AppointmentType;
+  duration: number;
+  capacity: number;
+  daysOfWeek: DayOfWeek[];
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+}

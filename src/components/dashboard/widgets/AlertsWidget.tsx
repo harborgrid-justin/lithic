@@ -194,7 +194,7 @@ export function AlertsWidget({ className, maxItems = 5 }: AlertsWidgetProps) {
             {activeAlerts.length !== 1 ? "s" : ""}
           </h3>
           {criticalCount > 0 && (
-            <Badge variant="destructive" className="text-xs">
+            <Badge variant="danger" className="text-xs">
               {criticalCount} Critical
             </Badge>
           )}

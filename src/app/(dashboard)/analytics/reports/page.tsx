@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   Plus,
@@ -25,11 +25,7 @@ export default function ReportsPage() {
     | "regulatory"
   >("all");
 
-  useEffect(() => {
-    loadReports();
-  }, [filter]);
-
-  const loadReports = async () => {
+  const loadReports = useCallback(async () => {
     setLoading(true);
     try {
       const data = await reportingService.getReports(
@@ -41,7 +37,11 @@ export default function ReportsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    loadReports();
+  }, [loadReports]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this report?")) return;

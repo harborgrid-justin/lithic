@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Users, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import {
@@ -26,11 +26,7 @@ export default function PopulationHealthPage() {
     },
   });
 
-  useEffect(() => {
-    loadMetrics();
-  }, [filters]);
-
-  const loadMetrics = async () => {
+  const loadMetrics = useCallback(async () => {
     setLoading(true);
     try {
       const data = await analyticsService.getPopulationMetrics(filters);
@@ -40,7 +36,11 @@ export default function PopulationHealthPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadMetrics();
+  }, [loadMetrics]);
 
   // Mock data for risk stratification
   const riskStratificationData = [

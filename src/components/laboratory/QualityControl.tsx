@@ -64,7 +64,7 @@ export default function QualityControl() {
         Pass
       </Badge>
     ) : (
-      <Badge variant="destructive" className="gap-1">
+      <Badge variant="danger" className="gap-1">
         <XCircle className="h-3 w-3" />
         Fail
       </Badge>

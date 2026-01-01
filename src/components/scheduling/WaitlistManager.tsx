@@ -231,7 +231,7 @@ export default function WaitlistManager({
                         </Button>
                         <Button
                           size="sm"
-                          variant="destructive"
+                          variant="danger"
                           onClick={() => handleRemove(entry)}
                           disabled={loading === entry.id}
                         >

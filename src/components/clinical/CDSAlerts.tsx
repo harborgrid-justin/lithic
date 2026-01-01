@@ -219,7 +219,7 @@ export function CDSAlerts({
               <ShieldAlert className="h-5 w-5 text-orange-500" />
               Clinical Decision Support
               {totalActiveAlerts > 0 && (
-                <Badge variant="destructive" className="ml-2">
+                <Badge variant="danger" className="ml-2">
                   {totalActiveAlerts} Active
                 </Badge>
               )}
@@ -229,7 +229,7 @@ export function CDSAlerts({
         <CardContent className="space-y-4">
           {/* Critical Alerts */}
           {groupedAlerts.critical.map((alert) => (
-            <Alert key={alert.id} variant="destructive" className="border-2">
+            <Alert key={alert.id} variant="danger" className="border-2">
               <div className="flex items-start gap-3">
                 {getSeverityIcon(alert.severity)}
                 <div className="flex-1 space-y-2">
@@ -341,7 +341,7 @@ export function CDSAlerts({
 
           {/* High Priority Alerts */}
           {groupedAlerts.high.map((alert) => (
-            <Alert key={alert.id} variant="destructive">
+            <Alert key={alert.id} variant="danger">
               <div className="flex items-start gap-3">
                 {getSeverityIcon(alert.severity)}
                 <div className="flex-1 space-y-2">

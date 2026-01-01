@@ -66,7 +66,7 @@ export default function CriticalAlerts() {
 
   const getSeverityBadge = (severity: string) => {
     return (
-      <Badge variant="destructive" className="gap-1">
+      <Badge variant="danger" className="gap-1">
         <AlertTriangle className="h-3 w-3" />
         {severity === "CRITICAL_HIGH" ? "CRIT HIGH" : "CRIT LOW"}
       </Badge>

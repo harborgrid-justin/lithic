@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { FileText, ArrowLeft, Edit, Play, Calendar } from "lucide-react";
@@ -17,11 +17,7 @@ export default function ReportDetailPage() {
   const [executions, setExecutions] = useState<ReportExecution[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadReport();
-  }, [params.id]);
-
-  const loadReport = async () => {
+  const loadReport = useCallback(async () => {
     setLoading(true);
     try {
       const [reportData, executionHistory] = await Promise.all([
@@ -35,7 +31,11 @@ export default function ReportDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id]);
+
+  useEffect(() => {
+    loadReport();
+  }, [loadReport]);
 
   const handleRun = async () => {
     if (!report) return;
