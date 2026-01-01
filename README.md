@@ -1,23 +1,31 @@
-# Lithic Enterprise Healthcare Platform v0.3
+# Lithic Enterprise Healthcare Platform v0.4
 
-> The Ultimate Epic Competitor - Enterprise-Grade Healthcare SaaS Platform
+> The Ultimate Epic Competitor - Enterprise-Grade Healthcare SaaS Platform with AI/ML, Genomics, and Advanced Analytics
 
 ## Overview
 
 Lithic is a comprehensive, enterprise-grade healthcare platform built to compete with industry leaders like Epic Systems. This Next.js-based platform provides a complete suite of clinical, operational, and financial tools for modern healthcare organizations.
 
-## Version 0.3 - Enterprise Features
+## Version 0.4 - Next-Generation Healthcare AI
 
-### Key Capabilities
+### Revolutionary Capabilities
 
 - **Multi-Tenant Architecture**: Support for health systems, hospitals, and clinics with organizational hierarchy
 - **Enterprise Security**: SSO, SAML 2.0, OAuth 2.0, RBAC, comprehensive audit logging
-- **Clinical Decision Support**: AI-powered CDS, sepsis prediction, drug interaction checking
+- **GPT-4 Clinical AI**: AI-powered clinical documentation, medical summarization, intelligent assistance
+- **Genomics Platform**: VCF processing, pharmacogenomics, genetic risk assessment, precision medicine
+- **USCDI v3 Compliance**: Complete USCDI v3 data classes, SMART on FHIR v2, bulk data export
+- **Value-Based Care**: ACO management, MIPS reporting, quality measure tracking, shared savings
+- **SDOH Integration**: Social determinants screening, community resource matching, referral management
+- **Patient Engagement 2.0**: Gamification, health goals, automated campaigns, mobile-first experience
+- **Clinical Decision Support**: AI-powered CDS, sepsis prediction, drug interaction checking, ML models
 - **Revenue Cycle Management**: Automated charge capture, claims management, contract negotiation
 - **Population Health**: Predictive analytics, risk stratification, care gap analysis
 - **Interoperability**: FHIR R4, HL7 v2, HIE integration, API gateway
-- **Advanced Scheduling**: Resource optimization, capacity management, waitlist automation
-- **Real-time Communication**: Secure messaging, presence, video conferencing
+- **Advanced OR Management**: Operating room scheduling, block management, case duration prediction
+- **Enterprise Dashboards**: C-suite analytics, real-time KPIs, drill-down capabilities
+- **Real-time Collaboration**: Video conferencing, clinical whiteboard, document co-editing
+- **Progressive Web App**: Mobile-first, offline-capable, push notifications, service workers
 - **Workflow Automation**: Customizable workflows, task management, approvals
 
 ## Technology Stack
@@ -40,15 +48,40 @@ Lithic is a comprehensive, enterprise-grade healthcare platform built to compete
 - **Queue**: Bull / BullMQ
 - **Cache**: Redis
 
+### AI & Machine Learning
+- **LLM**: OpenAI GPT-4, GPT-4 Turbo
+- **NLP**: LangChain, custom entity extraction
+- **ML Framework**: TensorFlow.js
+- **Prediction Models**: Readmission, Sepsis, Length-of-Stay, No-show
+- **Model Governance**: Registry, monitoring, explainability
+
+### Mobile & PWA
+- **PWA Framework**: next-pwa with Workbox
+- **Service Workers**: Offline-first architecture
+- **Push Notifications**: Web Push API
+- **Local Storage**: IndexedDB via idb
+- **Background Sync**: Service Worker Sync API
+
 ### Healthcare Standards
-- **FHIR**: R4 compliant
+- **FHIR**: R4+ compliant with USCDI v3 support
+- **SMART on FHIR**: v2 application platform
 - **HL7**: v2.5.1 support
 - **LOINC**: Laboratory coding
 - **SNOMED CT**: Clinical terminology
+- **RxNorm**: Medication coding
 - **ICD-10**: Diagnosis coding
 - **CPT**: Procedure coding
+- **HCPCS**: Healthcare procedure codes
+- **ClinVar**: Genomic variant database integration
+- **gnomAD**: Population frequency data
+- **CPIC**: Pharmacogenomics guidelines
+- **PRAPARE**: Social determinants screening
+- **AHC-HRSN**: Health-related social needs
+- **HEDIS**: Quality measure reporting
+- **MIPS**: Merit-based Incentive Payment System
 - **HIPAA**: Compliant architecture
 - **SOC 2**: Security controls
+- **21 CFR Part 11**: Electronic records compliance
 
 ## Project Structure
 
@@ -58,68 +91,239 @@ lithic/
 │   ├── app/                      # Next.js App Router
 │   │   ├── (dashboard)/          # Dashboard routes
 │   │   │   ├── admin/           # Administration & settings
+│   │   │   ├── ai-assistant/    # NEW: GPT-4 Clinical Assistant
 │   │   │   ├── analytics/       # Analytics & reporting
 │   │   │   ├── billing/         # Revenue cycle management
 │   │   │   ├── clinical/        # Clinical workflows
+│   │   │   ├── collaboration/   # NEW: Real-time collaboration
 │   │   │   ├── dashboard/       # Main dashboard
+│   │   │   ├── genomics/        # NEW: Genomics platform
 │   │   │   ├── laboratory/      # Laboratory information system
+│   │   │   ├── or-management/   # NEW: Operating room management
 │   │   │   ├── patients/        # Patient management
 │   │   │   ├── pharmacy/        # Medication management
 │   │   │   ├── population-health/ # Population health
 │   │   │   ├── scheduling/      # Scheduling & resources
-│   │   │   └── telehealth/      # Telemedicine
+│   │   │   ├── sdoh/            # NEW: Social determinants of health
+│   │   │   ├── settings/        # Settings & configuration
+│   │   │   ├── telehealth/      # Telemedicine
+│   │   │   └── value-based-care/ # NEW: VBC analytics
 │   │   └── api/                 # API routes
+│   │       ├── ai/              # NEW: AI/ML APIs
 │   │       ├── analytics/       # Analytics APIs
 │   │       ├── billing/         # Billing APIs
+│   │       ├── collaboration/   # NEW: Collaboration APIs
+│   │       ├── genomics/        # NEW: Genomics APIs
 │   │       ├── messaging/       # Communication APIs
 │   │       ├── scheduling/      # Scheduling APIs
+│   │       ├── sdoh/            # NEW: SDOH APIs
+│   │       ├── vbc/             # NEW: Value-based care APIs
 │   │       └── workflow/        # Workflow APIs
 │   ├── components/              # React components
+│   │   ├── ai/                 # NEW: AI components
 │   │   ├── analytics/          # Analytics components (24 files)
 │   │   ├── billing/            # Billing components (17 files)
 │   │   ├── clinical/           # Clinical components (23 files)
+│   │   ├── collaboration/      # NEW: Collaboration UI
 │   │   ├── communication/      # Messaging components (8 files)
 │   │   ├── enterprise/         # Enterprise UI (39 files)
+│   │   ├── genomics/           # NEW: Genomics components
 │   │   ├── patients/           # Patient portal (9 files)
+│   │   ├── pwa/                # NEW: PWA components
 │   │   ├── scheduling/         # Scheduling (17 files)
+│   │   ├── sdoh/               # NEW: SDOH components
 │   │   ├── security/           # Security components (3 files)
 │   │   ├── ui/                 # Base UI components
+│   │   ├── vbc/                # NEW: VBC components
 │   │   └── workflow/           # Workflow components (6 files)
 │   ├── lib/                     # Shared libraries
+│   │   ├── ai/                 # NEW: AI/ML engine
+│   │   │   ├── gpt/            # GPT-4 integration
+│   │   │   ├── nlp/            # NLP processing
+│   │   │   ├── prediction/     # ML prediction models
+│   │   │   └── governance/     # Model governance
 │   │   ├── algorithms/         # Clinical algorithms (11 files)
 │   │   ├── analytics/          # Analytics engine
 │   │   ├── auth/               # Authentication
 │   │   ├── billing/            # Billing utilities
 │   │   ├── cds/                # Clinical decision support
+│   │   ├── collaboration/      # NEW: Collaboration engine
 │   │   ├── design-system/      # Design system utilities
 │   │   ├── fhir/               # FHIR resources
+│   │   ├── genomics/           # NEW: Genomics library
+│   │   │   ├── vcf/            # VCF parser
+│   │   │   ├── pgx/            # Pharmacogenomics
+│   │   │   ├── risk/           # Risk assessment
+│   │   │   └── reporting/      # Report generation
 │   │   ├── hl7/                # HL7 message handling
 │   │   ├── integrations/       # External integrations (17 files)
+│   │   ├── pwa/                # NEW: PWA utilities
 │   │   ├── realtime/           # Real-time communication
 │   │   ├── scheduling/         # Scheduling logic
+│   │   ├── sdoh/               # NEW: SDOH library
+│   │   │   ├── screening/      # Screening tools
+│   │   │   ├── resources/      # Resource matching
+│   │   │   ├── referrals/      # Referral management
+│   │   │   └── outcomes/       # Outcomes tracking
 │   │   ├── security/           # Security & encryption (16 files)
+│   │   ├── vbc/                # NEW: Value-based care engine
+│   │   │   ├── aco/            # ACO management
+│   │   │   ├── mips/           # MIPS reporting
+│   │   │   └── quality/        # Quality measures
 │   │   └── workflow/           # Workflow engine
+│   ├── workers/                 # NEW: Service workers
+│   │   ├── sw.ts               # Main service worker
+│   │   ├── sync.ts             # Background sync
+│   │   └── push.ts             # Push notifications
 │   ├── server/                  # Server-side code
 │   │   ├── api/                # tRPC routers
 │   │   ├── services/           # Business logic
 │   │   └── db/                 # Database utilities
-│   ├── stores/                  # Zustand state stores (5 files)
-│   ├── hooks/                   # Custom React hooks (9 files)
+│   ├── stores/                  # Zustand state stores
+│   ├── hooks/                   # Custom React hooks
 │   └── types/                   # TypeScript types
 ├── prisma/                      # Database schema
 ├── public/                      # Static assets
 └── docs/                        # Documentation
+    ├── modules/                # Module-specific docs
+    ├── ARCHITECTURE.md         # System architecture
+    └── API_REFERENCE.md        # API documentation
 
-Total: 741 TypeScript files
-- 145 Next.js pages
-- 112 API route handlers
-- 213 React components
-- 100 library modules
+Total: 945 TypeScript files
+- 159 Next.js pages
+- 154 API route handlers
+- 292 React components
+- 271 library modules
 ```
 
 ## Core Modules
 
-### 1. Patient Portal & Experience
+### NEW IN V0.4
+
+### 1. AI/ML Platform & GPT-4 Integration
+- GPT-4 powered clinical documentation assistant
+- Intelligent medical record summarization
+- Natural language processing for clinical text
+- Entity extraction (medications, diagnoses, symptoms)
+- Predictive models for readmission risk
+- Sepsis early warning with ML
+- Length-of-stay prediction
+- No-show prediction for appointments
+- Computer vision for medical imaging analysis
+- ML model governance and monitoring
+- Model explainability and interpretability
+- Real-time inference API
+
+### 2. Genomics & Precision Medicine Platform
+- VCF (Variant Call Format) file parsing and validation
+- Pharmacogenomics (PGx) clinical decision support
+- CPIC guideline implementation
+- Star allele calling for drug metabolism
+- Genetic risk assessment panels
+- Cancer susceptibility analysis
+- Cardiac risk assessment
+- Polygenic risk scores
+- ClinVar and gnomAD integration
+- Patient-friendly genomics reports
+- Clinical genetics workflow integration
+
+### 3. Social Determinants of Health (SDOH)
+- PRAPARE screening tool integration
+- AHC-HRSN (Accountable Health Communities) screening
+- Custom screening questionnaires
+- Z-code (ICD-10) mapping for social needs
+- Community resource database
+- FindHelp.org integration
+- Resource matching engine
+- Automated referral management
+- Community-based organization (CBO) integration
+- Consent management for referrals
+- Outcomes tracking and analytics
+- ROI measurement for interventions
+
+### 4. Value-Based Care Suite
+- ACO (Accountable Care Organization) management
+- Patient attribution engine
+- Risk adjustment calculations
+- Shared savings calculator
+- MIPS (Merit-based Incentive Payment System) reporting
+- Quality measure tracking (100+ measures)
+- Cost measure analytics
+- Improvement activities documentation
+- Promoting Interoperability reporting
+- MIPS final score calculation
+- HEDIS measure calculator
+- Care gap analysis and closure tracking
+- Benchmark comparisons
+
+### 5. Patient Engagement 2.0
+- Health goal setting and tracking
+- Gamification engine (points, badges, levels)
+- Leaderboards and challenges
+- Automated care campaigns
+- Health education content library
+- Mobile-first patient experience
+- Push notifications for engagement
+- Activity tracking integration
+- Medication adherence tracking
+- Appointment adherence scoring
+- Patient activation measurement
+
+### 6. Progressive Web App (PWA) Architecture
+- Offline-first data synchronization
+- Service worker implementation
+- Background sync queue
+- Web push notifications
+- IndexedDB local storage
+- Camera and biometric APIs
+- Geolocation services
+- Install to home screen
+- App-like mobile experience
+- Automatic updates
+
+### 7. Advanced OR Management
+- Operating room scheduling
+- Block scheduling templates
+- Case duration prediction
+- Staff and equipment optimization
+- Preference card management
+- Turnover time tracking
+- Utilization analytics
+- Real-time OR dashboard
+
+### 8. Enterprise Dashboard Suite
+- C-suite executive analytics
+- Real-time KPI monitoring
+- Department performance views
+- Drill-down capabilities
+- Custom dashboard builder
+- Data visualization library
+- Export and sharing
+- Mobile-optimized dashboards
+
+### 9. Real-time Collaboration
+- Video conferencing integration
+- Clinical whiteboard
+- Document co-editing
+- Screen sharing
+- Team presence indicators
+- Collaborative care planning
+- Multi-user workflows
+
+### 10. USCDI v3 Compliance
+- All 20+ USCDI v3 data classes
+- SMART on FHIR v2 app platform
+- Bulk FHIR data export ($export)
+- CDS Hooks 2.0 integration
+- Patient access API enhancements
+- Provider directory services
+- Payer-to-payer data exchange
+
+---
+
+### CORE MODULES FROM V0.3
+
+### 11. Patient Portal & Experience
 - Patient dashboard with health summary
 - Appointment scheduling and management
 - Secure messaging with providers
@@ -127,7 +331,7 @@ Total: 741 TypeScript files
 - Prescription refills
 - Bill pay and insurance management
 
-### 2. Clinical Decision Support (CDS)
+### 12. Clinical Decision Support (CDS)
 - AI-powered clinical alerts
 - Sepsis early warning system
 - Drug interaction checking
@@ -136,7 +340,7 @@ Total: 741 TypeScript files
 - Clinical quality measures (CQM)
 - Risk prediction models
 
-### 3. Revenue Cycle Management
+### 13. Revenue Cycle Management
 - Automated charge capture
 - AI-powered coding suggestions
 - Claims scrubbing and submission
@@ -146,7 +350,7 @@ Total: 741 TypeScript files
 - Patient financial counseling
 - Payment plans and collections
 
-### 4. Population Health & Analytics
+### 14. Population Health & Analytics
 - Risk stratification algorithms
 - Care gap identification
 - Chronic disease registries
@@ -156,7 +360,7 @@ Total: 741 TypeScript files
 - Custom report builder
 - Executive KPI dashboards
 
-### 5. Interoperability & Integration
+### 15. Interoperability & Integration
 - FHIR R4 API gateway with OAuth 2.0
 - HL7 v2 message broker
 - Health Information Exchange (HIE)
@@ -166,7 +370,7 @@ Total: 741 TypeScript files
 - Webhook management
 - Integration monitoring
 
-### 6. Security & Compliance
+### 16. Security & Compliance
 - Multi-factor authentication (MFA)
 - Single Sign-On (SSO) with SAML 2.0
 - Role-based access control (RBAC)
@@ -177,7 +381,7 @@ Total: 741 TypeScript files
 - Breach detection
 - SOC 2 compliance controls
 
-### 7. Workflow & Task Engine
+### 17. Workflow & Task Engine
 - Customizable workflow designer
 - Automated task creation
 - Approval workflows
@@ -187,7 +391,7 @@ Total: 741 TypeScript files
 - Task prioritization
 - Batch processing
 
-### 8. Scheduling & Resources
+### 18. Scheduling & Resources
 - Multi-resource scheduling
 - Capacity management
 - Waitlist automation
@@ -197,7 +401,7 @@ Total: 741 TypeScript files
 - Provider schedule optimization
 - Room and equipment tracking
 
-### 9. Enterprise UI Components
+### 19. Enterprise UI Components
 - Comprehensive design system
 - Accessibility (WCAG 2.1 AA)
 - Theming and white-labeling
@@ -207,7 +411,7 @@ Total: 741 TypeScript files
 - Icon system
 - Typography scale
 
-### 10. Real-time Communication
+### 20. Real-time Communication
 - Secure team messaging
 - Presence indicators
 - Video conferencing
@@ -283,6 +487,42 @@ Configure FHIR endpoint in `/src/lib/fhir/config.ts`
 ### HL7 Integration
 Configure HL7 interfaces in `/src/lib/hl7/config.ts`
 
+### AI/ML Configuration (NEW v0.4)
+Configure OpenAI API keys and models in environment variables:
+```bash
+OPENAI_API_KEY=your_api_key
+OPENAI_MODEL=gpt-4-turbo
+OPENAI_MAX_TOKENS=4096
+```
+
+### Genomics Platform (NEW v0.4)
+Configure genomics services:
+- VCF validation settings
+- ClinVar/gnomAD API endpoints
+- CPIC guideline database
+
+### SDOH Configuration (NEW v0.4)
+Configure community resource integrations:
+- FindHelp.org API credentials
+- CBO partner integrations
+- Referral consent workflows
+
+### Value-Based Care (NEW v0.4)
+Configure quality measure specifications:
+- MIPS measure sets
+- HEDIS specifications
+- ACO benchmarks
+
+### PWA Configuration (NEW v0.4)
+Configure service worker settings in `next.config.js`:
+```javascript
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true
+})
+```
+
 ## API Documentation
 
 ### Authentication
@@ -320,6 +560,52 @@ All API endpoints require authentication via JWT or session tokens.
 - `GET /api/workflow/tasks` - List tasks
 - `POST /api/workflow/instances` - Start workflow
 - `POST /api/workflow/approvals` - Approve task
+
+#### AI/ML (NEW v0.4)
+- `POST /api/ai/chat` - GPT-4 clinical assistant chat
+- `POST /api/ai/summarize` - Medical record summarization
+- `POST /api/ai/predict/readmission` - Readmission risk prediction
+- `POST /api/ai/predict/sepsis` - Sepsis risk assessment
+- `POST /api/ai/predict/los` - Length-of-stay prediction
+- `POST /api/ai/nlp/extract` - Clinical entity extraction
+- `GET /api/ai/models` - Model registry listing
+
+#### Genomics (NEW v0.4)
+- `POST /api/genomics/vcf/upload` - Upload VCF file
+- `POST /api/genomics/vcf/validate` - Validate VCF format
+- `GET /api/genomics/variants/[id]` - Get variant details
+- `POST /api/genomics/pgx/analyze` - Pharmacogenomics analysis
+- `GET /api/genomics/pgx/recommendations` - Drug recommendations
+- `POST /api/genomics/risk/cancer` - Cancer risk assessment
+- `POST /api/genomics/risk/cardiac` - Cardiac risk assessment
+- `GET /api/genomics/report/[patientId]` - Patient genomics report
+
+#### SDOH (NEW v0.4)
+- `POST /api/sdoh/screen` - Conduct SDOH screening
+- `GET /api/sdoh/screen/[screeningId]` - Get screening results
+- `GET /api/sdoh/resources/search` - Search community resources
+- `POST /api/sdoh/referral` - Create referral
+- `GET /api/sdoh/referral/[id]` - Get referral status
+- `POST /api/sdoh/referral/[id]/consent` - Manage consent
+- `GET /api/sdoh/outcomes/[patientId]` - Track outcomes
+
+#### Value-Based Care (NEW v0.4)
+- `GET /api/vbc/aco/performance` - ACO performance metrics
+- `POST /api/vbc/aco/attribution` - Patient attribution
+- `GET /api/vbc/aco/shared-savings` - Shared savings calculation
+- `GET /api/vbc/mips/score` - MIPS final score
+- `GET /api/vbc/mips/quality` - Quality measure performance
+- `POST /api/vbc/quality/submit` - Submit quality measure
+- `GET /api/vbc/care-gaps` - Identify care gaps
+- `GET /api/vbc/hedis/[measure]` - HEDIS measure calculation
+
+#### Collaboration (NEW v0.4)
+- `POST /api/collaboration/room/create` - Create video room
+- `POST /api/collaboration/room/[id]/join` - Join video room
+- `GET /api/collaboration/whiteboard/[id]` - Get whiteboard state
+- `POST /api/collaboration/whiteboard/[id]/update` - Update whiteboard
+- `GET /api/collaboration/presence` - Get user presence
+- `POST /api/collaboration/presence/update` - Update presence status
 
 ### FHIR API
 RESTful FHIR R4 API available at `/api/fhir`
@@ -411,15 +697,6 @@ npm run test:coverage
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## Roadmap
-
-### v0.4 (Planned)
-- Mobile applications (iOS/Android)
-- Advanced AI features (GPT-4 integration)
-- Enhanced interoperability (USCDI v3)
-- Value-based care analytics
-- Patient engagement platform
-- Genomics integration
-- Social determinants of health (SDOH)
 
 ### v0.5 (Planned)
 - Research data capture

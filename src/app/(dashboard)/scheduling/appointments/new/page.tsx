@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
-export default function NewAppointmentPage() {
+function NewAppointmentPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -156,5 +156,13 @@ export default function NewAppointmentPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function NewAppointmentPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <NewAppointmentPageContent />
+    </Suspense>
   );
 }

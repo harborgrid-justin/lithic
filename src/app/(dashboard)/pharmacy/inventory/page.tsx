@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   pharmacyService,
@@ -15,7 +15,7 @@ import { InventoryManager } from "@/components/pharmacy/InventoryManager";
 
 export const dynamic = "force-dynamic";
 
-export default function InventoryPage() {
+function InventoryPageContent() {
   const searchParams = useSearchParams();
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -193,5 +193,13 @@ export default function InventoryPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function InventoryPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <InventoryPageContent />
+    </Suspense>
   );
 }

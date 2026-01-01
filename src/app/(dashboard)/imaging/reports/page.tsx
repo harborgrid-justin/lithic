@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ReportEditor from "@/components/imaging/ReportEditor";
 import VoiceDictation from "@/components/imaging/VoiceDictation";
@@ -8,7 +8,7 @@ import { imagingService, RadiologyReport } from "@/services/imaging.service";
 
 export const dynamic = "force-dynamic";
 
-export default function ReportsPage() {
+function ReportsPageContent() {
   const searchParams = useSearchParams();
   const studyId = searchParams.get("studyId");
   const isNew = searchParams.get("new") === "true";
@@ -184,5 +184,13 @@ export default function ReportsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ReportsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <ReportsPageContent />
+    </Suspense>
   );
 }

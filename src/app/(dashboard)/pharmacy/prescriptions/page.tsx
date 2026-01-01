@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -16,7 +16,7 @@ import { PrescriptionList } from "@/components/pharmacy/PrescriptionList";
 
 export const dynamic = "force-dynamic";
 
-export default function PrescriptionsPage() {
+function PrescriptionsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -223,5 +223,13 @@ export default function PrescriptionsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function PrescriptionsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <PrescriptionsPageContent />
+    </Suspense>
   );
 }

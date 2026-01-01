@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Moon,
   Sun,
@@ -34,6 +34,8 @@ import { cn } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 export default function AppearancePage() {
+  const [mounted, setMounted] = useState(false);
+  const themeContext = useTheme();
   const {
     theme,
     setTheme,
@@ -41,11 +43,25 @@ export default function AppearancePage() {
     brandingManager,
     isReducedMotion,
     setReducedMotion,
-  } = useTheme();
-  const [branding, setBranding] = useState<BrandingConfig>(
-    brandingManager.getBranding(),
-  );
+  } = themeContext || {};
+
+  const [branding, setBranding] = useState<BrandingConfig | null>(null);
   const [showSaved, setShowSaved] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (brandingManager) {
+      setBranding(brandingManager.getBranding());
+    }
+  }, [brandingManager]);
+
+  if (!mounted || !themeContext || !branding) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+  }
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { imagingService, ImagingStudy } from "@/services/imaging.service";
 import DicomViewer from "@/components/imaging/DicomViewer";
@@ -10,7 +10,7 @@ import ImageAnnotations from "@/components/imaging/ImageAnnotations";
 
 export const dynamic = "force-dynamic";
 
-export default function ViewerPage() {
+function ViewerPageContent() {
   const searchParams = useSearchParams();
   const studyId = searchParams.get("studyId");
 
@@ -175,5 +175,13 @@ export default function ViewerPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ViewerPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <ViewerPageContent />
+    </Suspense>
   );
 }
