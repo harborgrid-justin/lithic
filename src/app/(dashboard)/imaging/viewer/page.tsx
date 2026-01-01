@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { imagingService, ImagingStudy } from "@/services/imaging.service";
 import DicomViewer from "@/components/imaging/DicomViewer";

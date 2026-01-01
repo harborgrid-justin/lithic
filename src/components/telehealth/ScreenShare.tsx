@@ -30,7 +30,7 @@ export function ScreenShare({ stream, onStopSharing }: ScreenShareProps) {
 
       <div className="absolute top-4 right-4 z-10">
         <Button
-          variant="destructive"
+          variant="danger"
           size="sm"
           onClick={onStopSharing}
           className="gap-2"

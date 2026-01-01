@@ -23,7 +23,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default function AdminDashboard() {
-  const { data: session, status } = useSession();
+  const { data: _session, status } = useSession();
   const router = useRouter();
   const [stats, setStats] = useState<any>(null);
 

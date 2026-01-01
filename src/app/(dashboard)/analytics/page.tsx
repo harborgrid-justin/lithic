@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   BarChart3,
@@ -38,11 +38,7 @@ export default function AnalyticsPage() {
     },
   });
 
-  useEffect(() => {
-    loadMetrics();
-  }, [filters]);
-
-  const loadMetrics = async () => {
+  const loadMetrics = useCallback(async () => {
     setLoading(true);
     try {
       const [quality, financial, operational, population] = await Promise.all([
@@ -69,7 +65,11 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadMetrics();
+  }, [loadMetrics]);
 
   const categories = [
     {

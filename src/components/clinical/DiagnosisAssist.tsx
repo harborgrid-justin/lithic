@@ -194,7 +194,7 @@ export function DiagnosisAssist({
                         <strong>Due:</strong>{" "}
                         {new Date(alert.dueDate).toLocaleDateString()}
                         {alert.overdue && (
-                          <Badge variant="destructive" className="ml-2">
+                          <Badge variant="danger" className="ml-2">
                             Overdue
                           </Badge>
                         )}

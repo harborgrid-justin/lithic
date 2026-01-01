@@ -342,7 +342,7 @@ export function HL7MessageViewer({
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="danger">
             <AlertTriangle className="h-4 w-4" />
             <div className="ml-2">
               <p className="font-semibold">Parse Error</p>

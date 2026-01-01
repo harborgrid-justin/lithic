@@ -114,7 +114,7 @@ export default function ScheduleTemplateComponent({
           {onDelete && (
             <Button
               size="sm"
-              variant="destructive"
+              variant="danger"
               onClick={() => onDelete(template)}
             >
               <Trash2 className="h-4 w-4 mr-1" />

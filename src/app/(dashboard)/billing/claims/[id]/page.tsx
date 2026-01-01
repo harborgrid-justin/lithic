@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Claim } from "@/types/billing";
 import ClaimDetail from "@/components/billing/ClaimDetail";
@@ -15,11 +15,7 @@ export default function ClaimDetailPage({
   const [claim, setClaim] = useState<Claim | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchClaim();
-  }, [params.id]);
-
-  const fetchClaim = async () => {
+  const fetchClaim = useCallback(async () => {
     try {
       const response = await fetch(`/api/billing/claims/${params.id}`);
       if (response.ok) {
@@ -34,7 +30,11 @@ export default function ClaimDetailPage({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    fetchClaim();
+  }, [fetchClaim]);
 
   const handleSubmit = async () => {
     if (!claim) return;

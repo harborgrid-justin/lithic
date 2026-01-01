@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Layout, ArrowLeft, Edit, Share2, Download } from "lucide-react";
@@ -21,11 +21,7 @@ export default function DashboardDetailPage() {
   const [loading, setLoading] = useState(true);
   const [widgetData, setWidgetData] = useState<Record<string, any>>({});
 
-  useEffect(() => {
-    loadDashboard();
-  }, [params.id]);
-
-  const loadDashboard = async () => {
+  const loadDashboard = useCallback(async () => {
     setLoading(true);
     try {
       const data = await analyticsService.getDashboard(params.id as string);
@@ -51,7 +47,11 @@ export default function DashboardDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id]);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   const renderWidget = (widget: Widget) => {
     const data = widgetData[widget.id];

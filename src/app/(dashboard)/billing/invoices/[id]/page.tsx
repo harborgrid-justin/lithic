@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Invoice } from "@/types/billing";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -16,11 +16,7 @@ export default function InvoiceDetailPage({
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchInvoice();
-  }, [params.id]);
-
-  const fetchInvoice = async () => {
+  const fetchInvoice = useCallback(async () => {
     try {
       const response = await fetch(`/api/billing/invoices/${params.id}`);
       if (response.ok) {
@@ -35,7 +31,11 @@ export default function InvoiceDetailPage({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    fetchInvoice();
+  }, [fetchInvoice]);
 
   const handlePrint = () => {
     window.print();

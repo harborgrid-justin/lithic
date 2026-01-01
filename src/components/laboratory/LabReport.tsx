@@ -199,7 +199,7 @@ export default function LabReport({ orderId }: LabReportProps) {
                       </td>
                       <td className="py-2">
                         {result.isCritical ? (
-                          <Badge variant="destructive">CRITICAL</Badge>
+                          <Badge variant="danger">CRITICAL</Badge>
                         ) : result.flag !== "NORMAL" ? (
                           <Badge variant="warning">{result.flag}</Badge>
                         ) : (

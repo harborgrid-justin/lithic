@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import ReportEditor from "@/components/imaging/ReportEditor";
 import VoiceDictation from "@/components/imaging/VoiceDictation";

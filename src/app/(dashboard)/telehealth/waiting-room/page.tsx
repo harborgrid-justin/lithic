@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { WaitingRoom } from "@/components/telehealth/WaitingRoom";
 import {
   Card,

@@ -20,7 +20,7 @@ import {
   Server,
   Database,
   Download,
-  Upload,
+  Upload as _Upload,
   Settings,
   CheckCircle2,
   XCircle,
