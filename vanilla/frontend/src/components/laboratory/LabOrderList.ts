@@ -8,7 +8,10 @@ export class LabOrderList {
   private orders: any[] = [];
   private onOrderClick?: (orderId: string) => void;
 
-  constructor(container: HTMLElement, options: { onOrderClick?: (orderId: string) => void } = {}) {
+  constructor(
+    container: HTMLElement,
+    options: { onOrderClick?: (orderId: string) => void } = {},
+  ) {
     this.container = container;
     this.onOrderClick = options.onOrderClick;
   }
@@ -44,7 +47,7 @@ export class LabOrderList {
             </tr>
           </thead>
           <tbody>
-            ${this.orders.map(order => this.renderOrderRow(order)).join('')}
+            ${this.orders.map((order) => this.renderOrderRow(order)).join("")}
           </tbody>
         </table>
       </div>
@@ -66,7 +69,7 @@ export class LabOrderList {
         <td>${order.patientName}</td>
         <td>${order.patientMRN}</td>
         <td>
-          <span class="test-count">${order.tests.length} test${order.tests.length !== 1 ? 's' : ''}</span>
+          <span class="test-count">${order.tests.length} test${order.tests.length !== 1 ? "s" : ""}</span>
         </td>
         <td>
           <span class="priority-badge ${priorityClass}">${order.priority.toUpperCase()}</span>
@@ -82,47 +85,50 @@ export class LabOrderList {
 
   private getPriorityClass(priority: string): string {
     const classes: Record<string, string> = {
-      stat: 'priority-stat',
-      urgent: 'priority-urgent',
-      asap: 'priority-asap',
-      routine: 'priority-routine'
+      stat: "priority-stat",
+      urgent: "priority-urgent",
+      asap: "priority-asap",
+      routine: "priority-routine",
     };
-    return classes[priority] || '';
+    return classes[priority] || "";
   }
 
   private getStatusClass(status: string): string {
     const classes: Record<string, string> = {
-      pending: 'status-pending',
-      collected: 'status-collected',
-      received: 'status-received',
-      processing: 'status-processing',
-      completed: 'status-completed',
-      cancelled: 'status-cancelled',
-      'on-hold': 'status-on-hold'
+      pending: "status-pending",
+      collected: "status-collected",
+      received: "status-received",
+      processing: "status-processing",
+      completed: "status-completed",
+      cancelled: "status-cancelled",
+      "on-hold": "status-on-hold",
     };
-    return classes[status] || '';
+    return classes[status] || "";
   }
 
   private formatStatus(status: string): string {
-    return status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return status
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatDateTime(date: Date | string): string {
     const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private attachEventListeners(): void {
-    const rows = this.container.querySelectorAll('.lab-order-row');
-    rows.forEach(row => {
-      row.addEventListener('click', () => {
-        const orderId = row.getAttribute('data-order-id');
+    const rows = this.container.querySelectorAll(".lab-order-row");
+    rows.forEach((row) => {
+      row.addEventListener("click", () => {
+        const orderId = row.getAttribute("data-order-id");
         if (orderId && this.onOrderClick) {
           this.onOrderClick(orderId);
         }
@@ -131,6 +137,6 @@ export class LabOrderList {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

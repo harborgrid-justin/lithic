@@ -3,8 +3,8 @@
  * Lithic Healthcare Platform
  */
 
-import { Router } from 'express';
-import { analyticsController } from '../../controllers/AnalyticsController';
+import { Router } from "express";
+import { analyticsController } from "../../controllers/AnalyticsController";
 
 const router = Router();
 
@@ -14,21 +14,21 @@ const router = Router();
  * @query   category - Filter by metric category
  * @access  Private
  */
-router.get('/', analyticsController.getMetrics);
+router.get("/", analyticsController.getMetrics);
 
 /**
  * @route   GET /api/analytics/metrics/:id
  * @desc    Get a specific metric definition
  * @access  Private
  */
-router.get('/:id', analyticsController.getMetric);
+router.get("/:id", analyticsController.getMetric);
 
 /**
  * @route   POST /api/analytics/metrics/:id/calculate
  * @desc    Calculate a metric value
  * @access  Private
  */
-router.post('/:id/calculate', analyticsController.calculateMetric);
+router.post("/:id/calculate", analyticsController.calculateMetric);
 
 /**
  * @route   GET /api/analytics/metrics/quality/measures
@@ -39,14 +39,17 @@ router.post('/:id/calculate', analyticsController.calculateMetric);
  * @query   endDate - Period end date
  * @access  Private
  */
-router.get('/quality/measures', analyticsController.getQualityMeasures);
+router.get("/quality/measures", analyticsController.getQualityMeasures);
 
 /**
  * @route   POST /api/analytics/metrics/quality/measures/:id/calculate
  * @desc    Calculate/recalculate a quality measure
  * @access  Private
  */
-router.post('/quality/measures/:id/calculate', analyticsController.calculateQualityMeasure);
+router.post(
+  "/quality/measures/:id/calculate",
+  analyticsController.calculateQualityMeasure,
+);
 
 /**
  * @route   GET /api/analytics/metrics/financial
@@ -55,7 +58,7 @@ router.post('/quality/measures/:id/calculate', analyticsController.calculateQual
  * @query   endDate - Required end date
  * @access  Private
  */
-router.get('/financial', analyticsController.getFinancialMetrics);
+router.get("/financial", analyticsController.getFinancialMetrics);
 
 /**
  * @route   GET /api/analytics/metrics/operational
@@ -64,7 +67,7 @@ router.get('/financial', analyticsController.getFinancialMetrics);
  * @query   endDate - Required end date
  * @access  Private
  */
-router.get('/operational', analyticsController.getOperationalMetrics);
+router.get("/operational", analyticsController.getOperationalMetrics);
 
 /**
  * @route   GET /api/analytics/metrics/population-health
@@ -72,6 +75,9 @@ router.get('/operational', analyticsController.getOperationalMetrics);
  * @query   populationId - Optional population filter
  * @access  Private
  */
-router.get('/population-health', analyticsController.getPopulationHealthMetrics);
+router.get(
+  "/population-health",
+  analyticsController.getPopulationHealthMetrics,
+);
 
 export default router;

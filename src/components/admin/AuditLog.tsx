@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,21 +8,32 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, Download, Filter } from 'lucide-react';
-import toast from 'react-hot-toast';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, Download, Filter } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AuditLog() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [actionFilter, setActionFilter] = useState('all');
-  const [pagination, setPagination] = useState({ page: 1, limit: 50, total: 0, totalPages: 0 });
+  const [search, setSearch] = useState("");
+  const [actionFilter, setActionFilter] = useState("all");
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 50,
+    total: 0,
+    totalPages: 0,
+  });
 
   useEffect(() => {
     fetchLogs();
@@ -36,8 +47,8 @@ export default function AuditLog() {
         limit: pagination.limit.toString(),
       });
 
-      if (search) params.append('search', search);
-      if (actionFilter !== 'all') params.append('actionFilter', actionFilter);
+      if (search) params.append("search", search);
+      if (actionFilter !== "all") params.append("actionFilter", actionFilter);
 
       const response = await fetch(`/api/admin/audit?${params}`);
       const data = await response.json();
@@ -46,10 +57,10 @@ export default function AuditLog() {
         setLogs(data.data);
         setPagination(data.pagination);
       } else {
-        toast.error(data.error || 'Failed to fetch audit logs');
+        toast.error(data.error || "Failed to fetch audit logs");
       }
     } catch (error) {
-      toast.error('Failed to fetch audit logs');
+      toast.error("Failed to fetch audit logs");
     } finally {
       setLoading(false);
     }
@@ -62,38 +73,38 @@ export default function AuditLog() {
       const endDate = new Date();
 
       const params = new URLSearchParams({
-        action: 'export',
+        action: "export",
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
-        format: 'csv',
+        format: "csv",
       });
 
       const response = await fetch(`/api/admin/audit?${params}`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `audit-logs-${startDate.toISOString()}.csv`;
       a.click();
 
-      toast.success('Audit logs exported');
+      toast.success("Audit logs exported");
     } catch (error) {
-      toast.error('Failed to export logs');
+      toast.error("Failed to export logs");
     }
   };
 
   const getActionBadge = (action: string) => {
     const variants: Record<string, any> = {
-      LOGIN: 'default',
-      LOGOUT: 'secondary',
-      CREATE: 'default',
-      UPDATE: 'default',
-      DELETE: 'destructive',
-      LOGIN_FAILED: 'destructive',
-      PHI_ACCESSED: 'outline',
+      LOGIN: "default",
+      LOGOUT: "secondary",
+      CREATE: "default",
+      UPDATE: "default",
+      DELETE: "destructive",
+      LOGIN_FAILED: "destructive",
+      PHI_ACCESSED: "outline",
     };
 
-    return <Badge variant={variants[action] || 'secondary'}>{action}</Badge>;
+    return <Badge variant={variants[action] || "secondary"}>{action}</Badge>;
   };
 
   return (
@@ -153,7 +164,10 @@ export default function AuditLog() {
                   <TableBody>
                     {logs.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        <TableCell
+                          colSpan={6}
+                          className="text-center py-8 text-muted-foreground"
+                        >
                           No audit logs found
                         </TableCell>
                       </TableRow>
@@ -163,10 +177,12 @@ export default function AuditLog() {
                           <TableCell className="text-sm">
                             {new Date(log.timestamp).toLocaleString()}
                           </TableCell>
-                          <TableCell>{log.userName || 'System'}</TableCell>
+                          <TableCell>{log.userName || "System"}</TableCell>
                           <TableCell>{getActionBadge(log.action)}</TableCell>
                           <TableCell>{log.resource}</TableCell>
-                          <TableCell className="max-w-md truncate">{log.details?.description || '-'}</TableCell>
+                          <TableCell className="max-w-md truncate">
+                            {log.details?.description || "-"}
+                          </TableCell>
                           <TableCell className="text-sm text-muted-foreground">
                             {log.ipAddress}
                           </TableCell>
@@ -186,7 +202,12 @@ export default function AuditLog() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
+                      onClick={() =>
+                        setPagination({
+                          ...pagination,
+                          page: pagination.page - 1,
+                        })
+                      }
                       disabled={pagination.page === 1}
                     >
                       Previous
@@ -194,7 +215,12 @@ export default function AuditLog() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
+                      onClick={() =>
+                        setPagination({
+                          ...pagination,
+                          page: pagination.page + 1,
+                        })
+                      }
                       disabled={pagination.page === pagination.totalPages}
                     >
                       Next

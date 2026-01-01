@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import ResultViewer from '@/components/laboratory/ResultViewer';
+import React from "react";
+import ResultViewer from "@/components/laboratory/ResultViewer";
 
 export default function ResultsPage() {
   return (

@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Users, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { FilterConfig, MetricData, analyticsService } from '@/services/analytics.service';
-import { KPICard } from '@/components/analytics/KPICard';
-import { ChartWidget } from '@/components/analytics/ChartWidget';
-import { TrendAnalysis } from '@/components/analytics/TrendAnalysis';
-import { FilterPanel } from '@/components/analytics/FilterPanel';
+import { useState, useEffect } from "react";
+import { Users, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import {
+  FilterConfig,
+  MetricData,
+  analyticsService,
+} from "@/services/analytics.service";
+import { KPICard } from "@/components/analytics/KPICard";
+import { ChartWidget } from "@/components/analytics/ChartWidget";
+import { TrendAnalysis } from "@/components/analytics/TrendAnalysis";
+import { FilterPanel } from "@/components/analytics/FilterPanel";
 
 export default function PopulationHealthPage() {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<MetricData[]>([]);
   const [filters, setFilters] = useState<FilterConfig>({
     dateRange: {
-      start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0],
-      preset: 'year',
+      start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      end: new Date().toISOString().split("T")[0],
+      preset: "year",
     },
   });
 
@@ -30,7 +36,7 @@ export default function PopulationHealthPage() {
       const data = await analyticsService.getPopulationMetrics(filters);
       setMetrics(data);
     } catch (error) {
-      console.error('Failed to load population metrics:', error);
+      console.error("Failed to load population metrics:", error);
     } finally {
       setLoading(false);
     }
@@ -38,9 +44,9 @@ export default function PopulationHealthPage() {
 
   // Mock data for risk stratification
   const riskStratificationData = [
-    { name: 'Low Risk', value: 45000, percentage: 75 },
-    { name: 'Medium Risk', value: 12000, percentage: 20 },
-    { name: 'High Risk', value: 3000, percentage: 5 },
+    { name: "Low Risk", value: 45000, percentage: 75 },
+    { name: "Medium Risk", value: 12000, percentage: 20 },
+    { name: "High Risk", value: 3000, percentage: 5 },
   ];
 
   return (
@@ -60,7 +66,9 @@ export default function PopulationHealthPage() {
               <Users className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Population Health</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Population Health
+              </h1>
               <p className="text-gray-500 mt-1">
                 Care management, preventive care, and population insights
               </p>
@@ -77,8 +85,8 @@ export default function PopulationHealthPage() {
               filters={filters}
               onChange={setFilters}
               availableFilters={{
-                locations: ['Main Campus', 'North Clinic', 'South Clinic'],
-                providers: ['Dr. Smith', 'Dr. Johnson', 'Dr. Williams'],
+                locations: ["Main Campus", "North Clinic", "South Clinic"],
+                providers: ["Dr. Smith", "Dr. Johnson", "Dr. Williams"],
               }}
             />
           </div>
@@ -93,7 +101,9 @@ export default function PopulationHealthPage() {
               <>
                 {/* KPI Cards */}
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Population Overview</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Population Overview
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {metrics.map((metric) => (
                       <KPICard key={metric.id} metric={metric} />
@@ -103,36 +113,50 @@ export default function PopulationHealthPage() {
 
                 {/* Risk Stratification */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Risk Stratification</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Risk Stratification
+                  </h2>
                   <div className="grid grid-cols-2 gap-6">
                     <ChartWidget
                       type="pie"
                       data={riskStratificationData}
                       config={{
-                        xAxis: 'name',
-                        yAxis: 'value',
-                        colors: ['#10b981', '#f59e0b', '#ef4444'],
+                        xAxis: "name",
+                        yAxis: "value",
+                        colors: ["#10b981", "#f59e0b", "#ef4444"],
                         showLegend: true,
                         height: 300,
                       }}
                     />
                     <div className="space-y-4">
                       {riskStratificationData.map((item, index) => (
-                        <div key={item.name} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                        <div
+                          key={item.name}
+                          className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                        >
                           <div className="flex items-center gap-3">
                             <div
                               className="w-4 h-4 rounded"
                               style={{
-                                backgroundColor: index === 0 ? '#10b981' : index === 1 ? '#f59e0b' : '#ef4444',
+                                backgroundColor:
+                                  index === 0
+                                    ? "#10b981"
+                                    : index === 1
+                                      ? "#f59e0b"
+                                      : "#ef4444",
                               }}
                             />
                             <div>
-                              <div className="font-medium text-gray-900">{item.name}</div>
-                              <div className="text-sm text-gray-500">{item.percentage}% of population</div>
+                              <div className="font-medium text-gray-900">
+                                {item.name}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {item.percentage}% of population
+                              </div>
                             </div>
                           </div>
                           <div className="text-2xl font-bold text-gray-900">
-                            {new Intl.NumberFormat('en-US').format(item.value)}
+                            {new Intl.NumberFormat("en-US").format(item.value)}
                           </div>
                         </div>
                       ))}

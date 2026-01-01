@@ -2,9 +2,13 @@
  * Patient Controller - HTTP request handlers for patient operations
  */
 
-import { Request, Response } from 'express';
-import PatientService from '../services/PatientService';
-import { Patient, PatientSearchParams, PatientMergeRequest } from '../models/Patient';
+import { Request, Response } from "express";
+import PatientService from "../services/PatientService";
+import {
+  Patient,
+  PatientSearchParams,
+  PatientMergeRequest,
+} from "../models/Patient";
 
 export class PatientController {
   /**
@@ -31,7 +35,7 @@ export class PatientController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -42,14 +46,14 @@ export class PatientController {
   public async getPatientById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
 
       const patient = await PatientService.getPatientById(id, userId);
 
       if (!patient) {
         res.status(404).json({
           success: false,
-          error: 'Patient not found',
+          error: "Patient not found",
         });
         return;
       }
@@ -61,7 +65,7 @@ export class PatientController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -72,14 +76,14 @@ export class PatientController {
   public async getPatientByMRN(req: Request, res: Response): Promise<void> {
     try {
       const { mrn } = req.params;
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
 
       const patient = await PatientService.getPatientByMRN(mrn, userId);
 
       if (!patient) {
         res.status(404).json({
           success: false,
-          error: 'Patient not found',
+          error: "Patient not found",
         });
         return;
       }
@@ -91,7 +95,7 @@ export class PatientController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -101,14 +105,18 @@ export class PatientController {
    */
   public async createPatient(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const patientData = req.body;
 
       // Validate required fields
-      if (!patientData.firstName || !patientData.lastName || !patientData.dateOfBirth) {
+      if (
+        !patientData.firstName ||
+        !patientData.lastName ||
+        !patientData.dateOfBirth
+      ) {
         res.status(400).json({
           success: false,
-          error: 'Missing required fields: firstName, lastName, dateOfBirth',
+          error: "Missing required fields: firstName, lastName, dateOfBirth",
         });
         return;
       }
@@ -118,10 +126,10 @@ export class PatientController {
       res.status(201).json({
         success: true,
         data: patient,
-        message: 'Patient created successfully',
+        message: "Patient created successfully",
       });
     } catch (error) {
-      if (error instanceof Error && error.message.includes('duplicate')) {
+      if (error instanceof Error && error.message.includes("duplicate")) {
         res.status(409).json({
           success: false,
           error: error.message,
@@ -131,7 +139,7 @@ export class PatientController {
 
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -142,7 +150,7 @@ export class PatientController {
   public async updatePatient(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const updates = req.body;
 
       const patient = await PatientService.updatePatient(id, updates, userId);
@@ -150,10 +158,10 @@ export class PatientController {
       res.json({
         success: true,
         data: patient,
-        message: 'Patient updated successfully',
+        message: "Patient updated successfully",
       });
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
+      if (error instanceof Error && error.message.includes("not found")) {
         res.status(404).json({
           success: false,
           error: error.message,
@@ -163,7 +171,7 @@ export class PatientController {
 
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -174,16 +182,16 @@ export class PatientController {
   public async deletePatient(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
 
       await PatientService.deletePatient(id, userId);
 
       res.json({
         success: true,
-        message: 'Patient deleted successfully',
+        message: "Patient deleted successfully",
       });
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
+      if (error instanceof Error && error.message.includes("not found")) {
         res.status(404).json({
           success: false,
           error: error.message,
@@ -193,7 +201,7 @@ export class PatientController {
 
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -210,7 +218,7 @@ export class PatientController {
         mrn: req.query.mrn as string,
         phone: req.query.phone as string,
         email: req.query.email as string,
-        status: req.query.status as Patient['status'],
+        status: req.query.status as Patient["status"],
         limit: parseInt(req.query.limit as string) || 50,
         offset: parseInt(req.query.offset as string) || 0,
       };
@@ -229,7 +237,7 @@ export class PatientController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -251,7 +259,7 @@ export class PatientController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -261,7 +269,7 @@ export class PatientController {
    */
   public async mergePatients(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const request: PatientMergeRequest = {
         ...req.body,
         performedBy: userId,
@@ -271,7 +279,7 @@ export class PatientController {
       if (!request.sourceMrn || !request.targetMrn || !request.reason) {
         res.status(400).json({
           success: false,
-          error: 'Missing required fields: sourceMrn, targetMrn, reason',
+          error: "Missing required fields: sourceMrn, targetMrn, reason",
         });
         return;
       }
@@ -281,12 +289,12 @@ export class PatientController {
       res.json({
         success: true,
         data: mergedPatient,
-        message: 'Patients merged successfully',
+        message: "Patients merged successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -297,20 +305,24 @@ export class PatientController {
   public async addDocument(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const documentData = req.body;
 
-      const patient = await PatientService.addDocument(id, documentData, userId);
+      const patient = await PatientService.addDocument(
+        id,
+        documentData,
+        userId,
+      );
 
       res.json({
         success: true,
         data: patient,
-        message: 'Document added successfully',
+        message: "Document added successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -321,7 +333,7 @@ export class PatientController {
   public async updateInsurance(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const insuranceData = req.body;
 
       // Generate ID if not provided
@@ -329,17 +341,21 @@ export class PatientController {
         insuranceData.id = `ins-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       }
 
-      const patient = await PatientService.updateInsurance(id, insuranceData, userId);
+      const patient = await PatientService.updateInsurance(
+        id,
+        insuranceData,
+        userId,
+      );
 
       res.json({
         success: true,
         data: patient,
-        message: 'Insurance updated successfully',
+        message: "Insurance updated successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }
@@ -360,7 +376,7 @@ export class PatientController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       });
     }
   }

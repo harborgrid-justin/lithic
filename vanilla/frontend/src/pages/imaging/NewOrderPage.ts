@@ -1,5 +1,5 @@
-import { ImagingService } from '../../services/ImagingService';
-import { ImagingOrderForm } from '../../components/imaging/ImagingOrderForm';
+import { ImagingService } from "../../services/ImagingService";
+import { ImagingOrderForm } from "../../components/imaging/ImagingOrderForm";
 
 export class NewOrderPage {
   private container: HTMLElement;
@@ -13,10 +13,10 @@ export class NewOrderPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'new-order-page';
+    const wrapper = document.createElement("div");
+    wrapper.className = "new-order-page";
     wrapper.innerHTML = `
       <div class="page-header">
         <button class="btn btn-link" data-action="back">← Back to Orders</button>
@@ -31,7 +31,7 @@ export class NewOrderPage {
     this.container.appendChild(wrapper);
     this.attachEventListeners();
 
-    const formContainer = document.getElementById('order-form-container');
+    const formContainer = document.getElementById("order-form-container");
     if (formContainer) {
       await this.orderForm.render(formContainer, this.handleSubmit.bind(this));
     }
@@ -39,19 +39,19 @@ export class NewOrderPage {
 
   private attachEventListeners() {
     const backBtn = this.container.querySelector('[data-action="back"]');
-    backBtn?.addEventListener('click', () => {
-      window.location.href = '#/imaging/orders';
+    backBtn?.addEventListener("click", () => {
+      window.location.href = "#/imaging/orders";
     });
   }
 
   private async handleSubmit(orderData: any) {
     try {
       const order = await this.imagingService.createOrder(orderData);
-      this.showSuccess('Order created successfully');
+      this.showSuccess("Order created successfully");
       window.location.href = `#/imaging/orders/${order.id}`;
     } catch (error) {
-      console.error('Error creating order:', error);
-      this.showError('Failed to create order');
+      console.error("Error creating order:", error);
+      this.showError("Failed to create order");
     }
   }
 
@@ -64,6 +64,6 @@ export class NewOrderPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -3,14 +3,14 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { LineChart } from '../../lib/charts/LineChart';
-import { BarChart } from '../../lib/charts/BarChart';
-import { PieChart } from '../../lib/charts/PieChart';
-import { ChartBase, ChartConfig } from '../../lib/charts/ChartBase';
+import { LineChart } from "../../lib/charts/LineChart";
+import { BarChart } from "../../lib/charts/BarChart";
+import { PieChart } from "../../lib/charts/PieChart";
+import { ChartBase, ChartConfig } from "../../lib/charts/ChartBase";
 
 export interface ChartWidgetConfig {
   id: string;
-  type: 'line' | 'bar' | 'pie' | 'area';
+  type: "line" | "bar" | "pie" | "area";
   title: string;
   data: ChartConfig;
   width?: string;
@@ -36,12 +36,12 @@ export class ChartWidget {
   }
 
   private render(): void {
-    this.container.innerHTML = '';
-    this.container.className = 'chart-widget';
+    this.container.innerHTML = "";
+    this.container.className = "chart-widget";
 
     // Create widget structure
-    const widget = document.createElement('div');
-    widget.className = 'widget-content';
+    const widget = document.createElement("div");
+    widget.className = "widget-content";
     widget.style.cssText = `
       background: white;
       border-radius: 8px;
@@ -53,7 +53,7 @@ export class ChartWidget {
     `;
 
     // Title
-    const title = document.createElement('h3');
+    const title = document.createElement("h3");
     title.textContent = this.config.title;
     title.style.cssText = `
       margin: 0 0 16px 0;
@@ -63,7 +63,7 @@ export class ChartWidget {
     `;
 
     // Canvas container
-    const canvasContainer = document.createElement('div');
+    const canvasContainer = document.createElement("div");
     canvasContainer.style.cssText = `
       flex: 1;
       position: relative;
@@ -71,7 +71,7 @@ export class ChartWidget {
     `;
 
     // Create canvas
-    this.canvas = document.createElement('canvas');
+    this.canvas = document.createElement("canvas");
     this.canvas.style.cssText = `
       width: 100%;
       height: 100%;
@@ -96,14 +96,14 @@ export class ChartWidget {
 
     // Create appropriate chart type
     switch (this.config.type) {
-      case 'line':
-      case 'area':
+      case "line":
+      case "area":
         this.chart = new LineChart(this.canvas, this.config.data);
         break;
-      case 'bar':
+      case "bar":
         this.chart = new BarChart(this.canvas, this.config.data);
         break;
-      case 'pie':
+      case "pie":
         this.chart = new PieChart(this.canvas, this.config.data);
         break;
       default:

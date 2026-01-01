@@ -16,12 +16,12 @@ import type {
   HumanName,
   Address,
   ContactPoint,
-} from './resources';
+} from "./resources";
 import {
   createReference,
   createCodeableConcept,
   createIdentifier,
-} from './resources';
+} from "./resources";
 
 // Internal types (these would come from your Prisma schema)
 interface InternalPatient {
@@ -31,7 +31,7 @@ interface InternalPatient {
   middleName?: string;
   lastName: string;
   dateOfBirth: Date;
-  gender: 'MALE' | 'FEMALE' | 'OTHER' | 'UNKNOWN';
+  gender: "MALE" | "FEMALE" | "OTHER" | "UNKNOWN";
   ssn?: string;
   email?: string;
   phone?: string;
@@ -95,40 +95,40 @@ interface InternalMedication {
  */
 export function patientToFHIR(patient: InternalPatient): Patient {
   const name: HumanName = {
-    use: 'official',
+    use: "official",
     family: patient.lastName,
     given: [patient.firstName, patient.middleName].filter(Boolean) as string[],
   };
 
   const identifier = [
     createIdentifier(
-      'http://hospital.example.org/mrn',
+      "http://hospital.example.org/mrn",
       patient.mrn,
-      'official'
+      "official",
     ),
   ];
 
   if (patient.ssn) {
     identifier.push(
       createIdentifier(
-        'http://hl7.org/fhir/sid/us-ssn',
+        "http://hl7.org/fhir/sid/us-ssn",
         patient.ssn,
-        'official'
-      )
+        "official",
+      ),
     );
   }
 
   const telecom: ContactPoint[] = [];
   if (patient.phone) {
     telecom.push({
-      system: 'phone',
+      system: "phone",
       value: patient.phone,
-      use: 'mobile',
+      use: "mobile",
     });
   }
   if (patient.email) {
     telecom.push({
-      system: 'email',
+      system: "email",
       value: patient.email,
     });
   }
@@ -136,44 +136,44 @@ export function patientToFHIR(patient: InternalPatient): Patient {
   const address: Address[] = [];
   if (patient.address) {
     address.push({
-      use: 'home',
+      use: "home",
       line: [patient.address],
       city: patient.city,
       state: patient.state,
       postalCode: patient.zipCode,
-      country: 'US',
+      country: "US",
     });
   }
 
-  const genderMap: Record<string, 'male' | 'female' | 'other' | 'unknown'> = {
-    MALE: 'male',
-    FEMALE: 'female',
-    OTHER: 'other',
-    UNKNOWN: 'unknown',
+  const genderMap: Record<string, "male" | "female" | "other" | "unknown"> = {
+    MALE: "male",
+    FEMALE: "female",
+    OTHER: "other",
+    UNKNOWN: "unknown",
   };
 
   return {
-    resourceType: 'Patient',
+    resourceType: "Patient",
     id: patient.id,
     identifier,
     active: patient.active ?? true,
     name: [name],
     telecom: telecom.length > 0 ? telecom : undefined,
-    gender: genderMap[patient.gender] || 'unknown',
-    birthDate: patient.dateOfBirth.toISOString().split('T')[0],
+    gender: genderMap[patient.gender] || "unknown",
+    birthDate: patient.dateOfBirth.toISOString().split("T")[0],
     address: address.length > 0 ? address : undefined,
     maritalStatus: patient.maritalStatus
       ? createCodeableConcept(
-          'http://terminology.hl7.org/CodeSystem/v3-MaritalStatus',
-          patient.maritalStatus
+          "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+          patient.maritalStatus,
         )
       : undefined,
     communication: patient.language
       ? [
           {
             language: createCodeableConcept(
-              'urn:ietf:bcp:47',
-              patient.language
+              "urn:ietf:bcp:47",
+              patient.language,
             ),
             preferred: true,
           },
@@ -185,33 +185,37 @@ export function patientToFHIR(patient: InternalPatient): Patient {
 /**
  * Transform FHIR Patient to internal patient
  */
-export function patientFromFHIR(fhirPatient: Patient): Partial<InternalPatient> {
+export function patientFromFHIR(
+  fhirPatient: Patient,
+): Partial<InternalPatient> {
   const name = fhirPatient.name?.[0];
-  const mrnIdentifier = fhirPatient.identifier?.find(i =>
-    i.system?.includes('mrn')
+  const mrnIdentifier = fhirPatient.identifier?.find((i) =>
+    i.system?.includes("mrn"),
   );
-  const ssnIdentifier = fhirPatient.identifier?.find(i =>
-    i.system?.includes('ssn')
+  const ssnIdentifier = fhirPatient.identifier?.find((i) =>
+    i.system?.includes("ssn"),
   );
-  const phone = fhirPatient.telecom?.find(t => t.system === 'phone');
-  const email = fhirPatient.telecom?.find(t => t.system === 'email');
+  const phone = fhirPatient.telecom?.find((t) => t.system === "phone");
+  const email = fhirPatient.telecom?.find((t) => t.system === "email");
   const address = fhirPatient.address?.[0];
 
-  const genderMap: Record<string, 'MALE' | 'FEMALE' | 'OTHER' | 'UNKNOWN'> = {
-    male: 'MALE',
-    female: 'FEMALE',
-    other: 'OTHER',
-    unknown: 'UNKNOWN',
+  const genderMap: Record<string, "MALE" | "FEMALE" | "OTHER" | "UNKNOWN"> = {
+    male: "MALE",
+    female: "FEMALE",
+    other: "OTHER",
+    unknown: "UNKNOWN",
   };
 
   return {
     id: fhirPatient.id,
-    mrn: mrnIdentifier?.value || '',
-    firstName: name?.given?.[0] || '',
+    mrn: mrnIdentifier?.value || "",
+    firstName: name?.given?.[0] || "",
     middleName: name?.given?.[1],
-    lastName: name?.family || '',
-    dateOfBirth: fhirPatient.birthDate ? new Date(fhirPatient.birthDate) : new Date(),
-    gender: fhirPatient.gender ? genderMap[fhirPatient.gender] : 'UNKNOWN',
+    lastName: name?.family || "",
+    dateOfBirth: fhirPatient.birthDate
+      ? new Date(fhirPatient.birthDate)
+      : new Date(),
+    gender: fhirPatient.gender ? genderMap[fhirPatient.gender] : "UNKNOWN",
     ssn: ssnIdentifier?.value,
     email: email?.value,
     phone: phone?.value,
@@ -229,49 +233,49 @@ export function patientFromFHIR(fhirPatient: Patient): Partial<InternalPatient> 
  * Transform internal observation to FHIR Observation
  */
 export function observationToFHIR(obs: InternalObservation): Observation {
-  const statusMap: Record<string, Observation['status']> = {
-    FINAL: 'final',
-    PRELIMINARY: 'preliminary',
-    AMENDED: 'amended',
-    CORRECTED: 'corrected',
-    CANCELLED: 'cancelled',
+  const statusMap: Record<string, Observation["status"]> = {
+    FINAL: "final",
+    PRELIMINARY: "preliminary",
+    AMENDED: "amended",
+    CORRECTED: "corrected",
+    CANCELLED: "cancelled",
   };
 
   const observation: Observation = {
-    resourceType: 'Observation',
+    resourceType: "Observation",
     id: obs.id,
-    status: statusMap[obs.status] || 'final',
+    status: statusMap[obs.status] || "final",
     code: createCodeableConcept(obs.codeSystem, obs.code, obs.display),
-    subject: createReference('Patient', obs.patientId),
+    subject: createReference("Patient", obs.patientId),
     effectiveDateTime: obs.effectiveDate.toISOString(),
   };
 
   if (obs.category) {
     observation.category = [
       createCodeableConcept(
-        'http://terminology.hl7.org/CodeSystem/observation-category',
-        obs.category
+        "http://terminology.hl7.org/CodeSystem/observation-category",
+        obs.category,
       ),
     ];
   }
 
   if (obs.encounterId) {
-    observation.encounter = createReference('Encounter', obs.encounterId);
+    observation.encounter = createReference("Encounter", obs.encounterId);
   }
 
   if (obs.performerId) {
-    observation.performer = [createReference('Practitioner', obs.performerId)];
+    observation.performer = [createReference("Practitioner", obs.performerId)];
   }
 
   // Handle different value types
-  if (typeof obs.value === 'number') {
+  if (typeof obs.value === "number") {
     observation.valueQuantity = {
       value: obs.value,
       unit: obs.unit,
-      system: 'http://unitsofmeasure.org',
+      system: "http://unitsofmeasure.org",
       code: obs.unit,
     };
-  } else if (typeof obs.value === 'boolean') {
+  } else if (typeof obs.value === "boolean") {
     observation.valueBoolean = obs.value;
   } else {
     observation.valueString = String(obs.value);
@@ -287,12 +291,14 @@ export function observationToFHIR(obs: InternalObservation): Observation {
 /**
  * Transform FHIR Observation to internal observation
  */
-export function observationFromFHIR(fhirObs: Observation): Partial<InternalObservation> {
-  const patientId = fhirObs.subject?.reference?.split('/')?.[1] || '';
-  const encounterId = fhirObs.encounter?.reference?.split('/')?.[1];
-  const performerId = fhirObs.performer?.[0]?.reference?.split('/')?.[1];
+export function observationFromFHIR(
+  fhirObs: Observation,
+): Partial<InternalObservation> {
+  const patientId = fhirObs.subject?.reference?.split("/")?.[1] || "";
+  const encounterId = fhirObs.encounter?.reference?.split("/")?.[1];
+  const performerId = fhirObs.performer?.[0]?.reference?.split("/")?.[1];
 
-  let value: number | string | boolean = '';
+  let value: number | string | boolean = "";
   if (fhirObs.valueQuantity) {
     value = fhirObs.valueQuantity.value || 0;
   } else if (fhirObs.valueBoolean !== undefined) {
@@ -300,16 +306,16 @@ export function observationFromFHIR(fhirObs: Observation): Partial<InternalObser
   } else if (fhirObs.valueString) {
     value = fhirObs.valueString;
   } else if (fhirObs.valueCodeableConcept) {
-    value = fhirObs.valueCodeableConcept.text || '';
+    value = fhirObs.valueCodeableConcept.text || "";
   }
 
   return {
     id: fhirObs.id,
     patientId,
     encounterId,
-    code: fhirObs.code.coding?.[0]?.code || '',
-    codeSystem: fhirObs.code.coding?.[0]?.system || '',
-    display: fhirObs.code.text || fhirObs.code.coding?.[0]?.display || '',
+    code: fhirObs.code.coding?.[0]?.code || "",
+    codeSystem: fhirObs.code.coding?.[0]?.system || "",
+    display: fhirObs.code.text || fhirObs.code.coding?.[0]?.display || "",
     value,
     unit: fhirObs.valueQuantity?.unit,
     status: fhirObs.status.toUpperCase(),
@@ -326,23 +332,23 @@ export function observationFromFHIR(fhirObs: Observation): Partial<InternalObser
  * Transform internal encounter to FHIR Encounter
  */
 export function encounterToFHIR(encounter: InternalEncounter): Encounter {
-  const statusMap: Record<string, Encounter['status']> = {
-    PLANNED: 'planned',
-    ARRIVED: 'arrived',
-    IN_PROGRESS: 'in-progress',
-    FINISHED: 'finished',
-    CANCELLED: 'cancelled',
+  const statusMap: Record<string, Encounter["status"]> = {
+    PLANNED: "planned",
+    ARRIVED: "arrived",
+    IN_PROGRESS: "in-progress",
+    FINISHED: "finished",
+    CANCELLED: "cancelled",
   };
 
   const fhirEncounter: Encounter = {
-    resourceType: 'Encounter',
+    resourceType: "Encounter",
     id: encounter.id,
-    status: statusMap[encounter.status] || 'finished',
+    status: statusMap[encounter.status] || "finished",
     class: {
-      system: 'http://terminology.hl7.org/CodeSystem/v3-ActCode',
+      system: "http://terminology.hl7.org/CodeSystem/v3-ActCode",
       code: encounter.class,
     },
-    subject: createReference('Patient', encounter.patientId),
+    subject: createReference("Patient", encounter.patientId),
     period: {
       start: encounter.startDate.toISOString(),
       end: encounter.endDate?.toISOString(),
@@ -351,17 +357,14 @@ export function encounterToFHIR(encounter: InternalEncounter): Encounter {
 
   if (encounter.type) {
     fhirEncounter.type = [
-      createCodeableConcept(
-        'http://snomed.info/sct',
-        encounter.type
-      ),
+      createCodeableConcept("http://snomed.info/sct", encounter.type),
     ];
   }
 
   if (encounter.providerId) {
     fhirEncounter.participant = [
       {
-        individual: createReference('Practitioner', encounter.providerId),
+        individual: createReference("Practitioner", encounter.providerId),
       },
     ];
   }
@@ -369,7 +372,7 @@ export function encounterToFHIR(encounter: InternalEncounter): Encounter {
   if (encounter.locationId) {
     fhirEncounter.location = [
       {
-        location: createReference('Location', encounter.locationId),
+        location: createReference("Location", encounter.locationId),
       },
     ];
   }
@@ -389,44 +392,41 @@ export function encounterToFHIR(encounter: InternalEncounter): Encounter {
  * Transform internal medication to FHIR MedicationRequest
  */
 export function medicationToFHIR(med: InternalMedication): MedicationRequest {
-  const statusMap: Record<string, MedicationRequest['status']> = {
-    ACTIVE: 'active',
-    COMPLETED: 'completed',
-    CANCELLED: 'cancelled',
-    STOPPED: 'stopped',
-    DRAFT: 'draft',
+  const statusMap: Record<string, MedicationRequest["status"]> = {
+    ACTIVE: "active",
+    COMPLETED: "completed",
+    CANCELLED: "cancelled",
+    STOPPED: "stopped",
+    DRAFT: "draft",
   };
 
   const medicationRequest: MedicationRequest = {
-    resourceType: 'MedicationRequest',
+    resourceType: "MedicationRequest",
     id: med.id,
-    status: statusMap[med.status] || 'active',
-    intent: 'order',
+    status: statusMap[med.status] || "active",
+    intent: "order",
     medicationCodeableConcept: med.medicationCode
       ? createCodeableConcept(
-          'http://www.nlm.nih.gov/research/umls/rxnorm',
+          "http://www.nlm.nih.gov/research/umls/rxnorm",
           med.medicationCode,
-          med.medication
+          med.medication,
         )
       : { text: med.medication },
-    subject: createReference('Patient', med.patientId),
+    subject: createReference("Patient", med.patientId),
     authoredOn: med.startDate.toISOString(),
-    requester: createReference('Practitioner', med.prescriberId),
+    requester: createReference("Practitioner", med.prescriberId),
   };
 
   if (med.encounterId) {
-    medicationRequest.encounter = createReference('Encounter', med.encounterId);
+    medicationRequest.encounter = createReference("Encounter", med.encounterId);
   }
 
   if (med.dosage || med.frequency || med.route) {
     medicationRequest.dosageInstruction = [
       {
-        text: `${med.dosage || ''} ${med.frequency || ''} ${med.route || ''}`.trim(),
+        text: `${med.dosage || ""} ${med.frequency || ""} ${med.route || ""}`.trim(),
         route: med.route
-          ? createCodeableConcept(
-              'http://snomed.info/sct',
-              med.route
-            )
+          ? createCodeableConcept("http://snomed.info/sct", med.route)
           : undefined,
       },
     ];
@@ -451,34 +451,43 @@ export function createCondition(params: {
   code: string;
   codeSystem: string;
   display: string;
-  clinicalStatus: 'active' | 'recurrence' | 'relapse' | 'inactive' | 'remission' | 'resolved';
-  verificationStatus: 'unconfirmed' | 'provisional' | 'differential' | 'confirmed' | 'refuted' | 'entered-in-error';
+  clinicalStatus:
+    | "active"
+    | "recurrence"
+    | "relapse"
+    | "inactive"
+    | "remission"
+    | "resolved";
+  verificationStatus:
+    | "unconfirmed"
+    | "provisional"
+    | "differential"
+    | "confirmed"
+    | "refuted"
+    | "entered-in-error";
   severity?: string;
   onsetDate?: Date;
   notes?: string;
 }): Condition {
   return {
-    resourceType: 'Condition',
+    resourceType: "Condition",
     id: params.id,
     clinicalStatus: createCodeableConcept(
-      'http://terminology.hl7.org/CodeSystem/condition-clinical',
-      params.clinicalStatus
+      "http://terminology.hl7.org/CodeSystem/condition-clinical",
+      params.clinicalStatus,
     ),
     verificationStatus: createCodeableConcept(
-      'http://terminology.hl7.org/CodeSystem/condition-ver-status',
-      params.verificationStatus
+      "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+      params.verificationStatus,
     ),
     code: createCodeableConcept(params.codeSystem, params.code, params.display),
-    subject: createReference('Patient', params.patientId),
+    subject: createReference("Patient", params.patientId),
     encounter: params.encounterId
-      ? createReference('Encounter', params.encounterId)
+      ? createReference("Encounter", params.encounterId)
       : undefined,
     onsetDateTime: params.onsetDate?.toISOString(),
     severity: params.severity
-      ? createCodeableConcept(
-          'http://snomed.info/sct',
-          params.severity
-        )
+      ? createCodeableConcept("http://snomed.info/sct", params.severity)
       : undefined,
     note: params.notes ? [{ text: params.notes }] : undefined,
   };
@@ -494,7 +503,7 @@ export function createDiagnosticReport(params: {
   code: string;
   codeSystem: string;
   display: string;
-  status: 'registered' | 'partial' | 'preliminary' | 'final' | 'amended';
+  status: "registered" | "partial" | "preliminary" | "final" | "amended";
   category?: string;
   effectiveDate: Date;
   issuedDate: Date;
@@ -503,28 +512,30 @@ export function createDiagnosticReport(params: {
   conclusion?: string;
 }): DiagnosticReport {
   return {
-    resourceType: 'DiagnosticReport',
+    resourceType: "DiagnosticReport",
     id: params.id,
     status: params.status,
     category: params.category
       ? [
           createCodeableConcept(
-            'http://terminology.hl7.org/CodeSystem/v2-0074',
-            params.category
+            "http://terminology.hl7.org/CodeSystem/v2-0074",
+            params.category,
           ),
         ]
       : undefined,
     code: createCodeableConcept(params.codeSystem, params.code, params.display),
-    subject: createReference('Patient', params.patientId),
+    subject: createReference("Patient", params.patientId),
     encounter: params.encounterId
-      ? createReference('Encounter', params.encounterId)
+      ? createReference("Encounter", params.encounterId)
       : undefined,
     effectiveDateTime: params.effectiveDate.toISOString(),
     issued: params.issuedDate.toISOString(),
     performer: params.performerId
-      ? [createReference('Practitioner', params.performerId)]
+      ? [createReference("Practitioner", params.performerId)]
       : undefined,
-    result: params.observationIds?.map(id => createReference('Observation', id)),
+    result: params.observationIds?.map((id) =>
+      createReference("Observation", id),
+    ),
     conclusion: params.conclusion,
   };
 }
@@ -537,7 +548,14 @@ export function createAppointment(params: {
   patientId: string;
   practitionerId: string;
   locationId?: string;
-  status: 'proposed' | 'pending' | 'booked' | 'arrived' | 'fulfilled' | 'cancelled' | 'noshow';
+  status:
+    | "proposed"
+    | "pending"
+    | "booked"
+    | "arrived"
+    | "fulfilled"
+    | "cancelled"
+    | "noshow";
   appointmentType?: string;
   serviceType?: string;
   startTime: Date;
@@ -547,17 +565,17 @@ export function createAppointment(params: {
   comment?: string;
 }): Appointment {
   return {
-    resourceType: 'Appointment',
+    resourceType: "Appointment",
     id: params.id,
     status: params.status,
     appointmentType: params.appointmentType
       ? createCodeableConcept(
-          'http://terminology.hl7.org/CodeSystem/v2-0276',
-          params.appointmentType
+          "http://terminology.hl7.org/CodeSystem/v2-0276",
+          params.appointmentType,
         )
       : undefined,
     serviceType: params.serviceType
-      ? [createCodeableConcept('http://snomed.info/sct', params.serviceType)]
+      ? [createCodeableConcept("http://snomed.info/sct", params.serviceType)]
       : undefined,
     description: params.description,
     start: params.startTime.toISOString(),
@@ -566,18 +584,18 @@ export function createAppointment(params: {
     comment: params.comment,
     participant: [
       {
-        actor: createReference('Patient', params.patientId),
-        status: 'accepted',
+        actor: createReference("Patient", params.patientId),
+        status: "accepted",
       },
       {
-        actor: createReference('Practitioner', params.practitionerId),
-        status: 'accepted',
+        actor: createReference("Practitioner", params.practitionerId),
+        status: "accepted",
       },
       ...(params.locationId
         ? [
             {
-              actor: createReference('Location', params.locationId),
-              status: 'accepted' as const,
+              actor: createReference("Location", params.locationId),
+              status: "accepted" as const,
             },
           ]
         : []),
@@ -595,6 +613,8 @@ export function bulkPatientToFHIR(patients: InternalPatient[]): Patient[] {
 /**
  * Bulk transform observations to FHIR
  */
-export function bulkObservationToFHIR(observations: InternalObservation[]): Observation[] {
+export function bulkObservationToFHIR(
+  observations: InternalObservation[],
+): Observation[] {
   return observations.map(observationToFHIR);
 }

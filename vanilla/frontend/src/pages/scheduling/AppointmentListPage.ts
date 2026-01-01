@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
+import { SchedulingService } from "../../services/SchedulingService";
 
 export class AppointmentListPage {
   private container: HTMLElement;
@@ -77,19 +77,29 @@ export class AppointmentListPage {
   }
 
   private attachEventListeners(): void {
-    document.getElementById('newBtn')?.addEventListener('click', () => {
-      window.location.hash = '/scheduling/appointments/new';
+    document.getElementById("newBtn")?.addEventListener("click", () => {
+      window.location.hash = "/scheduling/appointments/new";
     });
 
-    document.getElementById('searchInput')?.addEventListener('input', () => this.loadAppointments());
-    document.getElementById('statusFilter')?.addEventListener('change', () => this.loadAppointments());
-    document.getElementById('providerFilter')?.addEventListener('change', () => this.loadAppointments());
-    document.getElementById('dateFilter')?.addEventListener('change', () => this.loadAppointments());
-    document.getElementById('clearFilters')?.addEventListener('click', () => this.clearFilters());
+    document
+      .getElementById("searchInput")
+      ?.addEventListener("input", () => this.loadAppointments());
+    document
+      .getElementById("statusFilter")
+      ?.addEventListener("change", () => this.loadAppointments());
+    document
+      .getElementById("providerFilter")
+      ?.addEventListener("change", () => this.loadAppointments());
+    document
+      .getElementById("dateFilter")
+      ?.addEventListener("change", () => this.loadAppointments());
+    document
+      .getElementById("clearFilters")
+      ?.addEventListener("click", () => this.clearFilters());
 
-    document.getElementById('selectAll')?.addEventListener('change', (e) => {
+    document.getElementById("selectAll")?.addEventListener("change", (e) => {
       const checked = (e.target as HTMLInputElement).checked;
-      document.querySelectorAll('.row-checkbox').forEach(cb => {
+      document.querySelectorAll(".row-checkbox").forEach((cb) => {
         (cb as HTMLInputElement).checked = checked;
       });
       this.updateBatchActions();
@@ -99,34 +109,41 @@ export class AppointmentListPage {
   private async loadAppointments(): Promise<void> {
     try {
       const filters = {
-        search: (document.getElementById('searchInput') as HTMLInputElement).value,
-        status: (document.getElementById('statusFilter') as HTMLSelectElement).value,
-        providerId: (document.getElementById('providerFilter') as HTMLSelectElement).value,
-        date: (document.getElementById('dateFilter') as HTMLInputElement).value
+        search: (document.getElementById("searchInput") as HTMLInputElement)
+          .value,
+        status: (document.getElementById("statusFilter") as HTMLSelectElement)
+          .value,
+        providerId: (
+          document.getElementById("providerFilter") as HTMLSelectElement
+        ).value,
+        date: (document.getElementById("dateFilter") as HTMLInputElement).value,
       };
 
       const result = await this.schedulingService.getAppointments({
         ...filters,
         limit: this.pageSize,
-        offset: (this.currentPage - 1) * this.pageSize
+        offset: (this.currentPage - 1) * this.pageSize,
       });
 
       this.renderAppointments(result.data);
       this.renderPagination(result.total);
     } catch (error) {
-      console.error('Error loading appointments:', error);
+      console.error("Error loading appointments:", error);
     }
   }
 
   private renderAppointments(appointments: any[]): void {
-    const tbody = document.getElementById('appointmentsBody')!;
+    const tbody = document.getElementById("appointmentsBody")!;
 
     if (appointments.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No appointments found</td></tr>';
+      tbody.innerHTML =
+        '<tr><td colspan="8" class="empty-state">No appointments found</td></tr>';
       return;
     }
 
-    tbody.innerHTML = appointments.map(apt => `
+    tbody.innerHTML = appointments
+      .map(
+        (apt) => `
       <tr data-id="${apt.id}">
         <td><input type="checkbox" class="row-checkbox" data-id="${apt.id}"></td>
         <td>${new Date(apt.startTime).toLocaleString()}</td>
@@ -140,47 +157,49 @@ export class AppointmentListPage {
           <button class="btn-icon" data-action="edit" data-id="${apt.id}">Edit</button>
         </td>
       </tr>
-    `).join('');
+    `,
+      )
+      .join("");
 
-    tbody.querySelectorAll('.row-checkbox').forEach(cb => {
-      cb.addEventListener('change', () => this.updateBatchActions());
+    tbody.querySelectorAll(".row-checkbox").forEach((cb) => {
+      cb.addEventListener("change", () => this.updateBatchActions());
     });
   }
 
   private renderPagination(total: number): void {
-    const container = document.getElementById('pagination')!;
+    const container = document.getElementById("pagination")!;
     const totalPages = Math.ceil(total / this.pageSize);
 
     if (totalPages <= 1) {
-      container.innerHTML = '';
+      container.innerHTML = "";
       return;
     }
 
     container.innerHTML = `
-      <button ${this.currentPage === 1 ? 'disabled' : ''} onclick="this.previousPage()">Previous</button>
+      <button ${this.currentPage === 1 ? "disabled" : ""} onclick="this.previousPage()">Previous</button>
       <span>Page ${this.currentPage} of ${totalPages}</span>
-      <button ${this.currentPage === totalPages ? 'disabled' : ''} onclick="this.nextPage()">Next</button>
+      <button ${this.currentPage === totalPages ? "disabled" : ""} onclick="this.nextPage()">Next</button>
     `;
   }
 
   private updateBatchActions(): void {
-    const selected = document.querySelectorAll('.row-checkbox:checked');
-    const batchActions = document.getElementById('batchActions')!;
-    const selectedCount = document.getElementById('selectedCount')!;
+    const selected = document.querySelectorAll(".row-checkbox:checked");
+    const batchActions = document.getElementById("batchActions")!;
+    const selectedCount = document.getElementById("selectedCount")!;
 
     if (selected.length > 0) {
-      batchActions.style.display = 'flex';
+      batchActions.style.display = "flex";
       selectedCount.textContent = `${selected.length} selected`;
     } else {
-      batchActions.style.display = 'none';
+      batchActions.style.display = "none";
     }
   }
 
   private clearFilters(): void {
-    (document.getElementById('searchInput') as HTMLInputElement).value = '';
-    (document.getElementById('statusFilter') as HTMLSelectElement).value = '';
-    (document.getElementById('providerFilter') as HTMLSelectElement).value = '';
-    (document.getElementById('dateFilter') as HTMLInputElement).value = '';
+    (document.getElementById("searchInput") as HTMLInputElement).value = "";
+    (document.getElementById("statusFilter") as HTMLSelectElement).value = "";
+    (document.getElementById("providerFilter") as HTMLSelectElement).value = "";
+    (document.getElementById("dateFilter") as HTMLInputElement).value = "";
     this.loadAppointments();
   }
 

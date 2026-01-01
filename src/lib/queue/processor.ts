@@ -3,25 +3,27 @@
  * Background job processing with Bull/BullMQ and Redis
  */
 
-import { z } from 'zod';
-import Redis from 'ioredis';
+import { z } from "zod";
+import Redis from "ioredis";
 
 const QueueConfigSchema = z.object({
   redis: z.object({
-    host: z.string().default('localhost'),
+    host: z.string().default("localhost"),
     port: z.number().default(6379),
     password: z.string().optional(),
     db: z.number().default(0),
   }),
-  defaultJobOptions: z.object({
-    attempts: z.number().default(3),
-    backoff: z.object({
-      type: z.enum(['fixed', 'exponential']).default('exponential'),
-      delay: z.number().default(1000),
-    }),
-    removeOnComplete: z.boolean().default(true),
-    removeOnFail: z.boolean().default(false),
-  }).optional(),
+  defaultJobOptions: z
+    .object({
+      attempts: z.number().default(3),
+      backoff: z.object({
+        type: z.enum(["fixed", "exponential"]).default("exponential"),
+        delay: z.number().default(1000),
+      }),
+      removeOnComplete: z.boolean().default(true),
+      removeOnFail: z.boolean().default(false),
+    })
+    .optional(),
 });
 
 type QueueConfig = z.infer<typeof QueueConfigSchema>;
@@ -45,7 +47,7 @@ export interface JobOptions {
   delay?: number;
   attempts?: number;
   backoff?: {
-    type: 'fixed' | 'exponential';
+    type: "fixed" | "exponential";
     delay: number;
   };
   timeout?: number;
@@ -66,10 +68,10 @@ export class QueueProcessor {
   constructor(config: Partial<QueueConfig> = {}) {
     this.config = QueueConfigSchema.parse({
       redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
+        host: process.env.REDIS_HOST || "localhost",
+        port: parseInt(process.env.REDIS_PORT || "6379"),
         password: process.env.REDIS_PASSWORD,
-        db: parseInt(process.env.REDIS_DB || '0'),
+        db: parseInt(process.env.REDIS_DB || "0"),
       },
       ...config,
     });
@@ -87,7 +89,10 @@ export class QueueProcessor {
   /**
    * Register a job processor
    */
-  registerProcessor<T = any>(jobName: string, processor: JobProcessor<T>): void {
+  registerProcessor<T = any>(
+    jobName: string,
+    processor: JobProcessor<T>,
+  ): void {
     this.processors.set(jobName, processor);
     this.queues.set(jobName, []);
     this.processing.set(jobName, false);
@@ -102,7 +107,7 @@ export class QueueProcessor {
   async addJob<T = any>(
     jobName: string,
     data: T,
-    options: JobOptions = {}
+    options: JobOptions = {},
   ): Promise<Job<T>> {
     const job: Job<T> = {
       id: `${jobName}:${Date.now()}:${Math.random().toString(36).substring(7)}`,
@@ -120,7 +125,10 @@ export class QueueProcessor {
     await this.redis.rpush(`queue:${jobName}`, JSON.stringify(job));
 
     // Publish event
-    await this.redis.publish('job:added', JSON.stringify({ jobName, jobId: job.id }));
+    await this.redis.publish(
+      "job:added",
+      JSON.stringify({ jobName, jobId: job.id }),
+    );
 
     return job;
   }
@@ -197,21 +205,25 @@ export class QueueProcessor {
         await this.redis.set(
           `job:${job.id}`,
           JSON.stringify(job),
-          'EX',
-          86400 // 24 hours
+          "EX",
+          86400, // 24 hours
         );
       }
 
       // Publish completion event
-      await this.redis.publish('job:completed', JSON.stringify({
-        jobName: job.name,
-        jobId: job.id,
-        result,
-      }));
+      await this.redis.publish(
+        "job:completed",
+        JSON.stringify({
+          jobName: job.name,
+          jobId: job.id,
+          result,
+        }),
+      );
     } catch (error) {
       job.attemptsMade++;
-      job.failedReason = error instanceof Error ? error.message : 'Unknown error';
-      job.stacktrace = error instanceof Error ? error.stack?.split('\n') : [];
+      job.failedReason =
+        error instanceof Error ? error.message : "Unknown error";
+      job.stacktrace = error instanceof Error ? error.stack?.split("\n") : [];
 
       const maxAttempts = job.opts.attempts || 1;
 
@@ -224,12 +236,15 @@ export class QueueProcessor {
         await this.redis.rpush(`queue:${jobName}`, JSON.stringify(job));
 
         // Publish retry event
-        await this.redis.publish('job:retry', JSON.stringify({
-          jobName: job.name,
-          jobId: job.id,
-          attempt: job.attemptsMade,
-          nextRetry: backoffDelay,
-        }));
+        await this.redis.publish(
+          "job:retry",
+          JSON.stringify({
+            jobName: job.name,
+            jobId: job.id,
+            attempt: job.attemptsMade,
+            nextRetry: backoffDelay,
+          }),
+        );
       } else {
         // Job failed permanently
         job.finishedOn = Date.now();
@@ -238,17 +253,20 @@ export class QueueProcessor {
           await this.redis.set(
             `job:failed:${job.id}`,
             JSON.stringify(job),
-            'EX',
-            604800 // 7 days
+            "EX",
+            604800, // 7 days
           );
         }
 
         // Publish failure event
-        await this.redis.publish('job:failed', JSON.stringify({
-          jobName: job.name,
-          jobId: job.id,
-          error: job.failedReason,
-        }));
+        await this.redis.publish(
+          "job:failed",
+          JSON.stringify({
+            jobName: job.name,
+            jobId: job.id,
+            error: job.failedReason,
+          }),
+        );
       }
     } finally {
       this.processing.set(jobName, false);
@@ -265,7 +283,7 @@ export class QueueProcessor {
 
     const { type, delay } = job.opts.backoff;
 
-    if (type === 'exponential') {
+    if (type === "exponential") {
       return delay * Math.pow(2, job.attemptsMade - 1);
     }
 
@@ -350,7 +368,10 @@ export class QueueProcessor {
   /**
    * Subscribe to job events
    */
-  on(event: 'completed' | 'failed' | 'retry' | 'added', callback: (data: any) => void): void {
+  on(
+    event: "completed" | "failed" | "retry" | "added",
+    callback: (data: any) => void,
+  ): void {
     const subscriber = new Redis({
       host: this.config.redis.host,
       port: this.config.redis.port,
@@ -359,7 +380,7 @@ export class QueueProcessor {
     });
 
     subscriber.subscribe(`job:${event}`);
-    subscriber.on('message', (channel, message) => {
+    subscriber.on("message", (channel, message) => {
       if (channel === `job:${event}`) {
         callback(JSON.parse(message));
       }
@@ -377,7 +398,7 @@ export const queueProcessor = new QueueProcessor();
  */
 export function createQueue<T = any>(
   name: string,
-  processor: JobProcessor<T>
+  processor: JobProcessor<T>,
 ): {
   add: (data: T, options?: JobOptions) => Promise<Job<T>>;
   getStats: () => Promise<any>;
@@ -388,7 +409,8 @@ export function createQueue<T = any>(
   queueProcessor.registerProcessor(name, processor);
 
   return {
-    add: (data: T, options?: JobOptions) => queueProcessor.addJob(name, data, options),
+    add: (data: T, options?: JobOptions) =>
+      queueProcessor.addJob(name, data, options),
     getStats: () => queueProcessor.getQueueStats(name),
     pause: () => queueProcessor.pauseQueue(name),
     resume: () => queueProcessor.resumeQueue(name),

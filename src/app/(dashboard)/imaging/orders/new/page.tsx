@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import ImagingOrderForm from '@/components/imaging/ImagingOrderForm';
+import { useRouter } from "next/navigation";
+import ImagingOrderForm from "@/components/imaging/ImagingOrderForm";
 
 export default function NewOrderPage() {
   const router = useRouter();
 
   const handleSubmit = () => {
-    router.push('/imaging/orders');
+    router.push("/imaging/orders");
   };
 
   const handleCancel = () => {

@@ -3,35 +3,40 @@
  * Manage pharmacy inventory with stock levels and expiration tracking
  */
 
-'use client';
+"use client";
 
-import { type InventoryItem } from '@/services/pharmacy.service';
+import { type InventoryItem } from "@/services/pharmacy.service";
 
 interface InventoryManagerProps {
   inventory: InventoryItem[];
   onRefresh: () => void;
 }
 
-export function InventoryManager({ inventory, onRefresh }: InventoryManagerProps) {
+export function InventoryManager({
+  inventory,
+  onRefresh,
+}: InventoryManagerProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'in-stock':
-        return 'bg-green-100 text-green-800';
-      case 'low-stock':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'out-of-stock':
-        return 'bg-red-100 text-red-800';
-      case 'expired':
-        return 'bg-purple-100 text-purple-800';
-      case 'recalled':
-        return 'bg-red-100 text-red-800';
+      case "in-stock":
+        return "bg-green-100 text-green-800";
+      case "low-stock":
+        return "bg-yellow-100 text-yellow-800";
+      case "out-of-stock":
+        return "bg-red-100 text-red-800";
+      case "expired":
+        return "bg-purple-100 text-purple-800";
+      case "recalled":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getDaysUntilExpiry = (expirationDate: string) => {
-    return Math.floor((new Date(expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    return Math.floor(
+      (new Date(expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    );
   };
 
   if (inventory.length === 0) {
@@ -123,7 +128,9 @@ export function InventoryManager({ inventory, onRefresh }: InventoryManagerProps
                   )}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}
+                  >
                     {item.status}
                   </span>
                 </td>

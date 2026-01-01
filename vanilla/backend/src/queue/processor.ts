@@ -4,14 +4,19 @@
  * Job queue processing system with retry logic, priorities, and monitoring
  */
 
-import { EventEmitter } from 'events';
-import { logger } from '../utils/logger';
+import { EventEmitter } from "events";
+import { logger } from "../utils/logger";
 
 // Job Status
-export type JobStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'retry';
+export type JobStatus =
+  | "pending"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "retry";
 
 // Job Priority
-export type JobPriority = 'low' | 'normal' | 'high' | 'critical';
+export type JobPriority = "low" | "normal" | "high" | "critical";
 
 // Job Definition
 export interface Job<T = any> {
@@ -70,7 +75,7 @@ export class QueueProcessor extends EventEmitter {
    */
   registerHandler<T = any>(jobType: string, handler: JobHandler<T>): void {
     this.handlers.set(jobType, handler);
-    logger.info('Job handler registered', { jobType });
+    logger.info("Job handler registered", { jobType });
   }
 
   /**
@@ -83,14 +88,14 @@ export class QueueProcessor extends EventEmitter {
       priority?: JobPriority;
       maxAttempts?: number;
       metadata?: Record<string, any>;
-    } = {}
+    } = {},
   ): Promise<Job<T>> {
     const job: Job<T> = {
       id: crypto.randomUUID(),
       type,
       data,
-      priority: options.priority || 'normal',
-      status: 'pending',
+      priority: options.priority || "normal",
+      status: "pending",
       attempts: 0,
       maxAttempts: options.maxAttempts || this.maxRetries,
       createdAt: new Date(),
@@ -99,9 +104,9 @@ export class QueueProcessor extends EventEmitter {
     };
 
     this.jobs.set(job.id, job);
-    this.emit('job:added', job);
+    this.emit("job:added", job);
 
-    logger.info('Job added to queue', {
+    logger.info("Job added to queue", {
       jobId: job.id,
       type: job.type,
       priority: job.priority,
@@ -115,7 +120,7 @@ export class QueueProcessor extends EventEmitter {
    */
   start(): void {
     if (this.running) {
-      logger.warn('Queue processor already running');
+      logger.warn("Queue processor already running");
       return;
     }
 
@@ -124,12 +129,12 @@ export class QueueProcessor extends EventEmitter {
       this.processNextJobs();
     }, this.pollInterval);
 
-    logger.info('Queue processor started', {
+    logger.info("Queue processor started", {
       concurrency: this.concurrency,
       pollInterval: this.pollInterval,
     });
 
-    this.emit('started');
+    this.emit("started");
   }
 
   /**
@@ -152,8 +157,8 @@ export class QueueProcessor extends EventEmitter {
       await this.sleep(100);
     }
 
-    logger.info('Queue processor stopped');
-    this.emit('stopped');
+    logger.info("Queue processor stopped");
+    this.emit("stopped");
   }
 
   /**
@@ -172,11 +177,12 @@ export class QueueProcessor extends EventEmitter {
 
     // Get pending jobs sorted by priority and created date
     const pendingJobs = Array.from(this.jobs.values())
-      .filter((job) => job.status === 'pending' && !this.processing.has(job.id))
+      .filter((job) => job.status === "pending" && !this.processing.has(job.id))
       .sort((a, b) => {
         // Sort by priority first
         const priorityOrder = { critical: 0, high: 1, normal: 2, low: 3 };
-        const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+        const priorityDiff =
+          priorityOrder[a.priority] - priorityOrder[b.priority];
         if (priorityDiff !== 0) return priorityDiff;
 
         // Then by created date
@@ -187,7 +193,7 @@ export class QueueProcessor extends EventEmitter {
     // Process jobs
     for (const job of pendingJobs) {
       this.processJob(job).catch((error) => {
-        logger.error('Unexpected error processing job', {
+        logger.error("Unexpected error processing job", {
           jobId: job.id,
           error: error.message,
         });
@@ -201,19 +207,19 @@ export class QueueProcessor extends EventEmitter {
   private async processJob(job: Job): Promise<void> {
     this.processing.add(job.id);
 
-    job.status = 'processing';
+    job.status = "processing";
     job.attempts++;
     job.startedAt = new Date();
     job.updatedAt = new Date();
     this.jobs.set(job.id, job);
 
-    logger.info('Processing job', {
+    logger.info("Processing job", {
       jobId: job.id,
       type: job.type,
       attempt: job.attempts,
     });
 
-    this.emit('job:started', job);
+    this.emit("job:started", job);
 
     try {
       // Get handler
@@ -226,55 +232,58 @@ export class QueueProcessor extends EventEmitter {
       const result = await handler(job);
 
       // Job completed successfully
-      job.status = 'completed';
+      job.status = "completed";
       job.result = result;
       job.completedAt = new Date();
       job.updatedAt = new Date();
       this.jobs.set(job.id, job);
 
-      logger.info('Job completed', {
+      logger.info("Job completed", {
         jobId: job.id,
         type: job.type,
         duration: job.completedAt.getTime() - job.startedAt!.getTime(),
       });
 
-      this.emit('job:completed', job);
+      this.emit("job:completed", job);
     } catch (error: any) {
       // Job failed
       job.error = error.message;
       job.failedAt = new Date();
       job.updatedAt = new Date();
 
-      logger.error('Job failed', {
+      logger.error("Job failed", {
         jobId: job.id,
         type: job.type,
         attempt: job.attempts,
         error: error.message,
       });
 
-      this.emit('job:failed', job, error);
+      this.emit("job:failed", job, error);
 
       // Retry if attempts remaining
       if (job.attempts < job.maxAttempts) {
-        job.status = 'retry';
+        job.status = "retry";
         this.jobs.set(job.id, job);
 
-        logger.info('Scheduling job retry', {
+        logger.info("Scheduling job retry", {
           jobId: job.id,
           attempt: job.attempts + 1,
           maxAttempts: job.maxAttempts,
         });
 
-        this.emit('job:retry', job);
+        this.emit("job:retry", job);
 
         // Schedule retry
-        setTimeout(() => {
-          job.status = 'pending';
-          job.updatedAt = new Date();
-          this.jobs.set(job.id, job);
-        }, this.retryDelay * Math.pow(2, job.attempts - 1));
+        setTimeout(
+          () => {
+            job.status = "pending";
+            job.updatedAt = new Date();
+            this.jobs.set(job.id, job);
+          },
+          this.retryDelay * Math.pow(2, job.attempts - 1),
+        );
       } else {
-        job.status = 'failed';
+        job.status = "failed";
         this.jobs.set(job.id, job);
       }
     } finally {
@@ -300,7 +309,9 @@ export class QueueProcessor extends EventEmitter {
    * Get jobs by status
    */
   getJobsByStatus(status: JobStatus): Job[] {
-    return Array.from(this.jobs.values()).filter((job) => job.status === status);
+    return Array.from(this.jobs.values()).filter(
+      (job) => job.status === status,
+    );
   }
 
   /**
@@ -315,18 +326,18 @@ export class QueueProcessor extends EventEmitter {
    */
   cancelJob(jobId: string): boolean {
     const job = this.jobs.get(jobId);
-    if (!job || job.status !== 'pending') {
+    if (!job || job.status !== "pending") {
       return false;
     }
 
-    job.status = 'failed';
-    job.error = 'Job cancelled';
+    job.status = "failed";
+    job.error = "Job cancelled";
     job.failedAt = new Date();
     job.updatedAt = new Date();
     this.jobs.set(jobId, job);
 
-    logger.info('Job cancelled', { jobId });
-    this.emit('job:cancelled', job);
+    logger.info("Job cancelled", { jobId });
+    this.emit("job:cancelled", job);
 
     return true;
   }
@@ -341,12 +352,12 @@ export class QueueProcessor extends EventEmitter {
     }
 
     // Don't remove processing jobs
-    if (job.status === 'processing') {
+    if (job.status === "processing") {
       return false;
     }
 
     this.jobs.delete(jobId);
-    this.emit('job:removed', job);
+    this.emit("job:removed", job);
 
     return true;
   }
@@ -358,13 +369,13 @@ export class QueueProcessor extends EventEmitter {
     let cleared = 0;
 
     for (const [id, job] of this.jobs.entries()) {
-      if (job.status === 'completed') {
+      if (job.status === "completed") {
         this.jobs.delete(id);
         cleared++;
       }
     }
 
-    logger.info('Cleared completed jobs', { count: cleared });
+    logger.info("Cleared completed jobs", { count: cleared });
     return cleared;
   }
 
@@ -375,13 +386,13 @@ export class QueueProcessor extends EventEmitter {
     let cleared = 0;
 
     for (const [id, job] of this.jobs.entries()) {
-      if (job.status !== 'processing' && job.updatedAt < olderThan) {
+      if (job.status !== "processing" && job.updatedAt < olderThan) {
         this.jobs.delete(id);
         cleared++;
       }
     }
 
-    logger.info('Cleared old jobs', { count: cleared });
+    logger.info("Cleared old jobs", { count: cleared });
     return cleared;
   }
 
@@ -400,11 +411,11 @@ export class QueueProcessor extends EventEmitter {
 
     return {
       total: jobs.length,
-      pending: jobs.filter((j) => j.status === 'pending').length,
-      processing: jobs.filter((j) => j.status === 'processing').length,
-      completed: jobs.filter((j) => j.status === 'completed').length,
-      failed: jobs.filter((j) => j.status === 'failed').length,
-      retry: jobs.filter((j) => j.status === 'retry').length,
+      pending: jobs.filter((j) => j.status === "pending").length,
+      processing: jobs.filter((j) => j.status === "processing").length,
+      completed: jobs.filter((j) => j.status === "completed").length,
+      failed: jobs.filter((j) => j.status === "failed").length,
+      retry: jobs.filter((j) => j.status === "retry").length,
     };
   }
 
@@ -427,13 +438,13 @@ export class QueueProcessor extends EventEmitter {
  * Default queue processor instance
  */
 export const queueProcessor = new QueueProcessor({
-  concurrency: parseInt(process.env.QUEUE_CONCURRENCY || '5', 10),
-  maxRetries: parseInt(process.env.QUEUE_MAX_RETRIES || '3', 10),
-  retryDelay: parseInt(process.env.QUEUE_RETRY_DELAY || '1000', 10),
-  pollInterval: parseInt(process.env.QUEUE_POLL_INTERVAL || '100', 10),
+  concurrency: parseInt(process.env.QUEUE_CONCURRENCY || "5", 10),
+  maxRetries: parseInt(process.env.QUEUE_MAX_RETRIES || "3", 10),
+  retryDelay: parseInt(process.env.QUEUE_RETRY_DELAY || "1000", 10),
+  pollInterval: parseInt(process.env.QUEUE_POLL_INTERVAL || "100", 10),
 });
 
 // Auto-start in production
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   queueProcessor.start();
 }

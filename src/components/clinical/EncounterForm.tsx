@@ -1,47 +1,59 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Encounter, Diagnosis, Procedure } from '@/types/clinical'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState } from "react";
+import { Encounter, Diagnosis, Procedure } from "@/types/clinical";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface EncounterFormProps {
-  encounter?: Encounter
-  onSubmit: (data: Partial<Encounter>) => void
-  onCancel: () => void
+  encounter?: Encounter;
+  onSubmit: (data: Partial<Encounter>) => void;
+  onCancel: () => void;
 }
 
-export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormProps) {
+export function EncounterForm({
+  encounter,
+  onSubmit,
+  onCancel,
+}: EncounterFormProps) {
   const [formData, setFormData] = useState<Partial<Encounter>>({
-    patientId: encounter?.patientId || '',
-    patientName: encounter?.patientName || '',
-    providerId: encounter?.providerId || '',
-    providerName: encounter?.providerName || '',
-    type: encounter?.type || 'office-visit',
-    status: encounter?.status || 'scheduled',
+    patientId: encounter?.patientId || "",
+    patientName: encounter?.patientName || "",
+    providerId: encounter?.providerId || "",
+    providerName: encounter?.providerName || "",
+    type: encounter?.type || "office-visit",
+    status: encounter?.status || "scheduled",
     date: encounter?.date || new Date().toISOString().slice(0, 16),
-    chiefComplaint: encounter?.chiefComplaint || '',
-    notes: encounter?.notes || '',
-  })
+    chiefComplaint: encounter?.chiefComplaint || "",
+    notes: encounter?.notes || "",
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData)
-  }
+    e.preventDefault();
+    onSubmit(formData);
+  };
 
   const handleChange = (field: keyof Encounter, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>{encounter ? 'Edit Encounter' : 'New Encounter'}</CardTitle>
+          <CardTitle>
+            {encounter ? "Edit Encounter" : "New Encounter"}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -50,7 +62,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
               <Input
                 id="patientId"
                 value={formData.patientId}
-                onChange={(e) => handleChange('patientId', e.target.value)}
+                onChange={(e) => handleChange("patientId", e.target.value)}
                 required
               />
             </div>
@@ -59,7 +71,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
               <Input
                 id="patientName"
                 value={formData.patientName}
-                onChange={(e) => handleChange('patientName', e.target.value)}
+                onChange={(e) => handleChange("patientName", e.target.value)}
                 required
               />
             </div>
@@ -71,7 +83,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
               <Input
                 id="providerId"
                 value={formData.providerId}
-                onChange={(e) => handleChange('providerId', e.target.value)}
+                onChange={(e) => handleChange("providerId", e.target.value)}
                 required
               />
             </div>
@@ -80,7 +92,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
               <Input
                 id="providerName"
                 value={formData.providerName}
-                onChange={(e) => handleChange('providerName', e.target.value)}
+                onChange={(e) => handleChange("providerName", e.target.value)}
                 required
               />
             </div>
@@ -92,7 +104,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
               <Select
                 id="type"
                 value={formData.type}
-                onChange={(e) => handleChange('type', e.target.value)}
+                onChange={(e) => handleChange("type", e.target.value)}
                 required
               >
                 <option value="office-visit">Office Visit</option>
@@ -107,7 +119,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
               <Select
                 id="status"
                 value={formData.status}
-                onChange={(e) => handleChange('status', e.target.value)}
+                onChange={(e) => handleChange("status", e.target.value)}
                 required
               >
                 <option value="scheduled">Scheduled</option>
@@ -122,7 +134,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
                 id="date"
                 type="datetime-local"
                 value={formData.date?.slice(0, 16)}
-                onChange={(e) => handleChange('date', e.target.value)}
+                onChange={(e) => handleChange("date", e.target.value)}
                 required
               />
             </div>
@@ -133,7 +145,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
             <Input
               id="chiefComplaint"
               value={formData.chiefComplaint}
-              onChange={(e) => handleChange('chiefComplaint', e.target.value)}
+              onChange={(e) => handleChange("chiefComplaint", e.target.value)}
               required
             />
           </div>
@@ -143,7 +155,7 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
             <Textarea
               id="notes"
               value={formData.notes}
-              onChange={(e) => handleChange('notes', e.target.value)}
+              onChange={(e) => handleChange("notes", e.target.value)}
               rows={4}
             />
           </div>
@@ -153,10 +165,10 @@ export function EncounterForm({ encounter, onSubmit, onCancel }: EncounterFormPr
             Cancel
           </Button>
           <Button type="submit">
-            {encounter ? 'Update' : 'Create'} Encounter
+            {encounter ? "Update" : "Create"} Encounter
           </Button>
         </CardFooter>
       </Card>
     </form>
-  )
+  );
 }

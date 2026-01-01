@@ -16,11 +16,14 @@ export class AllergyList {
 
   private render(): void {
     if (this.allergies.length === 0) {
-      this.container.innerHTML = '<div class="no-allergies">No Known Allergies (NKA)</div>';
+      this.container.innerHTML =
+        '<div class="no-allergies">No Known Allergies (NKA)</div>';
       return;
     }
 
-    const allergiesHTML = this.allergies.map(allergy => this.renderAllergy(allergy)).join('');
+    const allergiesHTML = this.allergies
+      .map((allergy) => this.renderAllergy(allergy))
+      .join("");
 
     this.container.innerHTML = `
       <div class="allergy-list">
@@ -47,14 +50,18 @@ export class AllergyList {
             <span class="type-badge ${typeClass}">${allergy.allergenType}</span>
           </div>
           <div class="allergy-reactions">
-            <strong>Reactions:</strong> ${allergy.reaction.join(', ')}
+            <strong>Reactions:</strong> ${allergy.reaction.join(", ")}
           </div>
-          ${allergy.notes ? `<div class="allergy-notes">${allergy.notes}</div>` : ''}
-          ${allergy.onsetDate ? `
+          ${allergy.notes ? `<div class="allergy-notes">${allergy.notes}</div>` : ""}
+          ${
+            allergy.onsetDate
+              ? `
             <div class="allergy-onset">
               <strong>Onset:</strong> ${new Date(allergy.onsetDate).toLocaleDateString()}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </div>
     `;
@@ -62,16 +69,16 @@ export class AllergyList {
 
   private getSeverityIcon(severity: string): string {
     const icons: Record<string, string> = {
-      'life-threatening': '⚠️',
-      'severe': '🔴',
-      'moderate': '🟠',
-      'mild': '🟡',
+      "life-threatening": "⚠️",
+      severe: "🔴",
+      moderate: "🟠",
+      mild: "🟡",
     };
-    return icons[severity] || '⚪';
+    return icons[severity] || "⚪";
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

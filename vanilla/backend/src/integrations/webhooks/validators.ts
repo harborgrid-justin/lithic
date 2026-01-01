@@ -4,33 +4,40 @@
  * Validation utilities for webhook subscriptions and payloads
  */
 
-import crypto from 'crypto';
-import { WebhookPayload, WebhookEventType } from './manager';
+import crypto from "crypto";
+import { WebhookPayload, WebhookEventType } from "./manager";
 
 // URL validation regex
-const URL_REGEX = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+const URL_REGEX =
+  /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
 
 // Validation error
 export class ValidationError extends Error {
-  constructor(message: string, public field?: string) {
+  constructor(
+    message: string,
+    public field?: string,
+  ) {
     super(message);
-    this.name = 'ValidationError';
+    this.name = "ValidationError";
   }
 }
 
 /**
  * Validate webhook URL
  */
-export function validateWebhookURL(url: string): { valid: boolean; errors: string[] } {
+export function validateWebhookURL(url: string): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!url) {
-    errors.push('URL is required');
+    errors.push("URL is required");
     return { valid: false, errors };
   }
 
   if (!URL_REGEX.test(url)) {
-    errors.push('Invalid URL format');
+    errors.push("Invalid URL format");
   }
 
   // Security checks
@@ -38,38 +45,43 @@ export function validateWebhookURL(url: string): { valid: boolean; errors: strin
     const parsedUrl = new URL(url);
 
     // Require HTTPS in production
-    if (process.env.NODE_ENV === 'production' && parsedUrl.protocol !== 'https:') {
-      errors.push('HTTPS is required in production');
+    if (
+      process.env.NODE_ENV === "production" &&
+      parsedUrl.protocol !== "https:"
+    ) {
+      errors.push("HTTPS is required in production");
     }
 
     // Block localhost and private IPs in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       const hostname = parsedUrl.hostname.toLowerCase();
 
       if (
-        hostname === 'localhost' ||
-        hostname === '127.0.0.1' ||
-        hostname.startsWith('192.168.') ||
-        hostname.startsWith('10.') ||
-        hostname.startsWith('172.16.') ||
-        hostname.startsWith('172.17.') ||
-        hostname.startsWith('172.18.') ||
-        hostname.startsWith('172.19.') ||
-        hostname.startsWith('172.2') ||
-        hostname.startsWith('172.30.') ||
-        hostname.startsWith('172.31.')
+        hostname === "localhost" ||
+        hostname === "127.0.0.1" ||
+        hostname.startsWith("192.168.") ||
+        hostname.startsWith("10.") ||
+        hostname.startsWith("172.16.") ||
+        hostname.startsWith("172.17.") ||
+        hostname.startsWith("172.18.") ||
+        hostname.startsWith("172.19.") ||
+        hostname.startsWith("172.2") ||
+        hostname.startsWith("172.30.") ||
+        hostname.startsWith("172.31.")
       ) {
-        errors.push('Private IP addresses and localhost are not allowed in production');
+        errors.push(
+          "Private IP addresses and localhost are not allowed in production",
+        );
       }
     }
 
     // Check for suspicious ports
-    const suspiciousPorts = ['22', '23', '25', '3306', '5432', '6379', '27017'];
+    const suspiciousPorts = ["22", "23", "25", "3306", "5432", "6379", "27017"];
     if (parsedUrl.port && suspiciousPorts.includes(parsedUrl.port)) {
       errors.push(`Port ${parsedUrl.port} is not allowed`);
     }
   } catch (error) {
-    errors.push('Invalid URL');
+    errors.push("Invalid URL");
   }
 
   return {
@@ -81,37 +93,40 @@ export function validateWebhookURL(url: string): { valid: boolean; errors: strin
 /**
  * Validate webhook events
  */
-export function validateWebhookEvents(events: any): { valid: boolean; errors: string[] } {
+export function validateWebhookEvents(events: any): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!Array.isArray(events)) {
-    errors.push('Events must be an array');
+    errors.push("Events must be an array");
     return { valid: false, errors };
   }
 
   if (events.length === 0) {
-    errors.push('At least one event is required');
+    errors.push("At least one event is required");
     return { valid: false, errors };
   }
 
   const validEvents: WebhookEventType[] = [
-    'patient.created',
-    'patient.updated',
-    'patient.deleted',
-    'appointment.created',
-    'appointment.updated',
-    'appointment.cancelled',
-    'order.created',
-    'order.completed',
-    'result.available',
-    'prescription.created',
-    'prescription.filled',
-    'encounter.created',
-    'encounter.completed',
-    'document.created',
-    'billing.claim.created',
-    'billing.claim.submitted',
-    'billing.payment.received',
+    "patient.created",
+    "patient.updated",
+    "patient.deleted",
+    "appointment.created",
+    "appointment.updated",
+    "appointment.cancelled",
+    "order.created",
+    "order.completed",
+    "result.available",
+    "prescription.created",
+    "prescription.filled",
+    "encounter.created",
+    "encounter.completed",
+    "document.created",
+    "billing.claim.created",
+    "billing.claim.submitted",
+    "billing.payment.received",
   ];
 
   for (const event of events) {
@@ -129,20 +144,23 @@ export function validateWebhookEvents(events: any): { valid: boolean; errors: st
 /**
  * Validate webhook secret
  */
-export function validateWebhookSecret(secret: string): { valid: boolean; errors: string[] } {
+export function validateWebhookSecret(secret: string): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!secret) {
-    errors.push('Secret is required');
+    errors.push("Secret is required");
     return { valid: false, errors };
   }
 
   if (secret.length < 32) {
-    errors.push('Secret must be at least 32 characters long');
+    errors.push("Secret must be at least 32 characters long");
   }
 
   if (!/^[A-Za-z0-9_\-+=\/]+$/.test(secret)) {
-    errors.push('Secret contains invalid characters');
+    errors.push("Secret contains invalid characters");
   }
 
   return {
@@ -166,11 +184,11 @@ export function validateWebhookHeaders(headers?: Record<string, string>): {
 
   // Check for reserved headers
   const reservedHeaders = [
-    'content-type',
-    'content-length',
-    'host',
-    'connection',
-    'transfer-encoding',
+    "content-type",
+    "content-length",
+    "host",
+    "connection",
+    "transfer-encoding",
   ];
 
   for (const key of Object.keys(headers)) {
@@ -187,7 +205,7 @@ export function validateWebhookHeaders(headers?: Record<string, string>): {
 
     // Validate header value
     const value = headers[key];
-    if (typeof value !== 'string') {
+    if (typeof value !== "string") {
       errors.push(`Header value for '${key}' must be a string`);
     }
   }
@@ -238,18 +256,21 @@ export function validateWebhookSubscription(subscription: {
   // Validate retry attempts
   if (subscription.retryAttempts !== undefined) {
     if (!Number.isInteger(subscription.retryAttempts)) {
-      errors.retryAttempts = ['Retry attempts must be an integer'];
-    } else if (subscription.retryAttempts < 0 || subscription.retryAttempts > 10) {
-      errors.retryAttempts = ['Retry attempts must be between 0 and 10'];
+      errors.retryAttempts = ["Retry attempts must be an integer"];
+    } else if (
+      subscription.retryAttempts < 0 ||
+      subscription.retryAttempts > 10
+    ) {
+      errors.retryAttempts = ["Retry attempts must be between 0 and 10"];
     }
   }
 
   // Validate timeout
   if (subscription.timeout !== undefined) {
     if (!Number.isInteger(subscription.timeout)) {
-      errors.timeout = ['Timeout must be an integer'];
+      errors.timeout = ["Timeout must be an integer"];
     } else if (subscription.timeout < 1000 || subscription.timeout > 60000) {
-      errors.timeout = ['Timeout must be between 1000 and 60000 milliseconds'];
+      errors.timeout = ["Timeout must be between 1000 and 60000 milliseconds"];
     }
   }
 
@@ -267,12 +288,12 @@ export function validateIncomingWebhookSignature(
   signature: string,
   secret: string,
   timestamp?: string,
-  maxAge?: number
+  maxAge?: number,
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   if (!signature) {
-    errors.push('Signature is required');
+    errors.push("Signature is required");
     return { valid: false, errors };
   }
 
@@ -282,31 +303,32 @@ export function validateIncomingWebhookSignature(
     const requestTime = parseInt(timestamp, 10);
 
     if (isNaN(requestTime)) {
-      errors.push('Invalid timestamp');
+      errors.push("Invalid timestamp");
     } else if (now - requestTime > maxAge) {
-      errors.push('Request timestamp is too old');
+      errors.push("Request timestamp is too old");
     }
   }
 
   // Verify signature
   try {
-    const payloadString = typeof payload === 'string' ? payload : JSON.stringify(payload);
+    const payloadString =
+      typeof payload === "string" ? payload : JSON.stringify(payload);
 
     const expectedSignature = crypto
-      .createHmac('sha256', secret)
+      .createHmac("sha256", secret)
       .update(payloadString)
-      .digest('hex');
+      .digest("hex");
 
     const isValid = crypto.timingSafeEqual(
       Buffer.from(signature),
-      Buffer.from(expectedSignature)
+      Buffer.from(expectedSignature),
     );
 
     if (!isValid) {
-      errors.push('Invalid signature');
+      errors.push("Invalid signature");
     }
   } catch (error) {
-    errors.push('Signature verification failed');
+    errors.push("Signature verification failed");
   }
 
   return {
@@ -318,36 +340,39 @@ export function validateIncomingWebhookSignature(
 /**
  * Validate webhook payload structure
  */
-export function validateWebhookPayload(payload: any): { valid: boolean; errors: string[] } {
+export function validateWebhookPayload(payload: any): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
-  if (!payload || typeof payload !== 'object') {
-    errors.push('Payload must be an object');
+  if (!payload || typeof payload !== "object") {
+    errors.push("Payload must be an object");
     return { valid: false, errors };
   }
 
   // Check required fields
   if (!payload.id) {
-    errors.push('Payload ID is required');
+    errors.push("Payload ID is required");
   }
 
   if (!payload.event) {
-    errors.push('Event type is required');
+    errors.push("Event type is required");
   }
 
   if (!payload.timestamp) {
-    errors.push('Timestamp is required');
+    errors.push("Timestamp is required");
   }
 
   if (!payload.data) {
-    errors.push('Data is required');
+    errors.push("Data is required");
   }
 
   // Validate timestamp format
   if (payload.timestamp) {
     const date = new Date(payload.timestamp);
     if (isNaN(date.getTime())) {
-      errors.push('Invalid timestamp format');
+      errors.push("Invalid timestamp format");
     }
   }
 
@@ -361,7 +386,7 @@ export function validateWebhookPayload(payload: any): { valid: boolean; errors: 
  * Generate secure webhook secret
  */
 export function generateWebhookSecret(length: number = 64): string {
-  return crypto.randomBytes(length).toString('base64').slice(0, length);
+  return crypto.randomBytes(length).toString("base64").slice(0, length);
 }
 
 /**
@@ -372,7 +397,14 @@ export function sanitizeWebhookURL(url: string): string {
     const parsedUrl = new URL(url);
 
     // Remove sensitive query parameters
-    const sensitiveParams = ['token', 'key', 'secret', 'password', 'api_key', 'apikey'];
+    const sensitiveParams = [
+      "token",
+      "key",
+      "secret",
+      "password",
+      "api_key",
+      "apikey",
+    ];
 
     for (const param of sensitiveParams) {
       parsedUrl.searchParams.delete(param);
@@ -380,13 +412,13 @@ export function sanitizeWebhookURL(url: string): string {
 
     // Hide username/password
     if (parsedUrl.username || parsedUrl.password) {
-      parsedUrl.username = '***';
-      parsedUrl.password = '***';
+      parsedUrl.username = "***";
+      parsedUrl.password = "***";
     }
 
     return parsedUrl.toString();
   } catch (error) {
-    return '[invalid-url]';
+    return "[invalid-url]";
   }
 }
 

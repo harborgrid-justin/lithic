@@ -18,7 +18,7 @@ export class ReferenceRanges {
 
   private render(): void {
     if (this.ranges.length === 0) {
-      this.container.innerHTML = '<p>No reference ranges available</p>';
+      this.container.innerHTML = "<p>No reference ranges available</p>";
       return;
     }
 
@@ -42,9 +42,11 @@ export class ReferenceRanges {
         </div>
 
         <div class="ranges-list">
-          ${Object.entries(groupedRanges).map(([testName, ranges]) =>
-            this.renderTestRanges(testName, ranges as any[])
-          ).join('')}
+          ${Object.entries(groupedRanges)
+            .map(([testName, ranges]) =>
+              this.renderTestRanges(testName, ranges as any[]),
+            )
+            .join("")}
         </div>
       </div>
     `;
@@ -56,7 +58,7 @@ export class ReferenceRanges {
   private groupRangesByTest(): Record<string, any[]> {
     const grouped: Record<string, any[]> = {};
 
-    this.ranges.forEach(range => {
+    this.ranges.forEach((range) => {
       if (!grouped[range.testName]) {
         grouped[range.testName] = [];
       }
@@ -82,10 +84,10 @@ export class ReferenceRanges {
             </tr>
           </thead>
           <tbody>
-            ${ranges.map(range => this.renderRangeRow(range)).join('')}
+            ${ranges.map((range) => this.renderRangeRow(range)).join("")}
           </tbody>
         </table>
-        ${ranges[0].description ? `<p class="range-description">${ranges[0].description}</p>` : ''}
+        ${ranges[0].description ? `<p class="range-description">${ranges[0].description}</p>` : ""}
       </div>
     `;
   }
@@ -99,8 +101,8 @@ export class ReferenceRanges {
         <td>${this.formatGender(range.gender)}</td>
         <td>${normalRange}</td>
         <td>${range.unit}</td>
-        <td>${range.criticalLow !== undefined ? range.criticalLow : '-'}</td>
-        <td>${range.criticalHigh !== undefined ? range.criticalHigh : '-'}</td>
+        <td>${range.criticalLow !== undefined ? range.criticalLow : "-"}</td>
+        <td>${range.criticalHigh !== undefined ? range.criticalHigh : "-"}</td>
       </tr>
     `;
   }
@@ -115,7 +117,7 @@ export class ReferenceRanges {
     if (min !== undefined) {
       return `> ${min}`;
     }
-    return '-';
+    return "-";
   }
 
   private formatAgeGroup(ageGroup: string): string {
@@ -123,77 +125,92 @@ export class ReferenceRanges {
   }
 
   private formatGender(gender: string): string {
-    if (gender === 'all') return 'All';
+    if (gender === "all") return "All";
     return gender.charAt(0).toUpperCase() + gender.slice(1);
   }
 
   private attachEventListeners(): void {
-    const searchInput = this.container.querySelector('#rangeSearch') as HTMLInputElement;
-    const ageGroupFilter = this.container.querySelector('#ageGroupFilter') as HTMLSelectElement;
-    const genderFilter = this.container.querySelector('#genderFilter') as HTMLSelectElement;
+    const searchInput = this.container.querySelector(
+      "#rangeSearch",
+    ) as HTMLInputElement;
+    const ageGroupFilter = this.container.querySelector(
+      "#ageGroupFilter",
+    ) as HTMLSelectElement;
+    const genderFilter = this.container.querySelector(
+      "#genderFilter",
+    ) as HTMLSelectElement;
 
     if (searchInput) {
-      searchInput.addEventListener('input', () => this.applyFilters());
+      searchInput.addEventListener("input", () => this.applyFilters());
     }
 
     if (ageGroupFilter) {
-      ageGroupFilter.addEventListener('change', () => this.applyFilters());
+      ageGroupFilter.addEventListener("change", () => this.applyFilters());
     }
 
     if (genderFilter) {
-      genderFilter.addEventListener('change', () => this.applyFilters());
+      genderFilter.addEventListener("change", () => this.applyFilters());
     }
   }
 
   private applyFilters(): void {
-    const searchInput = this.container.querySelector('#rangeSearch') as HTMLInputElement;
-    const ageGroupFilter = this.container.querySelector('#ageGroupFilter') as HTMLSelectElement;
-    const genderFilter = this.container.querySelector('#genderFilter') as HTMLSelectElement;
+    const searchInput = this.container.querySelector(
+      "#rangeSearch",
+    ) as HTMLInputElement;
+    const ageGroupFilter = this.container.querySelector(
+      "#ageGroupFilter",
+    ) as HTMLSelectElement;
+    const genderFilter = this.container.querySelector(
+      "#genderFilter",
+    ) as HTMLSelectElement;
 
-    const searchTerm = searchInput?.value.toLowerCase() || '';
-    const ageGroup = ageGroupFilter?.value || '';
-    const gender = genderFilter?.value || '';
+    const searchTerm = searchInput?.value.toLowerCase() || "";
+    const ageGroup = ageGroupFilter?.value || "";
+    const gender = genderFilter?.value || "";
 
-    const testRanges = this.container.querySelectorAll('.test-ranges');
+    const testRanges = this.container.querySelectorAll(".test-ranges");
 
-    testRanges.forEach(testRange => {
-      const testName = (testRange as HTMLElement).dataset.testName?.toLowerCase() || '';
+    testRanges.forEach((testRange) => {
+      const testName =
+        (testRange as HTMLElement).dataset.testName?.toLowerCase() || "";
       const matchesSearch = !searchTerm || testName.includes(searchTerm);
 
       if (!matchesSearch) {
-        (testRange as HTMLElement).style.display = 'none';
+        (testRange as HTMLElement).style.display = "none";
         return;
       }
 
-      (testRange as HTMLElement).style.display = 'block';
+      (testRange as HTMLElement).style.display = "block";
 
       // Filter rows within the test
-      const rows = testRange.querySelectorAll('tbody tr');
+      const rows = testRange.querySelectorAll("tbody tr");
       let visibleRows = 0;
 
-      rows.forEach(row => {
-        const rowAgeGroup = (row as HTMLElement).dataset.ageGroup || '';
-        const rowGender = (row as HTMLElement).dataset.gender || '';
+      rows.forEach((row) => {
+        const rowAgeGroup = (row as HTMLElement).dataset.ageGroup || "";
+        const rowGender = (row as HTMLElement).dataset.gender || "";
 
-        const matchesAgeGroup = !ageGroup || rowAgeGroup === ageGroup || rowAgeGroup === 'all';
-        const matchesGender = !gender || rowGender === gender || rowGender === 'all';
+        const matchesAgeGroup =
+          !ageGroup || rowAgeGroup === ageGroup || rowAgeGroup === "all";
+        const matchesGender =
+          !gender || rowGender === gender || rowGender === "all";
 
         if (matchesAgeGroup && matchesGender) {
-          (row as HTMLElement).style.display = '';
+          (row as HTMLElement).style.display = "";
           visibleRows++;
         } else {
-          (row as HTMLElement).style.display = 'none';
+          (row as HTMLElement).style.display = "none";
         }
       });
 
       // Hide test if no rows visible
       if (visibleRows === 0) {
-        (testRange as HTMLElement).style.display = 'none';
+        (testRange as HTMLElement).style.display = "none";
       }
     });
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

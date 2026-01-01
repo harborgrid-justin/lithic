@@ -5,14 +5,18 @@ export class ImageThumbnails {
 
   constructor() {}
 
-  render(container: HTMLElement, instances: any[], onSelect?: (index: number) => void) {
+  render(
+    container: HTMLElement,
+    instances: any[],
+    onSelect?: (index: number) => void,
+  ) {
     this.container = container;
     this.thumbnails = instances;
     this.onSelect = onSelect;
 
     container.innerHTML = `
       <div class="thumbnails-container">
-        ${instances.map((instance, index) => this.createThumbnail(instance, index)).join('')}
+        ${instances.map((instance, index) => this.createThumbnail(instance, index)).join("")}
       </div>
     `;
 
@@ -21,7 +25,7 @@ export class ImageThumbnails {
 
   private createThumbnail(instance: any, index: number): string {
     return `
-      <div class="thumbnail-item ${index === 0 ? 'active' : ''}" data-index="${index}">
+      <div class="thumbnail-item ${index === 0 ? "active" : ""}" data-index="${index}">
         <div class="thumbnail-image">
           <canvas class="thumbnail-canvas" id="thumb-${index}" width="100" height="100"></canvas>
         </div>
@@ -33,18 +37,18 @@ export class ImageThumbnails {
   private attachEventListeners() {
     if (!this.container) return;
 
-    this.container.addEventListener('click', (e) => {
+    this.container.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
-      const thumbnailItem = target.closest('.thumbnail-item');
+      const thumbnailItem = target.closest(".thumbnail-item");
 
       if (thumbnailItem) {
-        const index = parseInt(thumbnailItem.getAttribute('data-index') || '0');
+        const index = parseInt(thumbnailItem.getAttribute("data-index") || "0");
 
         // Update active state
-        this.container!.querySelectorAll('.thumbnail-item').forEach(item => {
-          item.classList.remove('active');
+        this.container!.querySelectorAll(".thumbnail-item").forEach((item) => {
+          item.classList.remove("active");
         });
-        thumbnailItem.classList.add('active');
+        thumbnailItem.classList.add("active");
 
         // Callback
         if (this.onSelect) {
@@ -57,11 +61,11 @@ export class ImageThumbnails {
   setActive(index: number) {
     if (!this.container) return;
 
-    this.container.querySelectorAll('.thumbnail-item').forEach((item, i) => {
+    this.container.querySelectorAll(".thumbnail-item").forEach((item, i) => {
       if (i === index) {
-        item.classList.add('active');
+        item.classList.add("active");
       } else {
-        item.classList.remove('active');
+        item.classList.remove("active");
       }
     });
   }

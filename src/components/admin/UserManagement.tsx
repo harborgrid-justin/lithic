@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -9,26 +9,32 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, MoreVertical, Edit, Trash2 } from 'lucide-react';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, MoreVertical, Edit, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import toast from 'react-hot-toast';
+} from "@/components/ui/dropdown-menu";
+import toast from "react-hot-toast";
 
 export default function UserManagement() {
   const router = useRouter();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 50,
@@ -44,8 +50,8 @@ export default function UserManagement() {
         limit: pagination.limit.toString(),
       });
 
-      if (search) params.append('search', search);
-      if (statusFilter !== 'all') params.append('status', statusFilter);
+      if (search) params.append("search", search);
+      if (statusFilter !== "all") params.append("status", statusFilter);
 
       const response = await fetch(`/api/admin/users?${params}`);
       const data = await response.json();
@@ -54,10 +60,10 @@ export default function UserManagement() {
         setUsers(data.data);
         setPagination(data.pagination);
       } else {
-        toast.error(data.error || 'Failed to fetch users');
+        toast.error(data.error || "Failed to fetch users");
       }
     } catch (error) {
-      toast.error('Failed to fetch users');
+      toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
     }
@@ -72,38 +78,34 @@ export default function UserManagement() {
   }, [search, statusFilter, pagination.page]);
 
   const handleDelete = async (userId: string) => {
-    if (!confirm('Are you sure you want to deactivate this user?')) return;
+    if (!confirm("Are you sure you want to deactivate this user?")) return;
 
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       const data = await response.json();
 
       if (data.success) {
-        toast.success('User deactivated successfully');
+        toast.success("User deactivated successfully");
         fetchUsers();
       } else {
-        toast.error(data.error || 'Failed to deactivate user');
+        toast.error(data.error || "Failed to deactivate user");
       }
     } catch (error) {
-      toast.error('Failed to deactivate user');
+      toast.error("Failed to deactivate user");
     }
   };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, any> = {
-      ACTIVE: 'default',
-      INACTIVE: 'secondary',
-      SUSPENDED: 'destructive',
-      PENDING: 'outline',
+      ACTIVE: "default",
+      INACTIVE: "secondary",
+      SUSPENDED: "destructive",
+      PENDING: "outline",
     };
 
-    return (
-      <Badge variant={variants[status] || 'secondary'}>
-        {status}
-      </Badge>
-    );
+    return <Badge variant={variants[status] || "secondary"}>{status}</Badge>;
   };
 
   return (
@@ -151,7 +153,10 @@ export default function UserManagement() {
               <TableBody>
                 {users.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell
+                      colSpan={6}
+                      className="text-center py-8 text-muted-foreground"
+                    >
                       No users found
                     </TableCell>
                   </TableRow>
@@ -163,13 +168,13 @@ export default function UserManagement() {
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
-                        {user.roles?.[0]?.role?.name || 'No Role'}
+                        {user.roles?.[0]?.role?.name || "No Role"}
                       </TableCell>
                       <TableCell>{getStatusBadge(user.status)}</TableCell>
                       <TableCell>
                         {user.lastLoginAt
                           ? new Date(user.lastLoginAt).toLocaleDateString()
-                          : 'Never'}
+                          : "Never"}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
@@ -180,7 +185,9 @@ export default function UserManagement() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
-                              onClick={() => router.push(`/admin/users/${user.id}`)}
+                              onClick={() =>
+                                router.push(`/admin/users/${user.id}`)
+                              }
                             >
                               <Edit className="h-4 w-4 mr-2" />
                               Edit
@@ -205,15 +212,17 @@ export default function UserManagement() {
           {pagination.totalPages > 1 && (
             <div className="flex justify-between items-center">
               <p className="text-sm text-muted-foreground">
-                Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
-                {pagination.total} users
+                Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+                {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
+                of {pagination.total} users
               </p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
+                  onClick={() =>
+                    setPagination({ ...pagination, page: pagination.page - 1 })
+                  }
                   disabled={pagination.page === 1}
                 >
                   Previous
@@ -221,7 +230,9 @@ export default function UserManagement() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
+                  onClick={() =>
+                    setPagination({ ...pagination, page: pagination.page + 1 })
+                  }
                   disabled={pagination.page === pagination.totalPages}
                 >
                   Next

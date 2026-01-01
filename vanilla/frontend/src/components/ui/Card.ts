@@ -3,8 +3,8 @@
  * Card Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface CardProps {
   title?: string;
@@ -12,7 +12,7 @@ export interface CardProps {
   actions?: { label: string; onClick: () => void }[];
   children?: HTMLElement[];
   className?: string;
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: "none" | "sm" | "md" | "lg";
   shadow?: boolean;
   border?: boolean;
   hoverable?: boolean;
@@ -26,32 +26,32 @@ export class Card extends Component<CardProps, CardState> {
   }
 
   protected getClassName(): string {
-    const classes = ['card'];
+    const classes = ["card"];
 
     if (this.props.className) {
       classes.push(this.props.className);
     }
 
-    const padding = this.props.padding || 'md';
+    const padding = this.props.padding || "md";
     classes.push(`card-padding-${padding}`);
 
     if (this.props.shadow !== false) {
-      classes.push('card-shadow');
+      classes.push("card-shadow");
     }
 
     if (this.props.border !== false) {
-      classes.push('card-border');
+      classes.push("card-border");
     }
 
     if (this.props.hoverable) {
-      classes.push('card-hoverable');
+      classes.push("card-hoverable");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
     // Add header if title or actions present
@@ -61,8 +61,8 @@ export class Card extends Component<CardProps, CardState> {
     }
 
     // Add content
-    const content = createElement('div', {
-      className: 'card-content',
+    const content = createElement("div", {
+      className: "card-content",
     });
 
     if (this.props.children) {
@@ -75,26 +75,26 @@ export class Card extends Component<CardProps, CardState> {
   }
 
   private createHeader(): HTMLElement {
-    const header = createElement('div', {
-      className: 'card-header',
+    const header = createElement("div", {
+      className: "card-header",
     });
 
     if (this.props.title || this.props.subtitle) {
-      const headerContent = createElement('div', {
-        className: 'card-header-content',
+      const headerContent = createElement("div", {
+        className: "card-header-content",
       });
 
       if (this.props.title) {
-        const title = createElement('h3', {
-          className: 'card-title',
+        const title = createElement("h3", {
+          className: "card-title",
           textContent: this.props.title,
         });
         headerContent.appendChild(title);
       }
 
       if (this.props.subtitle) {
-        const subtitle = createElement('p', {
-          className: 'card-subtitle',
+        const subtitle = createElement("p", {
+          className: "card-subtitle",
           textContent: this.props.subtitle,
         });
         headerContent.appendChild(subtitle);
@@ -104,13 +104,13 @@ export class Card extends Component<CardProps, CardState> {
     }
 
     if (this.props.actions && this.props.actions.length > 0) {
-      const actionsContainer = createElement('div', {
-        className: 'card-actions',
+      const actionsContainer = createElement("div", {
+        className: "card-actions",
       });
 
       this.props.actions.forEach((action) => {
-        const button = createElement('button', {
-          className: 'card-action-btn',
+        const button = createElement("button", {
+          className: "card-action-btn",
           textContent: action.label,
           events: {
             click: (e) => {

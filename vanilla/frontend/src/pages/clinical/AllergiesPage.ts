@@ -1,6 +1,6 @@
 // Allergies Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import AllergyList from '../../components/clinical/AllergyList';
+import ClinicalService from "../../services/ClinicalService";
+import AllergyList from "../../components/clinical/AllergyList";
 
 export class AllergiesPage {
   private container: HTMLElement;
@@ -114,99 +114,116 @@ export class AllergiesPage {
 
   private async loadAllergies(): Promise<void> {
     try {
-      const allergies = await ClinicalService.getAllergiesByPatient(this.patientId, true);
+      const allergies = await ClinicalService.getAllergiesByPatient(
+        this.patientId,
+        true,
+      );
 
-      this.allergyList = new AllergyList('allergy-list-container');
+      this.allergyList = new AllergyList("allergy-list-container");
       this.allergyList.setAllergies(allergies);
     } catch (error) {
-      console.error('Error loading allergies:', error);
+      console.error("Error loading allergies:", error);
     }
   }
 
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('back-btn');
-    backBtn?.addEventListener('click', () => {
+    const backBtn = document.getElementById("back-btn");
+    backBtn?.addEventListener("click", () => {
       window.history.back();
     });
 
-    const addAllergyBtn = document.getElementById('add-allergy-btn');
-    addAllergyBtn?.addEventListener('click', () => {
+    const addAllergyBtn = document.getElementById("add-allergy-btn");
+    addAllergyBtn?.addEventListener("click", () => {
       this.showModal();
     });
 
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    closeModalBtn?.addEventListener('click', () => {
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    closeModalBtn?.addEventListener("click", () => {
       this.hideModal();
     });
 
-    const addAllergyForm = document.getElementById('add-allergy-form') as HTMLFormElement;
-    addAllergyForm?.addEventListener('submit', async (e) => {
+    const addAllergyForm = document.getElementById(
+      "add-allergy-form",
+    ) as HTMLFormElement;
+    addAllergyForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.addAllergy(addAllergyForm);
     });
 
-    const cancelBtn = document.getElementById('cancel-btn');
-    cancelBtn?.addEventListener('click', () => {
+    const cancelBtn = document.getElementById("cancel-btn");
+    cancelBtn?.addEventListener("click", () => {
       this.hideModal();
     });
   }
 
   private showModal(): void {
-    const modal = document.getElementById('add-allergy-modal');
+    const modal = document.getElementById("add-allergy-modal");
     if (modal) {
-      modal.style.display = 'block';
+      modal.style.display = "block";
     }
   }
 
   private hideModal(): void {
-    const modal = document.getElementById('add-allergy-modal');
+    const modal = document.getElementById("add-allergy-modal");
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.display = "none";
     }
   }
 
   private async addAllergy(form: HTMLFormElement): Promise<void> {
     try {
       const reactions: string[] = [];
-      const reactionCheckboxes = form.querySelectorAll('input[name="reaction"]:checked');
+      const reactionCheckboxes = form.querySelectorAll(
+        'input[name="reaction"]:checked',
+      );
       reactionCheckboxes.forEach((checkbox: any) => {
         reactions.push(checkbox.value);
       });
 
-      const otherReaction = (document.getElementById('other-reaction') as HTMLInputElement)?.value;
-      if (otherReaction && reactions.includes('other')) {
-        reactions[reactions.indexOf('other')] = otherReaction;
+      const otherReaction = (
+        document.getElementById("other-reaction") as HTMLInputElement
+      )?.value;
+      if (otherReaction && reactions.includes("other")) {
+        reactions[reactions.indexOf("other")] = otherReaction;
       }
 
       if (reactions.length === 0) {
-        alert('Please select at least one reaction');
+        alert("Please select at least one reaction");
         return;
       }
 
       const data = {
         patientId: this.patientId,
-        allergen: (document.getElementById('allergen') as HTMLInputElement)?.value,
-        allergenType: (document.getElementById('allergen-type') as HTMLSelectElement)?.value,
-        severity: (document.getElementById('severity') as HTMLSelectElement)?.value,
+        allergen: (document.getElementById("allergen") as HTMLInputElement)
+          ?.value,
+        allergenType: (
+          document.getElementById("allergen-type") as HTMLSelectElement
+        )?.value,
+        severity: (document.getElementById("severity") as HTMLSelectElement)
+          ?.value,
         reaction: reactions,
-        onsetDate: (document.getElementById('onset-date') as HTMLInputElement)?.value || undefined,
-        notes: (document.getElementById('notes') as HTMLTextAreaElement)?.value || undefined,
+        onsetDate:
+          (document.getElementById("onset-date") as HTMLInputElement)?.value ||
+          undefined,
+        notes:
+          (document.getElementById("notes") as HTMLTextAreaElement)?.value ||
+          undefined,
       };
 
       await ClinicalService.createAllergy(data);
-      alert('Allergy added successfully');
+      alert("Allergy added successfully");
       this.hideModal();
       form.reset();
       await this.loadAllergies();
     } catch (error) {
-      console.error('Error adding allergy:', error);
-      alert('Failed to add allergy');
+      console.error("Error adding allergy:", error);
+      alert("Failed to add allergy");
     }
   }
 
   destroy(): void {
     this.allergyList?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

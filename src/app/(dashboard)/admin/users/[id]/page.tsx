@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import UserForm from '@/components/admin/UserForm';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import UserForm from "@/components/admin/UserForm";
 
 export default function UserDetailsPage() {
   const router = useRouter();
@@ -24,13 +24,17 @@ export default function UserDetailsPage() {
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Failed to fetch user:', error);
+        console.error("Failed to fetch user:", error);
         setLoading(false);
       });
   }, [userId]);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -44,7 +48,9 @@ export default function UserDetailsPage() {
 
       <div>
         <h1 className="text-3xl font-bold">Edit User</h1>
-        <p className="text-muted-foreground">Update user information and permissions</p>
+        <p className="text-muted-foreground">
+          Update user information and permissions
+        </p>
       </div>
 
       {user && <UserForm user={user} mode="edit" />}

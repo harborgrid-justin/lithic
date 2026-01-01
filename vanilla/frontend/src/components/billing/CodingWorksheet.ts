@@ -1,6 +1,8 @@
 export class CodingWorksheet {
   private container: HTMLElement;
-  constructor(container: HTMLElement) { this.container = container; }
+  constructor(container: HTMLElement) {
+    this.container = container;
+  }
   render(): void {
     this.container.innerHTML = `
       <div class="coding-worksheet">

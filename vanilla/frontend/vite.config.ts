@@ -1,22 +1,22 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import { defineConfig } from "vite";
+import { resolve } from "path";
 
 export default defineConfig({
-  root: './',
-  publicDir: 'public',
+  root: "./",
+  publicDir: "public",
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     emptyOutDir: true,
     sourcemap: true,
-    target: 'es2022',
-    minify: 'esbuild',
+    target: "es2022",
+    minify: "esbuild",
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main: resolve(__dirname, "index.html"),
       },
       output: {
         manualChunks: {
-          vendor: ['chart.js'],
+          vendor: ["chart.js"],
         },
       },
     },
@@ -27,8 +27,8 @@ export default defineConfig({
     strictPort: true,
     host: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
+      "/api": {
+        target: "http://localhost:3000",
         changeOrigin: true,
         secure: false,
       },
@@ -41,16 +41,16 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
-      '@components': resolve(__dirname, './src/components'),
-      '@pages': resolve(__dirname, './src/pages'),
-      '@services': resolve(__dirname, './src/services'),
-      '@utils': resolve(__dirname, './src/utils'),
-      '@styles': resolve(__dirname, './src/styles'),
-      '@shared': resolve(__dirname, '../shared'),
+      "@": resolve(__dirname, "./src"),
+      "@components": resolve(__dirname, "./src/components"),
+      "@pages": resolve(__dirname, "./src/pages"),
+      "@services": resolve(__dirname, "./src/services"),
+      "@utils": resolve(__dirname, "./src/utils"),
+      "@styles": resolve(__dirname, "./src/styles"),
+      "@shared": resolve(__dirname, "../shared"),
     },
   },
   optimizeDeps: {
-    include: ['chart.js'],
+    include: ["chart.js"],
   },
 });

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Patient } from '@/types/patient';
-import { PatientCard } from './PatientCard';
-import { Search, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { Patient } from "@/types/patient";
+import { PatientCard } from "./PatientCard";
+import { Search, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 interface PatientListProps {
   patients: Patient[];
@@ -13,18 +13,23 @@ interface PatientListProps {
   loading?: boolean;
 }
 
-export function PatientList({ patients, onPatientClick, loading }: PatientListProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+export function PatientList({
+  patients,
+  onPatientClick,
+  loading,
+}: PatientListProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const filteredPatients = patients.filter(patient => {
-    const matchesSearch = 
+  const filteredPatients = patients.filter((patient) => {
+    const matchesSearch =
       patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patient.mrn.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patient.email?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || patient.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || patient.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -67,9 +72,7 @@ export function PatientList({ patients, onPatientClick, loading }: PatientListPr
       </div>
 
       {filteredPatients.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          No patients found
-        </div>
+        <div className="text-center py-12 text-gray-500">No patients found</div>
       ) : (
         <div className="grid gap-4">
           {filteredPatients.map((patient) => (

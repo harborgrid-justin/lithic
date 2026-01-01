@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import QualityControl from '@/components/laboratory/QualityControl';
-import CriticalAlerts from '@/components/laboratory/CriticalAlerts';
+import React from "react";
+import QualityControl from "@/components/laboratory/QualityControl";
+import CriticalAlerts from "@/components/laboratory/CriticalAlerts";
 
 export default function QCPage() {
   return (

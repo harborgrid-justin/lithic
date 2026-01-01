@@ -3,7 +3,7 @@
  * Pre-built message constructors for common HL7 message types
  */
 
-import { HL7Builder, createHL7Builder } from './builder';
+import { HL7Builder, createHL7Builder } from "./builder";
 
 interface FacilityInfo {
   sendingApplication: string;
@@ -23,7 +23,7 @@ export function createADT_A01(params: {
     firstName: string;
     middleName?: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
     address?: string;
     city?: string;
     state?: string;
@@ -32,7 +32,7 @@ export function createADT_A01(params: {
     ssn?: string;
   };
   visit: {
-    patientClass: 'E' | 'I' | 'O' | 'P' | 'R' | 'B';
+    patientClass: "E" | "I" | "O" | "P" | "R" | "B";
     location?: string;
     admissionType?: string;
     attendingDoctor?: string;
@@ -44,8 +44,8 @@ export function createADT_A01(params: {
   return builder
     .addMSH({
       ...params.facility,
-      messageType: 'ADT',
-      triggerEvent: 'A01',
+      messageType: "ADT",
+      triggerEvent: "A01",
     })
     .addPID({
       patientIdList: params.patient.mrn,
@@ -81,10 +81,10 @@ export function createADT_A03(params: {
     lastName: string;
     firstName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
   };
   visit: {
-    patientClass: 'E' | 'I' | 'O' | 'P' | 'R' | 'B';
+    patientClass: "E" | "I" | "O" | "P" | "R" | "B";
     location?: string;
     attendingDoctor?: string;
     admitDateTime: Date;
@@ -96,8 +96,8 @@ export function createADT_A03(params: {
   return builder
     .addMSH({
       ...params.facility,
-      messageType: 'ADT',
-      triggerEvent: 'A03',
+      messageType: "ADT",
+      triggerEvent: "A03",
     })
     .addPID({
       patientIdList: params.patient.mrn,
@@ -127,7 +127,7 @@ export function createADT_A08(params: {
     firstName: string;
     middleName?: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
     address?: string;
     city?: string;
     state?: string;
@@ -140,8 +140,8 @@ export function createADT_A08(params: {
   return builder
     .addMSH({
       ...params.facility,
-      messageType: 'ADT',
-      triggerEvent: 'A08',
+      messageType: "ADT",
+      triggerEvent: "A08",
     })
     .addPID({
       patientIdList: params.patient.mrn,
@@ -169,10 +169,10 @@ export function createORM_O01(params: {
     lastName: string;
     firstName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
   };
   order: {
-    orderControl: 'NW' | 'CA' | 'OC';
+    orderControl: "NW" | "CA" | "OC";
     placerOrderNumber: string;
     orderDateTime: Date;
     orderingProvider: string;
@@ -188,8 +188,8 @@ export function createORM_O01(params: {
   builder
     .addMSH({
       ...params.facility,
-      messageType: 'ORM',
-      triggerEvent: 'O01',
+      messageType: "ORM",
+      triggerEvent: "O01",
     })
     .addPID({
       patientIdList: params.patient.mrn,
@@ -229,7 +229,7 @@ export function createORU_R01(params: {
     lastName: string;
     firstName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
   };
   order: {
     placerOrderNumber: string;
@@ -240,11 +240,11 @@ export function createORU_R01(params: {
     code: string;
     description: string;
     value: string | number;
-    valueType: 'CE' | 'NM' | 'ST' | 'TX';
+    valueType: "CE" | "NM" | "ST" | "TX";
     units?: string;
     referenceRange?: string;
     abnormalFlag?: string;
-    status: 'F' | 'P' | 'R' | 'C';
+    status: "F" | "P" | "R" | "C";
     observationDateTime: Date;
   }>;
 }): string {
@@ -253,8 +253,8 @@ export function createORU_R01(params: {
   builder
     .addMSH({
       ...params.facility,
-      messageType: 'ORU',
-      triggerEvent: 'R01',
+      messageType: "ORU",
+      triggerEvent: "R01",
     })
     .addPID({
       patientIdList: params.patient.mrn,
@@ -267,10 +267,10 @@ export function createORU_R01(params: {
       setId: 1,
       placerOrderNumber: params.order.placerOrderNumber,
       fillerOrderNumber: params.order.fillerOrderNumber,
-      universalServiceId: 'PANEL',
-      universalServiceText: 'Test Panel',
+      universalServiceId: "PANEL",
+      universalServiceText: "Test Panel",
       orderingProvider: params.order.orderingProvider,
-      resultStatus: 'F',
+      resultStatus: "F",
     });
 
   params.results.forEach((result, index) => {
@@ -297,7 +297,7 @@ export function createORU_R01(params: {
 export function createACK(params: {
   facility: FacilityInfo;
   originalMessageControlId: string;
-  acknowledgmentCode: 'AA' | 'AE' | 'AR' | 'CA' | 'CE' | 'CR';
+  acknowledgmentCode: "AA" | "AE" | "AR" | "CA" | "CE" | "CR";
   textMessage?: string;
 }): string {
   const builder = createHL7Builder();
@@ -305,13 +305,13 @@ export function createACK(params: {
   builder
     .addMSH({
       ...params.facility,
-      messageType: 'ACK',
-      triggerEvent: 'ACK',
+      messageType: "ACK",
+      triggerEvent: "ACK",
     })
-    .addSegment('MSA', [
+    .addSegment("MSA", [
       params.acknowledgmentCode,
       params.originalMessageControlId,
-      params.textMessage || '',
+      params.textMessage || "",
     ]);
 
   return builder.build();
@@ -327,7 +327,7 @@ export function createDFT_P03(params: {
     lastName: string;
     firstName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
   };
   charges: Array<{
     code: string;
@@ -342,8 +342,8 @@ export function createDFT_P03(params: {
   builder
     .addMSH({
       ...params.facility,
-      messageType: 'DFT',
-      triggerEvent: 'P03',
+      messageType: "DFT",
+      triggerEvent: "P03",
     })
     .addPID({
       patientIdList: params.patient.mrn,
@@ -354,30 +354,30 @@ export function createDFT_P03(params: {
     });
 
   params.charges.forEach((charge, index) => {
-    builder.addSegment('FT1', [
+    builder.addSegment("FT1", [
       String(index + 1), // Set ID
-      '', // Transaction ID
-      '', // Transaction Batch ID
-      builder['formatDate'](charge.serviceDate), // Transaction Date (private method access)
-      '', // Transaction Posting Date
-      'CG', // Transaction Type (CG = Charge)
+      "", // Transaction ID
+      "", // Transaction Batch ID
+      builder["formatDate"](charge.serviceDate), // Transaction Date (private method access)
+      "", // Transaction Posting Date
+      "CG", // Transaction Type (CG = Charge)
       charge.code,
       charge.description,
-      '', // Transaction Description - Alt
+      "", // Transaction Description - Alt
       String(charge.quantity),
-      '', // Transaction Amount - Extended
+      "", // Transaction Amount - Extended
       String(charge.amount),
-      '', // Transaction Amount - Unit
-      '', // Department Code
-      '', // Insurance Plan ID
-      '', // Insurance Amount
-      '', // Assigned Patient Location
-      '', // Fee Schedule
-      '', // Patient Type
-      '', // Diagnosis Code
-      '', // Performed By Code
-      '', // Ordered By Code
-      '', // Unit Cost
+      "", // Transaction Amount - Unit
+      "", // Department Code
+      "", // Insurance Plan ID
+      "", // Insurance Amount
+      "", // Assigned Patient Location
+      "", // Fee Schedule
+      "", // Patient Type
+      "", // Diagnosis Code
+      "", // Performed By Code
+      "", // Ordered By Code
+      "", // Unit Cost
     ]);
   });
 
@@ -394,7 +394,7 @@ export function createSIU_S12(params: {
     lastName: string;
     firstName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
   };
   appointment: {
     appointmentId: string;
@@ -412,35 +412,35 @@ export function createSIU_S12(params: {
   builder
     .addMSH({
       ...params.facility,
-      messageType: 'SIU',
-      triggerEvent: 'S12',
+      messageType: "SIU",
+      triggerEvent: "S12",
     })
-    .addSegment('SCH', [
-      '', // Placer Appointment ID
+    .addSegment("SCH", [
+      "", // Placer Appointment ID
       params.appointment.appointmentId, // Filler Appointment ID
-      '', // Occurrence Number
-      '', // Placer Group Number
-      '', // Schedule ID
-      '', // Event Reason
-      '', // Appointment Reason
-      params.appointment.appointmentType || '', // Appointment Type
+      "", // Occurrence Number
+      "", // Placer Group Number
+      "", // Schedule ID
+      "", // Event Reason
+      "", // Appointment Reason
+      params.appointment.appointmentType || "", // Appointment Type
       String(params.appointment.duration), // Appointment Duration
-      'MIN', // Appointment Duration Units
-      '', // Appointment Timing Quantity
-      '', // Placer Contact Person
-      '', // Placer Contact Phone Number
-      '', // Placer Contact Address
-      '', // Placer Contact Location
-      '', // Filler Contact Person
-      '', // Filler Contact Phone Number
-      '', // Filler Contact Address
-      '', // Filler Contact Location
-      '', // Entered By Person
-      '', // Entered By Phone Number
-      '', // Entered By Location
-      '', // Parent Placer Appointment ID
-      '', // Parent Filler Appointment ID
-      'Booked', // Filler Status Code
+      "MIN", // Appointment Duration Units
+      "", // Appointment Timing Quantity
+      "", // Placer Contact Person
+      "", // Placer Contact Phone Number
+      "", // Placer Contact Address
+      "", // Placer Contact Location
+      "", // Filler Contact Person
+      "", // Filler Contact Phone Number
+      "", // Filler Contact Address
+      "", // Filler Contact Location
+      "", // Entered By Person
+      "", // Entered By Phone Number
+      "", // Entered By Location
+      "", // Parent Placer Appointment ID
+      "", // Parent Filler Appointment ID
+      "Booked", // Filler Status Code
     ])
     .addPID({
       patientIdList: params.patient.mrn,
@@ -449,19 +449,19 @@ export function createSIU_S12(params: {
       dateOfBirth: params.patient.dateOfBirth,
       gender: params.patient.gender,
     })
-    .addSegment('AIP', [
-      '1', // Set ID
-      '', // Segment Action Code
-      '', // Personnel Resource ID
-      '', // Resource Type
-      '', // Resource Group
-      builder['formatDateTime'](params.appointment.startDateTime),
-      '', // Start Date/Time Offset
-      '', // Start Date/Time Offset Units
+    .addSegment("AIP", [
+      "1", // Set ID
+      "", // Segment Action Code
+      "", // Personnel Resource ID
+      "", // Resource Type
+      "", // Resource Group
+      builder["formatDateTime"](params.appointment.startDateTime),
+      "", // Start Date/Time Offset
+      "", // Start Date/Time Offset Units
       String(params.appointment.duration),
-      'MIN', // Duration Units
-      'A', // Allow Substitution Code
-      'Confirmed', // Filler Status Code
+      "MIN", // Duration Units
+      "A", // Allow Substitution Code
+      "Confirmed", // Filler Status Code
     ]);
 
   return builder.build();
@@ -477,7 +477,7 @@ export function createMDM_T02(params: {
     lastName: string;
     firstName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'O' | 'U';
+    gender: "M" | "F" | "O" | "U";
   };
   document: {
     documentId: string;
@@ -486,7 +486,7 @@ export function createMDM_T02(params: {
     documentDateTime: Date;
     provider: string;
     documentContent: string;
-    status: 'IP' | 'DO' | 'LA' | 'AU' | 'PA' | 'UC';
+    status: "IP" | "DO" | "LA" | "AU" | "PA" | "UC";
   };
 }): string {
   const builder = createHL7Builder();
@@ -494,8 +494,8 @@ export function createMDM_T02(params: {
   builder
     .addMSH({
       ...params.facility,
-      messageType: 'MDM',
-      triggerEvent: 'T02',
+      messageType: "MDM",
+      triggerEvent: "T02",
     })
     .addPID({
       patientIdList: params.patient.mrn,
@@ -504,37 +504,37 @@ export function createMDM_T02(params: {
       dateOfBirth: params.patient.dateOfBirth,
       gender: params.patient.gender,
     })
-    .addSegment('TXA', [
-      '1', // Set ID
+    .addSegment("TXA", [
+      "1", // Set ID
       params.document.documentType, // Document Type
-      '', // Document Content Presentation
-      builder['formatDateTime'](params.document.documentDateTime),
-      '', // Primary Activity Provider
-      builder['formatDateTime'](params.document.documentDateTime), // Origination Date/Time
-      '', // Transcription Date/Time
-      '', // Edit Date/Time
-      '', // Originator Code/Name
-      '', // Assigned Document Authenticator
-      '', // Transcriptionist Code/Name
+      "", // Document Content Presentation
+      builder["formatDateTime"](params.document.documentDateTime),
+      "", // Primary Activity Provider
+      builder["formatDateTime"](params.document.documentDateTime), // Origination Date/Time
+      "", // Transcription Date/Time
+      "", // Edit Date/Time
+      "", // Originator Code/Name
+      "", // Assigned Document Authenticator
+      "", // Transcriptionist Code/Name
       params.document.documentId, // Unique Document Number
-      '', // Parent Document Number
-      '', // Placer Order Number
-      '', // Filler Order Number
-      '', // Unique Document File Name
+      "", // Parent Document Number
+      "", // Placer Order Number
+      "", // Filler Order Number
+      "", // Unique Document File Name
       params.document.status, // Document Completion Status
-      '', // Document Confidentiality Status
-      '', // Document Availability Status
-      '', // Document Storage Status
-      '', // Document Change Reason
-      '', // Authentication Person, Time Stamp
-      '', // Distributed Copies
+      "", // Document Confidentiality Status
+      "", // Document Availability Status
+      "", // Document Storage Status
+      "", // Document Change Reason
+      "", // Authentication Person, Time Stamp
+      "", // Distributed Copies
     ])
-    .addSegment('OBX', [
-      '1',
-      'TX', // Value Type
+    .addSegment("OBX", [
+      "1",
+      "TX", // Value Type
       params.document.documentType,
       params.document.documentTitle,
-      '', // Observation Sub-ID
+      "", // Observation Sub-ID
       params.document.documentContent,
     ]);
 
@@ -550,22 +550,22 @@ export function parseACK(ackMessage: string): {
   textMessage?: string;
   success: boolean;
 } {
-  const lines = ackMessage.split(/\r?\n/).filter(line => line.trim());
-  const msaLine = lines.find(line => line.startsWith('MSA'));
+  const lines = ackMessage.split(/\r?\n/).filter((line) => line.trim());
+  const msaLine = lines.find((line) => line.startsWith("MSA"));
 
   if (!msaLine) {
-    throw new Error('Invalid ACK message: MSA segment not found');
+    throw new Error("Invalid ACK message: MSA segment not found");
   }
 
-  const fields = msaLine.split('|');
-  const acknowledgmentCode = fields[1] || '';
-  const messageControlId = fields[2] || '';
+  const fields = msaLine.split("|");
+  const acknowledgmentCode = fields[1] || "";
+  const messageControlId = fields[2] || "";
   const textMessage = fields[3];
 
   return {
     acknowledgmentCode,
     messageControlId,
     textMessage,
-    success: acknowledgmentCode === 'AA' || acknowledgmentCode === 'CA',
+    success: acknowledgmentCode === "AA" || acknowledgmentCode === "CA",
   };
 }

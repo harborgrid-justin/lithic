@@ -1,6 +1,8 @@
 export class DenialManager {
   private container: HTMLElement;
-  constructor(container: HTMLElement) { this.container = container; }
+  constructor(container: HTMLElement) {
+    this.container = container;
+  }
   render(denials: any[]): void {
     this.container.innerHTML = `
       <div class="denial-manager">
@@ -8,14 +10,18 @@ export class DenialManager {
         <table>
           <thead><tr><th>Claim</th><th>Reason</th><th>Amount</th><th>Action</th></tr></thead>
           <tbody>
-            ${denials.map(d => `
+            ${denials
+              .map(
+                (d) => `
               <tr>
                 <td>${d.claimNumber}</td>
                 <td>${d.reason}</td>
                 <td>$${d.amount}</td>
                 <td><button class="btn btn-sm">Appeal</button></td>
               </tr>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </tbody>
         </table>
       </div>

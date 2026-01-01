@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import StudyList from '@/components/imaging/StudyList';
-import { ImagingStudy } from '@/services/imaging.service';
-import { useRouter } from 'next/navigation';
+import StudyList from "@/components/imaging/StudyList";
+import { ImagingStudy } from "@/services/imaging.service";
+import { useRouter } from "next/navigation";
 
 export default function StudiesPage() {
   const router = useRouter();
@@ -16,7 +16,9 @@ export default function StudiesPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Imaging Studies</h1>
-          <p className="text-gray-600 mt-1">Browse and review medical imaging studies</p>
+          <p className="text-gray-600 mt-1">
+            Browse and review medical imaging studies
+          </p>
         </div>
       </div>
 

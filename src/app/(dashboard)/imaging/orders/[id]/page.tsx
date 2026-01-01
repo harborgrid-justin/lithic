@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import ImagingOrderForm from '@/components/imaging/ImagingOrderForm';
-import { imagingService, ImagingOrder } from '@/services/imaging.service';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import ImagingOrderForm from "@/components/imaging/ImagingOrderForm";
+import { imagingService, ImagingOrder } from "@/services/imaging.service";
 
 export default function EditOrderPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -19,14 +19,14 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
       const data = await imagingService.getOrder(params.id);
       setOrder(data);
     } catch (error) {
-      console.error('Failed to load order:', error);
+      console.error("Failed to load order:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleSubmit = () => {
-    router.push('/imaging/orders');
+    router.push("/imaging/orders");
   };
 
   const handleCancel = () => {

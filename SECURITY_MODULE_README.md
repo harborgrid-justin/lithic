@@ -67,6 +67,7 @@ lithic/
 ### 1. Authentication & Authorization
 
 #### NextAuth.js Integration
+
 - **Credentials Provider**: Email/password authentication with bcrypt hashing
 - **Session Strategy**: JWT-based sessions with 30-day expiry
 - **Automatic Session Refresh**: Periodic user data synchronization
@@ -74,6 +75,7 @@ lithic/
 - **Password Security**: Minimum 12 characters, complexity requirements
 
 #### Multi-Factor Authentication (MFA)
+
 - **TOTP Support**: Time-based One-Time Password using otpauth
 - **QR Code Generation**: Easy authenticator app setup
 - **Backup Codes**: 10 one-time use backup codes
@@ -83,6 +85,7 @@ lithic/
 ### 2. Role-Based Access Control (RBAC)
 
 #### Permission System
+
 - **Granular Permissions**: Resource-level access control
 - **Permission Scopes**: OWN, DEPARTMENT, ORGANIZATION, ALL
 - **Dynamic Permission Checking**: Runtime permission validation
@@ -90,6 +93,7 @@ lithic/
 - **Permission Matrix**: Visual permission overview across roles
 
 #### System Roles
+
 1. **SUPER_ADMIN**: Full system access across all organizations
 2. **ADMIN**: Organization-wide administrator
 3. **PHYSICIAN**: Clinical access with prescription rights
@@ -101,6 +105,7 @@ lithic/
 ### 3. Audit Logging & Compliance
 
 #### HIPAA-Compliant Audit Trail
+
 - **Comprehensive Logging**: All user actions tracked
 - **PHI Access Tracking**: Special logging for Protected Health Information
 - **7-Year Retention**: Automatic retention period calculation
@@ -108,6 +113,7 @@ lithic/
 - **Export Capabilities**: CSV and JSON export for compliance
 
 #### Audit Features
+
 - **Action Tracking**: LOGIN, LOGOUT, CREATE, UPDATE, DELETE, PHI_ACCESSED
 - **User Attribution**: User ID, name, email stored denormalized
 - **Context Capture**: IP address, user agent, location
@@ -118,6 +124,7 @@ lithic/
 ### 4. Session Management
 
 #### Advanced Session Control
+
 - **Multi-Device Support**: Track sessions across devices
 - **Session Monitoring**: Real-time active session viewing
 - **Session Revocation**: Individual or bulk session termination
@@ -126,6 +133,7 @@ lithic/
 - **Session Timeout**: Configurable inactivity timeout
 
 #### Security Features
+
 - **Device Fingerprinting**: Track device information
 - **Location Tracking**: Geographic session monitoring
 - **Concurrent Session Limits**: Prevent session hijacking
@@ -134,6 +142,7 @@ lithic/
 ### 5. Data Encryption
 
 #### PHI Encryption
+
 - **AES-256-GCM**: Military-grade encryption algorithm
 - **Key Derivation**: PBKDF2 with 100,000 iterations
 - **Salt & IV**: Random salt and initialization vector per encryption
@@ -141,6 +150,7 @@ lithic/
 - **Field-Level Encryption**: Encrypt specific sensitive fields
 
 #### Encryption Features
+
 - **Master Key Management**: Environment-based key storage
 - **Data Masking**: Partial data display (SSN, credit cards)
 - **PHI Redaction**: Automatic PHI removal from logs
@@ -149,6 +159,7 @@ lithic/
 ### 6. Organization Management
 
 #### Multi-Tenant Architecture
+
 - **Organization Isolation**: Complete data separation
 - **Organization Types**: Hospital, Clinic, Private Practice, etc.
 - **Subscription Management**: Plan-based feature access
@@ -156,6 +167,7 @@ lithic/
 - **BAA Management**: Business Associate Agreement tracking
 
 #### Organization Settings
+
 - **Security Policies**: MFA requirements, session timeouts
 - **Password Policies**: Complexity, expiration, history
 - **IP Whitelisting**: Network-level access control
@@ -164,6 +176,7 @@ lithic/
 ### 7. Integration Management
 
 #### Supported Integrations
+
 - **Epic EHR**: Electronic Health Records integration
 - **FHIR API**: Fast Healthcare Interoperability Resources
 - **HL7 Interface**: Health Level 7 messaging
@@ -173,6 +186,7 @@ lithic/
 ## Security Middleware
 
 ### Route Protection
+
 ```typescript
 // Automatic authentication check for protected routes
 // - /dashboard/* - Requires authenticated user
@@ -182,6 +196,7 @@ lithic/
 ```
 
 ### Security Headers
+
 - **X-Frame-Options**: DENY
 - **X-Content-Type-Options**: nosniff
 - **X-XSS-Protection**: Enabled
@@ -192,12 +207,14 @@ lithic/
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/[...nextauth]` - NextAuth handlers
 - `GET /api/auth/mfa` - Get MFA status
 - `POST /api/auth/mfa` - MFA operations (generate, enable, disable, verify)
 
 ### Admin - Users
+
 - `GET /api/admin/users` - List users (paginated, filterable)
 - `POST /api/admin/users` - Create user
 - `GET /api/admin/users/[id]` - Get user details
@@ -205,23 +222,27 @@ lithic/
 - `DELETE /api/admin/users/[id]` - Deactivate user
 
 ### Admin - Roles & Permissions
+
 - `GET /api/admin/roles` - List roles
 - `POST /api/admin/roles` - Create role
 - `GET /api/admin/permissions` - Get permission matrix
 - `POST /api/admin/permissions` - Grant permission or assign role
 
 ### Admin - Audit & Compliance
+
 - `GET /api/admin/audit` - Get audit logs (with analytics option)
 - `POST /api/admin/audit` - Generate compliance report
 - Export functionality for CSV/JSON
 
 ### Admin - Organizations
+
 - `GET /api/admin/organizations` - Get organization details
 - `PATCH /api/admin/organizations` - Update organization settings
 
 ## Database Schema
 
 ### Core Models
+
 - **User**: User accounts with MFA support
 - **Role**: RBAC roles
 - **Permission**: Granular permissions with scopes
@@ -235,57 +256,61 @@ lithic/
 ## Usage Examples
 
 ### Check Permission
+
 ```typescript
-import { checkPermission } from '@/lib/permissions';
+import { checkPermission } from "@/lib/permissions";
 
 const hasAccess = await checkPermission({
-  userId: 'user-id',
-  resource: 'patient',
-  action: 'read',
-  organizationId: 'org-id',
+  userId: "user-id",
+  resource: "patient",
+  action: "read",
+  organizationId: "org-id",
 });
 ```
 
 ### Log Audit Event
+
 ```typescript
-import { logAudit } from '@/lib/audit';
+import { logAudit } from "@/lib/audit";
 
 await logAudit({
-  userId: 'user-id',
-  action: 'PHI_ACCESSED',
-  resource: 'Patient',
-  resourceId: 'patient-id',
-  description: 'Viewed patient medical record',
-  organizationId: 'org-id',
+  userId: "user-id",
+  action: "PHI_ACCESSED",
+  resource: "Patient",
+  resourceId: "patient-id",
+  description: "Viewed patient medical record",
+  organizationId: "org-id",
   isPHIAccess: true,
-  phiType: 'Medical Record',
+  phiType: "Medical Record",
 });
 ```
 
 ### Encrypt PHI
+
 ```typescript
-import { encrypt, decrypt } from '@/lib/encryption';
+import { encrypt, decrypt } from "@/lib/encryption";
 
 const encrypted = encrypt(sensitiveData);
 const decrypted = decrypt(encrypted);
 ```
 
 ### Session Management
+
 ```typescript
-import { createSession, validateSession, revokeSession } from '@/lib/session';
+import { createSession, validateSession, revokeSession } from "@/lib/session";
 
 // Create session
 const session = await createSession({
-  userId: 'user-id',
+  userId: "user-id",
   ipAddress: req.ip,
-  userAgent: req.headers['user-agent'],
+  userAgent: req.headers["user-agent"],
 });
 
 // Validate session
 const isValid = await validateSession(sessionToken);
 
 // Revoke session
-await revokeSession(sessionId, 'User logged out');
+await revokeSession(sessionId, "User logged out");
 ```
 
 ## Environment Variables
@@ -307,12 +332,14 @@ ENCRYPTION_KEY=your-encryption-key-min-32-characters
 ## Installation & Setup
 
 1. **Install Dependencies**
+
 ```bash
 npm install
 # otpauth is already included for MFA/TOTP
 ```
 
 2. **Database Setup**
+
 ```bash
 npx prisma generate
 npx prisma db push
@@ -321,32 +348,35 @@ npx prisma migrate dev
 ```
 
 3. **Initialize System Roles**
-```typescript
-import { initializeSystemRoles } from '@/lib/permissions';
 
-await initializeSystemRoles('organization-id');
+```typescript
+import { initializeSystemRoles } from "@/lib/permissions";
+
+await initializeSystemRoles("organization-id");
 ```
 
 4. **Create First Admin User**
+
 ```typescript
-import { createOrganization } from '@/services/organization.service';
+import { createOrganization } from "@/services/organization.service";
 
 const result = await createOrganization({
-  name: 'My Organization',
-  type: 'HOSPITAL',
-  npi: '1234567890',
-  taxId: '12-3456789',
+  name: "My Organization",
+  type: "HOSPITAL",
+  npi: "1234567890",
+  taxId: "12-3456789",
   address: {},
   contactInfo: {},
-  adminEmail: 'admin@example.com',
-  adminFirstName: 'Admin',
-  adminLastName: 'User',
+  adminEmail: "admin@example.com",
+  adminFirstName: "Admin",
+  adminLastName: "User",
 });
 ```
 
 ## Security Best Practices
 
 ### Password Security
+
 - Minimum 12 characters
 - Complexity requirements enforced
 - Bcrypt with 12 rounds
@@ -354,18 +384,21 @@ const result = await createOrganization({
 - Password history tracking
 
 ### Session Security
+
 - Short-lived JWT tokens
 - Session timeout on inactivity
 - Concurrent session monitoring
 - Automatic session cleanup
 
 ### Data Protection
+
 - Field-level encryption for PHI
 - Data masking in logs
 - Secure key storage
 - Regular key rotation
 
 ### Audit Compliance
+
 - All PHI access logged
 - 7-year retention period
 - Tamper-proof logging
@@ -400,6 +433,7 @@ const result = await createOrganization({
 ## Component Library
 
 All admin components are fully functional with:
+
 - Real-time data fetching
 - Form validation
 - Error handling

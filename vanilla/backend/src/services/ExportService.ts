@@ -3,7 +3,12 @@
  * Lithic Healthcare Platform
  */
 
-import { ExportJob, ReportFormat, Dashboard, ChartDataSeries } from '../models/Analytics';
+import {
+  ExportJob,
+  ReportFormat,
+  Dashboard,
+  ChartDataSeries,
+} from "../models/Analytics";
 
 export class ExportService {
   private jobs: Map<string, ExportJob> = new Map();
@@ -13,14 +18,14 @@ export class ExportService {
   // ==================== Export Management ====================
 
   async createExportJob(
-    type: ExportJob['type'],
+    type: ExportJob["type"],
     sourceId: string,
     sourceName: string,
     format: ReportFormat,
-    parameters: ExportJob['parameters'],
-    userId: string
+    parameters: ExportJob["parameters"],
+    userId: string,
   ): Promise<ExportJob> {
-    const id = this.generateId('exp');
+    const id = this.generateId("exp");
 
     const job: ExportJob = {
       id,
@@ -29,7 +34,7 @@ export class ExportService {
       sourceName,
       format,
       parameters,
-      status: 'queued',
+      status: "queued",
       progress: 0,
       requestedBy: userId,
       createdAt: new Date(),
@@ -41,10 +46,10 @@ export class ExportService {
     this.executeExport(id).catch((error) => {
       const failed = this.jobs.get(id);
       if (failed) {
-        failed.status = 'failed';
+        failed.status = "failed";
         failed.error = {
           message: error.message,
-          code: 'EXPORT_FAILED',
+          code: "EXPORT_FAILED",
         };
         this.jobs.set(id, failed);
       }
@@ -67,17 +72,17 @@ export class ExportService {
     const job = this.jobs.get(id);
 
     if (!job) {
-      throw new Error('Export job not found');
+      throw new Error("Export job not found");
     }
 
-    if (job.status === 'completed' || job.status === 'failed') {
-      throw new Error('Cannot cancel completed or failed job');
+    if (job.status === "completed" || job.status === "failed") {
+      throw new Error("Cannot cancel completed or failed job");
     }
 
-    job.status = 'failed';
+    job.status = "failed";
     job.error = {
-      message: 'Export cancelled by user',
-      code: 'CANCELLED',
+      message: "Export cancelled by user",
+      code: "CANCELLED",
     };
 
     this.jobs.set(id, job);
@@ -95,20 +100,20 @@ export class ExportService {
     if (!job) return;
 
     try {
-      job.status = 'processing';
+      job.status = "processing";
       job.startedAt = new Date();
       this.jobs.set(jobId, job);
 
       let fileInfo: { url: string; size: number; recordCount: number };
 
       switch (job.type) {
-        case 'dashboard':
+        case "dashboard":
           fileInfo = await this.exportDashboard(job);
           break;
-        case 'report':
+        case "report":
           fileInfo = await this.exportReport(job);
           break;
-        case 'dataset':
+        case "dataset":
           fileInfo = await this.exportDataset(job);
           break;
         default:
@@ -116,7 +121,7 @@ export class ExportService {
       }
 
       // Update job
-      job.status = 'completed';
+      job.status = "completed";
       job.completedAt = new Date();
       job.fileUrl = fileInfo.url;
       job.fileSize = fileInfo.size;
@@ -136,7 +141,9 @@ export class ExportService {
 
   // ==================== Export Type Handlers ====================
 
-  private async exportDashboard(job: ExportJob): Promise<{ url: string; size: number; recordCount: number }> {
+  private async exportDashboard(
+    job: ExportJob,
+  ): Promise<{ url: string; size: number; recordCount: number }> {
     // Simulate dashboard export
     await this.updateProgress(job.id, 25);
 
@@ -152,17 +159,19 @@ export class ExportService {
     // Format based on export format
     let fileData: any;
     switch (job.format) {
-      case 'pdf':
+      case "pdf":
         fileData = await this.generatePDF(dashboardData);
         break;
-      case 'excel':
+      case "excel":
         fileData = await this.generateExcel(dashboardData);
         break;
-      case 'json':
+      case "json":
         fileData = await this.generateJSON(dashboardData);
         break;
       default:
-        throw new Error(`Unsupported format for dashboard export: ${job.format}`);
+        throw new Error(
+          `Unsupported format for dashboard export: ${job.format}`,
+        );
     }
 
     await this.updateProgress(job.id, 100);
@@ -174,7 +183,9 @@ export class ExportService {
     };
   }
 
-  private async exportReport(job: ExportJob): Promise<{ url: string; size: number; recordCount: number }> {
+  private async exportReport(
+    job: ExportJob,
+  ): Promise<{ url: string; size: number; recordCount: number }> {
     // Simulate report export
     await this.updateProgress(job.id, 20);
 
@@ -189,16 +200,16 @@ export class ExportService {
 
     let fileData: any;
     switch (job.format) {
-      case 'pdf':
+      case "pdf":
         fileData = await this.generatePDF(reportData);
         break;
-      case 'excel':
+      case "excel":
         fileData = await this.generateExcel(reportData);
         break;
-      case 'csv':
+      case "csv":
         fileData = await this.generateCSV(reportData);
         break;
-      case 'json':
+      case "json":
         fileData = await this.generateJSON(reportData);
         break;
       default:
@@ -214,7 +225,9 @@ export class ExportService {
     };
   }
 
-  private async exportDataset(job: ExportJob): Promise<{ url: string; size: number; recordCount: number }> {
+  private async exportDataset(
+    job: ExportJob,
+  ): Promise<{ url: string; size: number; recordCount: number }> {
     await this.updateProgress(job.id, 10);
 
     // Simulate fetching large dataset
@@ -222,20 +235,28 @@ export class ExportService {
 
     // Check size limits
     if (data.length > this.MAX_EXPORT_SIZE) {
-      throw new Error(`Dataset too large. Maximum ${this.MAX_EXPORT_SIZE} rows allowed.`);
+      throw new Error(
+        `Dataset too large. Maximum ${this.MAX_EXPORT_SIZE} rows allowed.`,
+      );
     }
 
     await this.updateProgress(job.id, 50);
 
     let fileData: any;
     switch (job.format) {
-      case 'csv':
-        fileData = await this.generateCSV({ data, columns: job.parameters.columns });
+      case "csv":
+        fileData = await this.generateCSV({
+          data,
+          columns: job.parameters.columns,
+        });
         break;
-      case 'excel':
-        fileData = await this.generateExcel({ data, columns: job.parameters.columns });
+      case "excel":
+        fileData = await this.generateExcel({
+          data,
+          columns: job.parameters.columns,
+        });
         break;
-      case 'json':
+      case "json":
         fileData = await this.generateJSON({ data });
         break;
       default:
@@ -253,7 +274,9 @@ export class ExportService {
 
   // ==================== Format Generators ====================
 
-  private async generatePDF(data: any): Promise<{ size: number; content: string }> {
+  private async generatePDF(
+    data: any,
+  ): Promise<{ size: number; content: string }> {
     // In production, use a PDF library like PDFKit or Puppeteer
     // For now, return simulated PDF metadata
 
@@ -261,11 +284,13 @@ export class ExportService {
 
     return {
       size: Math.floor(Math.random() * 1024 * 1024) + 100000, // 100KB - 1MB
-      content: 'PDF_BINARY_DATA',
+      content: "PDF_BINARY_DATA",
     };
   }
 
-  private async generateExcel(data: any): Promise<{ size: number; content: string }> {
+  private async generateExcel(
+    data: any,
+  ): Promise<{ size: number; content: string }> {
     // In production, use a library like ExcelJS
     // For now, return simulated Excel metadata
 
@@ -275,51 +300,60 @@ export class ExportService {
 
     return {
       size: rows * 100, // Approximate size
-      content: 'EXCEL_BINARY_DATA',
+      content: "EXCEL_BINARY_DATA",
     };
   }
 
-  private async generateCSV(data: any): Promise<{ size: number; content: string }> {
+  private async generateCSV(
+    data: any,
+  ): Promise<{ size: number; content: string }> {
     await this.simulateProcessing(200);
 
-    let csv = '';
+    let csv = "";
 
     if (data.columns && data.data) {
       // Header
-      csv += data.columns.join(',') + '\n';
+      csv += data.columns.join(",") + "\n";
 
       // Rows
       data.data.forEach((row: any) => {
         const values = data.columns.map((col: string) => {
-          const value = row[col] || '';
+          const value = row[col] || "";
           // Escape commas and quotes
-          if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+          if (
+            typeof value === "string" &&
+            (value.includes(",") || value.includes('"'))
+          ) {
             return `"${value.replace(/"/g, '""')}"`;
           }
           return value;
         });
-        csv += values.join(',') + '\n';
+        csv += values.join(",") + "\n";
       });
     }
 
     return {
-      size: Buffer.byteLength(csv, 'utf8'),
+      size: Buffer.byteLength(csv, "utf8"),
       content: csv,
     };
   }
 
-  private async generateJSON(data: any): Promise<{ size: number; content: string }> {
+  private async generateJSON(
+    data: any,
+  ): Promise<{ size: number; content: string }> {
     await this.simulateProcessing(100);
 
     const json = JSON.stringify(data, null, 2);
 
     return {
-      size: Buffer.byteLength(json, 'utf8'),
+      size: Buffer.byteLength(json, "utf8"),
       content: json,
     };
   }
 
-  private async generateHTML(data: any): Promise<{ size: number; content: string }> {
+  private async generateHTML(
+    data: any,
+  ): Promise<{ size: number; content: string }> {
     await this.simulateProcessing(150);
 
     let html = `
@@ -327,7 +361,7 @@ export class ExportService {
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>${data.name || 'Export'}</title>
+  <title>${data.name || "Export"}</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     table { border-collapse: collapse; width: 100%; margin: 20px 0; }
@@ -337,7 +371,7 @@ export class ExportService {
   </style>
 </head>
 <body>
-  <h1>${data.name || 'Export'}</h1>
+  <h1>${data.name || "Export"}</h1>
   <p>Generated: ${new Date().toLocaleString()}</p>
   <div id="content">
     ${JSON.stringify(data, null, 2)}
@@ -347,14 +381,17 @@ export class ExportService {
 `;
 
     return {
-      size: Buffer.byteLength(html, 'utf8'),
+      size: Buffer.byteLength(html, "utf8"),
       content: html,
     };
   }
 
   // ==================== Helper Methods ====================
 
-  private async fetchDataset(sourceId: string, parameters: any): Promise<any[]> {
+  private async fetchDataset(
+    sourceId: string,
+    parameters: any,
+  ): Promise<any[]> {
     // Simulate fetching data from database
     await this.simulateProcessing(1000);
 
@@ -366,7 +403,7 @@ export class ExportService {
         id: i + 1,
         timestamp: new Date(),
         value: Math.random() * 100,
-        category: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
+        category: ["A", "B", "C"][Math.floor(Math.random() * 3)],
       });
     }
 
@@ -395,15 +432,22 @@ export class ExportService {
   // ==================== Bulk Export ====================
 
   async bulkExport(
-    items: { type: ExportJob['type']; sourceId: string; sourceName: string }[],
+    items: { type: ExportJob["type"]; sourceId: string; sourceName: string }[],
     format: ReportFormat,
-    parameters: ExportJob['parameters'],
-    userId: string
+    parameters: ExportJob["parameters"],
+    userId: string,
   ): Promise<ExportJob[]> {
     const jobs: ExportJob[] = [];
 
     for (const item of items) {
-      const job = await this.createExportJob(item.type, item.sourceId, item.sourceName, format, parameters, userId);
+      const job = await this.createExportJob(
+        item.type,
+        item.sourceId,
+        item.sourceName,
+        format,
+        parameters,
+        userId,
+      );
       jobs.push(job);
     }
 
@@ -412,15 +456,19 @@ export class ExportService {
 
   // ==================== Format Conversion ====================
 
-  async convertFormat(sourceJobId: string, targetFormat: ReportFormat, userId: string): Promise<ExportJob> {
+  async convertFormat(
+    sourceJobId: string,
+    targetFormat: ReportFormat,
+    userId: string,
+  ): Promise<ExportJob> {
     const sourceJob = this.jobs.get(sourceJobId);
 
     if (!sourceJob) {
-      throw new Error('Source export job not found');
+      throw new Error("Source export job not found");
     }
 
-    if (sourceJob.status !== 'completed') {
-      throw new Error('Source export must be completed');
+    if (sourceJob.status !== "completed") {
+      throw new Error("Source export must be completed");
     }
 
     // Create new export job with different format
@@ -430,7 +478,7 @@ export class ExportService {
       sourceJob.sourceName,
       targetFormat,
       sourceJob.parameters,
-      userId
+      userId,
     );
   }
 

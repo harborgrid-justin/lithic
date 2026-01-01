@@ -1,19 +1,21 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, Users, Clock } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import ProviderSchedule from '@/components/scheduling/ProviderSchedule';
-import { schedulingService } from '@/services/scheduling.service';
-import type { Provider, Appointment } from '@/types/scheduling';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { Calendar as CalendarIcon, Users, Clock } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Select } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import ProviderSchedule from "@/components/scheduling/ProviderSchedule";
+import { schedulingService } from "@/services/scheduling.service";
+import type { Provider, Appointment } from "@/types/scheduling";
+import { toast } from "sonner";
 
 export default function ProvidersPage() {
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
+    null,
+  );
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +32,7 @@ export default function ProvidersPage() {
         setSelectedProvider(data[0]);
       }
     } catch (error) {
-      toast.error('Failed to load providers');
+      toast.error("Failed to load providers");
       console.error(error);
     } finally {
       setLoading(false);
@@ -50,7 +52,9 @@ export default function ProvidersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Provider Schedules</h1>
-          <p className="text-gray-600 mt-1">View and manage provider availability</p>
+          <p className="text-gray-600 mt-1">
+            View and manage provider availability
+          </p>
         </div>
       </div>
 
@@ -74,9 +78,14 @@ export default function ProvidersPage() {
               <div>
                 <p className="text-sm text-gray-600">Available Today</p>
                 <p className="text-3xl font-bold mt-1">
-                  {providers.filter((p) =>
-                    p.availability.some((a) => a.dayOfWeek === new Date().getDay() && a.isActive)
-                  ).length}
+                  {
+                    providers.filter((p) =>
+                      p.availability.some(
+                        (a) =>
+                          a.dayOfWeek === new Date().getDay() && a.isActive,
+                      ),
+                    ).length
+                  }
                 </p>
               </div>
               <CalendarIcon className="h-8 w-8 text-green-600" />
@@ -110,20 +119,24 @@ export default function ProvidersPage() {
             {loading ? (
               <div className="text-center py-8 text-gray-500">Loading...</div>
             ) : providers.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">No providers found</div>
+              <div className="text-center py-8 text-gray-500">
+                No providers found
+              </div>
             ) : (
               providers.map((provider) => (
                 <div
                   key={provider.id}
                   className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                     selectedProvider?.id === provider.id
-                      ? 'border-primary-600 bg-primary-50'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      ? "border-primary-600 bg-primary-50"
+                      : "border-gray-200 hover:bg-gray-50"
                   }`}
                   onClick={() => setSelectedProvider(provider)}
                 >
                   <div className="font-medium">{provider.name}</div>
-                  <div className="text-sm text-gray-500">{provider.specialty}</div>
+                  <div className="text-sm text-gray-500">
+                    {provider.specialty}
+                  </div>
                   <Badge variant="outline" className="mt-1 text-xs">
                     {provider.department}
                   </Badge>
@@ -139,10 +152,12 @@ export default function ProvidersPage() {
             <CardContent className="p-4">
               <div className="flex items-center space-x-4">
                 <div className="flex-1">
-                  <label className="text-sm font-medium text-gray-700">Select Date</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Select Date
+                  </label>
                   <Input
                     type="date"
-                    value={selectedDate.toISOString().split('T')[0]}
+                    value={selectedDate.toISOString().split("T")[0]}
                     onChange={(e) => setSelectedDate(new Date(e.target.value))}
                     className="mt-1"
                   />

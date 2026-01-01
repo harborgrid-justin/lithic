@@ -1,16 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { imagingService, ImagingStudy } from '@/services/imaging.service';
-import DicomViewer from '@/components/imaging/DicomViewer';
-import ImageThumbnails from '@/components/imaging/ImageThumbnails';
-import MeasurementTools from '@/components/imaging/MeasurementTools';
-import ImageAnnotations from '@/components/imaging/ImageAnnotations';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { imagingService, ImagingStudy } from "@/services/imaging.service";
+import DicomViewer from "@/components/imaging/DicomViewer";
+import ImageThumbnails from "@/components/imaging/ImageThumbnails";
+import MeasurementTools from "@/components/imaging/MeasurementTools";
+import ImageAnnotations from "@/components/imaging/ImageAnnotations";
+
+export const dynamic = "force-dynamic";
 
 export default function ViewerPage() {
   const searchParams = useSearchParams();
-  const studyId = searchParams.get('studyId');
+  const studyId = searchParams.get("studyId");
 
   const [study, setStudy] = useState<ImagingStudy | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,12 +32,15 @@ export default function ViewerPage() {
     try {
       const data = await imagingService.getStudy(studyId);
       setStudy(data);
-      if (data.seriesList.length > 0 && data.seriesList[0].instances.length > 0) {
+      if (
+        data.seriesList.length > 0 &&
+        data.seriesList[0].instances.length > 0
+      ) {
         setSelectedSeries(data.seriesList[0]);
         setSelectedInstance(data.seriesList[0].instances[0]);
       }
     } catch (error) {
-      console.error('Failed to load study:', error);
+      console.error("Failed to load study:", error);
     } finally {
       setLoading(false);
     }
@@ -103,11 +108,25 @@ export default function ViewerPage() {
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="font-semibold mb-2">Study Information</h3>
             <div className="space-y-1 text-sm">
-              <div><span className="text-gray-600">Patient:</span> {study.patientName}</div>
-              <div><span className="text-gray-600">MRN:</span> {study.patientMRN}</div>
-              <div><span className="text-gray-600">Study:</span> {study.studyDescription}</div>
-              <div><span className="text-gray-600">Date:</span> {new Date(study.studyDate).toLocaleDateString()}</div>
-              <div><span className="text-gray-600">Modality:</span> {study.modality}</div>
+              <div>
+                <span className="text-gray-600">Patient:</span>{" "}
+                {study.patientName}
+              </div>
+              <div>
+                <span className="text-gray-600">MRN:</span> {study.patientMRN}
+              </div>
+              <div>
+                <span className="text-gray-600">Study:</span>{" "}
+                {study.studyDescription}
+              </div>
+              <div>
+                <span className="text-gray-600">Date:</span>{" "}
+                {new Date(study.studyDate).toLocaleDateString()}
+              </div>
+              <div>
+                <span className="text-gray-600">Modality:</span>{" "}
+                {study.modality}
+              </div>
             </div>
           </div>
 
@@ -116,7 +135,9 @@ export default function ViewerPage() {
             <button
               onClick={() => setShowMeasurements(!showMeasurements)}
               className={`flex-1 px-3 py-2 rounded ${
-                showMeasurements ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+                showMeasurements
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
               Measurements
@@ -124,7 +145,9 @@ export default function ViewerPage() {
             <button
               onClick={() => setShowAnnotations(!showAnnotations)}
               className={`flex-1 px-3 py-2 rounded ${
-                showAnnotations ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+                showAnnotations
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
               Annotations

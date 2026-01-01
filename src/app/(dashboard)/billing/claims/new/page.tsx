@@ -1,37 +1,37 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import ClaimForm from '@/components/billing/ClaimForm';
-import { ArrowLeft } from 'lucide-react';
-import { Claim } from '@/types/billing';
+import { useRouter } from "next/navigation";
+import ClaimForm from "@/components/billing/ClaimForm";
+import { ArrowLeft } from "lucide-react";
+import { Claim } from "@/types/billing";
 
 export default function NewClaimPage() {
   const router = useRouter();
 
   const handleSubmit = async (data: Partial<Claim>) => {
     try {
-      const response = await fetch('/api/billing/claims', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/billing/claims", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
         const claim = await response.json();
-        alert('Claim created successfully!');
+        alert("Claim created successfully!");
         router.push(`/billing/claims/${claim.id}`);
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error || 'Failed to create claim'}`);
+        alert(`Error: ${error.error || "Failed to create claim"}`);
       }
     } catch (error) {
-      console.error('Error creating claim:', error);
-      alert('Failed to create claim');
+      console.error("Error creating claim:", error);
+      alert("Failed to create claim");
     }
   };
 
   const handleCancel = () => {
-    router.push('/billing/claims');
+    router.push("/billing/claims");
   };
 
   return (
@@ -39,7 +39,7 @@ export default function NewClaimPage() {
       {/* Header */}
       <div>
         <button
-          onClick={() => router.push('/billing/claims')}
+          onClick={() => router.push("/billing/claims")}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeft className="w-5 h-5" />

@@ -9,9 +9,9 @@ export class MRNGenerator {
   private checkDigit: boolean;
 
   constructor(
-    prefix: string = 'MRN',
+    prefix: string = "MRN",
     sequenceLength: number = 8,
-    checkDigit: boolean = true
+    checkDigit: boolean = true,
   ) {
     this.prefix = prefix;
     this.sequenceLength = sequenceLength;
@@ -24,8 +24,8 @@ export class MRNGenerator {
    */
   public async generate(): Promise<string> {
     const sequence = this.generateSequence();
-    const check = this.checkDigit ? this.calculateCheckDigit(sequence) : '';
-    return `${this.prefix}-${sequence}${check ? '-' + check : ''}`;
+    const check = this.checkDigit ? this.calculateCheckDigit(sequence) : "";
+    return `${this.prefix}-${sequence}${check ? "-" + check : ""}`;
   }
 
   /**
@@ -41,7 +41,7 @@ export class MRNGenerator {
     }
 
     if (this.checkDigit) {
-      const parts = mrn.split('-');
+      const parts = mrn.split("-");
       const sequence = parts[1];
       const providedCheck = parts[2];
       const calculatedCheck = this.calculateCheckDigit(sequence);
@@ -56,7 +56,9 @@ export class MRNGenerator {
    */
   private generateSequence(): string {
     const timestamp = Date.now().toString();
-    const random = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    const random = Math.floor(Math.random() * 1000000)
+      .toString()
+      .padStart(6, "0");
     const combined = timestamp + random;
 
     // Take last N digits
@@ -92,7 +94,7 @@ export class MRNGenerator {
    * Extract sequence from MRN
    */
   public extractSequence(mrn: string): string | null {
-    const parts = mrn.split('-');
+    const parts = mrn.split("-");
     return parts[1] || null;
   }
 }

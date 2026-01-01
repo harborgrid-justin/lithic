@@ -9,7 +9,7 @@ export interface KPICardConfig {
   unit?: string;
   trend?: {
     value: number;
-    direction: 'up' | 'down' | 'neutral';
+    direction: "up" | "down" | "neutral";
     isPositive?: boolean;
   };
   target?: number;
@@ -28,23 +28,23 @@ export class KPICard {
   }
 
   private render(): void {
-    this.container.innerHTML = '';
-    this.container.className = 'kpi-card';
+    this.container.innerHTML = "";
+    this.container.className = "kpi-card";
 
-    const card = document.createElement('div');
+    const card = document.createElement("div");
     card.style.cssText = `
       background: white;
       border-radius: 8px;
       padding: 20px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      border-left: 4px solid ${this.config.color || '#4a90e2'};
+      border-left: 4px solid ${this.config.color || "#4a90e2"};
       height: 100%;
       display: flex;
       flex-direction: column;
     `;
 
     // Header with title and icon
-    const header = document.createElement('div');
+    const header = document.createElement("div");
     header.style.cssText = `
       display: flex;
       justify-content: space-between;
@@ -52,7 +52,7 @@ export class KPICard {
       margin-bottom: 12px;
     `;
 
-    const title = document.createElement('div');
+    const title = document.createElement("div");
     title.textContent = this.config.title;
     title.style.cssText = `
       font-size: 14px;
@@ -61,7 +61,7 @@ export class KPICard {
     `;
 
     if (this.config.icon) {
-      const icon = document.createElement('div');
+      const icon = document.createElement("div");
       icon.innerHTML = this.config.icon;
       icon.style.cssText = `
         width: 32px;
@@ -69,9 +69,9 @@ export class KPICard {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: ${this.config.color || '#4a90e2'}15;
+        background: ${this.config.color || "#4a90e2"}15;
         border-radius: 6px;
-        color: ${this.config.color || '#4a90e2'};
+        color: ${this.config.color || "#4a90e2"};
       `;
       header.appendChild(icon);
     }
@@ -79,12 +79,12 @@ export class KPICard {
     header.insertBefore(title, header.firstChild);
 
     // Value
-    const valueContainer = document.createElement('div');
+    const valueContainer = document.createElement("div");
     valueContainer.style.cssText = `
       margin-bottom: 8px;
     `;
 
-    const value = document.createElement('div');
+    const value = document.createElement("div");
     value.style.cssText = `
       font-size: 32px;
       font-weight: 700;
@@ -92,12 +92,13 @@ export class KPICard {
       display: inline;
     `;
 
-    value.textContent = typeof this.config.value === 'number'
-      ? this.config.value.toLocaleString()
-      : this.config.value;
+    value.textContent =
+      typeof this.config.value === "number"
+        ? this.config.value.toLocaleString()
+        : this.config.value;
 
     if (this.config.unit) {
-      const unit = document.createElement('span');
+      const unit = document.createElement("span");
       unit.textContent = ` ${this.config.unit}`;
       unit.style.cssText = `
         font-size: 18px;
@@ -110,7 +111,7 @@ export class KPICard {
     valueContainer.appendChild(value);
 
     // Footer with trend and target
-    const footer = document.createElement('div');
+    const footer = document.createElement("div");
     footer.style.cssText = `
       display: flex;
       justify-content: space-between;
@@ -126,8 +127,8 @@ export class KPICard {
 
     // Target
     if (this.config.target !== undefined) {
-      const target = document.createElement('div');
-      target.textContent = `Target: ${this.config.target}${this.config.unit || ''}`;
+      const target = document.createElement("div");
+      target.textContent = `Target: ${this.config.target}${this.config.unit || ""}`;
       target.style.cssText = `
         font-size: 12px;
         color: #999;
@@ -144,8 +145,10 @@ export class KPICard {
     this.container.appendChild(card);
   }
 
-  private createTrendIndicator(trend: NonNullable<KPICardConfig['trend']>): HTMLElement {
-    const container = document.createElement('div');
+  private createTrendIndicator(
+    trend: NonNullable<KPICardConfig["trend"]>,
+  ): HTMLElement {
+    const container = document.createElement("div");
     container.style.cssText = `
       display: flex;
       align-items: center;
@@ -154,26 +157,26 @@ export class KPICard {
       font-weight: 600;
     `;
 
-    const arrow = document.createElement('span');
+    const arrow = document.createElement("span");
     arrow.style.cssText = `
       font-size: 16px;
     `;
 
-    let color = '#666';
-    if (trend.direction === 'up') {
-      arrow.textContent = '▲';
-      color = trend.isPositive !== false ? '#50c878' : '#e74c3c';
-    } else if (trend.direction === 'down') {
-      arrow.textContent = '▼';
-      color = trend.isPositive === true ? '#50c878' : '#e74c3c';
+    let color = "#666";
+    if (trend.direction === "up") {
+      arrow.textContent = "▲";
+      color = trend.isPositive !== false ? "#50c878" : "#e74c3c";
+    } else if (trend.direction === "down") {
+      arrow.textContent = "▼";
+      color = trend.isPositive === true ? "#50c878" : "#e74c3c";
     } else {
-      arrow.textContent = '■';
-      color = '#666';
+      arrow.textContent = "■";
+      color = "#666";
     }
 
     arrow.style.color = color;
 
-    const value = document.createElement('span');
+    const value = document.createElement("span");
     value.textContent = `${Math.abs(trend.value).toFixed(1)}%`;
     value.style.color = color;
 
@@ -188,7 +191,7 @@ export class KPICard {
     this.render();
   }
 
-  public updateTrend(trend: KPICardConfig['trend']): void {
+  public updateTrend(trend: KPICardConfig["trend"]): void {
     this.config.trend = trend;
     this.render();
   }

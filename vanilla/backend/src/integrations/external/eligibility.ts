@@ -4,28 +4,33 @@
  * Real-time insurance eligibility and benefits verification
  */
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
-import { logger } from '../../utils/logger';
+import axios, { AxiosInstance, AxiosError } from "axios";
+import { logger } from "../../utils/logger";
 
 // Coverage Level
-export type CoverageLevel = 'individual' | 'family' | 'employee' | 'spouse' | 'child';
+export type CoverageLevel =
+  | "individual"
+  | "family"
+  | "employee"
+  | "spouse"
+  | "child";
 
 // Service Type
 export type ServiceType =
-  | 'medical'
-  | 'surgical'
-  | 'consultation'
-  | 'diagnostic_xray'
-  | 'diagnostic_lab'
-  | 'radiation_therapy'
-  | 'anesthesia'
-  | 'surgical_assistance'
-  | 'emergency_services'
-  | 'preventive_care'
-  | 'pharmacy'
-  | 'vision'
-  | 'dental'
-  | 'mental_health';
+  | "medical"
+  | "surgical"
+  | "consultation"
+  | "diagnostic_xray"
+  | "diagnostic_lab"
+  | "radiation_therapy"
+  | "anesthesia"
+  | "surgical_assistance"
+  | "emergency_services"
+  | "preventive_care"
+  | "pharmacy"
+  | "vision"
+  | "dental"
+  | "mental_health";
 
 // Verification Request
 export interface VerificationRequest {
@@ -67,7 +72,7 @@ export interface VerificationResult {
   verificationId: string;
   requestDate: string;
   responseDate: string;
-  status: 'active' | 'inactive' | 'pending' | 'error';
+  status: "active" | "inactive" | "pending" | "error";
   eligible: boolean;
   coverage: {
     active: boolean;
@@ -120,13 +125,13 @@ export interface PriorAuthRequest {
   procedureCode: string;
   diagnosis: string[];
   serviceDate: string;
-  urgency: 'routine' | 'urgent' | 'emergency';
+  urgency: "routine" | "urgent" | "emergency";
   clinicalInfo?: string;
 }
 
 export interface PriorAuthResponse {
   authorizationId: string;
-  status: 'approved' | 'denied' | 'pending' | 'more_info_needed';
+  status: "approved" | "denied" | "pending" | "more_info_needed";
   authNumber?: string;
   expirationDate?: string;
   approvedUnits?: number;
@@ -152,12 +157,15 @@ export class EligibilityClient {
     this.apiKey = config.apiKey;
 
     this.client = axios.create({
-      baseURL: config.baseUrl || process.env.ELIGIBILITY_BASE_URL || 'https://api.eligibility.com/v1',
+      baseURL:
+        config.baseUrl ||
+        process.env.ELIGIBILITY_BASE_URL ||
+        "https://api.eligibility.com/v1",
       timeout: config.timeout || 30000,
       headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': this.apiKey,
-        'X-Provider-ID': this.providerId,
+        "Content-Type": "application/json",
+        "X-API-Key": this.apiKey,
+        "X-Provider-ID": this.providerId,
       },
     });
 
@@ -170,48 +178,50 @@ export class EligibilityClient {
   private setupInterceptors(): void {
     this.client.interceptors.request.use(
       (config) => {
-        logger.debug('Eligibility Request', {
+        logger.debug("Eligibility Request", {
           method: config.method?.toUpperCase(),
           url: config.url,
         });
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     this.client.interceptors.response.use(
       (response) => {
-        logger.debug('Eligibility Response', {
+        logger.debug("Eligibility Response", {
           status: response.status,
         });
         return response;
       },
       async (error: AxiosError) => {
-        logger.error('Eligibility Error', {
+        logger.error("Eligibility Error", {
           status: error.response?.status,
           message: error.message,
         });
         throw new EligibilityError(
           error.message,
           error.response?.status,
-          error.response?.data
+          error.response?.data,
         );
-      }
+      },
     );
   }
 
   /**
    * Verify insurance eligibility
    */
-  async verifyEligibility(request: VerificationRequest): Promise<VerificationResult> {
+  async verifyEligibility(
+    request: VerificationRequest,
+  ): Promise<VerificationResult> {
     try {
-      const response = await this.client.post('/verify', request);
+      const response = await this.client.post("/verify", request);
 
       const result: VerificationResult = {
         verificationId: response.data.verificationId || crypto.randomUUID(),
         requestDate: new Date().toISOString(),
         responseDate: response.data.responseDate || new Date().toISOString(),
-        status: response.data.status || 'active',
+        status: response.data.status || "active",
         eligible: response.data.eligible || false,
         coverage: response.data.coverage || {},
         benefits: response.data.benefits,
@@ -221,7 +231,7 @@ export class EligibilityClient {
         raw: response.data,
       };
 
-      logger.info('Eligibility verified', {
+      logger.info("Eligibility verified", {
         verificationId: result.verificationId,
         patientId: request.patientId,
         eligible: result.eligible,
@@ -229,7 +239,7 @@ export class EligibilityClient {
 
       return result;
     } catch (error) {
-      logger.error('Failed to verify eligibility', {
+      logger.error("Failed to verify eligibility", {
         patientId: request.patientId,
         error,
       });
@@ -240,7 +250,10 @@ export class EligibilityClient {
   /**
    * Get verification history for patient
    */
-  async getVerificationHistory(patientId: string, limit: number = 10): Promise<VerificationResult[]> {
+  async getVerificationHistory(
+    patientId: string,
+    limit: number = 10,
+  ): Promise<VerificationResult[]> {
     try {
       const response = await this.client.get(`/verify/history/${patientId}`, {
         params: { limit },
@@ -248,7 +261,7 @@ export class EligibilityClient {
 
       return response.data.verifications || [];
     } catch (error) {
-      logger.error('Failed to get verification history', { patientId, error });
+      logger.error("Failed to get verification history", { patientId, error });
       throw error;
     }
   }
@@ -262,7 +275,7 @@ export class EligibilityClient {
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get verification', { verificationId, error });
+      logger.error("Failed to get verification", { verificationId, error });
       throw error;
     }
   }
@@ -270,11 +283,13 @@ export class EligibilityClient {
   /**
    * Request prior authorization
    */
-  async requestPriorAuth(request: PriorAuthRequest): Promise<PriorAuthResponse> {
+  async requestPriorAuth(
+    request: PriorAuthRequest,
+  ): Promise<PriorAuthResponse> {
     try {
-      const response = await this.client.post('/prior-auth', request);
+      const response = await this.client.post("/prior-auth", request);
 
-      logger.info('Prior authorization requested', {
+      logger.info("Prior authorization requested", {
         authorizationId: response.data.authorizationId,
         patientId: request.patientId,
         status: response.data.status,
@@ -282,7 +297,7 @@ export class EligibilityClient {
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to request prior authorization', {
+      logger.error("Failed to request prior authorization", {
         patientId: request.patientId,
         error,
       });
@@ -293,13 +308,18 @@ export class EligibilityClient {
   /**
    * Check prior authorization status
    */
-  async getPriorAuthStatus(authorizationId: string): Promise<PriorAuthResponse> {
+  async getPriorAuthStatus(
+    authorizationId: string,
+  ): Promise<PriorAuthResponse> {
     try {
       const response = await this.client.get(`/prior-auth/${authorizationId}`);
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get prior auth status', { authorizationId, error });
+      logger.error("Failed to get prior auth status", {
+        authorizationId,
+        error,
+      });
       throw error;
     }
   }
@@ -307,18 +327,20 @@ export class EligibilityClient {
   /**
    * Batch verify eligibility
    */
-  async batchVerify(requests: VerificationRequest[]): Promise<VerificationResult[]> {
+  async batchVerify(
+    requests: VerificationRequest[],
+  ): Promise<VerificationResult[]> {
     try {
-      const response = await this.client.post('/verify/batch', { requests });
+      const response = await this.client.post("/verify/batch", { requests });
 
-      logger.info('Batch eligibility verification completed', {
+      logger.info("Batch eligibility verification completed", {
         count: requests.length,
         successful: response.data.results?.length || 0,
       });
 
       return response.data.results || [];
     } catch (error) {
-      logger.error('Failed to batch verify eligibility', { error });
+      logger.error("Failed to batch verify eligibility", { error });
       throw error;
     }
   }
@@ -326,19 +348,21 @@ export class EligibilityClient {
   /**
    * Get supported payers
    */
-  async getSupportedPayers(): Promise<Array<{
-    payerId: string;
-    payerName: string;
-    type: string;
-    states: string[];
-    realTime: boolean;
-  }>> {
+  async getSupportedPayers(): Promise<
+    Array<{
+      payerId: string;
+      payerName: string;
+      type: string;
+      states: string[];
+      realTime: boolean;
+    }>
+  > {
     try {
-      const response = await this.client.get('/payers');
+      const response = await this.client.get("/payers");
 
       return response.data.payers || [];
     } catch (error) {
-      logger.error('Failed to get supported payers', { error });
+      logger.error("Failed to get supported payers", { error });
       throw error;
     }
   }
@@ -346,19 +370,21 @@ export class EligibilityClient {
   /**
    * Search payer by name
    */
-  async searchPayer(name: string): Promise<Array<{
-    payerId: string;
-    payerName: string;
-    type: string;
-  }>> {
+  async searchPayer(name: string): Promise<
+    Array<{
+      payerId: string;
+      payerName: string;
+      type: string;
+    }>
+  > {
     try {
-      const response = await this.client.get('/payers/search', {
+      const response = await this.client.get("/payers/search", {
         params: { name },
       });
 
       return response.data.payers || [];
     } catch (error) {
-      logger.error('Failed to search payers', { error });
+      logger.error("Failed to search payers", { error });
       throw error;
     }
   }
@@ -366,7 +392,11 @@ export class EligibilityClient {
   /**
    * Get coverage summary
    */
-  async getCoverageSummary(patientId: string, memberId: string, payerId: string): Promise<{
+  async getCoverageSummary(
+    patientId: string,
+    memberId: string,
+    payerId: string,
+  ): Promise<{
     active: boolean;
     planName?: string;
     effectiveDate?: string;
@@ -375,13 +405,13 @@ export class EligibilityClient {
     outOfPocketRemaining?: number;
   }> {
     try {
-      const response = await this.client.get('/coverage/summary', {
+      const response = await this.client.get("/coverage/summary", {
         params: { patientId, memberId, payerId },
       });
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get coverage summary', { patientId, error });
+      logger.error("Failed to get coverage summary", { patientId, error });
       throw error;
     }
   }
@@ -399,14 +429,14 @@ export class EligibilityClient {
     errors?: string[];
   }> {
     try {
-      const response = await this.client.post('/validate-card', cardData);
+      const response = await this.client.post("/validate-card", cardData);
 
       return {
         valid: response.data.valid || false,
         errors: response.data.errors,
       };
     } catch (error) {
-      logger.error('Failed to validate insurance card', { error });
+      logger.error("Failed to validate insurance card", { error });
       throw error;
     }
   }
@@ -419,10 +449,10 @@ export class EligibilityError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
-    this.name = 'EligibilityError';
+    this.name = "EligibilityError";
   }
 }
 
@@ -431,7 +461,7 @@ export class EligibilityError extends Error {
  */
 export const eligibilityClient = new EligibilityClient({
   baseUrl: process.env.ELIGIBILITY_BASE_URL,
-  providerId: process.env.ELIGIBILITY_PROVIDER_ID || '',
-  apiKey: process.env.ELIGIBILITY_API_KEY || '',
-  timeout: parseInt(process.env.ELIGIBILITY_TIMEOUT || '30000', 10),
+  providerId: process.env.ELIGIBILITY_PROVIDER_ID || "",
+  apiKey: process.env.ELIGIBILITY_API_KEY || "",
+  timeout: parseInt(process.env.ELIGIBILITY_TIMEOUT || "30000", 10),
 });

@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { DuplicatePatient, PatientMergeRequest } from '@/types/patient';
-import { patientService } from '@/services/patient.service';
-import { MergePatients } from '@/components/patients/MergePatients';
-import { ArrowLeft } from 'lucide-react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { DuplicatePatient, PatientMergeRequest } from "@/types/patient";
+import { patientService } from "@/services/patient.service";
+import { MergePatients } from "@/components/patients/MergePatients";
+import { ArrowLeft } from "lucide-react";
 
 export default function MergePatientsPage() {
   const router = useRouter();
@@ -17,10 +17,10 @@ export default function MergePatientsPage() {
     try {
       setLoading(true);
       await patientService.mergePatients(request);
-      router.push('/patients/' + request.targetPatientId);
+      router.push("/patients/" + request.targetPatientId);
     } catch (error) {
-      console.error('Failed to merge patients:', error);
-      alert('Failed to merge patients. Please try again.');
+      console.error("Failed to merge patients:", error);
+      alert("Failed to merge patients. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -36,7 +36,9 @@ export default function MergePatientsPage() {
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to Patients
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">Merge Patient Records</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Merge Patient Records
+        </h1>
         <p className="text-gray-500 mt-1">
           Combine duplicate patient records into a single record
         </p>
@@ -50,7 +52,7 @@ export default function MergePatientsPage() {
         <MergePatients
           duplicates={duplicates}
           onMerge={handleMerge}
-          onCancel={() => router.push('/patients')}
+          onCancel={() => router.push("/patients")}
         />
       )}
     </div>

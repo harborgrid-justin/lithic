@@ -1,17 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { CPTCode, ICDCode } from '@/types/billing';
-import { Search, Plus, X } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import { CPTCode, ICDCode } from "@/types/billing";
+import { Search, Plus, X } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface CodingWorksheetProps {
   onCodesSelected?: (cptCodes: CPTCode[], icdCodes: ICDCode[]) => void;
 }
 
-export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProps) {
-  const [cptSearch, setCptSearch] = useState('');
-  const [icdSearch, setIcdSearch] = useState('');
+export default function CodingWorksheet({
+  onCodesSelected,
+}: CodingWorksheetProps) {
+  const [cptSearch, setCptSearch] = useState("");
+  const [icdSearch, setIcdSearch] = useState("");
   const [cptResults, setCptResults] = useState<CPTCode[]>([]);
   const [icdResults, setIcdResults] = useState<ICDCode[]>([]);
   const [selectedCPT, setSelectedCPT] = useState<CPTCode[]>([]);
@@ -23,14 +25,14 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
       const timer = setTimeout(async () => {
         try {
           const response = await fetch(
-            `/api/billing/coding?type=cpt&q=${encodeURIComponent(cptSearch)}`
+            `/api/billing/coding?type=cpt&q=${encodeURIComponent(cptSearch)}`,
           );
           if (response.ok) {
             const data = await response.json();
             setCptResults(data);
           }
         } catch (error) {
-          console.error('Error searching CPT codes:', error);
+          console.error("Error searching CPT codes:", error);
         }
       }, 300);
       return () => clearTimeout(timer);
@@ -45,14 +47,14 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
       const timer = setTimeout(async () => {
         try {
           const response = await fetch(
-            `/api/billing/coding?type=icd&q=${encodeURIComponent(icdSearch)}`
+            `/api/billing/coding?type=icd&q=${encodeURIComponent(icdSearch)}`,
           );
           if (response.ok) {
             const data = await response.json();
             setIcdResults(data);
           }
         } catch (error) {
-          console.error('Error searching ICD codes:', error);
+          console.error("Error searching ICD codes:", error);
         }
       }, 300);
       return () => clearTimeout(timer);
@@ -62,33 +64,33 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
   }, [icdSearch]);
 
   const addCPTCode = (code: CPTCode) => {
-    if (!selectedCPT.find(c => c.code === code.code)) {
+    if (!selectedCPT.find((c) => c.code === code.code)) {
       const updated = [...selectedCPT, code];
       setSelectedCPT(updated);
       onCodesSelected?.(updated, selectedICD);
     }
-    setCptSearch('');
+    setCptSearch("");
     setCptResults([]);
   };
 
   const removeCPTCode = (code: string) => {
-    const updated = selectedCPT.filter(c => c.code !== code);
+    const updated = selectedCPT.filter((c) => c.code !== code);
     setSelectedCPT(updated);
     onCodesSelected?.(updated, selectedICD);
   };
 
   const addICDCode = (code: ICDCode) => {
-    if (!selectedICD.find(c => c.code === code.code)) {
+    if (!selectedICD.find((c) => c.code === code.code)) {
       const updated = [...selectedICD, code];
       setSelectedICD(updated);
       onCodesSelected?.(selectedCPT, updated);
     }
-    setIcdSearch('');
+    setIcdSearch("");
     setIcdResults([]);
   };
 
   const removeICDCode = (code: string) => {
-    const updated = selectedICD.filter(c => c.code !== code);
+    const updated = selectedICD.filter((c) => c.code !== code);
     setSelectedICD(updated);
     onCodesSelected?.(selectedCPT, updated);
   };
@@ -97,7 +99,9 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
     <div className="space-y-6">
       {/* CPT/HCPCS Codes Section */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold mb-4">Procedure Codes (CPT/HCPCS)</h3>
+        <h3 className="text-lg font-semibold mb-4">
+          Procedure Codes (CPT/HCPCS)
+        </h3>
 
         {/* Search */}
         <div className="relative mb-4">
@@ -127,7 +131,9 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
                           {code.category}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-700 mt-1">{code.description}</p>
+                      <p className="text-sm text-gray-700 mt-1">
+                        {code.description}
+                      </p>
                     </div>
                     <span className="ml-4 font-semibold text-gray-900">
                       {formatCurrency(code.price)}
@@ -160,7 +166,9 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
                         {code.category}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700 mt-1">{code.description}</p>
+                    <p className="text-sm text-gray-700 mt-1">
+                      {code.description}
+                    </p>
                     <p className="text-sm font-semibold text-primary-900 mt-1">
                       {formatCurrency(code.price)}
                     </p>
@@ -236,7 +244,9 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
                         {code.category}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700 mt-1">{code.description}</p>
+                    <p className="text-sm text-gray-700 mt-1">
+                      {code.description}
+                    </p>
                   </div>
                   <button
                     onClick={() => removeICDCode(code.code)}
@@ -257,17 +267,21 @@ export default function CodingWorksheet({ onCodesSelected }: CodingWorksheetProp
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-500">CPT Codes Selected</p>
-              <p className="text-2xl font-bold text-gray-900">{selectedCPT.length}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {selectedCPT.length}
+              </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">ICD Codes Selected</p>
-              <p className="text-2xl font-bold text-gray-900">{selectedICD.length}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {selectedICD.length}
+              </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Total Charges</p>
               <p className="text-2xl font-bold text-primary-600">
                 {formatCurrency(
-                  selectedCPT.reduce((sum, code) => sum + code.price, 0)
+                  selectedCPT.reduce((sum, code) => sum + code.price, 0),
                 )}
               </p>
             </div>

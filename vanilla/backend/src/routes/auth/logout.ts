@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { AuthController } from '../../controllers/AuthController';
+import { Router } from "express";
+import { AuthController } from "../../controllers/AuthController";
 
 /**
  * Logout route
@@ -11,7 +11,7 @@ export function createLogoutRoute(authController: AuthController): Router {
    * POST /auth/logout
    * Logout user and invalidate session
    */
-  router.post('/', authController.logout);
+  router.post("/", authController.logout);
 
   return router;
 }

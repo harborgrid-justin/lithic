@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { registerUser } from '@/services/auth.service';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { registerUser } from "@/services/auth.service";
+import { z } from "zod";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -33,27 +33,28 @@ export async function POST(request: NextRequest) {
           lastName: user.lastName,
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Validation error',
+          error: "Validation error",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const message = error instanceof Error ? error.message : 'Registration failed';
+    const message =
+      error instanceof Error ? error.message : "Registration failed";
     return NextResponse.json(
       {
         success: false,
         error: message,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

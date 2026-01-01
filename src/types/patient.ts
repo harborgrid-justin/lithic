@@ -3,7 +3,16 @@
  * Agent 2: Patient Management
  */
 
-import type { BaseEntity, Address, Name, Gender, BloodType, Race, Ethnicity, MaritalStatus } from './index';
+import type {
+  BaseEntity,
+  Address,
+  Name,
+  Gender,
+  BloodType,
+  Race,
+  Ethnicity,
+  MaritalStatus,
+} from "./index";
 
 // ============================================================================
 // Patient Types
@@ -44,11 +53,11 @@ export interface Patient extends BaseEntity {
 }
 
 export enum PatientStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  DECEASED = 'DECEASED',
-  MERGED = 'MERGED',
-  TEST = 'TEST',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  DECEASED = "DECEASED",
+  MERGED = "MERGED",
+  TEST = "TEST",
 }
 
 export interface EmergencyContact extends BaseEntity {
@@ -91,31 +100,31 @@ export interface PatientInsurance extends BaseEntity {
 }
 
 export enum InsurancePriority {
-  PRIMARY = 'PRIMARY',
-  SECONDARY = 'SECONDARY',
-  TERTIARY = 'TERTIARY',
+  PRIMARY = "PRIMARY",
+  SECONDARY = "SECONDARY",
+  TERTIARY = "TERTIARY",
 }
 
 export enum InsuranceStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  PENDING_VERIFICATION = 'PENDING_VERIFICATION',
-  VERIFICATION_FAILED = 'VERIFICATION_FAILED',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  PENDING_VERIFICATION = "PENDING_VERIFICATION",
+  VERIFICATION_FAILED = "VERIFICATION_FAILED",
 }
 
 export enum InsurancePayer {
-  MEDICARE = 'MEDICARE',
-  MEDICAID = 'MEDICAID',
-  BLUE_CROSS_BLUE_SHIELD = 'BLUE_CROSS_BLUE_SHIELD',
-  UNITED_HEALTHCARE = 'UNITED_HEALTHCARE',
-  AETNA = 'AETNA',
-  CIGNA = 'CIGNA',
-  HUMANA = 'HUMANA',
-  ANTHEM = 'ANTHEM',
-  KAISER = 'KAISER',
-  TRICARE = 'TRICARE',
-  SELF_PAY = 'SELF_PAY',
-  OTHER = 'OTHER',
+  MEDICARE = "MEDICARE",
+  MEDICAID = "MEDICAID",
+  BLUE_CROSS_BLUE_SHIELD = "BLUE_CROSS_BLUE_SHIELD",
+  UNITED_HEALTHCARE = "UNITED_HEALTHCARE",
+  AETNA = "AETNA",
+  CIGNA = "CIGNA",
+  HUMANA = "HUMANA",
+  ANTHEM = "ANTHEM",
+  KAISER = "KAISER",
+  TRICARE = "TRICARE",
+  SELF_PAY = "SELF_PAY",
+  OTHER = "OTHER",
 }
 
 export interface Allergy extends BaseEntity {
@@ -132,23 +141,23 @@ export interface Allergy extends BaseEntity {
 }
 
 export enum AllergenType {
-  MEDICATION = 'MEDICATION',
-  FOOD = 'FOOD',
-  ENVIRONMENTAL = 'ENVIRONMENTAL',
-  OTHER = 'OTHER',
+  MEDICATION = "MEDICATION",
+  FOOD = "FOOD",
+  ENVIRONMENTAL = "ENVIRONMENTAL",
+  OTHER = "OTHER",
 }
 
 export enum AllergySeverity {
-  MILD = 'MILD',
-  MODERATE = 'MODERATE',
-  SEVERE = 'SEVERE',
-  LIFE_THREATENING = 'LIFE_THREATENING',
+  MILD = "MILD",
+  MODERATE = "MODERATE",
+  SEVERE = "SEVERE",
+  LIFE_THREATENING = "LIFE_THREATENING",
 }
 
 export enum AllergyStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  RESOLVED = 'RESOLVED',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  RESOLVED = "RESOLVED",
 }
 
 export interface Immunization extends BaseEntity {
@@ -201,55 +210,55 @@ export interface SocialHistory extends BaseEntity {
 }
 
 export enum SmokingStatus {
-  NEVER_SMOKER = 'NEVER_SMOKER',
-  CURRENT_SMOKER = 'CURRENT_SMOKER',
-  FORMER_SMOKER = 'FORMER_SMOKER',
-  UNKNOWN = 'UNKNOWN',
+  NEVER_SMOKER = "NEVER_SMOKER",
+  CURRENT_SMOKER = "CURRENT_SMOKER",
+  FORMER_SMOKER = "FORMER_SMOKER",
+  UNKNOWN = "UNKNOWN",
 }
 
 export enum AlcoholUse {
-  NONE = 'NONE',
-  OCCASIONAL = 'OCCASIONAL',
-  MODERATE = 'MODERATE',
-  HEAVY = 'HEAVY',
-  UNKNOWN = 'UNKNOWN',
+  NONE = "NONE",
+  OCCASIONAL = "OCCASIONAL",
+  MODERATE = "MODERATE",
+  HEAVY = "HEAVY",
+  UNKNOWN = "UNKNOWN",
 }
 
 export enum SubstanceUse {
-  NONE = 'NONE',
-  PAST = 'PAST',
-  CURRENT = 'CURRENT',
-  UNKNOWN = 'UNKNOWN',
+  NONE = "NONE",
+  PAST = "PAST",
+  CURRENT = "CURRENT",
+  UNKNOWN = "UNKNOWN",
 }
 
 export enum EducationLevel {
-  LESS_THAN_HIGH_SCHOOL = 'LESS_THAN_HIGH_SCHOOL',
-  HIGH_SCHOOL = 'HIGH_SCHOOL',
-  SOME_COLLEGE = 'SOME_COLLEGE',
-  ASSOCIATES = 'ASSOCIATES',
-  BACHELORS = 'BACHELORS',
-  MASTERS = 'MASTERS',
-  DOCTORATE = 'DOCTORATE',
-  UNKNOWN = 'UNKNOWN',
+  LESS_THAN_HIGH_SCHOOL = "LESS_THAN_HIGH_SCHOOL",
+  HIGH_SCHOOL = "HIGH_SCHOOL",
+  SOME_COLLEGE = "SOME_COLLEGE",
+  ASSOCIATES = "ASSOCIATES",
+  BACHELORS = "BACHELORS",
+  MASTERS = "MASTERS",
+  DOCTORATE = "DOCTORATE",
+  UNKNOWN = "UNKNOWN",
 }
 
 export enum LivingArrangement {
-  ALONE = 'ALONE',
-  WITH_FAMILY = 'WITH_FAMILY',
-  WITH_OTHERS = 'WITH_OTHERS',
-  ASSISTED_LIVING = 'ASSISTED_LIVING',
-  NURSING_HOME = 'NURSING_HOME',
-  HOMELESS = 'HOMELESS',
-  UNKNOWN = 'UNKNOWN',
+  ALONE = "ALONE",
+  WITH_FAMILY = "WITH_FAMILY",
+  WITH_OTHERS = "WITH_OTHERS",
+  ASSISTED_LIVING = "ASSISTED_LIVING",
+  NURSING_HOME = "NURSING_HOME",
+  HOMELESS = "HOMELESS",
+  UNKNOWN = "UNKNOWN",
 }
 
 export enum ExerciseFrequency {
-  NONE = 'NONE',
-  LESS_THAN_ONCE_WEEK = 'LESS_THAN_ONCE_WEEK',
-  ONE_TWO_TIMES_WEEK = 'ONE_TWO_TIMES_WEEK',
-  THREE_FOUR_TIMES_WEEK = 'THREE_FOUR_TIMES_WEEK',
-  FIVE_PLUS_TIMES_WEEK = 'FIVE_PLUS_TIMES_WEEK',
-  UNKNOWN = 'UNKNOWN',
+  NONE = "NONE",
+  LESS_THAN_ONCE_WEEK = "LESS_THAN_ONCE_WEEK",
+  ONE_TWO_TIMES_WEEK = "ONE_TWO_TIMES_WEEK",
+  THREE_FOUR_TIMES_WEEK = "THREE_FOUR_TIMES_WEEK",
+  FIVE_PLUS_TIMES_WEEK = "FIVE_PLUS_TIMES_WEEK",
+  UNKNOWN = "UNKNOWN",
 }
 
 export interface AdvanceDirective extends BaseEntity {
@@ -265,13 +274,13 @@ export interface AdvanceDirective extends BaseEntity {
 }
 
 export enum AdvanceDirectiveType {
-  LIVING_WILL = 'LIVING_WILL',
-  DNR = 'DNR',
-  DNI = 'DNI',
-  HEALTHCARE_PROXY = 'HEALTHCARE_PROXY',
-  POWER_OF_ATTORNEY = 'POWER_OF_ATTORNEY',
-  ORGAN_DONATION = 'ORGAN_DONATION',
-  POLST = 'POLST',
+  LIVING_WILL = "LIVING_WILL",
+  DNR = "DNR",
+  DNI = "DNI",
+  HEALTHCARE_PROXY = "HEALTHCARE_PROXY",
+  POWER_OF_ATTORNEY = "POWER_OF_ATTORNEY",
+  ORGAN_DONATION = "ORGAN_DONATION",
+  POLST = "POLST",
 }
 
 export interface PatientDocument extends BaseEntity {
@@ -291,15 +300,15 @@ export interface PatientDocument extends BaseEntity {
 }
 
 export enum DocumentType {
-  MEDICAL_RECORD = 'MEDICAL_RECORD',
-  LAB_RESULT = 'LAB_RESULT',
-  IMAGING_REPORT = 'IMAGING_REPORT',
-  CONSENT_FORM = 'CONSENT_FORM',
-  INSURANCE_CARD = 'INSURANCE_CARD',
-  ID_DOCUMENT = 'ID_DOCUMENT',
-  REFERRAL = 'REFERRAL',
-  ADVANCE_DIRECTIVE = 'ADVANCE_DIRECTIVE',
-  OTHER = 'OTHER',
+  MEDICAL_RECORD = "MEDICAL_RECORD",
+  LAB_RESULT = "LAB_RESULT",
+  IMAGING_REPORT = "IMAGING_REPORT",
+  CONSENT_FORM = "CONSENT_FORM",
+  INSURANCE_CARD = "INSURANCE_CARD",
+  ID_DOCUMENT = "ID_DOCUMENT",
+  REFERRAL = "REFERRAL",
+  ADVANCE_DIRECTIVE = "ADVANCE_DIRECTIVE",
+  OTHER = "OTHER",
 }
 
 // ============================================================================
@@ -321,10 +330,10 @@ export interface PatientPortalUser extends BaseEntity {
 }
 
 export enum PortalUserStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  LOCKED = 'LOCKED',
-  PENDING_ACTIVATION = 'PENDING_ACTIVATION',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  LOCKED = "LOCKED",
+  PENDING_ACTIVATION = "PENDING_ACTIVATION",
 }
 
 export interface PortalPreferences {

@@ -2,10 +2,10 @@
  * PatientDetailPage - Patient detail view
  */
 
-import { PatientCard } from '../../components/patients/PatientCard';
-import { PatientTimeline } from '../../components/patients/PatientTimeline';
-import PatientService from '../../services/PatientService';
-import { Patient } from '../../types/Patient';
+import { PatientCard } from "../../components/patients/PatientCard";
+import { PatientTimeline } from "../../components/patients/PatientTimeline";
+import PatientService from "../../services/PatientService";
+import { Patient } from "../../types/Patient";
 
 export class PatientDetailPage {
   private patientId: string;
@@ -16,8 +16,8 @@ export class PatientDetailPage {
   constructor(patientId: string) {
     this.patientId = patientId;
     this.initializePage();
-    this.patientCard = new PatientCard('patientCardContainer');
-    this.patientTimeline = new PatientTimeline('timelineContainer', patientId);
+    this.patientCard = new PatientCard("patientCardContainer");
+    this.patientTimeline = new PatientTimeline("timelineContainer", patientId);
     this.loadPatient();
   }
 
@@ -71,41 +71,41 @@ export class PatientDetailPage {
    * Attach page-level event listeners
    */
   private attachPageEventListeners(): void {
-    const backBtn = document.getElementById('backBtn');
-    const editBtn = document.getElementById('editBtn');
-    const mergeBtn = document.getElementById('mergeBtn');
-    const deleteBtn = document.getElementById('deleteBtn');
+    const backBtn = document.getElementById("backBtn");
+    const editBtn = document.getElementById("editBtn");
+    const mergeBtn = document.getElementById("mergeBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
 
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        window.location.href = '/patients';
+      backBtn.addEventListener("click", () => {
+        window.location.href = "/patients";
       });
     }
 
     if (editBtn) {
-      editBtn.addEventListener('click', () => {
+      editBtn.addEventListener("click", () => {
         window.location.href = `/patients/${this.patientId}/edit`;
       });
     }
 
     if (mergeBtn) {
-      mergeBtn.addEventListener('click', () => {
+      mergeBtn.addEventListener("click", () => {
         window.location.href = `/patients/${this.patientId}/merge`;
       });
     }
 
     if (deleteBtn) {
-      deleteBtn.addEventListener('click', async () => {
+      deleteBtn.addEventListener("click", async () => {
         await this.handleDelete();
       });
     }
 
     // Tab buttons
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
+    const tabButtons = document.querySelectorAll(".tab-button");
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
         const target = e.target as HTMLElement;
-        const tab = target.getAttribute('data-tab');
+        const tab = target.getAttribute("data-tab");
         if (tab) {
           this.switchTab(tab);
         }
@@ -126,20 +126,20 @@ export class PatientDetailPage {
         this.patientTimeline.load();
 
         // Update page title
-        const nameEl = document.getElementById('patientName');
+        const nameEl = document.getElementById("patientName");
         if (nameEl) {
           nameEl.textContent = `${this.patient.firstName} ${this.patient.lastName}`;
         }
 
         // Load default tab
-        this.switchTab('demographics');
+        this.switchTab("demographics");
       } else {
-        throw new Error(response.error || 'Patient not found');
+        throw new Error(response.error || "Patient not found");
       }
     } catch (error) {
-      console.error('Failed to load patient:', error);
-      alert('Failed to load patient. Please try again.');
-      window.location.href = '/patients';
+      console.error("Failed to load patient:", error);
+      alert("Failed to load patient. Please try again.");
+      window.location.href = "/patients";
     }
   }
 
@@ -148,29 +148,29 @@ export class PatientDetailPage {
    */
   private switchTab(tab: string): void {
     // Update active tab button
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => {
-      button.classList.remove('active');
-      if (button.getAttribute('data-tab') === tab) {
-        button.classList.add('active');
+    const tabButtons = document.querySelectorAll(".tab-button");
+    tabButtons.forEach((button) => {
+      button.classList.remove("active");
+      if (button.getAttribute("data-tab") === tab) {
+        button.classList.add("active");
       }
     });
 
     // Load tab content
-    const tabPanel = document.getElementById('tabPanel');
+    const tabPanel = document.getElementById("tabPanel");
     if (!tabPanel) return;
 
     switch (tab) {
-      case 'demographics':
+      case "demographics":
         window.location.href = `/patients/${this.patientId}/demographics`;
         break;
-      case 'insurance':
+      case "insurance":
         window.location.href = `/patients/${this.patientId}/insurance`;
         break;
-      case 'documents':
+      case "documents":
         window.location.href = `/patients/${this.patientId}/documents`;
         break;
-      case 'history':
+      case "history":
         window.location.href = `/patients/${this.patientId}/history`;
         break;
     }
@@ -183,7 +183,7 @@ export class PatientDetailPage {
     if (!this.patient) return;
 
     const confirmed = confirm(
-      `Are you sure you want to delete patient ${this.patient.firstName} ${this.patient.lastName}? This will mark the patient as inactive.`
+      `Are you sure you want to delete patient ${this.patient.firstName} ${this.patient.lastName}? This will mark the patient as inactive.`,
     );
 
     if (!confirmed) return;
@@ -192,21 +192,21 @@ export class PatientDetailPage {
       const response = await PatientService.deletePatient(this.patientId);
 
       if (response.success) {
-        alert('Patient deleted successfully');
-        window.location.href = '/patients';
+        alert("Patient deleted successfully");
+        window.location.href = "/patients";
       } else {
-        throw new Error(response.error || 'Delete failed');
+        throw new Error(response.error || "Delete failed");
       }
     } catch (error) {
-      console.error('Failed to delete patient:', error);
-      alert('Failed to delete patient. Please try again.');
+      console.error("Failed to delete patient:", error);
+      alert("Failed to delete patient. Please try again.");
     }
   }
 }
 
 // Initialize page (get patient ID from URL)
-document.addEventListener('DOMContentLoaded', () => {
-  const pathParts = window.location.pathname.split('/');
+document.addEventListener("DOMContentLoaded", () => {
+  const pathParts = window.location.pathname.split("/");
   const patientId = pathParts[2];
 
   if (patientId) {

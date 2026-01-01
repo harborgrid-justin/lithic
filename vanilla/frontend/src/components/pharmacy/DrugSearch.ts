@@ -3,13 +3,18 @@
  * Drug search component with NDC code lookup
  */
 
-import pharmacyService, { type Medication } from '../../services/PharmacyService';
+import pharmacyService, {
+  type Medication,
+} from "../../services/PharmacyService";
 
 export class DrugSearch {
   private container: HTMLElement;
   private onSelect?: (medication: Medication) => void;
 
-  constructor(container: HTMLElement, onSelect?: (medication: Medication) => void) {
+  constructor(
+    container: HTMLElement,
+    onSelect?: (medication: Medication) => void,
+  ) {
     this.container = container;
     this.onSelect = onSelect;
   }
@@ -29,32 +34,40 @@ export class DrugSearch {
       </style>
     `;
 
-    const input = this.container.querySelector('.search-input') as HTMLInputElement;
-    const results = this.container.querySelector('.search-results') as HTMLElement;
+    const input = this.container.querySelector(
+      ".search-input",
+    ) as HTMLInputElement;
+    const results = this.container.querySelector(
+      ".search-results",
+    ) as HTMLElement;
 
-    input.addEventListener('input', async (e) => {
+    input.addEventListener("input", async (e) => {
       const query = (e.target as HTMLInputElement).value;
       if (query.length < 2) {
-        results.style.display = 'none';
+        results.style.display = "none";
         return;
       }
 
       const medications = await pharmacyService.searchMedications(query);
-      results.innerHTML = medications.map(med => `
+      results.innerHTML = medications
+        .map(
+          (med) => `
         <div class="search-result-item" data-id="${med.id}">
           <div><strong>${med.name}</strong></div>
           <div style="font-size: 12px; color: #666;">NDC: ${med.ndcCode} | ${med.strength}</div>
         </div>
-      `).join('');
-      results.style.display = 'block';
+      `,
+        )
+        .join("");
+      results.style.display = "block";
 
-      results.querySelectorAll('.search-result-item').forEach(item => {
-        item.addEventListener('click', () => {
+      results.querySelectorAll(".search-result-item").forEach((item) => {
+        item.addEventListener("click", () => {
           const id = (item as HTMLElement).dataset.id!;
-          const med = medications.find(m => m.id === id);
+          const med = medications.find((m) => m.id === id);
           if (med && this.onSelect) {
             this.onSelect(med);
-            results.style.display = 'none';
+            results.style.display = "none";
             input.value = med.name;
           }
         });

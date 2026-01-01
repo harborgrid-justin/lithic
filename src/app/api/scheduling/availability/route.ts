@@ -1,18 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { addDays, format } from 'date-fns';
+import { NextRequest, NextResponse } from "next/server";
+import { addDays, format } from "date-fns";
+
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const providerId = searchParams.get('providerId');
-    const resourceId = searchParams.get('resourceId');
-    const date = searchParams.get('date');
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
-    const duration = parseInt(searchParams.get('duration') || '30');
+    const providerId = searchParams.get("providerId");
+    const resourceId = searchParams.get("resourceId");
+    const date = searchParams.get("date");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    const duration = parseInt(searchParams.get("duration") || "30");
 
     if (!date && (!startDate || !endDate)) {
-      return NextResponse.json({ error: 'Date or date range required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Date or date range required" },
+        { status: 400 },
+      );
     }
 
     // Mock availability data - replace with actual database queries
@@ -49,7 +55,7 @@ export async function GET(request: NextRequest) {
 
       let currentDate = start;
       while (currentDate <= end) {
-        const dateKey = format(currentDate, 'yyyy-MM-dd');
+        const dateKey = format(currentDate, "yyyy-MM-dd");
         slotsRange[dateKey] = generateSlots(dateKey);
         currentDate = addDays(currentDate, 1);
       }
@@ -59,7 +65,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({});
   } catch (error) {
-    console.error('Error fetching availability:', error);
-    return NextResponse.json({ error: 'Failed to fetch availability' }, { status: 500 });
+    console.error("Error fetching availability:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch availability" },
+      { status: 500 },
+    );
   }
 }

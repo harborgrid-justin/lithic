@@ -1,7 +1,7 @@
 // Rich Text Note Editor Component - Vanilla TypeScript
 export class NoteEditor {
   private container: HTMLElement;
-  private content: string = '';
+  private content: string = "";
   private onChange?: (content: string) => void;
 
   constructor(containerId: string, onChange?: (content: string) => void) {
@@ -54,20 +54,22 @@ export class NoteEditor {
   }
 
   private attachEventListeners(): void {
-    const toolbar = this.container.querySelector('.editor-toolbar');
-    toolbar?.addEventListener('click', (e) => {
+    const toolbar = this.container.querySelector(".editor-toolbar");
+    toolbar?.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
-      const button = target.closest('.toolbar-btn') as HTMLElement;
+      const button = target.closest(".toolbar-btn") as HTMLElement;
       if (button) {
-        const command = button.getAttribute('data-command');
+        const command = button.getAttribute("data-command");
         if (command) {
           this.executeCommand(command);
         }
       }
     });
 
-    const editorContent = this.container.querySelector('#editor-content') as HTMLElement;
-    editorContent?.addEventListener('input', () => {
+    const editorContent = this.container.querySelector(
+      "#editor-content",
+    ) as HTMLElement;
+    editorContent?.addEventListener("input", () => {
       this.content = editorContent.innerHTML;
       if (this.onChange) {
         this.onChange(this.content);
@@ -77,13 +79,17 @@ export class NoteEditor {
 
   private executeCommand(command: string): void {
     document.execCommand(command, false);
-    const editorContent = this.container.querySelector('#editor-content') as HTMLElement;
+    const editorContent = this.container.querySelector(
+      "#editor-content",
+    ) as HTMLElement;
     editorContent?.focus();
   }
 
   setContent(content: string): void {
     this.content = content;
-    const editorContent = this.container.querySelector('#editor-content') as HTMLElement;
+    const editorContent = this.container.querySelector(
+      "#editor-content",
+    ) as HTMLElement;
     if (editorContent) {
       editorContent.innerHTML = content;
     }
@@ -94,23 +100,27 @@ export class NoteEditor {
   }
 
   clear(): void {
-    this.setContent('');
+    this.setContent("");
   }
 
   setReadOnly(readOnly: boolean): void {
-    const editorContent = this.container.querySelector('#editor-content') as HTMLElement;
+    const editorContent = this.container.querySelector(
+      "#editor-content",
+    ) as HTMLElement;
     if (editorContent) {
-      editorContent.contentEditable = readOnly ? 'false' : 'true';
+      editorContent.contentEditable = readOnly ? "false" : "true";
     }
 
-    const toolbar = this.container.querySelector('.editor-toolbar') as HTMLElement;
+    const toolbar = this.container.querySelector(
+      ".editor-toolbar",
+    ) as HTMLElement;
     if (toolbar) {
-      toolbar.style.display = readOnly ? 'none' : 'flex';
+      toolbar.style.display = readOnly ? "none" : "flex";
     }
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

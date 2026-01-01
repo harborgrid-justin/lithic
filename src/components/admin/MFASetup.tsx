@@ -1,21 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, CheckCircle, Copy } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Shield, CheckCircle, Copy } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function MFASetup() {
   const [mfaStatus, setMfaStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [qrCode, setQrCode] = useState<string>('');
+  const [qrCode, setQrCode] = useState<string>("");
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [step, setStep] = useState<'status' | 'setup' | 'verify'>('status');
+  const [verificationCode, setVerificationCode] = useState("");
+  const [step, setStep] = useState<"status" | "setup" | "verify">("status");
 
   useEffect(() => {
     fetchMFAStatus();
@@ -24,14 +30,14 @@ export default function MFASetup() {
   const fetchMFAStatus = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/auth/mfa');
+      const response = await fetch("/api/auth/mfa");
       const data = await response.json();
 
       if (data.success) {
         setMfaStatus(data.data);
       }
     } catch (error) {
-      console.error('Failed to fetch MFA status:', error);
+      console.error("Failed to fetch MFA status:", error);
     } finally {
       setLoading(false);
     }
@@ -39,76 +45,76 @@ export default function MFASetup() {
 
   const generateMFA = async () => {
     try {
-      const response = await fetch('/api/auth/mfa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'generate' }),
+      const response = await fetch("/api/auth/mfa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate" }),
       });
       const data = await response.json();
 
       if (data.success) {
         setQrCode(data.data.qrCode);
         setBackupCodes(data.data.backupCodes);
-        setStep('setup');
+        setStep("setup");
       } else {
-        toast.error(data.error || 'Failed to generate MFA secret');
+        toast.error(data.error || "Failed to generate MFA secret");
       }
     } catch (error) {
-      toast.error('Failed to generate MFA secret');
+      toast.error("Failed to generate MFA secret");
     }
   };
 
   const enableMFA = async () => {
     if (!verificationCode) {
-      toast.error('Please enter verification code');
+      toast.error("Please enter verification code");
       return;
     }
 
     try {
-      const response = await fetch('/api/auth/mfa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'enable', code: verificationCode }),
+      const response = await fetch("/api/auth/mfa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "enable", code: verificationCode }),
       });
       const data = await response.json();
 
       if (data.success) {
-        toast.success('MFA enabled successfully');
-        setStep('status');
+        toast.success("MFA enabled successfully");
+        setStep("status");
         fetchMFAStatus();
       } else {
-        toast.error(data.error || 'Invalid verification code');
+        toast.error(data.error || "Invalid verification code");
       }
     } catch (error) {
-      toast.error('Failed to enable MFA');
+      toast.error("Failed to enable MFA");
     }
   };
 
   const disableMFA = async () => {
-    if (!confirm('Are you sure you want to disable MFA?')) return;
+    if (!confirm("Are you sure you want to disable MFA?")) return;
 
     try {
-      const response = await fetch('/api/auth/mfa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'disable' }),
+      const response = await fetch("/api/auth/mfa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "disable" }),
       });
       const data = await response.json();
 
       if (data.success) {
-        toast.success('MFA disabled successfully');
+        toast.success("MFA disabled successfully");
         fetchMFAStatus();
       } else {
-        toast.error(data.error || 'Failed to disable MFA');
+        toast.error(data.error || "Failed to disable MFA");
       }
     } catch (error) {
-      toast.error('Failed to disable MFA');
+      toast.error("Failed to disable MFA");
     }
   };
 
   const copyBackupCodes = () => {
-    navigator.clipboard.writeText(backupCodes.join('\n'));
-    toast.success('Backup codes copied to clipboard');
+    navigator.clipboard.writeText(backupCodes.join("\n"));
+    toast.success("Backup codes copied to clipboard");
   };
 
   if (loading) {
@@ -117,7 +123,7 @@ export default function MFASetup() {
 
   return (
     <div className="space-y-6">
-      {step === 'status' && (
+      {step === "status" && (
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -138,8 +144,8 @@ export default function MFASetup() {
                 <Alert>
                   <Shield className="h-4 w-4" />
                   <AlertDescription>
-                    MFA is currently enabled. You have {mfaStatus.backupCodesRemaining} backup
-                    codes remaining.
+                    MFA is currently enabled. You have{" "}
+                    {mfaStatus.backupCodesRemaining} backup codes remaining.
                   </AlertDescription>
                 </Alert>
                 <div className="flex gap-2">
@@ -152,7 +158,8 @@ export default function MFASetup() {
             ) : (
               <>
                 <p className="text-sm text-muted-foreground">
-                  MFA is not enabled. Enable it to protect your account with TOTP authentication.
+                  MFA is not enabled. Enable it to protect your account with
+                  TOTP authentication.
                 </p>
                 <Button onClick={generateMFA}>
                   <Shield className="h-4 w-4 mr-2" />
@@ -164,11 +171,13 @@ export default function MFASetup() {
         </Card>
       )}
 
-      {step === 'setup' && (
+      {step === "setup" && (
         <Card>
           <CardHeader>
             <CardTitle>Set Up MFA</CardTitle>
-            <CardDescription>Scan the QR code with your authenticator app</CardDescription>
+            <CardDescription>
+              Scan the QR code with your authenticator app
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-center p-4 bg-white rounded-lg">
@@ -179,8 +188,8 @@ export default function MFASetup() {
               <AlertDescription>
                 <strong>Backup Codes</strong>
                 <p className="text-sm mt-2">
-                  Save these codes in a safe place. You can use them to access your account if you
-                  lose your authenticator device.
+                  Save these codes in a safe place. You can use them to access
+                  your account if you lose your authenticator device.
                 </p>
                 <div className="grid grid-cols-2 gap-2 mt-3 font-mono text-sm">
                   {backupCodes.map((code, index) => (
@@ -189,7 +198,12 @@ export default function MFASetup() {
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" size="sm" onClick={copyBackupCodes} className="mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={copyBackupCodes}
+                  className="mt-3"
+                >
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Codes
                 </Button>
@@ -208,7 +222,7 @@ export default function MFASetup() {
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={() => setStep('status')} variant="outline">
+              <Button onClick={() => setStep("status")} variant="outline">
                 Cancel
               </Button>
               <Button onClick={enableMFA}>Verify and Enable</Button>

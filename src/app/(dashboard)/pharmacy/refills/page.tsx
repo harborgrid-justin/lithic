@@ -3,17 +3,20 @@
  * Manage prescription refill requests and processing
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { prescriptionService, type RefillRequest } from '@/services/prescription.service';
-import { RefillManager } from '@/components/pharmacy/RefillManager';
+import { useEffect, useState } from "react";
+import {
+  prescriptionService,
+  type RefillRequest,
+} from "@/services/prescription.service";
+import { RefillManager } from "@/components/pharmacy/RefillManager";
 
 export default function RefillsPage() {
   const [refillRequests, setRefillRequests] = useState<RefillRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({
-    status: 'pending',
+    status: "pending",
   });
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function RefillsPage() {
       });
       setRefillRequests(data);
     } catch (error) {
-      console.error('Failed to load refill requests:', error);
+      console.error("Failed to load refill requests:", error);
     } finally {
       setLoading(false);
     }
@@ -36,13 +39,13 @@ export default function RefillsPage() {
 
   const handleProcessRefill = async (
     id: string,
-    action: 'approve' | 'deny',
+    action: "approve" | "deny",
     notes?: string,
-    denialReason?: string
+    denialReason?: string,
   ) => {
     try {
       await prescriptionService.processRefillRequest(id, action, {
-        processedBy: 'Current Pharmacist', // Would come from auth context
+        processedBy: "Current Pharmacist", // Would come from auth context
         notes,
         denialReason,
       });
@@ -56,11 +59,11 @@ export default function RefillsPage() {
 
   const stats = {
     total: refillRequests.length,
-    pending: refillRequests.filter(r => r.status === 'pending').length,
-    approved: refillRequests.filter(r => r.status === 'approved').length,
-    denied: refillRequests.filter(r => r.status === 'denied').length,
-    processing: refillRequests.filter(r => r.status === 'processing').length,
-    completed: refillRequests.filter(r => r.status === 'completed').length,
+    pending: refillRequests.filter((r) => r.status === "pending").length,
+    approved: refillRequests.filter((r) => r.status === "approved").length,
+    denied: refillRequests.filter((r) => r.status === "denied").length,
+    processing: refillRequests.filter((r) => r.status === "processing").length,
+    completed: refillRequests.filter((r) => r.status === "completed").length,
   };
 
   return (
@@ -68,8 +71,12 @@ export default function RefillsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Refill Requests</h1>
-            <p className="text-gray-600">Process and manage prescription refill requests</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Refill Requests
+            </h1>
+            <p className="text-gray-600">
+              Process and manage prescription refill requests
+            </p>
           </div>
           <button
             onClick={loadRefillRequests}
@@ -83,27 +90,39 @@ export default function RefillsPage() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="text-xs text-gray-600 mb-1">Total</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.total}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-yellow-200 p-4">
             <div className="text-xs text-gray-600 mb-1">Pending</div>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {stats.pending}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-blue-200 p-4">
             <div className="text-xs text-gray-600 mb-1">Processing</div>
-            <div className="text-2xl font-bold text-blue-600">{stats.processing}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {stats.processing}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-green-200 p-4">
             <div className="text-xs text-gray-600 mb-1">Approved</div>
-            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.approved}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-red-200 p-4">
             <div className="text-xs text-gray-600 mb-1">Denied</div>
-            <div className="text-2xl font-bold text-red-600">{stats.denied}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {stats.denied}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-purple-200 p-4">
             <div className="text-xs text-gray-600 mb-1">Completed</div>
-            <div className="text-2xl font-bold text-purple-600">{stats.completed}</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {stats.completed}
+            </div>
           </div>
         </div>
       </div>
@@ -132,7 +151,7 @@ export default function RefillsPage() {
 
           <div className="flex items-end">
             <button
-              onClick={() => setFilter({ status: '' })}
+              onClick={() => setFilter({ status: "" })}
               className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
               Clear Filters

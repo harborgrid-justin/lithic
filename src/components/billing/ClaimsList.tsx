@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Claim, ClaimStatus } from '@/types/billing';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { getClaimStatusColor } from '@/lib/billing-utils';
-import { Search, Filter, Eye } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { Claim, ClaimStatus } from "@/types/billing";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { getClaimStatusColor } from "@/lib/billing-utils";
+import { Search, Filter, Eye } from "lucide-react";
+import Link from "next/link";
 
 interface ClaimsListProps {
   claims: Claim[];
@@ -13,15 +13,16 @@ interface ClaimsListProps {
 }
 
 export default function ClaimsList({ claims, onClaimSelect }: ClaimsListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<ClaimStatus | 'all'>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<ClaimStatus | "all">("all");
 
-  const filteredClaims = claims.filter(claim => {
+  const filteredClaims = claims.filter((claim) => {
     const matchesSearch =
       claim.claimNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       claim.patientName.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || claim.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || claim.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -42,7 +43,9 @@ export default function ClaimsList({ claims, onClaimSelect }: ClaimsListProps) {
         </div>
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as ClaimStatus | 'all')}
+          onChange={(e) =>
+            setStatusFilter(e.target.value as ClaimStatus | "all")
+          }
           className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           <option value="all">All Statuses</option>
@@ -121,8 +124,10 @@ export default function ClaimsList({ claims, onClaimSelect }: ClaimsListProps) {
                     {formatCurrency(claim.paidAmount || 0)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getClaimStatusColor(claim.status)}`}>
-                      {claim.status.replace('_', ' ').toUpperCase()}
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${getClaimStatusColor(claim.status)}`}
+                    >
+                      {claim.status.replace("_", " ").toUpperCase()}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -146,25 +151,34 @@ export default function ClaimsList({ claims, onClaimSelect }: ClaimsListProps) {
         <div className="grid grid-cols-4 gap-4">
           <div>
             <p className="text-sm text-gray-500">Total Claims</p>
-            <p className="text-2xl font-bold text-gray-900">{filteredClaims.length}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {filteredClaims.length}
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Total Charged</p>
             <p className="text-2xl font-bold text-gray-900">
-              {formatCurrency(filteredClaims.reduce((sum, c) => sum + c.totalAmount, 0))}
+              {formatCurrency(
+                filteredClaims.reduce((sum, c) => sum + c.totalAmount, 0),
+              )}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Total Paid</p>
             <p className="text-2xl font-bold text-green-600">
-              {formatCurrency(filteredClaims.reduce((sum, c) => sum + (c.paidAmount || 0), 0))}
+              {formatCurrency(
+                filteredClaims.reduce((sum, c) => sum + (c.paidAmount || 0), 0),
+              )}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Outstanding</p>
             <p className="text-2xl font-bold text-orange-600">
               {formatCurrency(
-                filteredClaims.reduce((sum, c) => sum + c.totalAmount - (c.paidAmount || 0), 0)
+                filteredClaims.reduce(
+                  (sum, c) => sum + c.totalAmount - (c.paidAmount || 0),
+                  0,
+                ),
               )}
             </p>
           </div>

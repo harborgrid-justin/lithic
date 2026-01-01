@@ -3,13 +3,13 @@
  * Lithic Healthcare Platform
  */
 
-import express, { Application, Request, Response, NextFunction } from 'express';
-import cors from 'cors';
-import patientsRouter from './routes/patients';
-import patientsSearchRouter from './routes/patients.search';
-import patientsMergeRouter from './routes/patients.merge';
-import patientsDocumentsRouter from './routes/patients.documents';
-import patientsInsuranceRouter from './routes/patients.insurance';
+import express, { Application, Request, Response, NextFunction } from "express";
+import cors from "cors";
+import patientsRouter from "./routes/patients";
+import patientsSearchRouter from "./routes/patients.search";
+import patientsMergeRouter from "./routes/patients.merge";
+import patientsDocumentsRouter from "./routes/patients.documents";
+import patientsInsuranceRouter from "./routes/patients.insurance";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
@@ -28,31 +28,31 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Mock authentication middleware (replace with real auth in production)
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.user = {
-    id: 'user-123',
-    name: 'Test User',
-    role: 'doctor',
+    id: "user-123",
+    name: "Test User",
+    role: "doctor",
   };
   next();
 });
 
 // Health check
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+app.get("/health", (req: Request, res: Response) => {
+  res.json({ status: "healthy", timestamp: new Date().toISOString() });
 });
 
 // API Routes
-app.use('/api/patients', patientsRouter);
-app.use('/api/patients/search', patientsSearchRouter);
-app.use('/api/patients/merge', patientsMergeRouter);
-app.use('/api/patients/documents', patientsDocumentsRouter);
-app.use('/api/patients/insurance', patientsInsuranceRouter);
+app.use("/api/patients", patientsRouter);
+app.use("/api/patients/search", patientsSearchRouter);
+app.use("/api/patients/merge", patientsMergeRouter);
+app.use("/api/patients/documents", patientsDocumentsRouter);
+app.use("/api/patients/insurance", patientsInsuranceRouter);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error:', err);
+  console.error("Error:", err);
   res.status(500).json({
     success: false,
-    error: err.message || 'Internal server error',
+    error: err.message || "Internal server error",
   });
 });
 
@@ -60,7 +60,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 app.use((req: Request, res: Response) => {
   res.status(404).json({
     success: false,
-    error: 'Route not found',
+    error: "Route not found",
   });
 });
 

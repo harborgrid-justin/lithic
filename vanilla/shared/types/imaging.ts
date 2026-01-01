@@ -1,30 +1,30 @@
 // Imaging & Radiology Types
 
 export enum ImagingModality {
-  XRAY = 'XRAY',
-  CT = 'CT',
-  MRI = 'MRI',
-  ULTRASOUND = 'ULTRASOUND',
-  MAMMOGRAPHY = 'MAMMOGRAPHY',
-  FLUOROSCOPY = 'FLUOROSCOPY',
-  PET = 'PET',
-  NUCLEAR_MEDICINE = 'NUCLEAR_MEDICINE',
+  XRAY = "XRAY",
+  CT = "CT",
+  MRI = "MRI",
+  ULTRASOUND = "ULTRASOUND",
+  MAMMOGRAPHY = "MAMMOGRAPHY",
+  FLUOROSCOPY = "FLUOROSCOPY",
+  PET = "PET",
+  NUCLEAR_MEDICINE = "NUCLEAR_MEDICINE",
 }
 
 export enum ImagingOrderStatus {
-  PENDING = 'PENDING',
-  SCHEDULED = 'SCHEDULED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  REPORTED = 'REPORTED',
-  CANCELLED = 'CANCELLED',
+  PENDING = "PENDING",
+  SCHEDULED = "SCHEDULED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  REPORTED = "REPORTED",
+  CANCELLED = "CANCELLED",
 }
 
 export enum ImagingStudyStatus {
-  PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  REPORTED = 'REPORTED',
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  REPORTED = "REPORTED",
 }
 
 export interface ImagingOrder {
@@ -34,7 +34,7 @@ export interface ImagingOrder {
   orderNumber: string;
   modality: ImagingModality;
   bodyPart: string;
-  priority: 'STAT' | 'URGENT' | 'ROUTINE';
+  priority: "STAT" | "URGENT" | "ROUTINE";
   clinicalInfo?: string;
   icd10Codes: string[];
   status: ImagingOrderStatus;
@@ -107,7 +107,7 @@ export interface RadiologyReport {
   recommendations?: string;
   technique?: string;
   comparison?: string;
-  status: 'DRAFT' | 'PRELIMINARY' | 'FINAL' | 'AMENDED';
+  status: "DRAFT" | "PRELIMINARY" | "FINAL" | "AMENDED";
   draftedAt: string;
   finalizedAt?: string;
   signedAt?: string;
@@ -122,7 +122,7 @@ export interface ImagingOrderCreateRequest {
   providerId: string;
   modality: ImagingModality;
   bodyPart: string;
-  priority: 'STAT' | 'URGENT' | 'ROUTINE';
+  priority: "STAT" | "URGENT" | "ROUTINE";
   clinicalInfo?: string;
   icd10Codes?: string[];
 }
@@ -165,7 +165,7 @@ export interface RadiologyReportUpdateRequest {
   recommendations?: string;
   technique?: string;
   comparison?: string;
-  status?: 'DRAFT' | 'PRELIMINARY' | 'FINAL';
+  status?: "DRAFT" | "PRELIMINARY" | "FINAL";
 }
 
 export interface RadiologyReportSignRequest {
@@ -178,7 +178,7 @@ export interface ImagingOrderSearchFilters {
   providerId?: string;
   status?: ImagingOrderStatus;
   modality?: ImagingModality;
-  priority?: 'STAT' | 'URGENT' | 'ROUTINE';
+  priority?: "STAT" | "URGENT" | "ROUTINE";
   startDate?: string;
   endDate?: string;
   orderNumber?: string;
@@ -197,7 +197,7 @@ export interface DICOMConfiguration {
   aeTitle: string;
   host: string;
   port: number;
-  protocol: 'DICOM' | 'DICOMWEB';
+  protocol: "DICOM" | "DICOMWEB";
   storageDirectory: string;
   maxStudyAge: number; // days
   autoRouting: boolean;
@@ -220,7 +220,7 @@ export interface CriticalResult {
   studyId: string;
   patientId: string;
   finding: string;
-  severity: 'CRITICAL' | 'URGENT';
+  severity: "CRITICAL" | "URGENT";
   notifiedAt?: string;
   notifiedBy?: string;
   acknowledgmentBy?: string;
@@ -254,12 +254,12 @@ export interface ModalityWorklist {
   scheduledDateTime: string;
   performingPhysician?: string;
   procedureDescription?: string;
-  status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED';
+  status: "SCHEDULED" | "IN_PROGRESS" | "COMPLETED";
 }
 
 export interface ImageViewer {
   studyInstanceUID: string;
-  viewerType: 'BASIC' | 'ADVANCED' | 'DIAGNOSTIC';
+  viewerType: "BASIC" | "ADVANCED" | "DIAGNOSTIC";
   windowLevel?: number;
   windowWidth?: number;
   zoom?: number;
@@ -269,7 +269,7 @@ export interface ImageViewer {
 
 export interface ImageAnnotation {
   id: string;
-  type: 'ARROW' | 'CIRCLE' | 'RECTANGLE' | 'TEXT';
+  type: "ARROW" | "CIRCLE" | "RECTANGLE" | "TEXT";
   coordinates: number[];
   text?: string;
   createdBy: string;
@@ -278,7 +278,7 @@ export interface ImageAnnotation {
 
 export interface ImageMeasurement {
   id: string;
-  type: 'LENGTH' | 'AREA' | 'ANGLE' | 'VOLUME';
+  type: "LENGTH" | "AREA" | "ANGLE" | "VOLUME";
   value: number;
   unit: string;
   coordinates: number[];

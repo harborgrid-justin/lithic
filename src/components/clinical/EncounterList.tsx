@@ -1,39 +1,46 @@
-'use client'
+"use client";
 
-import { Encounter } from '@/types/clinical'
-import { formatDateTime } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Calendar, Clock, User, FileText } from 'lucide-react'
-import Link from 'next/link'
+import { Encounter } from "@/types/clinical";
+import { formatDateTime } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Calendar, Clock, User, FileText } from "lucide-react";
+import Link from "next/link";
 
 interface EncounterListProps {
-  encounters: Encounter[]
+  encounters: Encounter[];
 }
 
 export function EncounterList({ encounters }: EncounterListProps) {
-  const getStatusColor = (status: Encounter['status']) => {
+  const getStatusColor = (status: Encounter["status"]) => {
     const colors = {
-      scheduled: 'info',
-      'in-progress': 'warning',
-      completed: 'success',
-      cancelled: 'danger',
-    }
-    return colors[status] as 'info' | 'warning' | 'success' | 'danger'
-  }
+      scheduled: "info",
+      "in-progress": "warning",
+      completed: "success",
+      cancelled: "danger",
+    };
+    return colors[status] as "info" | "warning" | "success" | "danger";
+  };
 
-  const getTypeLabel = (type: Encounter['type']) => {
+  const getTypeLabel = (type: Encounter["type"]) => {
     const labels = {
-      'office-visit': 'Office Visit',
-      'telehealth': 'Telehealth',
-      'emergency': 'Emergency',
-      'hospital': 'Hospital',
-      'consultation': 'Consultation',
-    }
-    return labels[type]
-  }
+      "office-visit": "Office Visit",
+      telehealth: "Telehealth",
+      emergency: "Emergency",
+      hospital: "Hospital",
+      consultation: "Consultation",
+    };
+    return labels[type];
+  };
 
   return (
     <Card>
@@ -63,7 +70,9 @@ export function EncounterList({ encounters }: EncounterListProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{getTypeLabel(encounter.type)}</Badge>
+                  <Badge variant="secondary">
+                    {getTypeLabel(encounter.type)}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -72,7 +81,9 @@ export function EncounterList({ encounters }: EncounterListProps) {
                   </div>
                 </TableCell>
                 <TableCell>{encounter.providerName}</TableCell>
-                <TableCell className="max-w-xs truncate">{encounter.chiefComplaint}</TableCell>
+                <TableCell className="max-w-xs truncate">
+                  {encounter.chiefComplaint}
+                </TableCell>
                 <TableCell>
                   <Badge variant={getStatusColor(encounter.status)}>
                     {encounter.status}
@@ -97,5 +108,5 @@ export function EncounterList({ encounters }: EncounterListProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

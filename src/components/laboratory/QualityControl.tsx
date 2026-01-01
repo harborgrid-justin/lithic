@@ -1,51 +1,58 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { QualityControl as QCType } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CheckCircle2, XCircle, Activity } from 'lucide-react';
-import { formatDateTime } from '@/lib/utils';
+import React, { useState } from "react";
+import { QualityControl as QCType } from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { CheckCircle2, XCircle, Activity } from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
 
 export default function QualityControl() {
   const [qcRecords, setQcRecords] = useState<QCType[]>([
     {
-      id: '1',
-      testId: 'WBC',
-      testName: 'White Blood Cell Count',
-      loincCode: '6690-2',
-      controlLevel: 'NORMAL',
-      lotNumber: 'LOT2026001',
-      expirationDate: new Date('2026-12-31'),
+      id: "1",
+      testId: "WBC",
+      testName: "White Blood Cell Count",
+      loincCode: "6690-2",
+      controlLevel: "NORMAL",
+      lotNumber: "LOT2026001",
+      expirationDate: new Date("2026-12-31"),
       expectedValue: 7.5,
       expectedRange: { low: 6.5, high: 8.5 },
       measuredValue: 7.3,
-      unit: '10^9/L',
+      unit: "10^9/L",
       isInRange: true,
-      performedBy: 'QC Tech 01',
+      performedBy: "QC Tech 01",
       performedAt: new Date(),
-      instrument: 'Hematology Analyzer A1',
+      instrument: "Hematology Analyzer A1",
       createdAt: new Date(),
     },
     {
-      id: '2',
-      testId: 'GLUCOSE',
-      testName: 'Glucose',
-      loincCode: '2345-7',
-      controlLevel: 'HIGH',
-      lotNumber: 'LOT2026002',
-      expirationDate: new Date('2026-11-30'),
+      id: "2",
+      testId: "GLUCOSE",
+      testName: "Glucose",
+      loincCode: "2345-7",
+      controlLevel: "HIGH",
+      lotNumber: "LOT2026002",
+      expirationDate: new Date("2026-11-30"),
       expectedValue: 250,
       expectedRange: { low: 240, high: 260 },
       measuredValue: 265,
-      unit: 'mg/dL',
+      unit: "mg/dL",
       isInRange: false,
-      performedBy: 'QC Tech 01',
+      performedBy: "QC Tech 01",
       performedAt: new Date(),
-      instrument: 'Chemistry Analyzer C1',
-      notes: 'Out of range - instrument recalibrated',
+      instrument: "Chemistry Analyzer C1",
+      notes: "Out of range - instrument recalibrated",
       createdAt: new Date(),
     },
   ]);
@@ -66,17 +73,21 @@ export default function QualityControl() {
 
   const getLevelBadge = (level: string) => {
     const colors: Record<string, any> = {
-      LOW: 'outline',
-      NORMAL: 'default',
-      HIGH: 'outline',
+      LOW: "outline",
+      NORMAL: "default",
+      HIGH: "outline",
     };
 
     return <Badge variant={colors[level]}>{level}</Badge>;
   };
 
-  const passRate = qcRecords.length > 0
-    ? (qcRecords.filter(r => r.isInRange).length / qcRecords.length * 100).toFixed(1)
-    : '0';
+  const passRate =
+    qcRecords.length > 0
+      ? (
+          (qcRecords.filter((r) => r.isInRange).length / qcRecords.length) *
+          100
+        ).toFixed(1)
+      : "0";
 
   return (
     <Card>
@@ -87,7 +98,7 @@ export default function QualityControl() {
             Quality Control Records
           </CardTitle>
           <div className="text-sm">
-            <span className="text-muted-foreground">Pass Rate:</span>{' '}
+            <span className="text-muted-foreground">Pass Rate:</span>{" "}
             <span className="font-semibold text-lg">{passRate}%</span>
           </div>
         </div>
@@ -110,19 +121,24 @@ export default function QualityControl() {
           <TableBody>
             {qcRecords.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={9}
+                  className="text-center text-muted-foreground"
+                >
                   No QC records available
                 </TableCell>
               </TableRow>
             ) : (
               qcRecords.map((qc) => (
-                <TableRow 
+                <TableRow
                   key={qc.id}
-                  className={!qc.isInRange ? 'bg-destructive/5' : ''}
+                  className={!qc.isInRange ? "bg-destructive/5" : ""}
                 >
                   <TableCell className="font-medium">{qc.testName}</TableCell>
                   <TableCell>{getLevelBadge(qc.controlLevel)}</TableCell>
-                  <TableCell className="font-mono text-xs">{qc.lotNumber}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {qc.lotNumber}
+                  </TableCell>
                   <TableCell>
                     {qc.expectedValue} {qc.unit}
                   </TableCell>
@@ -135,7 +151,9 @@ export default function QualityControl() {
                   <TableCell>{getStatusBadge(qc.isInRange)}</TableCell>
                   <TableCell className="text-sm">
                     <div>{formatDateTime(qc.performedAt)}</div>
-                    <div className="text-xs text-muted-foreground">{qc.performedBy}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {qc.performedBy}
+                    </div>
                   </TableCell>
                   <TableCell className="text-sm">{qc.instrument}</TableCell>
                 </TableRow>
@@ -144,14 +162,20 @@ export default function QualityControl() {
           </TableBody>
         </Table>
 
-        {qcRecords.some(qc => qc.notes) && (
+        {qcRecords.some((qc) => qc.notes) && (
           <div className="mt-4 space-y-2">
             <h4 className="font-semibold text-sm">QC Notes:</h4>
             {qcRecords
-              .filter(qc => qc.notes)
+              .filter((qc) => qc.notes)
               .map((qc) => (
-                <div key={qc.id} className="text-sm border-l-2 border-primary pl-3 py-1">
-                  <span className="font-medium">{qc.testName} ({qc.controlLevel}):</span> {qc.notes}
+                <div
+                  key={qc.id}
+                  className="text-sm border-l-2 border-primary pl-3 py-1"
+                >
+                  <span className="font-medium">
+                    {qc.testName} ({qc.controlLevel}):
+                  </span>{" "}
+                  {qc.notes}
                 </div>
               ))}
           </div>
@@ -162,9 +186,14 @@ export default function QualityControl() {
           <ul className="text-sm space-y-1 ml-4 list-disc">
             <li>Run QC at least once per shift before patient testing</li>
             <li>Document all QC results, including out-of-range values</li>
-            <li>Investigate and resolve any QC failures before reporting patient results</li>
+            <li>
+              Investigate and resolve any QC failures before reporting patient
+              results
+            </li>
             <li>Verify control lot numbers and expiration dates</li>
-            <li>Follow manufacturer&apos;s instructions for control handling</li>
+            <li>
+              Follow manufacturer&apos;s instructions for control handling
+            </li>
           </ul>
         </div>
       </CardContent>

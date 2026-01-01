@@ -6,7 +6,7 @@
 export class LaboratoryService {
   private baseURL: string;
 
-  constructor(baseURL = '/api/laboratory') {
+  constructor(baseURL = "/api/laboratory") {
     this.baseURL = baseURL;
   }
 
@@ -14,9 +14,9 @@ export class LaboratoryService {
 
   async createOrder(orderData: any): Promise<any> {
     const response = await fetch(`${this.baseURL}/orders`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
     });
 
     return this.handleResponse(response);
@@ -24,9 +24,9 @@ export class LaboratoryService {
 
   async createOrderFromPanel(panelId: string, orderData: any): Promise<any> {
     const response = await fetch(`${this.baseURL}/orders/panel/${panelId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
     });
 
     return this.handleResponse(response);
@@ -49,9 +49,9 @@ export class LaboratoryService {
 
   async updateOrderStatus(orderId: string, status: string): Promise<any> {
     const response = await fetch(`${this.baseURL}/orders/${orderId}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
     });
 
     return this.handleResponse(response);
@@ -59,9 +59,9 @@ export class LaboratoryService {
 
   async cancelOrder(orderId: string, reason: string): Promise<any> {
     const response = await fetch(`${this.baseURL}/orders/${orderId}/cancel`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason }),
     });
 
     return this.handleResponse(response);
@@ -76,9 +76,9 @@ export class LaboratoryService {
 
   async addResult(resultData: any): Promise<any> {
     const response = await fetch(`${this.baseURL}/results`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(resultData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(resultData),
     });
 
     return this.handleResponse(response);
@@ -86,9 +86,9 @@ export class LaboratoryService {
 
   async verifyResult(resultId: string, verifiedBy: string): Promise<any> {
     const response = await fetch(`${this.baseURL}/results/${resultId}/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ verifiedBy })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ verifiedBy }),
     });
 
     return this.handleResponse(response);
@@ -100,7 +100,9 @@ export class LaboratoryService {
   }
 
   async getResultsForPatient(patientId: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/results/patient/${patientId}`);
+    const response = await fetch(
+      `${this.baseURL}/results/patient/${patientId}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -116,7 +118,9 @@ export class LaboratoryService {
   }
 
   async generateHL7Result(orderId: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/results/order/${orderId}/hl7`);
+    const response = await fetch(
+      `${this.baseURL}/results/order/${orderId}/hl7`,
+    );
     return this.handleResponse(response);
   }
 
@@ -124,9 +128,9 @@ export class LaboratoryService {
 
   async createSpecimen(specimenData: any): Promise<any> {
     const response = await fetch(`${this.baseURL}/specimens`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(specimenData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(specimenData),
     });
 
     return this.handleResponse(response);
@@ -138,7 +142,9 @@ export class LaboratoryService {
   }
 
   async getSpecimenByBarcode(barcode: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/specimens/barcode/${barcode}`);
+    const response = await fetch(
+      `${this.baseURL}/specimens/barcode/${barcode}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -148,47 +154,70 @@ export class LaboratoryService {
   }
 
   async receiveSpecimen(specimenId: string, receivedBy: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/specimens/${specimenId}/receive`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ receivedBy })
-    });
+    const response = await fetch(
+      `${this.baseURL}/specimens/${specimenId}/receive`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ receivedBy }),
+      },
+    );
 
     return this.handleResponse(response);
   }
 
-  async updateSpecimenStatus(specimenId: string, status: string, performedBy: string, notes?: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/specimens/${specimenId}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status, performedBy, notes })
-    });
+  async updateSpecimenStatus(
+    specimenId: string,
+    status: string,
+    performedBy: string,
+    notes?: string,
+  ): Promise<any> {
+    const response = await fetch(
+      `${this.baseURL}/specimens/${specimenId}/status`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status, performedBy, notes }),
+      },
+    );
 
     return this.handleResponse(response);
   }
 
-  async rejectSpecimen(specimenId: string, reason: string, rejectedBy: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/specimens/${specimenId}/reject`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason, rejectedBy })
-    });
+  async rejectSpecimen(
+    specimenId: string,
+    reason: string,
+    rejectedBy: string,
+  ): Promise<any> {
+    const response = await fetch(
+      `${this.baseURL}/specimens/${specimenId}/reject`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason, rejectedBy }),
+      },
+    );
 
     return this.handleResponse(response);
   }
 
   async addQualityIssue(specimenId: string, issueData: any): Promise<any> {
-    const response = await fetch(`${this.baseURL}/specimens/${specimenId}/quality-issue`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(issueData)
-    });
+    const response = await fetch(
+      `${this.baseURL}/specimens/${specimenId}/quality-issue`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(issueData),
+      },
+    );
 
     return this.handleResponse(response);
   }
 
   async getTrackingHistory(specimenId: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/specimens/${specimenId}/tracking`);
+    const response = await fetch(
+      `${this.baseURL}/specimens/${specimenId}/tracking`,
+    );
     return this.handleResponse(response);
   }
 
@@ -206,9 +235,9 @@ export class LaboratoryService {
 
   async createPanel(panelData: any): Promise<any> {
     const response = await fetch(`${this.baseURL}/panels`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(panelData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(panelData),
     });
 
     return this.handleResponse(response);
@@ -222,7 +251,9 @@ export class LaboratoryService {
   }
 
   async searchLOINCCodes(query: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/reference/loinc/search?query=${encodeURIComponent(query)}`);
+    const response = await fetch(
+      `${this.baseURL}/reference/loinc/search?query=${encodeURIComponent(query)}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -236,8 +267,14 @@ export class LaboratoryService {
     return this.handleResponse(response);
   }
 
-  async getReferenceRange(loincCode: string, age: number, gender: string): Promise<any> {
-    const response = await fetch(`${this.baseURL}/reference/reference-ranges/${loincCode}?age=${age}&gender=${gender}`);
+  async getReferenceRange(
+    loincCode: string,
+    age: number,
+    gender: string,
+  ): Promise<any> {
+    const response = await fetch(
+      `${this.baseURL}/reference/reference-ranges/${loincCode}?age=${age}&gender=${gender}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -250,19 +287,23 @@ export class LaboratoryService {
 
   async recordQC(qcData: any): Promise<any> {
     const response = await fetch(`${this.baseURL}/reference/qc`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(qcData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(qcData),
     });
 
     return this.handleResponse(response);
   }
 
-  async getQCRecords(testCode?: string, dateFrom?: Date, dateTo?: Date): Promise<any> {
+  async getQCRecords(
+    testCode?: string,
+    dateFrom?: Date,
+    dateTo?: Date,
+  ): Promise<any> {
     const params = new URLSearchParams();
-    if (testCode) params.append('testCode', testCode);
-    if (dateFrom) params.append('dateFrom', dateFrom.toISOString());
-    if (dateTo) params.append('dateTo', dateTo.toISOString());
+    if (testCode) params.append("testCode", testCode);
+    if (dateFrom) params.append("dateFrom", dateFrom.toISOString());
+    if (dateTo) params.append("dateTo", dateTo.toISOString());
 
     const response = await fetch(`${this.baseURL}/reference/qc?${params}`);
     return this.handleResponse(response);
@@ -270,9 +311,11 @@ export class LaboratoryService {
 
   async getFailedQC(dateFrom?: Date): Promise<any> {
     const params = new URLSearchParams();
-    if (dateFrom) params.append('dateFrom', dateFrom.toISOString());
+    if (dateFrom) params.append("dateFrom", dateFrom.toISOString());
 
-    const response = await fetch(`${this.baseURL}/reference/qc/failed?${params}`);
+    const response = await fetch(
+      `${this.baseURL}/reference/qc/failed?${params}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -282,7 +325,7 @@ export class LaboratoryService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'An error occurred');
+      throw new Error(data.error || "An error occurred");
     }
 
     return data.data;

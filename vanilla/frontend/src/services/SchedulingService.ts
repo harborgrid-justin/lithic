@@ -4,14 +4,14 @@
  */
 
 export class SchedulingService {
-  private apiBaseUrl = '/api/scheduling';
+  private apiBaseUrl = "/api/scheduling";
 
   /**
    * Get dashboard statistics
    */
   async getDashboardStats(): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/dashboard/stats`);
-    if (!response.ok) throw new Error('Failed to fetch dashboard stats');
+    if (!response.ok) throw new Error("Failed to fetch dashboard stats");
     const result = await response.json();
     return result.data;
   }
@@ -27,7 +27,7 @@ export class SchedulingService {
 
     return this.getAppointments({
       startDate: today,
-      endDate: tomorrow
+      endDate: tomorrow,
     });
   }
 
@@ -42,7 +42,7 @@ export class SchedulingService {
     return this.getAppointments({
       startDate,
       endDate,
-      status: 'scheduled,confirmed'
+      status: "scheduled,confirmed",
     });
   }
 
@@ -52,8 +52,12 @@ export class SchedulingService {
   async getAppointments(filters: any = {}): Promise<any> {
     const params = new URLSearchParams();
 
-    Object.keys(filters).forEach(key => {
-      if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+    Object.keys(filters).forEach((key) => {
+      if (
+        filters[key] !== undefined &&
+        filters[key] !== null &&
+        filters[key] !== ""
+      ) {
         if (filters[key] instanceof Date) {
           params.append(key, filters[key].toISOString());
         } else {
@@ -62,8 +66,10 @@ export class SchedulingService {
       }
     });
 
-    const response = await fetch(`${this.apiBaseUrl}/appointments?${params.toString()}`);
-    if (!response.ok) throw new Error('Failed to fetch appointments');
+    const response = await fetch(
+      `${this.apiBaseUrl}/appointments?${params.toString()}`,
+    );
+    if (!response.ok) throw new Error("Failed to fetch appointments");
     const result = await response.json();
     return result.data;
   }
@@ -73,7 +79,7 @@ export class SchedulingService {
    */
   async getAppointment(id: string): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/appointments/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch appointment');
+    if (!response.ok) throw new Error("Failed to fetch appointment");
     const result = await response.json();
     return result.data;
   }
@@ -83,14 +89,14 @@ export class SchedulingService {
    */
   async createAppointment(data: any): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/appointments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to create appointment');
+      throw new Error(error.error || "Failed to create appointment");
     }
 
     const result = await response.json();
@@ -102,12 +108,12 @@ export class SchedulingService {
    */
   async updateAppointment(id: string, data: any): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/appointments/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error('Failed to update appointment');
+    if (!response.ok) throw new Error("Failed to update appointment");
     const result = await response.json();
     return result.data;
   }
@@ -117,12 +123,12 @@ export class SchedulingService {
    */
   async cancelAppointment(id: string, reason: string): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/appointments/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason })
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason }),
     });
 
-    if (!response.ok) throw new Error('Failed to cancel appointment');
+    if (!response.ok) throw new Error("Failed to cancel appointment");
     const result = await response.json();
     return result.data;
   }
@@ -131,11 +137,14 @@ export class SchedulingService {
    * Check in patient
    */
   async checkIn(id: string): Promise<any> {
-    const response = await fetch(`${this.apiBaseUrl}/appointments/${id}/check-in`, {
-      method: 'POST'
-    });
+    const response = await fetch(
+      `${this.apiBaseUrl}/appointments/${id}/check-in`,
+      {
+        method: "POST",
+      },
+    );
 
-    if (!response.ok) throw new Error('Failed to check in patient');
+    if (!response.ok) throw new Error("Failed to check in patient");
     const result = await response.json();
     return result.data;
   }
@@ -144,11 +153,14 @@ export class SchedulingService {
    * Check out patient
    */
   async checkOut(id: string): Promise<any> {
-    const response = await fetch(`${this.apiBaseUrl}/appointments/${id}/check-out`, {
-      method: 'POST'
-    });
+    const response = await fetch(
+      `${this.apiBaseUrl}/appointments/${id}/check-out`,
+      {
+        method: "POST",
+      },
+    );
 
-    if (!response.ok) throw new Error('Failed to check out patient');
+    if (!response.ok) throw new Error("Failed to check out patient");
     const result = await response.json();
     return result.data;
   }
@@ -157,11 +169,14 @@ export class SchedulingService {
    * Confirm appointment
    */
   async confirmAppointment(id: string): Promise<any> {
-    const response = await fetch(`${this.apiBaseUrl}/appointments/${id}/confirm`, {
-      method: 'POST'
-    });
+    const response = await fetch(
+      `${this.apiBaseUrl}/appointments/${id}/confirm`,
+      {
+        method: "POST",
+      },
+    );
 
-    if (!response.ok) throw new Error('Failed to confirm appointment');
+    if (!response.ok) throw new Error("Failed to confirm appointment");
     const result = await response.json();
     return result.data;
   }
@@ -169,14 +184,24 @@ export class SchedulingService {
   /**
    * Reschedule appointment
    */
-  async rescheduleAppointment(id: string, newStartTime: Date, reason?: string): Promise<any> {
-    const response = await fetch(`${this.apiBaseUrl}/appointments/${id}/reschedule`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ newStartTime: newStartTime.toISOString(), reason })
-    });
+  async rescheduleAppointment(
+    id: string,
+    newStartTime: Date,
+    reason?: string,
+  ): Promise<any> {
+    const response = await fetch(
+      `${this.apiBaseUrl}/appointments/${id}/reschedule`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          newStartTime: newStartTime.toISOString(),
+          reason,
+        }),
+      },
+    );
 
-    if (!response.ok) throw new Error('Failed to reschedule appointment');
+    if (!response.ok) throw new Error("Failed to reschedule appointment");
     const result = await response.json();
     return result.data;
   }
@@ -185,24 +210,30 @@ export class SchedulingService {
    * Send reminder
    */
   async sendReminder(id: string): Promise<void> {
-    const response = await fetch(`${this.apiBaseUrl}/appointments/${id}/reminder`, {
-      method: 'POST'
-    });
+    const response = await fetch(
+      `${this.apiBaseUrl}/appointments/${id}/reminder`,
+      {
+        method: "POST",
+      },
+    );
 
-    if (!response.ok) throw new Error('Failed to send reminder');
+    if (!response.ok) throw new Error("Failed to send reminder");
   }
 
   /**
    * Check for conflicts
    */
   async checkConflicts(data: any): Promise<any> {
-    const response = await fetch(`${this.apiBaseUrl}/appointments/check-conflicts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
+    const response = await fetch(
+      `${this.apiBaseUrl}/appointments/check-conflicts`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      },
+    );
 
-    if (!response.ok) throw new Error('Failed to check conflicts');
+    if (!response.ok) throw new Error("Failed to check conflicts");
     const result = await response.json();
     return result;
   }
@@ -213,7 +244,7 @@ export class SchedulingService {
   async getAvailability(filters: any): Promise<any[]> {
     const params = new URLSearchParams();
 
-    Object.keys(filters).forEach(key => {
+    Object.keys(filters).forEach((key) => {
       if (filters[key] !== undefined && filters[key] !== null) {
         if (filters[key] instanceof Date) {
           params.append(key, filters[key].toISOString());
@@ -223,8 +254,10 @@ export class SchedulingService {
       }
     });
 
-    const response = await fetch(`${this.apiBaseUrl}/availability?${params.toString()}`);
-    if (!response.ok) throw new Error('Failed to fetch availability');
+    const response = await fetch(
+      `${this.apiBaseUrl}/availability?${params.toString()}`,
+    );
+    if (!response.ok) throw new Error("Failed to fetch availability");
     const result = await response.json();
     return result.data;
   }
@@ -235,14 +268,20 @@ export class SchedulingService {
   async getProviders(filters: any = {}): Promise<any[]> {
     const params = new URLSearchParams();
 
-    Object.keys(filters).forEach(key => {
-      if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+    Object.keys(filters).forEach((key) => {
+      if (
+        filters[key] !== undefined &&
+        filters[key] !== null &&
+        filters[key] !== ""
+      ) {
         params.append(key, filters[key].toString());
       }
     });
 
-    const response = await fetch(`${this.apiBaseUrl}/providers?${params.toString()}`);
-    if (!response.ok) throw new Error('Failed to fetch providers');
+    const response = await fetch(
+      `${this.apiBaseUrl}/providers?${params.toString()}`,
+    );
+    if (!response.ok) throw new Error("Failed to fetch providers");
     const result = await response.json();
     return result.data;
   }
@@ -252,7 +291,7 @@ export class SchedulingService {
    */
   async getProvider(id: string): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/providers/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch provider');
+    if (!response.ok) throw new Error("Failed to fetch provider");
     const result = await response.json();
     return result.data;
   }
@@ -263,14 +302,20 @@ export class SchedulingService {
   async getResources(filters: any = {}): Promise<any[]> {
     const params = new URLSearchParams();
 
-    Object.keys(filters).forEach(key => {
-      if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+    Object.keys(filters).forEach((key) => {
+      if (
+        filters[key] !== undefined &&
+        filters[key] !== null &&
+        filters[key] !== ""
+      ) {
         params.append(key, filters[key].toString());
       }
     });
 
-    const response = await fetch(`${this.apiBaseUrl}/resources?${params.toString()}`);
-    if (!response.ok) throw new Error('Failed to fetch resources');
+    const response = await fetch(
+      `${this.apiBaseUrl}/resources?${params.toString()}`,
+    );
+    if (!response.ok) throw new Error("Failed to fetch resources");
     const result = await response.json();
     return result.data;
   }
@@ -281,14 +326,20 @@ export class SchedulingService {
   async getWaitlist(filters: any = {}): Promise<any[]> {
     const params = new URLSearchParams();
 
-    Object.keys(filters).forEach(key => {
-      if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+    Object.keys(filters).forEach((key) => {
+      if (
+        filters[key] !== undefined &&
+        filters[key] !== null &&
+        filters[key] !== ""
+      ) {
         params.append(key, filters[key].toString());
       }
     });
 
-    const response = await fetch(`${this.apiBaseUrl}/waitlist?${params.toString()}`);
-    if (!response.ok) throw new Error('Failed to fetch waitlist');
+    const response = await fetch(
+      `${this.apiBaseUrl}/waitlist?${params.toString()}`,
+    );
+    if (!response.ok) throw new Error("Failed to fetch waitlist");
     const result = await response.json();
     return result.data;
   }
@@ -298,7 +349,7 @@ export class SchedulingService {
    */
   async getPriorityWaitlist(): Promise<any[]> {
     const response = await fetch(`${this.apiBaseUrl}/waitlist/priority-queue`);
-    if (!response.ok) throw new Error('Failed to fetch priority waitlist');
+    if (!response.ok) throw new Error("Failed to fetch priority waitlist");
     const result = await response.json();
     return result.data;
   }
@@ -308,12 +359,12 @@ export class SchedulingService {
    */
   async addToWaitlist(data: any): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/waitlist`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error('Failed to add to waitlist');
+    if (!response.ok) throw new Error("Failed to add to waitlist");
     const result = await response.json();
     return result.data;
   }
@@ -323,10 +374,10 @@ export class SchedulingService {
    */
   async notifyWaitlistEntry(id: string): Promise<void> {
     const response = await fetch(`${this.apiBaseUrl}/waitlist/${id}/notify`, {
-      method: 'POST'
+      method: "POST",
     });
 
-    if (!response.ok) throw new Error('Failed to notify patient');
+    if (!response.ok) throw new Error("Failed to notify patient");
   }
 
   /**
@@ -334,12 +385,12 @@ export class SchedulingService {
    */
   async removeFromWaitlist(id: string, reason?: string): Promise<void> {
     const response = await fetch(`${this.apiBaseUrl}/waitlist/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason })
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason }),
     });
 
-    if (!response.ok) throw new Error('Failed to remove from waitlist');
+    if (!response.ok) throw new Error("Failed to remove from waitlist");
   }
 
   /**
@@ -347,7 +398,7 @@ export class SchedulingService {
    */
   async getRecurringTemplates(): Promise<any[]> {
     const response = await fetch(`${this.apiBaseUrl}/recurring/templates`);
-    if (!response.ok) throw new Error('Failed to fetch templates');
+    if (!response.ok) throw new Error("Failed to fetch templates");
     const result = await response.json();
     return result.data;
   }
@@ -357,12 +408,12 @@ export class SchedulingService {
    */
   async createRecurringAppointment(data: any): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/recurring`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error('Failed to create recurring appointment');
+    if (!response.ok) throw new Error("Failed to create recurring appointment");
     const result = await response.json();
     return result.data;
   }
@@ -378,12 +429,12 @@ export class SchedulingService {
 
     const response = await fetch(
       `${this.apiBaseUrl}/appointments?` +
-      `startDate=${today.toISOString()}&` +
-      `endDate=${tomorrow.toISOString()}&` +
-      `search=${encodeURIComponent(query)}`
+        `startDate=${today.toISOString()}&` +
+        `endDate=${tomorrow.toISOString()}&` +
+        `search=${encodeURIComponent(query)}`,
     );
 
-    if (!response.ok) throw new Error('Failed to search appointments');
+    if (!response.ok) throw new Error("Failed to search appointments");
     const result = await response.json();
     return result.data;
   }
@@ -394,7 +445,7 @@ export class SchedulingService {
   async getCalendarData(filters: any): Promise<any> {
     const params = new URLSearchParams();
 
-    Object.keys(filters).forEach(key => {
+    Object.keys(filters).forEach((key) => {
       if (filters[key] !== undefined && filters[key] !== null) {
         if (filters[key] instanceof Date) {
           params.append(key, filters[key].toISOString());
@@ -404,8 +455,10 @@ export class SchedulingService {
       }
     });
 
-    const response = await fetch(`${this.apiBaseUrl}/calendar?${params.toString()}`);
-    if (!response.ok) throw new Error('Failed to fetch calendar data');
+    const response = await fetch(
+      `${this.apiBaseUrl}/calendar?${params.toString()}`,
+    );
+    if (!response.ok) throw new Error("Failed to fetch calendar data");
     const result = await response.json();
     return result.data;
   }
@@ -413,14 +466,19 @@ export class SchedulingService {
   /**
    * Batch operations on appointments
    */
-  async batchOperation(operation: string, appointmentIds: string[], data?: any): Promise<any> {
+  async batchOperation(
+    operation: string,
+    appointmentIds: string[],
+    data?: any,
+  ): Promise<any> {
     const response = await fetch(`${this.apiBaseUrl}/batch`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ operation, appointmentIds, data })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ operation, appointmentIds, data }),
     });
 
-    if (!response.ok) throw new Error(`Failed to perform batch operation: ${operation}`);
+    if (!response.ok)
+      throw new Error(`Failed to perform batch operation: ${operation}`);
     const result = await response.json();
     return result.data;
   }

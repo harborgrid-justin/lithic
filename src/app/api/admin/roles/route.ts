@@ -1,9 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { authOptions, getServerSession } from '@/lib/auth';
-import { prisma } from '@/lib/db';
-import { checkPermission, createRole, updateRolePermissions } from '@/lib/permissions';
-import { logAudit } from '@/lib/audit';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { authOptions, getServerSession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import {
+  checkPermission,
+  createRole,
+  updateRolePermissions,
+} from "@/lib/permissions";
+import { logAudit } from "@/lib/audit";
+import { z } from "zod";
 
 // GET /api/admin/roles - List all roles
 export async function GET(request: NextRequest) {
@@ -12,22 +16,22 @@ export async function GET(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     const hasPermission = await checkPermission({
       userId: session.user.id,
-      resource: 'role',
-      action: 'read',
+      resource: "role",
+      action: "read",
       organizationId: (session.user as any).organizationId,
     });
 
     if (!hasPermission) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: "Forbidden" },
+        { status: 403 },
       );
     }
 
@@ -42,7 +46,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json({
@@ -54,10 +58,11 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch roles';
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch roles";
     return NextResponse.json(
       { success: false, error: message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -69,22 +74,22 @@ export async function POST(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     const hasPermission = await checkPermission({
       userId: session.user.id,
-      resource: 'role',
-      action: 'write',
+      resource: "role",
+      action: "write",
       organizationId: (session.user as any).organizationId,
     });
 
     if (!hasPermission) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: "Forbidden" },
+        { status: 403 },
       );
     }
 
@@ -97,9 +102,9 @@ export async function POST(request: NextRequest) {
         z.object({
           resource: z.string(),
           action: z.string(),
-          scope: z.enum(['OWN', 'DEPARTMENT', 'ORGANIZATION', 'ALL']),
+          scope: z.enum(["OWN", "DEPARTMENT", "ORGANIZATION", "ALL"]),
           conditions: z.any().optional(),
-        })
+        }),
       ),
     });
 
@@ -110,11 +115,11 @@ export async function POST(request: NextRequest) {
     const role = await prisma.role.create({
       data: {
         name: validatedData.name,
-        description: validatedData.description || '',
+        description: validatedData.description || "",
         organizationId: (session.user as any).organizationId,
         permissions: validatedData.permissions,
         isSystemRole: false,
-        color: '#6366F1',
+        color: "#6366F1",
         createdBy: session.user.id,
         updatedBy: session.user.id,
       },
@@ -123,8 +128,8 @@ export async function POST(request: NextRequest) {
     // Log creation
     await logAudit({
       userId: session.user.id,
-      action: 'CREATE',
-      resource: 'Role',
+      action: "CREATE",
+      resource: "Role",
       resourceId: role.id,
       description: `Role created: ${role.name}`,
       metadata: { name: role.name, permissions: validatedData.permissions },
@@ -136,24 +141,25 @@ export async function POST(request: NextRequest) {
         success: true,
         data: role,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Validation error',
+          error: "Validation error",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const message = error instanceof Error ? error.message : 'Failed to create role';
+    const message =
+      error instanceof Error ? error.message : "Failed to create role";
     return NextResponse.json(
       { success: false, error: message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

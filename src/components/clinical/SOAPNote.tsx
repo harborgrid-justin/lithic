@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import { ClinicalNote } from '@/types/clinical'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { FileCheck } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { formatDateTime } from '@/lib/utils'
+import { ClinicalNote } from "@/types/clinical";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { FileCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { formatDateTime } from "@/lib/utils";
 
 interface SOAPNoteProps {
-  note: ClinicalNote
+  note: ClinicalNote;
 }
 
 export function SOAPNote({ note }: SOAPNoteProps) {
-  if (note.type !== 'soap') {
-    return null
+  if (note.type !== "soap") {
+    return null;
   }
 
   return (
@@ -49,7 +49,9 @@ export function SOAPNote({ note }: SOAPNoteProps) {
                 dangerouslySetInnerHTML={{ __html: note.subjective }}
               />
             ) : (
-              <p className="text-gray-400 italic">No subjective data recorded</p>
+              <p className="text-gray-400 italic">
+                No subjective data recorded
+              </p>
             )}
           </div>
         </div>
@@ -121,15 +123,17 @@ export function SOAPNote({ note }: SOAPNoteProps) {
           <>
             <Separator />
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm font-semibold text-gray-700">Electronically Signed:</p>
+              <p className="text-sm font-semibold text-gray-700">
+                Electronically Signed:
+              </p>
               <p className="text-sm text-gray-600 mt-1">{note.signature}</p>
               <p className="text-xs text-gray-500 mt-1">
-                Signed on {formatDateTime(note.signedAt || '')}
+                Signed on {formatDateTime(note.signedAt || "")}
               </p>
             </div>
           </>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

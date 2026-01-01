@@ -1,50 +1,57 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Problem, Allergy, Medication, VitalSigns, Order } from '@/types/clinical'
-import { ClinicalSummary } from '@/components/clinical/ClinicalSummary'
-import { OrdersPanel } from '@/components/clinical/OrdersPanel'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { FileText, Activity, ClipboardList, Stethoscope } from 'lucide-react'
-import Link from 'next/link'
+import { useEffect, useState } from "react";
+import {
+  Problem,
+  Allergy,
+  Medication,
+  VitalSigns,
+  Order,
+} from "@/types/clinical";
+import { ClinicalSummary } from "@/components/clinical/ClinicalSummary";
+import { OrdersPanel } from "@/components/clinical/OrdersPanel";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FileText, Activity, ClipboardList, Stethoscope } from "lucide-react";
+import Link from "next/link";
 
 export default function ClinicalPage() {
-  const [problems, setProblems] = useState<Problem[]>([])
-  const [allergies, setAllergies] = useState<Allergy[]>([])
-  const [medications, setMedications] = useState<Medication[]>([])
-  const [vitals, setVitals] = useState<VitalSigns[]>([])
-  const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState(true)
+  const [problems, setProblems] = useState<Problem[]>([]);
+  const [allergies, setAllergies] = useState<Allergy[]>([]);
+  const [medications, setMedications] = useState<Medication[]>([]);
+  const [vitals, setVitals] = useState<VitalSigns[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   const loadData = async () => {
     try {
       // In production, pass actual patient ID
-      const patientId = 'P001'
+      const patientId = "P001";
 
-      const [problemsRes, allergiesRes, medicationsRes, vitalsRes, ordersRes] = await Promise.all([
-        fetch(`/api/clinical/problems?patientId=${patientId}`),
-        fetch(`/api/clinical/allergies?patientId=${patientId}`),
-        fetch(`/api/clinical/medications?patientId=${patientId}`),
-        fetch(`/api/clinical/vitals?patientId=${patientId}`),
-        fetch(`/api/clinical/orders?patientId=${patientId}`),
-      ])
+      const [problemsRes, allergiesRes, medicationsRes, vitalsRes, ordersRes] =
+        await Promise.all([
+          fetch(`/api/clinical/problems?patientId=${patientId}`),
+          fetch(`/api/clinical/allergies?patientId=${patientId}`),
+          fetch(`/api/clinical/medications?patientId=${patientId}`),
+          fetch(`/api/clinical/vitals?patientId=${patientId}`),
+          fetch(`/api/clinical/orders?patientId=${patientId}`),
+        ]);
 
-      setProblems(await problemsRes.json())
-      setAllergies(await allergiesRes.json())
-      setMedications(await medicationsRes.json())
-      setVitals(await vitalsRes.json())
-      setOrders(await ordersRes.json())
+      setProblems(await problemsRes.json());
+      setAllergies(await allergiesRes.json());
+      setMedications(await medicationsRes.json());
+      setVitals(await vitalsRes.json());
+      setOrders(await ordersRes.json());
     } catch (error) {
-      console.error('Failed to load clinical data:', error)
+      console.error("Failed to load clinical data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -54,7 +61,7 @@ export default function ClinicalPage() {
           <p className="text-gray-600">Loading clinical data...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -62,8 +69,12 @@ export default function ClinicalPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Clinical Documentation</h1>
-            <p className="text-gray-600 mt-1">Electronic Health Records & Clinical Notes</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Clinical Documentation
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Electronic Health Records & Clinical Notes
+            </p>
           </div>
         </div>
 
@@ -71,12 +82,16 @@ export default function ClinicalPage() {
           <Link href="/clinical/encounters">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Encounters</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Encounters
+                </CardTitle>
                 <FileText className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">View All</div>
-                <p className="text-xs text-gray-500">Patient encounters & visits</p>
+                <p className="text-xs text-gray-500">
+                  Patient encounters & visits
+                </p>
               </CardContent>
             </Card>
           </Link>
@@ -84,7 +99,9 @@ export default function ClinicalPage() {
           <Link href="/clinical/notes">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Clinical Notes</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Clinical Notes
+                </CardTitle>
                 <FileText className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
@@ -97,7 +114,9 @@ export default function ClinicalPage() {
           <Link href="/clinical/vitals">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Vital Signs</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Vital Signs
+                </CardTitle>
                 <Activity className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
@@ -149,5 +168,5 @@ export default function ClinicalPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

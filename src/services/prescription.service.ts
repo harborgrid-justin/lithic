@@ -3,13 +3,19 @@
  * Service for managing prescriptions, dispensing, refills, and e-prescribing
  */
 
-import { Drug } from './pharmacy.service';
+import { Drug } from "./pharmacy.service";
 
 export interface Prescription {
   id: string;
   rxNumber: string;
-  status: 'pending' | 'active' | 'dispensed' | 'cancelled' | 'expired' | 'on-hold';
-  type: 'new' | 'refill' | 'transfer';
+  status:
+    | "pending"
+    | "active"
+    | "dispensed"
+    | "cancelled"
+    | "expired"
+    | "on-hold";
+  type: "new" | "refill" | "transfer";
 
   // Patient Information
   patientId: string;
@@ -65,7 +71,7 @@ export interface Prescription {
   // Prior Authorization
   priorAuthRequired: boolean;
   priorAuthNumber?: string;
-  priorAuthStatus?: 'pending' | 'approved' | 'denied';
+  priorAuthStatus?: "pending" | "approved" | "denied";
 
   // Insurance
   insuranceId?: string;
@@ -78,15 +84,15 @@ export interface Prescription {
 export interface DispensingQueueItem {
   id: string;
   prescription: Prescription;
-  priority: 'routine' | 'priority' | 'urgent' | 'stat';
+  priority: "routine" | "priority" | "urgent" | "stat";
   queuePosition: number;
   estimatedReadyTime: string;
   assignedTo?: string;
-  status: 'queued' | 'in-progress' | 'verification' | 'ready' | 'picked-up';
+  status: "queued" | "in-progress" | "verification" | "ready" | "picked-up";
   enteredQueue: string;
   workflowSteps: {
     step: string;
-    status: 'pending' | 'in-progress' | 'completed';
+    status: "pending" | "in-progress" | "completed";
     completedBy?: string;
     completedAt?: string;
   }[];
@@ -94,15 +100,15 @@ export interface DispensingQueueItem {
 
 export interface EPrescribeMessage {
   id: string;
-  messageType: 'NEWRX' | 'REFRES' | 'RXCHG' | 'CANRX' | 'ERROR' | 'STATUS';
-  direction: 'inbound' | 'outbound';
+  messageType: "NEWRX" | "REFRES" | "RXCHG" | "CANRX" | "ERROR" | "STATUS";
+  direction: "inbound" | "outbound";
   ncpdpMessageId: string;
   prescriptionId?: string;
   prescriberId: string;
   pharmacyNCPDP: string;
   patientId: string;
   messageData: any;
-  status: 'received' | 'processed' | 'error' | 'sent' | 'acknowledged';
+  status: "received" | "processed" | "error" | "sent" | "acknowledged";
   receivedAt?: string;
   processedAt?: string;
   sentAt?: string;
@@ -113,9 +119,9 @@ export interface RefillRequest {
   id: string;
   prescriptionId: string;
   prescription?: Prescription;
-  requestedBy: 'patient' | 'provider' | 'pharmacist';
+  requestedBy: "patient" | "provider" | "pharmacist";
   requestDate: string;
-  status: 'pending' | 'approved' | 'denied' | 'processing' | 'completed';
+  status: "pending" | "approved" | "denied" | "processing" | "completed";
   approvedBy?: string;
   approvedDate?: string;
   denialReason?: string;
@@ -124,7 +130,7 @@ export interface RefillRequest {
 }
 
 class PrescriptionService {
-  private apiBase = '/api/pharmacy';
+  private apiBase = "/api/pharmacy";
 
   /**
    * Prescription Management
@@ -137,50 +143,56 @@ class PrescriptionService {
     endDate?: string;
   }): Promise<Prescription[]> {
     const params = new URLSearchParams();
-    if (filters?.patientId) params.append('patientId', filters.patientId);
-    if (filters?.prescriberId) params.append('prescriberId', filters.prescriberId);
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.startDate) params.append('startDate', filters.startDate);
-    if (filters?.endDate) params.append('endDate', filters.endDate);
+    if (filters?.patientId) params.append("patientId", filters.patientId);
+    if (filters?.prescriberId)
+      params.append("prescriberId", filters.prescriberId);
+    if (filters?.status) params.append("status", filters.status);
+    if (filters?.startDate) params.append("startDate", filters.startDate);
+    if (filters?.endDate) params.append("endDate", filters.endDate);
 
     const response = await fetch(`${this.apiBase}/prescriptions?${params}`);
-    if (!response.ok) throw new Error('Failed to get prescriptions');
+    if (!response.ok) throw new Error("Failed to get prescriptions");
     return response.json();
   }
 
   async getPrescription(id: string): Promise<Prescription> {
     const response = await fetch(`${this.apiBase}/prescriptions/${id}`);
-    if (!response.ok) throw new Error('Prescription not found');
+    if (!response.ok) throw new Error("Prescription not found");
     return response.json();
   }
 
-  async createPrescription(data: Omit<Prescription, 'id' | 'rxNumber' | 'createdAt' | 'updatedAt'>): Promise<Prescription> {
+  async createPrescription(
+    data: Omit<Prescription, "id" | "rxNumber" | "createdAt" | "updatedAt">,
+  ): Promise<Prescription> {
     const response = await fetch(`${this.apiBase}/prescriptions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to create prescription');
+    if (!response.ok) throw new Error("Failed to create prescription");
     return response.json();
   }
 
-  async updatePrescription(id: string, data: Partial<Prescription>): Promise<Prescription> {
+  async updatePrescription(
+    id: string,
+    data: Partial<Prescription>,
+  ): Promise<Prescription> {
     const response = await fetch(`${this.apiBase}/prescriptions/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to update prescription');
+    if (!response.ok) throw new Error("Failed to update prescription");
     return response.json();
   }
 
   async cancelPrescription(id: string, reason: string): Promise<Prescription> {
     const response = await fetch(`${this.apiBase}/prescriptions/${id}/cancel`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reason }),
     });
-    if (!response.ok) throw new Error('Failed to cancel prescription');
+    if (!response.ok) throw new Error("Failed to cancel prescription");
     return response.json();
   }
 
@@ -193,35 +205,38 @@ class PrescriptionService {
     assignedTo?: string;
   }): Promise<DispensingQueueItem[]> {
     const params = new URLSearchParams();
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.priority) params.append('priority', filters.priority);
-    if (filters?.assignedTo) params.append('assignedTo', filters.assignedTo);
+    if (filters?.status) params.append("status", filters.status);
+    if (filters?.priority) params.append("priority", filters.priority);
+    if (filters?.assignedTo) params.append("assignedTo", filters.assignedTo);
 
     const response = await fetch(`${this.apiBase}/dispense/queue?${params}`);
-    if (!response.ok) throw new Error('Failed to get dispensing queue');
+    if (!response.ok) throw new Error("Failed to get dispensing queue");
     return response.json();
   }
 
   async addToDispensingQueue(
     prescriptionId: string,
-    priority: DispensingQueueItem['priority'] = 'routine'
+    priority: DispensingQueueItem["priority"] = "routine",
   ): Promise<DispensingQueueItem> {
     const response = await fetch(`${this.apiBase}/dispense/queue`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prescriptionId, priority }),
     });
-    if (!response.ok) throw new Error('Failed to add to dispensing queue');
+    if (!response.ok) throw new Error("Failed to add to dispensing queue");
     return response.json();
   }
 
-  async updateQueueItem(id: string, data: Partial<DispensingQueueItem>): Promise<DispensingQueueItem> {
+  async updateQueueItem(
+    id: string,
+    data: Partial<DispensingQueueItem>,
+  ): Promise<DispensingQueueItem> {
     const response = await fetch(`${this.apiBase}/dispense/queue/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to update queue item');
+    if (!response.ok) throw new Error("Failed to update queue item");
     return response.json();
   }
 
@@ -237,11 +252,11 @@ class PrescriptionService {
     notes?: string;
   }): Promise<Prescription> {
     const response = await fetch(`${this.apiBase}/dispense`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to dispense prescription');
+    if (!response.ok) throw new Error("Failed to dispense prescription");
     return response.json();
   }
 
@@ -254,14 +269,17 @@ class PrescriptionService {
       labelVerified: boolean;
       patientVerified: boolean;
       interactionsChecked: boolean;
-    }
+    },
   ): Promise<void> {
-    const response = await fetch(`${this.apiBase}/prescriptions/${prescriptionId}/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ verifiedBy, checks }),
-    });
-    if (!response.ok) throw new Error('Failed to verify prescription');
+    const response = await fetch(
+      `${this.apiBase}/prescriptions/${prescriptionId}/verify`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ verifiedBy, checks }),
+      },
+    );
+    if (!response.ok) throw new Error("Failed to verify prescription");
   }
 
   /**
@@ -272,36 +290,39 @@ class PrescriptionService {
     patientId?: string;
   }): Promise<RefillRequest[]> {
     const params = new URLSearchParams();
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.patientId) params.append('patientId', filters.patientId);
+    if (filters?.status) params.append("status", filters.status);
+    if (filters?.patientId) params.append("patientId", filters.patientId);
 
     const response = await fetch(`${this.apiBase}/refills?${params}`);
-    if (!response.ok) throw new Error('Failed to get refill requests');
+    if (!response.ok) throw new Error("Failed to get refill requests");
     return response.json();
   }
 
-  async createRefillRequest(prescriptionId: string, requestedBy: string): Promise<RefillRequest> {
+  async createRefillRequest(
+    prescriptionId: string,
+    requestedBy: string,
+  ): Promise<RefillRequest> {
     const response = await fetch(`${this.apiBase}/refills`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prescriptionId, requestedBy }),
     });
-    if (!response.ok) throw new Error('Failed to create refill request');
+    if (!response.ok) throw new Error("Failed to create refill request");
     return response.json();
   }
 
   async processRefillRequest(
     id: string,
-    action: 'approve' | 'deny',
+    action: "approve" | "deny",
     data: {
       processedBy: string;
       notes?: string;
       denialReason?: string;
-    }
+    },
   ): Promise<RefillRequest> {
     const response = await fetch(`${this.apiBase}/refills/${id}/${action}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error(`Failed to ${action} refill request`);
@@ -314,8 +335,10 @@ class PrescriptionService {
     nextEligibleDate?: string;
     refillsRemaining: number;
   }> {
-    const response = await fetch(`${this.apiBase}/refills/${prescriptionId}/eligibility`);
-    if (!response.ok) throw new Error('Failed to check refill eligibility');
+    const response = await fetch(
+      `${this.apiBase}/refills/${prescriptionId}/eligibility`,
+    );
+    if (!response.ok) throw new Error("Failed to check refill eligibility");
     return response.json();
   }
 
@@ -329,64 +352,76 @@ class PrescriptionService {
     endDate?: string;
   }): Promise<EPrescribeMessage[]> {
     const params = new URLSearchParams();
-    if (filters?.messageType) params.append('messageType', filters.messageType);
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.startDate) params.append('startDate', filters.startDate);
-    if (filters?.endDate) params.append('endDate', filters.endDate);
+    if (filters?.messageType) params.append("messageType", filters.messageType);
+    if (filters?.status) params.append("status", filters.status);
+    if (filters?.startDate) params.append("startDate", filters.startDate);
+    if (filters?.endDate) params.append("endDate", filters.endDate);
 
     const response = await fetch(`${this.apiBase}/eprescribe?${params}`);
-    if (!response.ok) throw new Error('Failed to get e-prescribe messages');
+    if (!response.ok) throw new Error("Failed to get e-prescribe messages");
     return response.json();
   }
 
   async processNewRxMessage(messageId: string): Promise<Prescription> {
-    const response = await fetch(`${this.apiBase}/eprescribe/${messageId}/process`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    if (!response.ok) throw new Error('Failed to process NEWRX message');
+    const response = await fetch(
+      `${this.apiBase}/eprescribe/${messageId}/process`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    if (!response.ok) throw new Error("Failed to process NEWRX message");
     return response.json();
   }
 
   async sendRefillResponse(
     messageId: string,
-    response_type: 'approved' | 'denied' | 'replaced',
+    response_type: "approved" | "denied" | "replaced",
     data?: {
       denialReason?: string;
       replacementPrescriptionId?: string;
       notes?: string;
-    }
+    },
   ): Promise<void> {
-    const response = await fetch(`${this.apiBase}/eprescribe/${messageId}/respond`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ response: response_type, ...data }),
-    });
-    if (!response.ok) throw new Error('Failed to send refill response');
+    const response = await fetch(
+      `${this.apiBase}/eprescribe/${messageId}/respond`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ response: response_type, ...data }),
+      },
+    );
+    if (!response.ok) throw new Error("Failed to send refill response");
   }
 
-  async sendChangeRequest(prescriptionId: string, changes: {
-    field: string;
-    currentValue: string;
-    requestedValue: string;
-    reason: string;
-  }[]): Promise<EPrescribeMessage> {
+  async sendChangeRequest(
+    prescriptionId: string,
+    changes: {
+      field: string;
+      currentValue: string;
+      requestedValue: string;
+      reason: string;
+    }[],
+  ): Promise<EPrescribeMessage> {
     const response = await fetch(`${this.apiBase}/eprescribe/change-request`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prescriptionId, changes }),
     });
-    if (!response.ok) throw new Error('Failed to send change request');
+    if (!response.ok) throw new Error("Failed to send change request");
     return response.json();
   }
 
-  async cancelEPrescription(prescriptionId: string, reason: string): Promise<void> {
+  async cancelEPrescription(
+    prescriptionId: string,
+    reason: string,
+  ): Promise<void> {
     const response = await fetch(`${this.apiBase}/eprescribe/cancel`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prescriptionId, reason }),
     });
-    if (!response.ok) throw new Error('Failed to cancel e-prescription');
+    if (!response.ok) throw new Error("Failed to cancel e-prescription");
   }
 
   /**
@@ -416,8 +451,10 @@ class PrescriptionService {
     };
     barcodeData: string;
   }> {
-    const response = await fetch(`${this.apiBase}/prescriptions/${prescriptionId}/label`);
-    if (!response.ok) throw new Error('Failed to generate medication label');
+    const response = await fetch(
+      `${this.apiBase}/prescriptions/${prescriptionId}/label`,
+    );
+    if (!response.ok) throw new Error("Failed to generate medication label");
     return response.json();
   }
 
@@ -427,15 +464,18 @@ class PrescriptionService {
   calculateNextRefillDate(
     lastFilledDate: string,
     daysSupply: number,
-    allowedRefillDays: number = 3
+    allowedRefillDays: number = 3,
   ): string {
     const lastFilled = new Date(lastFilledDate);
     const nextRefill = new Date(lastFilled);
     nextRefill.setDate(nextRefill.getDate() + daysSupply - allowedRefillDays);
-    return nextRefill.toISOString().split('T')[0];
+    return nextRefill.toISOString().split("T")[0];
   }
 
-  calculateExpirationDate(writtenDate: string, controlled: boolean = false): string {
+  calculateExpirationDate(
+    writtenDate: string,
+    controlled: boolean = false,
+  ): string {
     const written = new Date(writtenDate);
     const expiration = new Date(written);
 
@@ -447,7 +487,7 @@ class PrescriptionService {
       expiration.setFullYear(expiration.getFullYear() + 1);
     }
 
-    return expiration.toISOString().split('T')[0];
+    return expiration.toISOString().split("T")[0];
   }
 
   generateRxNumber(): string {
@@ -457,7 +497,11 @@ class PrescriptionService {
     return `RX${timestamp}${random}`;
   }
 
-  isTooSoonToRefill(lastFilledDate: string, daysSupply: number, allowedDays: number = 3): boolean {
+  isTooSoonToRefill(
+    lastFilledDate: string,
+    daysSupply: number,
+    allowedDays: number = 3,
+  ): boolean {
     const lastFilled = new Date(lastFilledDate);
     const eligibleDate = new Date(lastFilled);
     eligibleDate.setDate(eligibleDate.getDate() + daysSupply - allowedDays);

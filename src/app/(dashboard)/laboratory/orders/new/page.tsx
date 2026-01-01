@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import LabOrderForm from '@/components/laboratory/LabOrderForm';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import LabOrderForm from "@/components/laboratory/LabOrderForm";
+import { useRouter } from "next/navigation";
 
 export default function NewOrderPage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function NewOrderPage() {
           router.push(`/laboratory/orders/${order.id}`);
         }}
         onCancel={() => {
-          router.push('/laboratory/orders');
+          router.push("/laboratory/orders");
         }}
       />
     </div>

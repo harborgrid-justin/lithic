@@ -1,4 +1,4 @@
-import { UserManagement } from '../../components/admin/UserManagement';
+import { UserManagement } from "../../components/admin/UserManagement";
 
 /**
  * UsersPage
@@ -9,7 +9,10 @@ export class UsersPage {
   private userManagement: UserManagement | null = null;
   private onNavigate?: (page: string, params?: any) => void;
 
-  constructor(container: HTMLElement, onNavigate?: (page: string, params?: any) => void) {
+  constructor(
+    container: HTMLElement,
+    onNavigate?: (page: string, params?: any) => void,
+  ) {
     this.container = container;
     this.onNavigate = onNavigate;
   }
@@ -26,14 +29,14 @@ export class UsersPage {
       </div>
     `;
 
-    const userContainer = document.getElementById('user-management-container');
+    const userContainer = document.getElementById("user-management-container");
     if (userContainer) {
       this.userManagement = new UserManagement(userContainer, (userId) => {
         if (this.onNavigate) {
-          if (userId === 'new') {
-            this.onNavigate('new-user');
+          if (userId === "new") {
+            this.onNavigate("new-user");
           } else {
-            this.onNavigate('user-detail', { userId });
+            this.onNavigate("user-detail", { userId });
           }
         }
       });
@@ -43,6 +46,6 @@ export class UsersPage {
 
   destroy(): void {
     this.userManagement?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

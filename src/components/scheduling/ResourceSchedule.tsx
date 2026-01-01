@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-import { MapPin, Clock, AlertCircle } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import type { Resource, Appointment } from '@/types/scheduling';
-import { schedulingService } from '@/services/scheduling.service';
-import AppointmentCard from './AppointmentCard';
+import React, { useState, useEffect } from "react";
+import { format } from "date-fns";
+import { MapPin, Clock, AlertCircle } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { Resource, Appointment } from "@/types/scheduling";
+import { schedulingService } from "@/services/scheduling.service";
+import AppointmentCard from "./AppointmentCard";
 
 interface ResourceScheduleProps {
   resource: Resource;
@@ -29,13 +29,17 @@ export default function ResourceSchedule({
 
   const loadSchedule = async () => {
     try {
-      const startDate = format(date, 'yyyy-MM-dd');
-      const endDate = format(date, 'yyyy-MM-dd');
+      const startDate = format(date, "yyyy-MM-dd");
+      const endDate = format(date, "yyyy-MM-dd");
 
-      const data = await schedulingService.getResourceSchedule(resource.id, startDate, endDate);
+      const data = await schedulingService.getResourceSchedule(
+        resource.id,
+        startDate,
+        endDate,
+      );
       setAppointments(data);
     } catch (error) {
-      console.error('Failed to load resource schedule:', error);
+      console.error("Failed to load resource schedule:", error);
     } finally {
       setLoading(false);
     }
@@ -48,10 +52,12 @@ export default function ResourceSchedule({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>{resource.name}</CardTitle>
-              <p className="text-sm text-gray-500 mt-1">{resource.description}</p>
+              <p className="text-sm text-gray-500 mt-1">
+                {resource.description}
+              </p>
             </div>
-            <Badge variant={resource.isAvailable ? 'default' : 'destructive'}>
-              {resource.isAvailable ? 'Available' : 'Unavailable'}
+            <Badge variant={resource.isAvailable ? "default" : "destructive"}>
+              {resource.isAvailable ? "Available" : "Unavailable"}
             </Badge>
           </div>
         </CardHeader>
@@ -91,13 +97,15 @@ export default function ResourceSchedule({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Bookings for {format(date, 'MMM d, yyyy')}</CardTitle>
+            <CardTitle>Bookings for {format(date, "MMM d, yyyy")}</CardTitle>
             <Badge>{appointments.length} bookings</Badge>
           </div>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-gray-500">Loading bookings...</div>
+            <div className="text-center py-8 text-gray-500">
+              Loading bookings...
+            </div>
           ) : appointments.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No bookings scheduled for this day

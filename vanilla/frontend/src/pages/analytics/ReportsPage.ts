@@ -3,8 +3,8 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { DataTable } from '../../components/analytics/DataTable';
-import { analyticsService } from '../../services/AnalyticsService';
+import { DataTable } from "../../components/analytics/DataTable";
+import { analyticsService } from "../../services/AnalyticsService";
 
 export class ReportsPage {
   private container: HTMLElement;
@@ -25,17 +25,17 @@ export class ReportsPage {
       const response = await analyticsService.getReports();
       this.reports = response.data || [];
     } catch (error) {
-      console.error('Failed to load reports:', error);
+      console.error("Failed to load reports:", error);
       this.reports = [];
     }
   }
 
   private render(): void {
-    this.container.innerHTML = '';
-    this.container.style.cssText = 'padding: 24px;';
+    this.container.innerHTML = "";
+    this.container.style.cssText = "padding: 24px;";
 
     // Header
-    const header = document.createElement('div');
+    const header = document.createElement("div");
     header.style.cssText = `
       display: flex;
       justify-content: space-between;
@@ -43,12 +43,12 @@ export class ReportsPage {
       margin-bottom: 24px;
     `;
 
-    const title = document.createElement('h1');
-    title.textContent = 'Reports';
-    title.style.margin = '0';
+    const title = document.createElement("h1");
+    title.textContent = "Reports";
+    title.style.margin = "0";
 
-    const createBtn = document.createElement('button');
-    createBtn.textContent = '+ Create Report';
+    const createBtn = document.createElement("button");
+    createBtn.textContent = "+ Create Report";
     createBtn.style.cssText = `
       padding: 12px 24px;
       background: #4a90e2;
@@ -59,8 +59,8 @@ export class ReportsPage {
       cursor: pointer;
     `;
 
-    createBtn.addEventListener('click', () => {
-      window.location.hash = '#/analytics/reports/builder';
+    createBtn.addEventListener("click", () => {
+      window.location.hash = "#/analytics/reports/builder";
     });
 
     header.appendChild(title);
@@ -68,22 +68,22 @@ export class ReportsPage {
     this.container.appendChild(header);
 
     // Table
-    const tableContainer = document.createElement('div');
+    const tableContainer = document.createElement("div");
     new DataTable(tableContainer, {
       columns: [
-        { key: 'name', label: 'Report Name', sortable: true },
-        { key: 'type', label: 'Type', sortable: true },
-        { key: 'format', label: 'Format', sortable: true },
+        { key: "name", label: "Report Name", sortable: true },
+        { key: "type", label: "Type", sortable: true },
+        { key: "format", label: "Format", sortable: true },
         {
-          key: 'updatedAt',
-          label: 'Last Modified',
+          key: "updatedAt",
+          label: "Last Modified",
           sortable: true,
           formatter: (value) => new Date(value).toLocaleString(),
         },
         {
-          key: 'actions',
-          label: 'Actions',
-          formatter: () => '⚙️',
+          key: "actions",
+          label: "Actions",
+          formatter: () => "⚙️",
         },
       ],
       data: this.reports,

@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Patient } from '@/types/patient';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { calculateAge, formatPhone } from '@/lib/utils';
-import { User, Phone, Mail, Calendar } from 'lucide-react';
+import { Patient } from "@/types/patient";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { calculateAge, formatPhone } from "@/lib/utils";
+import { User, Phone, Mail, Calendar } from "lucide-react";
 
 interface PatientCardProps {
   patient: Patient;
@@ -15,13 +15,13 @@ export function PatientCard({ patient, onClick }: PatientCardProps) {
   const age = calculateAge(patient.dateOfBirth);
 
   const statusVariant = {
-    active: 'success' as const,
-    inactive: 'secondary' as const,
-    deceased: 'danger' as const,
+    active: "success" as const,
+    inactive: "secondary" as const,
+    deceased: "danger" as const,
   };
 
   return (
-    <Card 
+    <Card
       className="hover:shadow-md transition-shadow cursor-pointer"
       onClick={onClick}
     >

@@ -1,28 +1,39 @@
-'use client'
+"use client";
 
-import { Medication } from '@/types/clinical'
-import { formatDate } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Pill } from 'lucide-react'
+import { Medication } from "@/types/clinical";
+import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Pill } from "lucide-react";
 
 interface MedicationListProps {
-  medications: Medication[]
-  onAdd?: () => void
-  onEdit?: (medication: Medication) => void
+  medications: Medication[];
+  onAdd?: () => void;
+  onEdit?: (medication: Medication) => void;
 }
 
-export function MedicationList({ medications, onAdd, onEdit }: MedicationListProps) {
-  const getStatusColor = (status: Medication['status']) => {
+export function MedicationList({
+  medications,
+  onAdd,
+  onEdit,
+}: MedicationListProps) {
+  const getStatusColor = (status: Medication["status"]) => {
     const colors = {
-      active: 'success',
-      discontinued: 'danger',
-      completed: 'secondary',
-    }
-    return colors[status] as 'success' | 'danger' | 'secondary'
-  }
+      active: "success",
+      discontinued: "danger",
+      completed: "secondary",
+    };
+    return colors[status] as "success" | "danger" | "secondary";
+  };
 
   return (
     <Card>
@@ -59,7 +70,9 @@ export function MedicationList({ medications, onAdd, onEdit }: MedicationListPro
                   <div>
                     <p className="font-medium">{medication.name}</p>
                     {medication.genericName && (
-                      <p className="text-xs text-gray-500">{medication.genericName}</p>
+                      <p className="text-xs text-gray-500">
+                        {medication.genericName}
+                      </p>
                     )}
                   </div>
                 </TableCell>
@@ -94,5 +107,5 @@ export function MedicationList({ medications, onAdd, onEdit }: MedicationListPro
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

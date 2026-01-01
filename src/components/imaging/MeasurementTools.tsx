@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Measurement } from '@/services/imaging.service';
-import { dicomService } from '@/services/dicom.service';
+import { useState } from "react";
+import { Measurement } from "@/services/imaging.service";
+import { dicomService } from "@/services/dicom.service";
 
 interface MeasurementToolsProps {
   studyId: string;
@@ -23,45 +23,57 @@ export default function MeasurementTools({
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
 
   const tools = [
-    { id: 'LENGTH', name: 'Length', icon: '📏', description: 'Measure distance' },
-    { id: 'AREA', name: 'Area', icon: '▭', description: 'Measure area' },
-    { id: 'ANGLE', name: 'Angle', icon: '∠', description: 'Measure angle' },
-    { id: 'HU', name: 'HU', icon: 'HU', description: 'Hounsfield Units (CT)' },
-    { id: 'SUV', name: 'SUV', icon: 'SUV', description: 'Standardized Uptake Value (PET)' },
+    {
+      id: "LENGTH",
+      name: "Length",
+      icon: "📏",
+      description: "Measure distance",
+    },
+    { id: "AREA", name: "Area", icon: "▭", description: "Measure area" },
+    { id: "ANGLE", name: "Angle", icon: "∠", description: "Measure angle" },
+    { id: "HU", name: "HU", icon: "HU", description: "Hounsfield Units (CT)" },
+    {
+      id: "SUV",
+      name: "SUV",
+      icon: "SUV",
+      description: "Standardized Uptake Value (PET)",
+    },
   ];
 
   const formatMeasurement = (measurement: Measurement) => {
     const units: { [key: string]: string } = {
-      LENGTH: pixelSpacing ? 'mm' : 'px',
-      AREA: pixelSpacing ? 'mm²' : 'px²',
-      ANGLE: '°',
-      HU: 'HU',
-      SUV: 'g/mL',
+      LENGTH: pixelSpacing ? "mm" : "px",
+      AREA: pixelSpacing ? "mm²" : "px²",
+      ANGLE: "°",
+      HU: "HU",
+      SUV: "g/mL",
     };
 
     return `${measurement.value.toFixed(2)} ${units[measurement.type] || measurement.unit}`;
   };
 
   const handleDeleteMeasurement = (id: string) => {
-    setMeasurements(measurements.filter(m => m.id !== id));
+    setMeasurements(measurements.filter((m) => m.id !== id));
   };
 
   const handleClearAll = () => {
-    if (confirm('Clear all measurements?')) {
+    if (confirm("Clear all measurements?")) {
       setMeasurements([]);
     }
   };
 
   const handleExport = () => {
-    const data = measurements.map(m => ({
+    const data = measurements.map((m) => ({
       type: m.type,
       value: m.value,
       unit: m.unit,
       label: m.label,
     }));
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `measurements-${studyId}.json`;
     a.click();
@@ -74,14 +86,16 @@ export default function MeasurementTools({
 
       {/* Tool Selection */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
-        {tools.map(tool => (
+        {tools.map((tool) => (
           <button
             key={tool.id}
-            onClick={() => setActiveTool(activeTool === tool.id ? null : tool.id)}
+            onClick={() =>
+              setActiveTool(activeTool === tool.id ? null : tool.id)
+            }
             className={`p-3 rounded-lg border-2 transition-all ${
               activeTool === tool.id
-                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                : 'border-gray-200 hover:border-gray-300'
+                ? "border-blue-500 bg-blue-50 text-blue-700"
+                : "border-gray-200 hover:border-gray-300"
             }`}
             title={tool.description}
           >
@@ -95,8 +109,10 @@ export default function MeasurementTools({
       {activeTool && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
-            <span className="font-semibold">{tools.find(t => t.id === activeTool)?.name}:</span>{' '}
-            {tools.find(t => t.id === activeTool)?.description}
+            <span className="font-semibold">
+              {tools.find((t) => t.id === activeTool)?.name}:
+            </span>{" "}
+            {tools.find((t) => t.id === activeTool)?.description}
           </p>
           <p className="text-xs text-blue-600 mt-1">
             Click on the image to start measuring
@@ -107,7 +123,9 @@ export default function MeasurementTools({
       {/* Measurements List */}
       <div className="space-y-2">
         <div className="flex justify-between items-center mb-2">
-          <h4 className="font-medium text-sm">Measurements ({measurements.length})</h4>
+          <h4 className="font-medium text-sm">
+            Measurements ({measurements.length})
+          </h4>
           {measurements.length > 0 && (
             <div className="space-x-2">
               <button
@@ -143,7 +161,9 @@ export default function MeasurementTools({
                       {measurement.type}
                     </span>
                     {measurement.label && (
-                      <span className="text-xs text-gray-500">({measurement.label})</span>
+                      <span className="text-xs text-gray-500">
+                        ({measurement.label})
+                      </span>
                     )}
                   </div>
                   <div className="text-sm font-semibold mt-1">

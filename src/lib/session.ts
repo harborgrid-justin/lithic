@@ -1,6 +1,6 @@
-import { prisma } from './db';
-import { generateToken } from './encryption';
-import { logAudit } from './audit';
+import { prisma } from "./db";
+import { generateToken } from "./encryption";
+import { logAudit } from "./audit";
 
 export interface SessionData {
   userId: string;
@@ -25,16 +25,18 @@ export async function createSession(data: SessionData) {
       accessToken: generateToken(64),
       refreshToken: generateToken(64),
       expiresAt,
-      refreshExpiresAt: new Date(expiresAt.getTime() + 30 * 24 * 60 * 60 * 1000),
-      ipAddress: data.ipAddress || 'unknown',
-      userAgent: data.userAgent || 'unknown',
+      refreshExpiresAt: new Date(
+        expiresAt.getTime() + 30 * 24 * 60 * 60 * 1000,
+      ),
+      ipAddress: data.ipAddress || "unknown",
+      userAgent: data.userAgent || "unknown",
       device: {
         id: data.deviceId || generateToken(16),
-        userAgent: data.userAgent || 'unknown',
+        userAgent: data.userAgent || "unknown",
       },
       location: data.location ? JSON.parse(data.location) : null,
       lastActivityAt: new Date(),
-      status: 'active',
+      status: "active",
     },
   });
 
@@ -73,13 +75,13 @@ export async function validateSession(sessionToken: string): Promise<boolean> {
   }
 
   // Check if session is active
-  if (session.status !== 'active') {
+  if (session.status !== "active") {
     return false;
   }
 
   // Check if session has expired
   if (new Date(session.expiresAt) < new Date()) {
-    await revokeSession(session.id, 'Session expired');
+    await revokeSession(session.id, "Session expired");
     return false;
   }
 
@@ -89,7 +91,7 @@ export async function validateSession(sessionToken: string): Promise<boolean> {
   const timeSinceActivity = Date.now() - lastActivity.getTime();
 
   if (timeSinceActivity > inactivityTimeout) {
-    await revokeSession(session.id, 'Session inactive timeout');
+    await revokeSession(session.id, "Session inactive timeout");
     return false;
   }
 
@@ -116,7 +118,7 @@ export async function revokeSession(sessionId: string, reason?: string) {
   const session = await prisma.session.update({
     where: { id: sessionId },
     data: {
-      status: 'revoked',
+      status: "revoked",
       logoutAt: new Date(),
       logoutReason: reason,
     },
@@ -125,10 +127,10 @@ export async function revokeSession(sessionId: string, reason?: string) {
   // Log session revocation
   await logAudit({
     userId: session.userId,
-    action: 'SESSION_REVOKED',
-    resource: 'Session',
+    action: "SESSION_REVOKED",
+    resource: "Session",
     resourceId: sessionId,
-    description: `Session revoked: ${reason || 'No reason provided'}`,
+    description: `Session revoked: ${reason || "No reason provided"}`,
     metadata: { sessionId, reason },
   });
 
@@ -141,11 +143,11 @@ export async function revokeSession(sessionId: string, reason?: string) {
 export async function revokeAllUserSessions(
   userId: string,
   reason?: string,
-  exceptSessionId?: string
+  exceptSessionId?: string,
 ) {
   const where: any = {
     userId,
-    status: 'active',
+    status: "active",
   };
 
   if (exceptSessionId) {
@@ -155,18 +157,18 @@ export async function revokeAllUserSessions(
   const result = await prisma.session.updateMany({
     where,
     data: {
-      status: 'revoked',
+      status: "revoked",
       logoutAt: new Date(),
-      logoutReason: reason || 'All sessions revoked',
+      logoutReason: reason || "All sessions revoked",
     },
   });
 
   // Log action
   await logAudit({
     userId,
-    action: 'SESSION_REVOKED',
-    resource: 'Session',
-    description: `All user sessions revoked: ${reason || 'No reason provided'}`,
+    action: "SESSION_REVOKED",
+    resource: "Session",
+    description: `All user sessions revoked: ${reason || "No reason provided"}`,
     metadata: { userId, reason, count: result.count },
   });
 
@@ -180,13 +182,13 @@ export async function getUserSessions(userId: string) {
   return await prisma.session.findMany({
     where: {
       userId,
-      status: 'active',
+      status: "active",
       expiresAt: {
         gte: new Date(),
       },
     },
     orderBy: {
-      lastActivityAt: 'desc',
+      lastActivityAt: "desc",
     },
   });
 }
@@ -197,15 +199,15 @@ export async function getUserSessions(userId: string) {
 export async function cleanupExpiredSessions() {
   const result = await prisma.session.updateMany({
     where: {
-      status: 'active',
+      status: "active",
       expiresAt: {
         lt: new Date(),
       },
     },
     data: {
-      status: 'expired',
+      status: "expired",
       logoutAt: new Date(),
-      logoutReason: 'Session expired',
+      logoutReason: "Session expired",
     },
   });
 
@@ -217,7 +219,7 @@ export async function cleanupExpiredSessions() {
  */
 export async function getSessionStats(organizationId?: string) {
   const where: any = {
-    status: 'active',
+    status: "active",
     expiresAt: {
       gte: new Date(),
     },
@@ -232,14 +234,12 @@ export async function getSessionStats(organizationId?: string) {
   const [activeSessions, totalSessions, uniqueUsers] = await Promise.all([
     prisma.session.count({ where }),
     prisma.session.count({
-      where: organizationId
-        ? { user: { organizationId } }
-        : {},
+      where: organizationId ? { user: { organizationId } } : {},
     }),
     prisma.session.findMany({
       where,
       select: { userId: true },
-      distinct: ['userId'],
+      distinct: ["userId"],
     }),
   ]);
 
@@ -269,16 +269,24 @@ export async function detectSuspiciousActivity(userId: string): Promise<{
   const locations = sessions
     .map((s) => {
       try {
-        return s.location ? (typeof s.location === 'string' ? JSON.parse(s.location) : s.location) : null;
+        return s.location
+          ? typeof s.location === "string"
+            ? JSON.parse(s.location)
+            : s.location
+          : null;
       } catch {
         return null;
       }
     })
     .filter(Boolean);
 
-  const countries = new Set(locations.map((l: any) => l?.country).filter(Boolean));
+  const countries = new Set(
+    locations.map((l: any) => l?.country).filter(Boolean),
+  );
   if (countries.size > 2) {
-    reasons.push(`Sessions from multiple countries: ${Array.from(countries).join(', ')}`);
+    reasons.push(
+      `Sessions from multiple countries: ${Array.from(countries).join(", ")}`,
+    );
   }
 
   // Check for rapid session creation
@@ -288,7 +296,9 @@ export async function detectSuspiciousActivity(userId: string): Promise<{
   });
 
   if (recentSessions.length > 3) {
-    reasons.push(`Rapid session creation: ${recentSessions.length} in 5 minutes`);
+    reasons.push(
+      `Rapid session creation: ${recentSessions.length} in 5 minutes`,
+    );
   }
 
   return {
@@ -306,26 +316,26 @@ export function parseUserAgent(userAgent: string): {
   device: string;
 } {
   // Simple user agent parsing (consider using a library like ua-parser-js for production)
-  let browser = 'Unknown';
-  let os = 'Unknown';
-  let device = 'Desktop';
+  let browser = "Unknown";
+  let os = "Unknown";
+  let device = "Desktop";
 
   // Detect browser
-  if (userAgent.includes('Chrome')) browser = 'Chrome';
-  else if (userAgent.includes('Firefox')) browser = 'Firefox';
-  else if (userAgent.includes('Safari')) browser = 'Safari';
-  else if (userAgent.includes('Edge')) browser = 'Edge';
+  if (userAgent.includes("Chrome")) browser = "Chrome";
+  else if (userAgent.includes("Firefox")) browser = "Firefox";
+  else if (userAgent.includes("Safari")) browser = "Safari";
+  else if (userAgent.includes("Edge")) browser = "Edge";
 
   // Detect OS
-  if (userAgent.includes('Windows')) os = 'Windows';
-  else if (userAgent.includes('Mac')) os = 'macOS';
-  else if (userAgent.includes('Linux')) os = 'Linux';
-  else if (userAgent.includes('Android')) os = 'Android';
-  else if (userAgent.includes('iOS')) os = 'iOS';
+  if (userAgent.includes("Windows")) os = "Windows";
+  else if (userAgent.includes("Mac")) os = "macOS";
+  else if (userAgent.includes("Linux")) os = "Linux";
+  else if (userAgent.includes("Android")) os = "Android";
+  else if (userAgent.includes("iOS")) os = "iOS";
 
   // Detect device type
-  if (userAgent.includes('Mobile')) device = 'Mobile';
-  else if (userAgent.includes('Tablet')) device = 'Tablet';
+  if (userAgent.includes("Mobile")) device = "Mobile";
+  else if (userAgent.includes("Tablet")) device = "Tablet";
 
   return { browser, os, device };
 }
@@ -338,13 +348,13 @@ export async function refreshSession(refreshToken: string) {
     where: { refreshToken },
   });
 
-  if (!session || session.status !== 'active') {
-    throw new Error('Invalid refresh token');
+  if (!session || session.status !== "active") {
+    throw new Error("Invalid refresh token");
   }
 
   if (new Date(session.refreshExpiresAt) < new Date()) {
-    await revokeSession(session.id, 'Refresh token expired');
-    throw new Error('Refresh token expired');
+    await revokeSession(session.id, "Refresh token expired");
+    throw new Error("Refresh token expired");
   }
 
   // Generate new tokens

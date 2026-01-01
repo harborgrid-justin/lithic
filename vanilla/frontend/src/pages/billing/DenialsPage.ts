@@ -1,6 +1,8 @@
 export class DenialsPage {
   private container: HTMLElement;
-  constructor(container: HTMLElement) { this.container = container; }
+  constructor(container: HTMLElement) {
+    this.container = container;
+  }
   async render(): Promise<void> {
     this.container.innerHTML = `
       <div class="denials-page">

@@ -1,23 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import ReportEditor from '@/components/imaging/ReportEditor';
-import VoiceDictation from '@/components/imaging/VoiceDictation';
-import { imagingService, RadiologyReport } from '@/services/imaging.service';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import ReportEditor from "@/components/imaging/ReportEditor";
+import VoiceDictation from "@/components/imaging/VoiceDictation";
+import { imagingService, RadiologyReport } from "@/services/imaging.service";
+
+export const dynamic = "force-dynamic";
 
 export default function ReportsPage() {
   const searchParams = useSearchParams();
-  const studyId = searchParams.get('studyId');
-  const isNew = searchParams.get('new') === 'true';
+  const studyId = searchParams.get("studyId");
+  const isNew = searchParams.get("new") === "true";
 
   const [reports, setReports] = useState<RadiologyReport[]>([]);
-  const [selectedReport, setSelectedReport] = useState<RadiologyReport | null>(null);
+  const [selectedReport, setSelectedReport] = useState<RadiologyReport | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [showDictation, setShowDictation] = useState(false);
   const [filters, setFilters] = useState({
-    status: '',
-    radiologist: '',
+    status: "",
+    radiologist: "",
   });
 
   useEffect(() => {
@@ -38,7 +42,7 @@ export default function ReportsPage() {
         setSelectedReport(data[0]);
       }
     } catch (error) {
-      console.error('Failed to load reports:', error);
+      console.error("Failed to load reports:", error);
     } finally {
       setLoading(false);
     }
@@ -46,13 +50,13 @@ export default function ReportsPage() {
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      DRAFT: 'bg-yellow-100 text-yellow-800',
-      PRELIMINARY: 'bg-blue-100 text-blue-800',
-      FINAL: 'bg-green-100 text-green-800',
-      AMENDED: 'bg-purple-100 text-purple-800',
-      CORRECTED: 'bg-orange-100 text-orange-800',
+      DRAFT: "bg-yellow-100 text-yellow-800",
+      PRELIMINARY: "bg-blue-100 text-blue-800",
+      FINAL: "bg-green-100 text-green-800",
+      AMENDED: "bg-purple-100 text-purple-800",
+      CORRECTED: "bg-orange-100 text-orange-800",
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   if (loading) {
@@ -74,7 +78,9 @@ export default function ReportsPage() {
           <div className="space-y-2">
             <select
               value={filters.status}
-              onChange={e => setFilters({ ...filters, status: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
             >
               <option value="">All Statuses</option>
@@ -89,20 +95,22 @@ export default function ReportsPage() {
         <div className="flex-1 overflow-y-auto">
           {reports.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
-              {isNew ? 'Create a new report' : 'No reports found'}
+              {isNew ? "Create a new report" : "No reports found"}
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {reports.map(report => (
+              {reports.map((report) => (
                 <div
                   key={report.id}
                   className={`p-4 cursor-pointer hover:bg-gray-50 ${
-                    selectedReport?.id === report.id ? 'bg-blue-50' : ''
+                    selectedReport?.id === report.id ? "bg-blue-50" : ""
                   }`}
                   onClick={() => setSelectedReport(report)}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <div className="font-medium text-sm truncate">{report.patientName}</div>
+                    <div className="font-medium text-sm truncate">
+                      {report.patientName}
+                    </div>
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${getStatusColor(report.status)}`}
                     >
@@ -111,7 +119,9 @@ export default function ReportsPage() {
                   </div>
                   <div className="text-xs text-gray-600 space-y-1">
                     <div>{report.studyDescription}</div>
-                    <div>{new Date(report.reportDate).toLocaleDateString()}</div>
+                    <div>
+                      {new Date(report.reportDate).toLocaleDateString()}
+                    </div>
                     <div>by {report.radiologist}</div>
                   </div>
                 </div>
@@ -141,18 +151,20 @@ export default function ReportsPage() {
             <button
               onClick={() => setShowDictation(!showDictation)}
               className={`px-4 py-2 rounded ${
-                showDictation ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+                showDictation
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
-              {showDictation ? 'Hide' : 'Show'} Voice Dictation
+              {showDictation ? "Hide" : "Show"} Voice Dictation
             </button>
           </div>
 
           {/* Voice Dictation */}
           {showDictation && (
             <VoiceDictation
-              onTranscript={text => console.log('Transcript:', text)}
-              onComplete={text => console.log('Complete:', text)}
+              onTranscript={(text) => console.log("Transcript:", text)}
+              onComplete={(text) => console.log("Complete:", text)}
             />
           )}
 
@@ -160,11 +172,11 @@ export default function ReportsPage() {
           <ReportEditor
             studyId={studyId || undefined}
             reportId={selectedReport?.id}
-            onSave={report => {
+            onSave={(report) => {
               loadReports();
               setSelectedReport(report);
             }}
-            onSign={report => {
+            onSign={(report) => {
               loadReports();
               setSelectedReport(report);
             }}

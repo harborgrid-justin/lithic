@@ -1,5 +1,5 @@
-import { prisma } from './db';
-import type { AuditAction } from '@prisma/client';
+import { prisma } from "./db";
+import type { AuditAction } from "@prisma/client";
 
 export interface AuditLogData {
   userId?: string;
@@ -73,7 +73,7 @@ export async function logAudit(data: AuditLogData) {
 
     return auditLog;
   } catch (error) {
-    console.error('Failed to create audit log:', error);
+    console.error("Failed to create audit log:", error);
     // Don't throw error to avoid breaking the main operation
     // But log it for monitoring
     return null;
@@ -88,7 +88,7 @@ export async function logPHIAccess({
   resource,
   resourceId,
   phiType,
-  action = 'PHI_ACCESSED',
+  action = "PHI_ACCESSED",
   description,
   metadata,
   ipAddress,
@@ -171,7 +171,7 @@ export async function getAuditLogs({
           },
         },
       },
-      orderBy: { timestamp: 'desc' },
+      orderBy: { timestamp: "desc" },
       skip: (page - 1) * limit,
       take: limit,
     }),
@@ -209,46 +209,41 @@ export async function getAuditStats({
     if (endDate) where.timestamp.lte = endDate;
   }
 
-  const [
-    totalLogs,
-    phiAccessCount,
-    uniqueUsers,
-    actionCounts,
-    resourceCounts,
-  ] = await Promise.all([
-    // Total audit logs
-    prisma.auditLog.count({ where }),
+  const [totalLogs, phiAccessCount, uniqueUsers, actionCounts, resourceCounts] =
+    await Promise.all([
+      // Total audit logs
+      prisma.auditLog.count({ where }),
 
-    // PHI access count
-    prisma.auditLog.count({
-      where: { ...where, isPHIAccess: true },
-    }),
+      // PHI access count
+      prisma.auditLog.count({
+        where: { ...where, isPHIAccess: true },
+      }),
 
-    // Unique users
-    prisma.auditLog.findMany({
-      where,
-      select: { userId: true },
-      distinct: ['userId'],
-    }),
+      // Unique users
+      prisma.auditLog.findMany({
+        where,
+        select: { userId: true },
+        distinct: ["userId"],
+      }),
 
-    // Action counts
-    prisma.auditLog.groupBy({
-      by: ['action'],
-      where,
-      _count: true,
-      orderBy: { _count: { action: 'desc' } },
-      take: 10,
-    }),
+      // Action counts
+      prisma.auditLog.groupBy({
+        by: ["action"],
+        where,
+        _count: true,
+        orderBy: { _count: { action: "desc" } },
+        take: 10,
+      }),
 
-    // Resource counts
-    prisma.auditLog.groupBy({
-      by: ['resource'],
-      where,
-      _count: true,
-      orderBy: { _count: { resource: 'desc' } },
-      take: 10,
-    }),
-  ]);
+      // Resource counts
+      prisma.auditLog.groupBy({
+        by: ["resource"],
+        where,
+        _count: true,
+        orderBy: { _count: { resource: "desc" } },
+        take: 10,
+      }),
+    ]);
 
   return {
     totalLogs,
@@ -272,12 +267,12 @@ export async function exportAuditLogs({
   organizationId,
   startDate,
   endDate,
-  format = 'json',
+  format = "json",
 }: {
   organizationId: string;
   startDate: Date;
   endDate: Date;
-  format?: 'json' | 'csv';
+  format?: "json" | "csv";
 }) {
   const logs = await prisma.auditLog.findMany({
     where: {
@@ -296,42 +291,42 @@ export async function exportAuditLogs({
         },
       },
     },
-    orderBy: { timestamp: 'asc' },
+    orderBy: { timestamp: "asc" },
   });
 
-  if (format === 'csv') {
+  if (format === "csv") {
     // Convert to CSV format
     const headers = [
-      'Timestamp',
-      'User ID',
-      'User Name',
-      'User Email',
-      'Action',
-      'Resource',
-      'Resource ID',
-      'Description',
-      'IP Address',
-      'PHI Access',
-      'PHI Type',
+      "Timestamp",
+      "User ID",
+      "User Name",
+      "User Email",
+      "Action",
+      "Resource",
+      "Resource ID",
+      "Description",
+      "IP Address",
+      "PHI Access",
+      "PHI Type",
     ];
 
     const rows = logs.map((log) => [
       log.timestamp.toISOString(),
-      log.userId || '',
-      log.userName || '',
-      log.userEmail || '',
+      log.userId || "",
+      log.userName || "",
+      log.userEmail || "",
       log.action,
       log.resource,
-      log.resourceId || '',
+      log.resourceId || "",
       log.description,
-      log.ipAddress || '',
-      log.isPHIAccess ? 'Yes' : 'No',
-      log.phiType || '',
+      log.ipAddress || "",
+      log.isPHIAccess ? "Yes" : "No",
+      log.phiType || "",
     ]);
 
     const csv = [headers, ...rows]
-      .map((row) => row.map((cell) => `"${cell}"`).join(','))
-      .join('\n');
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
 
     return csv;
   }
@@ -345,7 +340,7 @@ export async function exportAuditLogs({
  */
 export function trackChanges(
   oldData: Record<string, any>,
-  newData: Record<string, any>
+  newData: Record<string, any>,
 ): {
   before: Record<string, any>;
   after: Record<string, any>;
@@ -367,10 +362,10 @@ export function trackChanges(
   for (const key of allKeys) {
     // Skip sensitive fields
     if (
-      key === 'password' ||
-      key === 'mfaSecret' ||
-      key === 'mfaBackupCodes' ||
-      key === 'updatedAt'
+      key === "password" ||
+      key === "mfaSecret" ||
+      key === "mfaBackupCodes" ||
+      key === "updatedAt"
     ) {
       continue;
     }
@@ -414,7 +409,7 @@ export async function getSecurityEvents({
   limit = 50,
 }: {
   organizationId?: string;
-  severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   resolved?: boolean;
   limit?: number;
 }) {
@@ -426,7 +421,7 @@ export async function getSecurityEvents({
 
   return await prisma.securityEvent.findMany({
     where,
-    orderBy: { timestamp: 'desc' },
+    orderBy: { timestamp: "desc" },
     take: limit,
   });
 }
@@ -445,7 +440,7 @@ export async function createSecurityEvent({
   metadata,
 }: {
   type: any; // SecurityEventType
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   userId?: string;
   organizationId?: string;
   ipAddress?: string;

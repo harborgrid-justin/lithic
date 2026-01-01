@@ -3,8 +3,8 @@
  * Tabs Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface Tab {
   id: string;
@@ -26,21 +26,21 @@ interface TabsState {
 export class Tabs extends Component<TabsProps, TabsState> {
   constructor(props: TabsProps) {
     super(props, {
-      activeTab: props.activeTab || props.tabs[0]?.id || '',
+      activeTab: props.activeTab || props.tabs[0]?.id || "",
     });
   }
 
   protected getClassName(): string {
-    return 'tabs-container';
+    return "tabs-container";
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
-    const tabList = createElement('div', {
-      className: 'tabs-list',
-      attributes: { role: 'tablist' },
+    const tabList = createElement("div", {
+      className: "tabs-list",
+      attributes: { role: "tablist" },
     });
 
     this.props.tabs.forEach((tab) => {
@@ -50,8 +50,8 @@ export class Tabs extends Component<TabsProps, TabsState> {
 
     this.element.appendChild(tabList);
 
-    const tabPanels = createElement('div', {
-      className: 'tabs-panels',
+    const tabPanels = createElement("div", {
+      className: "tabs-panels",
     });
 
     this.props.tabs.forEach((tab) => {
@@ -65,13 +65,13 @@ export class Tabs extends Component<TabsProps, TabsState> {
   private createTabButton(tab: Tab): HTMLElement {
     const isActive = this.state.activeTab === tab.id;
 
-    const button = createElement('button', {
-      className: `tab-button ${isActive ? 'tab-active' : ''} ${tab.disabled ? 'tab-disabled' : ''}`,
+    const button = createElement("button", {
+      className: `tab-button ${isActive ? "tab-active" : ""} ${tab.disabled ? "tab-disabled" : ""}`,
       textContent: tab.label,
       attributes: {
-        role: 'tab',
-        'aria-selected': String(isActive),
-        'aria-controls': `panel-${tab.id}`,
+        role: "tab",
+        "aria-selected": String(isActive),
+        "aria-controls": `panel-${tab.id}`,
         id: `tab-${tab.id}`,
       },
       events: {
@@ -80,7 +80,7 @@ export class Tabs extends Component<TabsProps, TabsState> {
     });
 
     if (tab.disabled) {
-      button.setAttribute('disabled', 'true');
+      button.setAttribute("disabled", "true");
     }
 
     return button;
@@ -89,16 +89,16 @@ export class Tabs extends Component<TabsProps, TabsState> {
   private createTabPanel(tab: Tab): HTMLElement {
     const isActive = this.state.activeTab === tab.id;
 
-    const panel = createElement('div', {
-      className: `tab-panel ${isActive ? 'tab-panel-active' : ''}`,
+    const panel = createElement("div", {
+      className: `tab-panel ${isActive ? "tab-panel-active" : ""}`,
       attributes: {
-        role: 'tabpanel',
-        'aria-labelledby': `tab-${tab.id}`,
+        role: "tabpanel",
+        "aria-labelledby": `tab-${tab.id}`,
         id: `panel-${tab.id}`,
       },
     });
 
-    if (typeof tab.content === 'string') {
+    if (typeof tab.content === "string") {
       panel.innerHTML = tab.content;
     } else {
       panel.appendChild(tab.content);

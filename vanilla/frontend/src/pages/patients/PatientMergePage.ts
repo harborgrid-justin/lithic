@@ -2,9 +2,9 @@
  * PatientMergePage - Merge patient records
  */
 
-import { MergePatients } from '../../components/patients/MergePatients';
-import PatientService from '../../services/PatientService';
-import { Patient } from '../../types/Patient';
+import { MergePatients } from "../../components/patients/MergePatients";
+import PatientService from "../../services/PatientService";
+import { Patient } from "../../types/Patient";
 
 export class PatientMergePage {
   private patientId: string;
@@ -14,7 +14,7 @@ export class PatientMergePage {
   constructor(patientId: string) {
     this.patientId = patientId;
     this.initializePage();
-    this.mergeComponent = new MergePatients('mergeContainer');
+    this.mergeComponent = new MergePatients("mergeContainer");
     this.loadPatient();
   }
 
@@ -44,9 +44,9 @@ export class PatientMergePage {
    * Attach page-level event listeners
    */
   private attachPageEventListeners(): void {
-    const backBtn = document.getElementById('backBtn');
+    const backBtn = document.getElementById("backBtn");
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
+      backBtn.addEventListener("click", () => {
         window.location.href = `/patients/${this.patientId}`;
       });
     }
@@ -63,19 +63,19 @@ export class PatientMergePage {
         this.patient = response.data;
         await this.mergeComponent.setSourcePatient(this.patient);
       } else {
-        throw new Error(response.error || 'Patient not found');
+        throw new Error(response.error || "Patient not found");
       }
     } catch (error) {
-      console.error('Failed to load patient:', error);
-      alert('Failed to load patient. Please try again.');
-      window.location.href = '/patients';
+      console.error("Failed to load patient:", error);
+      alert("Failed to load patient. Please try again.");
+      window.location.href = "/patients";
     }
   }
 }
 
 // Initialize page
-document.addEventListener('DOMContentLoaded', () => {
-  const pathParts = window.location.pathname.split('/');
+document.addEventListener("DOMContentLoaded", () => {
+  const pathParts = window.location.pathname.split("/");
   const patientId = pathParts[2];
 
   if (patientId) {

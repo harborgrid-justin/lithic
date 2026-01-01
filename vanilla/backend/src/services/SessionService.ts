@@ -1,6 +1,6 @@
-import { Pool } from 'pg';
-import crypto from 'crypto';
-import { AuditService, AuditAction, ResourceType } from './AuditService';
+import { Pool } from "pg";
+import crypto from "crypto";
+import { AuditService, AuditAction, ResourceType } from "./AuditService";
 
 /**
  * SessionService - Secure session management with automatic timeout
@@ -66,7 +66,7 @@ export class SessionService {
     try {
       await this.pool.query(createTableQuery);
     } catch (error) {
-      console.error('Failed to initialize session table:', error);
+      console.error("Failed to initialize session table:", error);
     }
   }
 
@@ -78,7 +78,7 @@ export class SessionService {
     userEmail: string,
     organizationId: string,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<Session> {
     // Check concurrent session limit
     await this.enforceConcurrentSessionLimit(userId);
@@ -121,11 +121,11 @@ export class SessionService {
       action: AuditAction.LOGIN,
       resourceType: ResourceType.SESSION,
       resourceId: sessionId,
-      status: 'success',
+      status: "success",
       ipAddress,
       userAgent,
       sessionId,
-      severity: 'low',
+      severity: "low",
     });
 
     return session;
@@ -134,7 +134,10 @@ export class SessionService {
   /**
    * Validate and refresh session
    */
-  async validateSession(sessionId: string, ipAddress: string): Promise<Session | null> {
+  async validateSession(
+    sessionId: string,
+    ipAddress: string,
+  ): Promise<Session | null> {
     const query = `
       SELECT * FROM sessions
       WHERE id = $1 AND is_active = true
@@ -150,14 +153,17 @@ export class SessionService {
 
     // Check if session expired
     if (new Date() > session.expiresAt) {
-      await this.invalidateSession(sessionId, 'Session expired');
+      await this.invalidateSession(sessionId, "Session expired");
       return null;
     }
 
     // Check inactivity timeout
     const inactivityTime = Date.now() - session.lastActivityAt.getTime();
     if (inactivityTime > this.sessionTimeout) {
-      await this.invalidateSession(sessionId, 'Session timeout due to inactivity');
+      await this.invalidateSession(
+        sessionId,
+        "Session timeout due to inactivity",
+      );
       return null;
     }
 
@@ -210,10 +216,10 @@ export class SessionService {
         action: AuditAction.LOGOUT,
         resourceType: ResourceType.SESSION,
         resourceId: sessionId,
-        status: 'success',
+        status: "success",
         details: { reason },
         sessionId,
-        severity: 'low',
+        severity: "low",
       });
     }
   }
@@ -221,7 +227,10 @@ export class SessionService {
   /**
    * Invalidate all sessions for a user
    */
-  async invalidateAllUserSessions(userId: string, exceptSessionId?: string): Promise<number> {
+  async invalidateAllUserSessions(
+    userId: string,
+    exceptSessionId?: string,
+  ): Promise<number> {
     let query = `
       UPDATE sessions
       SET is_active = false
@@ -231,7 +240,7 @@ export class SessionService {
     const values: any[] = [userId];
 
     if (exceptSessionId) {
-      query += ' AND id != $2';
+      query += " AND id != $2";
       values.push(exceptSessionId);
     }
 
@@ -282,7 +291,7 @@ export class SessionService {
       const oldestSession = sessions[sessions.length - 1];
       await this.invalidateSession(
         oldestSession.id,
-        'Maximum concurrent sessions exceeded'
+        "Maximum concurrent sessions exceeded",
       );
     }
   }
@@ -309,23 +318,26 @@ export class SessionService {
    */
   private startSessionCleanup(): void {
     // Run cleanup every 5 minutes
-    setInterval(async () => {
-      try {
-        const cleaned = await this.cleanupExpiredSessions();
-        if (cleaned > 0) {
-          console.log(`Cleaned up ${cleaned} expired sessions`);
+    setInterval(
+      async () => {
+        try {
+          const cleaned = await this.cleanupExpiredSessions();
+          if (cleaned > 0) {
+            console.log(`Cleaned up ${cleaned} expired sessions`);
+          }
+        } catch (error) {
+          console.error("Session cleanup failed:", error);
         }
-      } catch (error) {
-        console.error('Session cleanup failed:', error);
-      }
-    }, 5 * 60 * 1000);
+      },
+      5 * 60 * 1000,
+    );
   }
 
   /**
    * Generate secure session ID
    */
   private generateSessionId(): string {
-    return crypto.randomBytes(32).toString('hex');
+    return crypto.randomBytes(32).toString("hex");
   }
 
   /**
@@ -335,20 +347,20 @@ export class SessionService {
     // Basic user agent parsing (in production, use a library like ua-parser-js)
     const deviceInfo: any = {};
 
-    if (userAgent.includes('Chrome')) deviceInfo.browser = 'Chrome';
-    else if (userAgent.includes('Firefox')) deviceInfo.browser = 'Firefox';
-    else if (userAgent.includes('Safari')) deviceInfo.browser = 'Safari';
-    else if (userAgent.includes('Edge')) deviceInfo.browser = 'Edge';
+    if (userAgent.includes("Chrome")) deviceInfo.browser = "Chrome";
+    else if (userAgent.includes("Firefox")) deviceInfo.browser = "Firefox";
+    else if (userAgent.includes("Safari")) deviceInfo.browser = "Safari";
+    else if (userAgent.includes("Edge")) deviceInfo.browser = "Edge";
 
-    if (userAgent.includes('Windows')) deviceInfo.os = 'Windows';
-    else if (userAgent.includes('Mac')) deviceInfo.os = 'macOS';
-    else if (userAgent.includes('Linux')) deviceInfo.os = 'Linux';
-    else if (userAgent.includes('Android')) deviceInfo.os = 'Android';
-    else if (userAgent.includes('iOS')) deviceInfo.os = 'iOS';
+    if (userAgent.includes("Windows")) deviceInfo.os = "Windows";
+    else if (userAgent.includes("Mac")) deviceInfo.os = "macOS";
+    else if (userAgent.includes("Linux")) deviceInfo.os = "Linux";
+    else if (userAgent.includes("Android")) deviceInfo.os = "Android";
+    else if (userAgent.includes("iOS")) deviceInfo.os = "iOS";
 
-    if (userAgent.includes('Mobile')) deviceInfo.device = 'Mobile';
-    else if (userAgent.includes('Tablet')) deviceInfo.device = 'Tablet';
-    else deviceInfo.device = 'Desktop';
+    if (userAgent.includes("Mobile")) deviceInfo.device = "Mobile";
+    else if (userAgent.includes("Tablet")) deviceInfo.device = "Tablet";
+    else deviceInfo.device = "Desktop";
 
     return deviceInfo;
   }
@@ -387,7 +399,7 @@ export class SessionService {
 
     const values: any[] = [];
     if (organizationId) {
-      query += ' WHERE organization_id = $1';
+      query += " WHERE organization_id = $1";
       values.push(organizationId);
     }
 

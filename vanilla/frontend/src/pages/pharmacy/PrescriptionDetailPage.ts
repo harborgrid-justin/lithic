@@ -3,7 +3,9 @@
  * Detailed view of a single prescription
  */
 
-import pharmacyService, { type Prescription } from '../../services/PharmacyService';
+import pharmacyService, {
+  type Prescription,
+} from "../../services/PharmacyService";
 
 export class PrescriptionDetailPage {
   private container: HTMLElement;
@@ -25,15 +27,18 @@ export class PrescriptionDetailPage {
 
   private async loadPrescription(): Promise<void> {
     try {
-      this.prescription = await pharmacyService.getPrescription(this.prescriptionId);
+      this.prescription = await pharmacyService.getPrescription(
+        this.prescriptionId,
+      );
     } catch (error) {
-      console.error('Failed to load prescription:', error);
+      console.error("Failed to load prescription:", error);
     }
   }
 
   private render(): void {
     if (!this.prescription) {
-      this.container.innerHTML = '<div class="error">Prescription not found</div>';
+      this.container.innerHTML =
+        '<div class="error">Prescription not found</div>';
       return;
     }
 
@@ -45,11 +50,11 @@ export class PrescriptionDetailPage {
           <div>
             <h1>Prescription ${rx.rxNumber}</h1>
             <div class="status-badge status-${rx.status}">
-              ${rx.status.split('_').join(' ').toUpperCase()}
+              ${rx.status.split("_").join(" ").toUpperCase()}
             </div>
           </div>
           <div class="header-actions">
-            ${rx.status === 'verified' ? '<button class="btn btn-primary" data-action="dispense">Dispense</button>' : ''}
+            ${rx.status === "verified" ? '<button class="btn btn-primary" data-action="dispense">Dispense</button>' : ""}
             <button class="btn btn-secondary" data-action="print">Print</button>
           </div>
         </div>
@@ -71,8 +76,8 @@ export class PrescriptionDetailPage {
               <dt>Name:</dt>
               <dd>${rx.prescriberName || rx.prescriberId}</dd>
               <dt>NPI:</dt>
-              <dd>${rx.prescriberNPI || 'N/A'}</dd>
-              ${rx.prescriberDEA ? `<dt>DEA:</dt><dd>${rx.prescriberDEA}</dd>` : ''}
+              <dd>${rx.prescriberNPI || "N/A"}</dd>
+              ${rx.prescriberDEA ? `<dt>DEA:</dt><dd>${rx.prescriberDEA}</dd>` : ""}
             </dl>
           </section>
 
@@ -81,12 +86,12 @@ export class PrescriptionDetailPage {
             <h3>${rx.medication?.name || rx.medicationId}</h3>
             <dl>
               <dt>NDC:</dt>
-              <dd>${rx.medication?.ndcCode || 'N/A'}</dd>
+              <dd>${rx.medication?.ndcCode || "N/A"}</dd>
               <dt>Strength:</dt>
-              <dd>${rx.medication?.strength || 'N/A'}</dd>
+              <dd>${rx.medication?.strength || "N/A"}</dd>
               <dt>Dosage Form:</dt>
-              <dd>${rx.medication?.dosageForm || 'N/A'}</dd>
-              ${rx.isControlled ? `<dt>DEA Schedule:</dt><dd class="controlled">Schedule ${rx.medication?.deaSchedule || 'II'}</dd>` : ''}
+              <dd>${rx.medication?.dosageForm || "N/A"}</dd>
+              ${rx.isControlled ? `<dt>DEA Schedule:</dt><dd class="controlled">Schedule ${rx.medication?.deaSchedule || "II"}</dd>` : ""}
             </dl>
           </section>
 
@@ -111,16 +116,20 @@ export class PrescriptionDetailPage {
               <dd>${new Date(rx.writtenDate).toLocaleString()}</dd>
               <dt>Expires:</dt>
               <dd>${new Date(rx.expirationDate).toLocaleString()}</dd>
-              ${rx.dispensedDate ? `<dt>Dispensed:</dt><dd>${new Date(rx.dispensedDate).toLocaleString()}</dd>` : ''}
+              ${rx.dispensedDate ? `<dt>Dispensed:</dt><dd>${new Date(rx.dispensedDate).toLocaleString()}</dd>` : ""}
             </dl>
           </section>
 
-          ${rx.notes ? `
+          ${
+            rx.notes
+              ? `
             <section class="detail-card full-width">
               <h2>Notes</h2>
               <p>${rx.notes}</p>
             </section>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </div>
 
@@ -148,15 +157,17 @@ export class PrescriptionDetailPage {
   }
 
   private attachEventListeners(): void {
-    const dispenseBtn = this.container.querySelector('[data-action="dispense"]');
+    const dispenseBtn = this.container.querySelector(
+      '[data-action="dispense"]',
+    );
     if (dispenseBtn) {
-      dispenseBtn.addEventListener('click', () => {
+      dispenseBtn.addEventListener("click", () => {
         window.location.hash = `#/pharmacy/dispensing?rx=${this.prescriptionId}`;
       });
     }
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

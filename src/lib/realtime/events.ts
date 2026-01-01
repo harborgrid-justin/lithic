@@ -3,54 +3,59 @@
  * Typed event payloads for Socket.IO
  */
 
-import { emitToUser, emitToRoom, emitToOrganization, broadcast } from './socket';
+import {
+  emitToUser,
+  emitToRoom,
+  emitToOrganization,
+  broadcast,
+} from "./socket";
 
 /**
  * Event types
  */
 export const RealtimeEvents = {
   // Patient events
-  PATIENT_CREATED: 'patient:created',
-  PATIENT_UPDATED: 'patient:updated',
-  PATIENT_CHECKED_IN: 'patient:checked_in',
+  PATIENT_CREATED: "patient:created",
+  PATIENT_UPDATED: "patient:updated",
+  PATIENT_CHECKED_IN: "patient:checked_in",
 
   // Appointment events
-  APPOINTMENT_CREATED: 'appointment:created',
-  APPOINTMENT_UPDATED: 'appointment:updated',
-  APPOINTMENT_CANCELLED: 'appointment:cancelled',
-  APPOINTMENT_CONFIRMED: 'appointment:confirmed',
-  APPOINTMENT_REMINDER: 'appointment:reminder',
+  APPOINTMENT_CREATED: "appointment:created",
+  APPOINTMENT_UPDATED: "appointment:updated",
+  APPOINTMENT_CANCELLED: "appointment:cancelled",
+  APPOINTMENT_CONFIRMED: "appointment:confirmed",
+  APPOINTMENT_REMINDER: "appointment:reminder",
 
   // Clinical events
-  VITALS_RECORDED: 'vitals:recorded',
-  LAB_RESULT_AVAILABLE: 'lab:result_available',
-  IMAGING_RESULT_AVAILABLE: 'imaging:result_available',
-  PRESCRIPTION_CREATED: 'prescription:created',
-  PRESCRIPTION_FILLED: 'prescription:filled',
+  VITALS_RECORDED: "vitals:recorded",
+  LAB_RESULT_AVAILABLE: "lab:result_available",
+  IMAGING_RESULT_AVAILABLE: "imaging:result_available",
+  PRESCRIPTION_CREATED: "prescription:created",
+  PRESCRIPTION_FILLED: "prescription:filled",
 
   // Messaging events
-  MESSAGE_RECEIVED: 'message:received',
-  MESSAGE_READ: 'message:read',
-  TYPING_START: 'typing:start',
-  TYPING_STOP: 'typing:stop',
+  MESSAGE_RECEIVED: "message:received",
+  MESSAGE_READ: "message:read",
+  TYPING_START: "typing:start",
+  TYPING_STOP: "typing:stop",
 
   // Notification events
-  NOTIFICATION_NEW: 'notification:new',
-  NOTIFICATION_READ: 'notification:read',
-  ALERT_CRITICAL: 'alert:critical',
+  NOTIFICATION_NEW: "notification:new",
+  NOTIFICATION_READ: "notification:read",
+  ALERT_CRITICAL: "alert:critical",
 
   // System events
-  SYSTEM_MAINTENANCE: 'system:maintenance',
-  SYSTEM_UPDATE: 'system:update',
+  SYSTEM_MAINTENANCE: "system:maintenance",
+  SYSTEM_UPDATE: "system:update",
 
   // Presence events
-  USER_ONLINE: 'user:online',
-  USER_OFFLINE: 'user:offline',
-  USER_AWAY: 'user:away',
+  USER_ONLINE: "user:online",
+  USER_OFFLINE: "user:offline",
+  USER_AWAY: "user:away",
 
   // Queue events
-  QUEUE_UPDATED: 'queue:updated',
-  PATIENT_CALLED: 'patient:called',
+  QUEUE_UPDATED: "queue:updated",
+  PATIENT_CALLED: "patient:called",
 } as const;
 
 /**
@@ -102,8 +107,8 @@ export function notifyPatientCheckedIn(params: {
   });
 
   // Update waiting room queue
-  emitToRoom('waiting-room', RealtimeEvents.QUEUE_UPDATED, {
-    action: 'patient_checked_in',
+  emitToRoom("waiting-room", RealtimeEvents.QUEUE_UPDATED, {
+    action: "patient_checked_in",
     patientId: params.patientId,
     timestamp: new Date().toISOString(),
   });
@@ -191,7 +196,7 @@ export function notifyLabResultAvailable(params: {
   // If critical, send alert
   if (params.critical) {
     emitToUser(params.providerId, RealtimeEvents.ALERT_CRITICAL, {
-      type: 'lab_result',
+      type: "lab_result",
       resultId: params.resultId,
       patientId: params.patientId,
       testName: params.testName,
@@ -235,12 +240,16 @@ export function notifyMessageReceived(params: {
   });
 
   // Update conversation room
-  emitToRoom(`conversation:${params.conversationId}`, RealtimeEvents.MESSAGE_RECEIVED, {
-    messageId: params.messageId,
-    fromUserId: params.fromUserId,
-    message: params.message,
-    timestamp: params.timestamp.toISOString(),
-  });
+  emitToRoom(
+    `conversation:${params.conversationId}`,
+    RealtimeEvents.MESSAGE_RECEIVED,
+    {
+      messageId: params.messageId,
+      fromUserId: params.fromUserId,
+      message: params.message,
+      timestamp: params.timestamp.toISOString(),
+    },
+  );
 }
 
 /**
@@ -250,7 +259,7 @@ export function notifyUser(params: {
   userId: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: "info" | "success" | "warning" | "error";
   actionUrl?: string;
 }): void {
   emitToUser(params.userId, RealtimeEvents.NOTIFICATION_NEW, {
@@ -266,7 +275,7 @@ export function sendCriticalAlert(params: {
   userId: string;
   title: string;
   message: string;
-  severity: 'high' | 'critical';
+  severity: "high" | "critical";
   requiresAcknowledgment?: boolean;
 }): void {
   emitToUser(params.userId, RealtimeEvents.ALERT_CRITICAL, {
@@ -282,13 +291,13 @@ export function sendCriticalAlert(params: {
  * Queue management events
  */
 export function updateWaitingRoomQueue(params: {
-  action: 'add' | 'remove' | 'update' | 'call';
+  action: "add" | "remove" | "update" | "call";
   patientId: string;
   patientName?: string;
   position?: number;
   estimatedWaitTime?: number;
 }): void {
-  emitToRoom('waiting-room', RealtimeEvents.QUEUE_UPDATED, {
+  emitToRoom("waiting-room", RealtimeEvents.QUEUE_UPDATED, {
     action: params.action,
     patientId: params.patientId,
     patientName: params.patientName,
@@ -312,7 +321,7 @@ export function callPatient(params: {
   });
 
   // Update waiting room display
-  emitToRoom('waiting-room', RealtimeEvents.PATIENT_CALLED, {
+  emitToRoom("waiting-room", RealtimeEvents.PATIENT_CALLED, {
     patientName: params.patientName,
     roomNumber: params.roomNumber,
     timestamp: new Date().toISOString(),
@@ -352,28 +361,28 @@ export function notifySystemUpdate(params: {
  * Helper to emit custom event
  */
 export function emitCustomEvent(params: {
-  target: 'user' | 'room' | 'organization' | 'broadcast';
+  target: "user" | "room" | "organization" | "broadcast";
   targetId?: string;
   event: string;
   data: any;
 }): void {
   switch (params.target) {
-    case 'user':
+    case "user":
       if (params.targetId) {
         emitToUser(params.targetId, params.event, params.data);
       }
       break;
-    case 'room':
+    case "room":
       if (params.targetId) {
         emitToRoom(params.targetId, params.event, params.data);
       }
       break;
-    case 'organization':
+    case "organization":
       if (params.targetId) {
         emitToOrganization(params.targetId, params.event, params.data);
       }
       break;
-    case 'broadcast':
+    case "broadcast":
       broadcast(params.event, params.data);
       break;
   }

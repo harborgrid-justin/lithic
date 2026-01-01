@@ -16,7 +16,11 @@ interface SocketMessage {
 type EventCallback = (payload: any) => void;
 
 // Connection state
-type ConnectionState = 'connecting' | 'connected' | 'disconnecting' | 'disconnected';
+type ConnectionState =
+  | "connecting"
+  | "connected"
+  | "disconnecting"
+  | "disconnected";
 
 /**
  * WebSocket Client
@@ -29,7 +33,7 @@ export class SocketClient {
   private maxReconnectAttempts: number = 5;
   private reconnectDelay: number = 1000;
   private heartbeatInterval: NodeJS.Timeout | null = null;
-  private state: ConnectionState = 'disconnected';
+  private state: ConnectionState = "disconnected";
   private eventHandlers: Map<string, Set<EventCallback>> = new Map();
   private subscriptions: Set<string> = new Set();
 
@@ -41,11 +45,11 @@ export class SocketClient {
    * Get WebSocket URL from environment or construct from window.location
    */
   private getWebSocketURL(): string {
-    if (typeof window === 'undefined') {
-      return 'ws://localhost:3000/ws';
+    if (typeof window === "undefined") {
+      return "ws://localhost:3000/ws";
     }
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.host;
     return `${protocol}//${host}/ws`;
   }
@@ -55,20 +59,20 @@ export class SocketClient {
    */
   connect(token?: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (this.state === 'connected' || this.state === 'connecting') {
+      if (this.state === "connected" || this.state === "connecting") {
         resolve();
         return;
       }
 
-      this.state = 'connecting';
+      this.state = "connecting";
       this.token = token || this.token;
 
       try {
         this.ws = new WebSocket(this.url);
 
         this.ws.onopen = () => {
-          console.log('[Socket] Connected');
-          this.state = 'connected';
+          console.log("[Socket] Connected");
+          this.state = "connected";
           this.reconnectAttempts = 0;
 
           // Authenticate if token is provided
@@ -82,7 +86,7 @@ export class SocketClient {
           // Resubscribe to channels
           this.resubscribe();
 
-          this.emit('connect', {});
+          this.emit("connect", {});
           resolve();
         };
 
@@ -91,22 +95,22 @@ export class SocketClient {
         };
 
         this.ws.onerror = (error) => {
-          console.error('[Socket] Error:', error);
-          this.emit('error', error);
+          console.error("[Socket] Error:", error);
+          this.emit("error", error);
         };
 
         this.ws.onclose = () => {
-          console.log('[Socket] Disconnected');
-          this.state = 'disconnected';
+          console.log("[Socket] Disconnected");
+          this.state = "disconnected";
           this.stopHeartbeat();
-          this.emit('disconnect', {});
+          this.emit("disconnect", {});
 
           // Attempt reconnection
           this.attemptReconnect();
         };
       } catch (error) {
-        console.error('[Socket] Connection failed:', error);
-        this.state = 'disconnected';
+        console.error("[Socket] Connection failed:", error);
+        this.state = "disconnected";
         reject(error);
       }
     });
@@ -116,15 +120,15 @@ export class SocketClient {
    * Disconnect from WebSocket server
    */
   disconnect(): void {
-    if (!this.ws || this.state === 'disconnected') {
+    if (!this.ws || this.state === "disconnected") {
       return;
     }
 
-    this.state = 'disconnecting';
+    this.state = "disconnecting";
     this.stopHeartbeat();
     this.ws.close();
     this.ws = null;
-    this.state = 'disconnected';
+    this.state = "disconnected";
   }
 
   /**
@@ -132,7 +136,7 @@ export class SocketClient {
    */
   private authenticate(token: string): void {
     this.send({
-      type: 'auth',
+      type: "auth",
       payload: { token },
       timestamp: new Date().toISOString(),
     });
@@ -143,7 +147,7 @@ export class SocketClient {
    */
   private send(message: SocketMessage): void {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-      console.warn('[Socket] Cannot send message, not connected');
+      console.warn("[Socket] Cannot send message, not connected");
       return;
     }
 
@@ -157,47 +161,50 @@ export class SocketClient {
     try {
       const message: SocketMessage = JSON.parse(data);
 
-      console.log('[Socket] Message received:', message.type);
+      console.log("[Socket] Message received:", message.type);
 
       // Emit to specific type handlers
       this.emit(message.type, message.payload);
 
       // Emit to general message handler
-      this.emit('message', message);
+      this.emit("message", message);
 
       // Handle special message types
       switch (message.type) {
-        case 'welcome':
-          console.log('[Socket] Welcome:', message.payload);
+        case "welcome":
+          console.log("[Socket] Welcome:", message.payload);
           break;
 
-        case 'auth:success':
-          console.log('[Socket] Authenticated');
-          this.emit('authenticated', message.payload);
+        case "auth:success":
+          console.log("[Socket] Authenticated");
+          this.emit("authenticated", message.payload);
           break;
 
-        case 'auth:error':
-          console.error('[Socket] Authentication failed:', message.payload.error);
+        case "auth:error":
+          console.error(
+            "[Socket] Authentication failed:",
+            message.payload.error,
+          );
           break;
 
-        case 'event':
+        case "event":
           this.handleEvent(message.payload);
           break;
 
-        case 'error':
-          console.error('[Socket] Server error:', message.payload.error);
+        case "error":
+          console.error("[Socket] Server error:", message.payload.error);
           break;
 
-        case 'pong':
+        case "pong":
           // Heartbeat response
           break;
 
-        case 'heartbeat:ack':
+        case "heartbeat:ack":
           // Heartbeat acknowledged
           break;
       }
     } catch (error) {
-      console.error('[Socket] Failed to parse message:', error);
+      console.error("[Socket] Failed to parse message:", error);
     }
   }
 
@@ -207,13 +214,13 @@ export class SocketClient {
   private handleEvent(eventPayload: any): void {
     const { eventType, data, metadata } = eventPayload;
 
-    console.log('[Socket] Event received:', eventType);
+    console.log("[Socket] Event received:", eventType);
 
     // Emit to event-specific handlers
     this.emit(`event:${eventType}`, { data, metadata });
 
     // Emit to general event handler
-    this.emit('event', eventPayload);
+    this.emit("event", eventPayload);
   }
 
   /**
@@ -222,9 +229,9 @@ export class SocketClient {
   subscribe(channel: string): void {
     this.subscriptions.add(channel);
 
-    if (this.state === 'connected') {
+    if (this.state === "connected") {
       this.send({
-        type: 'subscribe',
+        type: "subscribe",
         payload: { channel },
         timestamp: new Date().toISOString(),
       });
@@ -237,9 +244,9 @@ export class SocketClient {
   unsubscribe(channel: string): void {
     this.subscriptions.delete(channel);
 
-    if (this.state === 'connected') {
+    if (this.state === "connected") {
       this.send({
-        type: 'unsubscribe',
+        type: "unsubscribe",
         payload: { channel },
         timestamp: new Date().toISOString(),
       });
@@ -252,7 +259,7 @@ export class SocketClient {
   private resubscribe(): void {
     for (const channel of this.subscriptions) {
       this.send({
-        type: 'subscribe',
+        type: "subscribe",
         payload: { channel },
         timestamp: new Date().toISOString(),
       });
@@ -310,7 +317,7 @@ export class SocketClient {
 
     this.heartbeatInterval = setInterval(() => {
       this.send({
-        type: 'heartbeat',
+        type: "heartbeat",
         payload: {},
         timestamp: new Date().toISOString(),
       });
@@ -332,8 +339,8 @@ export class SocketClient {
    */
   private attemptReconnect(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.log('[Socket] Max reconnection attempts reached');
-      this.emit('reconnect:failed', {});
+      console.log("[Socket] Max reconnection attempts reached");
+      this.emit("reconnect:failed", {});
       return;
     }
 
@@ -341,10 +348,10 @@ export class SocketClient {
     this.reconnectAttempts++;
 
     console.log(
-      `[Socket] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`
+      `[Socket] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
     );
 
-    this.emit('reconnecting', {
+    this.emit("reconnecting", {
       attempt: this.reconnectAttempts,
       maxAttempts: this.maxReconnectAttempts,
       delay,
@@ -366,7 +373,7 @@ export class SocketClient {
    * Check if connected
    */
   isConnected(): boolean {
-    return this.state === 'connected';
+    return this.state === "connected";
   }
 }
 

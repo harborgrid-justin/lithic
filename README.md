@@ -95,11 +95,13 @@ src/
 ### Getting Started
 
 1. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Run Development Server**
+
    ```bash
    npm run dev
    ```
@@ -126,32 +128,41 @@ src/
 ### Key Components
 
 #### LabOrderList
+
 Displays a table of laboratory orders with filtering and status badges.
 
 #### LabOrderForm
+
 Form for creating new laboratory orders with patient info, test selection, and priority.
 
 #### ResultEntry
+
 Interface for entering and verifying laboratory test results.
 
 #### ResultViewer
+
 Displays test results with flags, reference ranges, and critical value indicators.
 
 #### SpecimenTracker
+
 Tracks specimens through collection, processing, and storage phases.
 
 #### BarcodeScanner
+
 Scans and retrieves specimen information using barcodes.
 
 #### TrendChart
+
 Visualizes patient test results over time with reference range indicators.
 
 #### CriticalAlerts
+
 Monitors and manages critical value alerts requiring immediate attention.
 
 ### LOINC Codes
 
 The system includes common LOINC codes for:
+
 - Complete Blood Count (CBC)
 - Basic Metabolic Panel (BMP)
 - Liver Function Tests (LFT)
@@ -165,6 +176,7 @@ The system includes common LOINC codes for:
 ### HL7 Message Generation
 
 The system can generate HL7 v2.5 messages for:
+
 - Order messages (ORM^O01)
 - Result messages (ORU^R01)
 

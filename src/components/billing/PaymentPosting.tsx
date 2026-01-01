@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Payment } from '@/types/billing';
-import { DollarSign, Save, X } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
+import { useState } from "react";
+import { Payment } from "@/types/billing";
+import { DollarSign, Save, X } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface PaymentPostingProps {
   claimId?: string;
@@ -30,10 +30,10 @@ export default function PaymentPosting({
     patientId,
     patientName,
     amount: 0,
-    paymentMethod: 'cash',
-    paymentDate: new Date().toISOString().split('T')[0],
-    referenceNumber: '',
-    notes: '',
+    paymentMethod: "cash",
+    paymentDate: new Date().toISOString().split("T")[0],
+    referenceNumber: "",
+    notes: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,9 +87,12 @@ export default function PaymentPosting({
               </span>
               <input
                 type="number"
-                value={formData.amount || ''}
+                value={formData.amount || ""}
                 onChange={(e) =>
-                  setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })
+                  setFormData({
+                    ...formData,
+                    amount: parseFloat(e.target.value) || 0,
+                  })
                 }
                 className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 step="0.01"
@@ -112,7 +115,7 @@ export default function PaymentPosting({
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  paymentMethod: e.target.value as Payment['paymentMethod'],
+                  paymentMethod: e.target.value as Payment["paymentMethod"],
                 })
               }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -133,7 +136,7 @@ export default function PaymentPosting({
             </label>
             <input
               type="date"
-              value={formData.paymentDate || ''}
+              value={formData.paymentDate || ""}
               onChange={(e) =>
                 setFormData({ ...formData, paymentDate: e.target.value })
               }
@@ -148,7 +151,7 @@ export default function PaymentPosting({
             </label>
             <input
               type="text"
-              value={formData.referenceNumber || ''}
+              value={formData.referenceNumber || ""}
               onChange={(e) =>
                 setFormData({ ...formData, referenceNumber: e.target.value })
               }
@@ -163,8 +166,10 @@ export default function PaymentPosting({
             Notes
           </label>
           <textarea
-            value={formData.notes || ''}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            value={formData.notes || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, notes: e.target.value })
+            }
             rows={3}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="Add any notes about this payment..."

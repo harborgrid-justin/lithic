@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Barcode } from 'lucide-react';
-import SpecimenTracker from '@/components/laboratory/SpecimenTracker';
-import BarcodeScanner from '@/components/laboratory/BarcodeScanner';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Barcode } from "lucide-react";
+import SpecimenTracker from "@/components/laboratory/SpecimenTracker";
+import BarcodeScanner from "@/components/laboratory/BarcodeScanner";
 
 export default function SpecimensPage() {
   const [showScanner, setShowScanner] = useState(false);
@@ -20,14 +20,14 @@ export default function SpecimensPage() {
         </div>
         <Button onClick={() => setShowScanner(!showScanner)}>
           <Barcode className="h-4 w-4 mr-2" />
-          {showScanner ? 'Hide' : 'Show'} Scanner
+          {showScanner ? "Hide" : "Show"} Scanner
         </Button>
       </div>
 
       {showScanner && (
         <BarcodeScanner
           onSpecimenFound={(specimen) => {
-            console.log('Found specimen:', specimen);
+            console.log("Found specimen:", specimen);
           }}
         />
       )}

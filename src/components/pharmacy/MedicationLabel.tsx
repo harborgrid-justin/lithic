@@ -3,10 +3,10 @@
  * Display and print medication labels
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { prescriptionService } from '@/services/prescription.service';
+import { useEffect, useState } from "react";
+import { prescriptionService } from "@/services/prescription.service";
 
 interface MedicationLabelProps {
   prescriptionId: string;
@@ -23,10 +23,11 @@ export function MedicationLabel({ prescriptionId }: MedicationLabelProps) {
   const loadLabelData = async () => {
     try {
       setLoading(true);
-      const data = await prescriptionService.generateMedicationLabel(prescriptionId);
+      const data =
+        await prescriptionService.generateMedicationLabel(prescriptionId);
       setLabelData(data);
     } catch (error) {
-      console.error('Failed to generate label:', error);
+      console.error("Failed to generate label:", error);
     } finally {
       setLoading(false);
     }
@@ -37,11 +38,17 @@ export function MedicationLabel({ prescriptionId }: MedicationLabelProps) {
   };
 
   if (loading) {
-    return <div className="text-center py-8 text-gray-500">Generating label...</div>;
+    return (
+      <div className="text-center py-8 text-gray-500">Generating label...</div>
+    );
   }
 
   if (!labelData) {
-    return <div className="text-center py-8 text-gray-500">Failed to generate label</div>;
+    return (
+      <div className="text-center py-8 text-gray-500">
+        Failed to generate label
+      </div>
+    );
   }
 
   const { labelData: label } = labelData;
@@ -49,7 +56,10 @@ export function MedicationLabel({ prescriptionId }: MedicationLabelProps) {
   return (
     <div className="space-y-4">
       {/* Label Preview */}
-      <div className="border-2 border-gray-800 p-6 bg-white" style={{ width: '4in', minHeight: '3in' }}>
+      <div
+        className="border-2 border-gray-800 p-6 bg-white"
+        style={{ width: "4in", minHeight: "3in" }}
+      >
         {/* Pharmacy Info */}
         <div className="border-b-2 border-gray-800 pb-2 mb-3">
           <div className="font-bold text-lg">{label.pharmacyInfo.name}</div>
@@ -62,11 +72,15 @@ export function MedicationLabel({ prescriptionId }: MedicationLabelProps) {
         <div className="mb-3 flex justify-between">
           <div>
             <div className="text-sm font-semibold">Rx #: {label.rxNumber}</div>
-            <div className="text-xs">Filled: {new Date(label.dispensedDate).toLocaleDateString()}</div>
+            <div className="text-xs">
+              Filled: {new Date(label.dispensedDate).toLocaleDateString()}
+            </div>
           </div>
           <div className="text-right">
             <div className="text-xs">Refills: {label.refillsRemaining}</div>
-            <div className="text-xs">Exp: {new Date(label.expirationDate).toLocaleDateString()}</div>
+            <div className="text-xs">
+              Exp: {new Date(label.expirationDate).toLocaleDateString()}
+            </div>
           </div>
         </div>
 

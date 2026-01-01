@@ -30,6 +30,6 @@ export class RefillsPage {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

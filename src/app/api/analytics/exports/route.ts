@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/analytics/exports
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     // For now, simulate immediate completion
     const result = {
       executionId,
-      status: 'completed',
+      status: "completed",
       fileUrl: `/downloads/${executionId}.${options.format}`,
       format: options.format,
       createdAt: new Date().toISOString(),
@@ -30,10 +30,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.error('Error creating export:', error);
+    console.error("Error creating export:", error);
     return NextResponse.json(
-      { error: 'Failed to create export' },
-      { status: 500 }
+      { error: "Failed to create export" },
+      { status: 500 },
     );
   }
 }
@@ -45,19 +45,19 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { pathname } = new URL(request.url);
-    const executionId = pathname.split('/').pop();
+    const executionId = pathname.split("/").pop();
 
     if (!executionId) {
       return NextResponse.json(
-        { error: 'Execution ID is required' },
-        { status: 400 }
+        { error: "Execution ID is required" },
+        { status: 400 },
       );
     }
 
     // Simulate export status
     const status = {
       id: executionId,
-      status: 'completed',
+      status: "completed",
       progress: 100,
       fileUrl: `/downloads/${executionId}.pdf`,
       fileSize: 1024 * 1024, // 1 MB
@@ -67,10 +67,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(status);
   } catch (error) {
-    console.error('Error fetching export status:', error);
+    console.error("Error fetching export status:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch export status' },
-      { status: 500 }
+      { error: "Failed to fetch export status" },
+      { status: 500 },
     );
   }
 }

@@ -9,7 +9,10 @@ export class LabPanelBuilder {
   private availableTests: any[] = [];
   private selectedTests: Set<string> = new Set();
 
-  constructor(container: HTMLElement, options: { onSave?: (panelData: any) => void } = {}) {
+  constructor(
+    container: HTMLElement,
+    options: { onSave?: (panelData: any) => void } = {},
+  ) {
     this.container = container;
     this.onSave = options.onSave;
   }
@@ -59,7 +62,7 @@ export class LabPanelBuilder {
               <input type="text" id="testSearch" placeholder="Search tests...">
             </div>
             <div class="test-list">
-              ${this.availableTests.map(test => this.renderTestOption(test)).join('')}
+              ${this.availableTests.map((test) => this.renderTestOption(test)).join("")}
             </div>
           </div>
 
@@ -84,7 +87,7 @@ export class LabPanelBuilder {
     const isSelected = this.selectedTests.has(test.code);
     return `
       <div class="test-option" data-test-code="${test.code}">
-        <input type="checkbox" id="test-${test.code}" ${isSelected ? 'checked' : ''}>
+        <input type="checkbox" id="test-${test.code}" ${isSelected ? "checked" : ""}>
         <label for="test-${test.code}">
           <strong>${test.commonName || test.displayName}</strong>
           <span class="test-code">${test.code}</span>
@@ -95,19 +98,23 @@ export class LabPanelBuilder {
   }
 
   private attachEventListeners(): void {
-    const form = this.container.querySelector('#panelBuilderForm') as HTMLFormElement;
-    const cancelBtn = this.container.querySelector('#cancelBtn');
-    const testSearch = this.container.querySelector('#testSearch') as HTMLInputElement;
+    const form = this.container.querySelector(
+      "#panelBuilderForm",
+    ) as HTMLFormElement;
+    const cancelBtn = this.container.querySelector("#cancelBtn");
+    const testSearch = this.container.querySelector(
+      "#testSearch",
+    ) as HTMLInputElement;
 
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         this.handleSubmit(form);
       });
     }
 
     if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
+      cancelBtn.addEventListener("click", () => {
         this.selectedTests.clear();
         form?.reset();
         this.updateSelectedTests();
@@ -115,17 +122,19 @@ export class LabPanelBuilder {
     }
 
     if (testSearch) {
-      testSearch.addEventListener('input', (e) => {
+      testSearch.addEventListener("input", (e) => {
         this.handleSearch((e.target as HTMLInputElement).value);
       });
     }
 
     // Test selection
-    const testOptions = this.container.querySelectorAll('.test-option input[type="checkbox"]');
-    testOptions.forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => {
+    const testOptions = this.container.querySelectorAll(
+      '.test-option input[type="checkbox"]',
+    );
+    testOptions.forEach((checkbox) => {
+      checkbox.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
-        const testCode = target.id.replace('test-', '');
+        const testCode = target.id.replace("test-", "");
         if (target.checked) {
           this.selectedTests.add(testCode);
         } else {
@@ -138,20 +147,22 @@ export class LabPanelBuilder {
 
   private handleSearch(query: string): void {
     const lowerQuery = query.toLowerCase();
-    const testOptions = this.container.querySelectorAll('.test-option');
+    const testOptions = this.container.querySelectorAll(".test-option");
 
-    testOptions.forEach(option => {
-      const label = option.querySelector('label');
+    testOptions.forEach((option) => {
+      const label = option.querySelector("label");
       if (label) {
-        const text = label.textContent?.toLowerCase() || '';
-        (option as HTMLElement).style.display = text.includes(lowerQuery) ? 'block' : 'none';
+        const text = label.textContent?.toLowerCase() || "";
+        (option as HTMLElement).style.display = text.includes(lowerQuery)
+          ? "block"
+          : "none";
       }
     });
   }
 
   private updateSelectedTests(): void {
-    const selectedList = this.container.querySelector('#selectedTestsList');
-    const selectedCount = this.container.querySelector('#selectedCount');
+    const selectedList = this.container.querySelector("#selectedTestsList");
+    const selectedCount = this.container.querySelector("#selectedCount");
 
     if (selectedCount) {
       selectedCount.textContent = this.selectedTests.size.toString();
@@ -159,24 +170,30 @@ export class LabPanelBuilder {
 
     if (selectedList) {
       const selectedTestsArray = Array.from(this.selectedTests);
-      selectedList.innerHTML = selectedTestsArray.map(code => {
-        const test = this.availableTests.find(t => t.code === code);
-        return test ? `
+      selectedList.innerHTML = selectedTestsArray
+        .map((code) => {
+          const test = this.availableTests.find((t) => t.code === code);
+          return test
+            ? `
           <div class="selected-test-item">
             <span>${test.commonName || test.displayName}</span>
             <button type="button" class="remove-btn" data-test-code="${code}">×</button>
           </div>
-        ` : '';
-      }).join('');
+        `
+            : "";
+        })
+        .join("");
 
       // Attach remove handlers
-      const removeBtns = selectedList.querySelectorAll('.remove-btn');
-      removeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const testCode = btn.getAttribute('data-test-code');
+      const removeBtns = selectedList.querySelectorAll(".remove-btn");
+      removeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const testCode = btn.getAttribute("data-test-code");
           if (testCode) {
             this.selectedTests.delete(testCode);
-            const checkbox = this.container.querySelector(`#test-${testCode}`) as HTMLInputElement;
+            const checkbox = this.container.querySelector(
+              `#test-${testCode}`,
+            ) as HTMLInputElement;
             if (checkbox) checkbox.checked = false;
             this.updateSelectedTests();
           }
@@ -189,13 +206,13 @@ export class LabPanelBuilder {
     const formData = new FormData(form);
 
     const panelData: any = {
-      name: formData.get('panelName'),
-      code: formData.get('panelCode'),
-      category: formData.get('category'),
-      description: formData.get('description') || '',
+      name: formData.get("panelName"),
+      code: formData.get("panelCode"),
+      category: formData.get("category"),
+      description: formData.get("description") || "",
       tests: Array.from(this.selectedTests),
-      specimenTypes: ['blood-serum', 'blood-plasma'],
-      active: true
+      specimenTypes: ["blood-serum", "blood-plasma"],
+      active: true,
     };
 
     if (this.onSave) {
@@ -204,6 +221,6 @@ export class LabPanelBuilder {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

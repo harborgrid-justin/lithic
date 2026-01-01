@@ -3,8 +3,8 @@
  * Manages webhook subscriptions and event delivery with retry logic
  */
 
-import { z } from 'zod';
-import crypto from 'crypto';
+import { z } from "zod";
+import crypto from "crypto";
 
 const WebhookConfigSchema = z.object({
   id: z.string(),
@@ -12,11 +12,13 @@ const WebhookConfigSchema = z.object({
   events: z.array(z.string()),
   secret: z.string(),
   active: z.boolean().default(true),
-  retryPolicy: z.object({
-    maxRetries: z.number().default(3),
-    backoffMultiplier: z.number().default(2),
-    initialDelay: z.number().default(1000),
-  }).optional(),
+  retryPolicy: z
+    .object({
+      maxRetries: z.number().default(3),
+      backoffMultiplier: z.number().default(2),
+      initialDelay: z.number().default(1000),
+    })
+    .optional(),
   headers: z.record(z.string()).optional(),
 });
 
@@ -34,7 +36,7 @@ export interface WebhookDelivery {
   id: string;
   webhookId: string;
   eventId: string;
-  status: 'pending' | 'delivered' | 'failed';
+  status: "pending" | "delivered" | "failed";
   attempts: number;
   lastAttemptAt?: string;
   nextAttemptAt?: string;
@@ -54,7 +56,7 @@ export class WebhookManager {
   /**
    * Register a webhook
    */
-  register(config: Omit<WebhookConfig, 'id'>): WebhookConfig {
+  register(config: Omit<WebhookConfig, "id">): WebhookConfig {
     const id = crypto.randomUUID();
     const webhook: WebhookConfig = {
       ...config,
@@ -91,7 +93,10 @@ export class WebhookManager {
   /**
    * Update webhook configuration
    */
-  update(webhookId: string, updates: Partial<WebhookConfig>): WebhookConfig | null {
+  update(
+    webhookId: string,
+    updates: Partial<WebhookConfig>,
+  ): WebhookConfig | null {
     const webhook = this.webhooks.get(webhookId);
     if (!webhook) return null;
 
@@ -105,7 +110,7 @@ export class WebhookManager {
   /**
    * Emit an event to all subscribed webhooks
    */
-  async emit(event: Omit<WebhookEvent, 'id' | 'timestamp'>): Promise<string> {
+  async emit(event: Omit<WebhookEvent, "id" | "timestamp">): Promise<string> {
     const webhookEvent: WebhookEvent = {
       ...event,
       id: crypto.randomUUID(),
@@ -114,9 +119,9 @@ export class WebhookManager {
 
     // Find webhooks subscribed to this event type
     const subscribedWebhooks = Array.from(this.webhooks.values()).filter(
-      webhook =>
+      (webhook) =>
         webhook.active &&
-        (webhook.events.includes(event.type) || webhook.events.includes('*'))
+        (webhook.events.includes(event.type) || webhook.events.includes("*")),
     );
 
     // Create delivery records
@@ -125,7 +130,7 @@ export class WebhookManager {
         id: crypto.randomUUID(),
         webhookId: webhook.id,
         eventId: webhookEvent.id,
-        status: 'pending',
+        status: "pending",
         attempts: 0,
         nextAttemptAt: new Date().toISOString(),
       };
@@ -154,17 +159,21 @@ export class WebhookManager {
       if (!delivery) break;
 
       const now = new Date();
-      const nextAttempt = delivery.nextAttemptAt ? new Date(delivery.nextAttemptAt) : now;
+      const nextAttempt = delivery.nextAttemptAt
+        ? new Date(delivery.nextAttemptAt)
+        : now;
 
       if (nextAttempt > now) {
         // Wait until next attempt time
-        await new Promise(resolve => setTimeout(resolve, nextAttempt.getTime() - now.getTime()));
+        await new Promise((resolve) =>
+          setTimeout(resolve, nextAttempt.getTime() - now.getTime()),
+        );
       }
 
       await this.deliverWebhook(delivery);
 
       // Remove from queue if delivered or failed permanently
-      if (delivery.status !== 'pending') {
+      if (delivery.status !== "pending") {
         this.deliveryQueue.shift();
       }
     }
@@ -178,8 +187,8 @@ export class WebhookManager {
   private async deliverWebhook(delivery: WebhookDelivery): Promise<void> {
     const webhook = this.webhooks.get(delivery.webhookId);
     if (!webhook) {
-      delivery.status = 'failed';
-      delivery.error = 'Webhook configuration not found';
+      delivery.status = "failed";
+      delivery.error = "Webhook configuration not found";
       return;
     }
 
@@ -190,23 +199,26 @@ export class WebhookManager {
       // Get event data (in real implementation, fetch from database)
       const eventData = {
         id: delivery.eventId,
-        type: 'event.type',
+        type: "event.type",
         timestamp: new Date().toISOString(),
         data: {},
       };
 
       // Generate signature
-      const signature = this.generateSignature(webhook.secret, JSON.stringify(eventData));
+      const signature = this.generateSignature(
+        webhook.secret,
+        JSON.stringify(eventData),
+      );
 
       // Send webhook
       const response = await fetch(webhook.url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Webhook-Signature': signature,
-          'X-Webhook-ID': webhook.id,
-          'X-Webhook-Timestamp': new Date().toISOString(),
-          'X-Webhook-Delivery-ID': delivery.id,
+          "Content-Type": "application/json",
+          "X-Webhook-Signature": signature,
+          "X-Webhook-ID": webhook.id,
+          "X-Webhook-Timestamp": new Date().toISOString(),
+          "X-Webhook-Delivery-ID": delivery.id,
           ...webhook.headers,
         },
         body: JSON.stringify(eventData),
@@ -221,12 +233,17 @@ export class WebhookManager {
       };
 
       if (response.ok) {
-        delivery.status = 'delivered';
+        delivery.status = "delivered";
       } else {
-        await this.handleDeliveryFailure(delivery, webhook, `HTTP ${response.status}`);
+        await this.handleDeliveryFailure(
+          delivery,
+          webhook,
+          `HTTP ${response.status}`,
+        );
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       await this.handleDeliveryFailure(delivery, webhook, errorMessage);
     }
   }
@@ -237,14 +254,14 @@ export class WebhookManager {
   private async handleDeliveryFailure(
     delivery: WebhookDelivery,
     webhook: WebhookConfig,
-    error: string
+    error: string,
   ): Promise<void> {
     delivery.error = error;
 
     const maxRetries = webhook.retryPolicy?.maxRetries ?? 3;
 
     if (delivery.attempts >= maxRetries) {
-      delivery.status = 'failed';
+      delivery.status = "failed";
       return;
     }
 
@@ -254,17 +271,14 @@ export class WebhookManager {
     const delay = initialDelay * Math.pow(multiplier, delivery.attempts - 1);
 
     delivery.nextAttemptAt = new Date(Date.now() + delay).toISOString();
-    delivery.status = 'pending';
+    delivery.status = "pending";
   }
 
   /**
    * Generate HMAC signature for webhook
    */
   generateSignature(secret: string, payload: string): string {
-    return crypto
-      .createHmac('sha256', secret)
-      .update(payload)
-      .digest('hex');
+    return crypto.createHmac("sha256", secret).update(payload).digest("hex");
   }
 
   /**
@@ -274,7 +288,7 @@ export class WebhookManager {
     const expectedSignature = this.generateSignature(secret, payload);
     return crypto.timingSafeEqual(
       Buffer.from(signature),
-      Buffer.from(expectedSignature)
+      Buffer.from(expectedSignature),
     );
   }
 
@@ -282,24 +296,24 @@ export class WebhookManager {
    * Get delivery status
    */
   getDelivery(deliveryId: string): WebhookDelivery | undefined {
-    return this.deliveryQueue.find(d => d.id === deliveryId);
+    return this.deliveryQueue.find((d) => d.id === deliveryId);
   }
 
   /**
    * Get all deliveries for a webhook
    */
   getDeliveries(webhookId: string): WebhookDelivery[] {
-    return this.deliveryQueue.filter(d => d.webhookId === webhookId);
+    return this.deliveryQueue.filter((d) => d.webhookId === webhookId);
   }
 
   /**
    * Retry a failed delivery
    */
   async retryDelivery(deliveryId: string): Promise<boolean> {
-    const delivery = this.deliveryQueue.find(d => d.id === deliveryId);
+    const delivery = this.deliveryQueue.find((d) => d.id === deliveryId);
     if (!delivery) return false;
 
-    delivery.status = 'pending';
+    delivery.status = "pending";
     delivery.nextAttemptAt = new Date().toISOString();
 
     if (!this.processing) {
@@ -315,7 +329,7 @@ export class WebhookManager {
   clearCompleted(): number {
     const initialLength = this.deliveryQueue.length;
     this.deliveryQueue = this.deliveryQueue.filter(
-      d => d.status === 'pending'
+      (d) => d.status === "pending",
     );
     return initialLength - this.deliveryQueue.length;
   }
@@ -331,86 +345,86 @@ export const webhookManager = new WebhookManager();
  */
 export const WebhookEventTypes = {
   // Patient events
-  PATIENT_CREATED: 'patient.created',
-  PATIENT_UPDATED: 'patient.updated',
-  PATIENT_DELETED: 'patient.deleted',
+  PATIENT_CREATED: "patient.created",
+  PATIENT_UPDATED: "patient.updated",
+  PATIENT_DELETED: "patient.deleted",
 
   // Appointment events
-  APPOINTMENT_CREATED: 'appointment.created',
-  APPOINTMENT_UPDATED: 'appointment.updated',
-  APPOINTMENT_CANCELLED: 'appointment.cancelled',
-  APPOINTMENT_CONFIRMED: 'appointment.confirmed',
-  APPOINTMENT_COMPLETED: 'appointment.completed',
+  APPOINTMENT_CREATED: "appointment.created",
+  APPOINTMENT_UPDATED: "appointment.updated",
+  APPOINTMENT_CANCELLED: "appointment.cancelled",
+  APPOINTMENT_CONFIRMED: "appointment.confirmed",
+  APPOINTMENT_COMPLETED: "appointment.completed",
 
   // Order events
-  ORDER_CREATED: 'order.created',
-  ORDER_UPDATED: 'order.updated',
-  ORDER_COMPLETED: 'order.completed',
-  ORDER_CANCELLED: 'order.cancelled',
+  ORDER_CREATED: "order.created",
+  ORDER_UPDATED: "order.updated",
+  ORDER_COMPLETED: "order.completed",
+  ORDER_CANCELLED: "order.cancelled",
 
   // Result events
-  RESULT_AVAILABLE: 'result.available',
-  RESULT_AMENDED: 'result.amended',
+  RESULT_AVAILABLE: "result.available",
+  RESULT_AMENDED: "result.amended",
 
   // Document events
-  DOCUMENT_CREATED: 'document.created',
-  DOCUMENT_SIGNED: 'document.signed',
+  DOCUMENT_CREATED: "document.created",
+  DOCUMENT_SIGNED: "document.signed",
 
   // Prescription events
-  PRESCRIPTION_CREATED: 'prescription.created',
-  PRESCRIPTION_FILLED: 'prescription.filled',
-  PRESCRIPTION_CANCELLED: 'prescription.cancelled',
+  PRESCRIPTION_CREATED: "prescription.created",
+  PRESCRIPTION_FILLED: "prescription.filled",
+  PRESCRIPTION_CANCELLED: "prescription.cancelled",
 
   // Billing events
-  CLAIM_SUBMITTED: 'claim.submitted',
-  CLAIM_PAID: 'claim.paid',
-  CLAIM_DENIED: 'claim.denied',
+  CLAIM_SUBMITTED: "claim.submitted",
+  CLAIM_PAID: "claim.paid",
+  CLAIM_DENIED: "claim.denied",
 } as const;
 
 /**
  * Helper to emit common events
  */
 export async function emitPatientEvent(
-  action: 'created' | 'updated' | 'deleted',
-  patientData: any
+  action: "created" | "updated" | "deleted",
+  patientData: any,
 ): Promise<string> {
   const eventType = `patient.${action}` as const;
   return webhookManager.emit({
     type: eventType,
     data: patientData,
     metadata: {
-      source: 'lithic',
-      version: '1.0',
+      source: "lithic",
+      version: "1.0",
     },
   });
 }
 
 export async function emitAppointmentEvent(
-  action: 'created' | 'updated' | 'cancelled' | 'confirmed' | 'completed',
-  appointmentData: any
+  action: "created" | "updated" | "cancelled" | "confirmed" | "completed",
+  appointmentData: any,
 ): Promise<string> {
   const eventType = `appointment.${action}` as const;
   return webhookManager.emit({
     type: eventType,
     data: appointmentData,
     metadata: {
-      source: 'lithic',
-      version: '1.0',
+      source: "lithic",
+      version: "1.0",
     },
   });
 }
 
 export async function emitOrderEvent(
-  action: 'created' | 'updated' | 'completed' | 'cancelled',
-  orderData: any
+  action: "created" | "updated" | "completed" | "cancelled",
+  orderData: any,
 ): Promise<string> {
   const eventType = `order.${action}` as const;
   return webhookManager.emit({
     type: eventType,
     data: orderData,
     metadata: {
-      source: 'lithic',
-      version: '1.0',
+      source: "lithic",
+      version: "1.0",
     },
   });
 }

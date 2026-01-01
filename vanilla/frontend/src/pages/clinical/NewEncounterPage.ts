@@ -1,6 +1,6 @@
 // New Encounter Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import EncounterForm from '../../components/clinical/EncounterForm';
+import ClinicalService from "../../services/ClinicalService";
+import EncounterForm from "../../components/clinical/EncounterForm";
 
 export class NewEncounterPage {
   private container: HTMLElement;
@@ -32,9 +32,12 @@ export class NewEncounterPage {
       </div>
     `;
 
-    this.encounterForm = new EncounterForm('encounter-form-container', async (data) => {
-      await this.createEncounter(data);
-    });
+    this.encounterForm = new EncounterForm(
+      "encounter-form-container",
+      async (data) => {
+        await this.createEncounter(data);
+      },
+    );
 
     this.attachEventListeners();
   }
@@ -42,24 +45,24 @@ export class NewEncounterPage {
   private async createEncounter(data: any): Promise<void> {
     try {
       const encounter = await ClinicalService.createEncounter(data);
-      alert('Encounter created successfully');
+      alert("Encounter created successfully");
       window.location.href = `/clinical/encounters/${encounter.id}`;
     } catch (error) {
-      console.error('Error creating encounter:', error);
-      alert('Failed to create encounter');
+      console.error("Error creating encounter:", error);
+      alert("Failed to create encounter");
     }
   }
 
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('back-btn');
-    backBtn?.addEventListener('click', () => {
+    const backBtn = document.getElementById("back-btn");
+    backBtn?.addEventListener("click", () => {
       window.history.back();
     });
   }
 
   destroy(): void {
     this.encounterForm?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

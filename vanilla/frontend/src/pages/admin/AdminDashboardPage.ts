@@ -1,5 +1,5 @@
-import { SecurityDashboard } from '../../components/admin/SecurityDashboard';
-import { AuditLog } from '../../components/admin/AuditLog';
+import { SecurityDashboard } from "../../components/admin/SecurityDashboard";
+import { AuditLog } from "../../components/admin/AuditLog";
 
 /**
  * AdminDashboardPage
@@ -32,14 +32,16 @@ export class AdminDashboardPage {
     `;
 
     // Render security dashboard
-    const securityContainer = document.getElementById('security-dashboard-container');
+    const securityContainer = document.getElementById(
+      "security-dashboard-container",
+    );
     if (securityContainer) {
       this.securityDashboard = new SecurityDashboard(securityContainer);
       await this.securityDashboard.render();
     }
 
     // Render audit log
-    const auditContainer = document.getElementById('audit-log-container');
+    const auditContainer = document.getElementById("audit-log-container");
     if (auditContainer) {
       this.auditLog = new AuditLog(auditContainer);
       await this.auditLog.render();
@@ -49,6 +51,6 @@ export class AdminDashboardPage {
   destroy(): void {
     this.securityDashboard?.destroy();
     this.auditLog?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

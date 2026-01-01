@@ -1,14 +1,21 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { LabOrder, OrderStatus } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { formatDateTime } from '@/lib/utils';
-import { FileText, Eye, XCircle } from 'lucide-react';
-import LaboratoryService from '@/services/laboratory.service';
+import React, { useEffect, useState } from "react";
+import { LabOrder, OrderStatus } from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { formatDateTime } from "@/lib/utils";
+import { FileText, Eye, XCircle } from "lucide-react";
+import LaboratoryService from "@/services/laboratory.service";
 
 interface LabOrderListProps {
   filters?: {
@@ -18,7 +25,10 @@ interface LabOrderListProps {
   onViewOrder?: (order: LabOrder) => void;
 }
 
-export default function LabOrderList({ filters, onViewOrder }: LabOrderListProps) {
+export default function LabOrderList({
+  filters,
+  onViewOrder,
+}: LabOrderListProps) {
   const [orders, setOrders] = useState<LabOrder[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +42,7 @@ export default function LabOrderList({ filters, onViewOrder }: LabOrderListProps
       const data = await LaboratoryService.getOrders(filters);
       setOrders(data);
     } catch (error) {
-      console.error('Failed to load orders:', error);
+      console.error("Failed to load orders:", error);
     } finally {
       setLoading(false);
     }
@@ -40,12 +50,12 @@ export default function LabOrderList({ filters, onViewOrder }: LabOrderListProps
 
   const getStatusBadge = (status: OrderStatus) => {
     const variants: Record<OrderStatus, any> = {
-      PENDING: 'warning',
-      COLLECTED: 'default',
-      IN_PROGRESS: 'default',
-      COMPLETED: 'success',
-      CANCELLED: 'destructive',
-      RESULTED: 'success',
+      PENDING: "warning",
+      COLLECTED: "default",
+      IN_PROGRESS: "default",
+      COMPLETED: "success",
+      CANCELLED: "destructive",
+      RESULTED: "success",
     };
 
     return <Badge variant={variants[status]}>{status}</Badge>;
@@ -53,13 +63,13 @@ export default function LabOrderList({ filters, onViewOrder }: LabOrderListProps
 
   const getPriorityBadge = (priority: string) => {
     const colors: Record<string, any> = {
-      STAT: 'destructive',
-      URGENT: 'warning',
-      ASAP: 'warning',
-      ROUTINE: 'outline',
+      STAT: "destructive",
+      URGENT: "warning",
+      ASAP: "warning",
+      ROUTINE: "outline",
     };
 
-    return <Badge variant={colors[priority] || 'outline'}>{priority}</Badge>;
+    return <Badge variant={colors[priority] || "outline"}>{priority}</Badge>;
   };
 
   if (loading) {
@@ -92,21 +102,30 @@ export default function LabOrderList({ filters, onViewOrder }: LabOrderListProps
           <TableBody>
             {orders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={9}
+                  className="text-center text-muted-foreground"
+                >
                   No orders found
                 </TableCell>
               </TableRow>
             ) : (
               orders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.orderNumber}</TableCell>
+                  <TableCell className="font-medium">
+                    {order.orderNumber}
+                  </TableCell>
                   <TableCell>{order.patientName}</TableCell>
                   <TableCell>{order.patientMRN}</TableCell>
                   <TableCell>
                     {order.panels.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {order.panels.map((panel) => (
-                          <Badge key={panel} variant="outline" className="text-xs">
+                          <Badge
+                            key={panel}
+                            variant="outline"
+                            className="text-xs"
+                          >
                             {panel}
                           </Badge>
                         ))}
@@ -122,7 +141,9 @@ export default function LabOrderList({ filters, onViewOrder }: LabOrderListProps
                   <TableCell className="text-sm">
                     {formatDateTime(order.orderDate)}
                   </TableCell>
-                  <TableCell className="text-sm">{order.orderingPhysician}</TableCell>
+                  <TableCell className="text-sm">
+                    {order.orderingPhysician}
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button

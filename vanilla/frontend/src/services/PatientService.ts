@@ -2,21 +2,31 @@
  * Patient Service - Frontend API client
  */
 
-import { Patient, PatientSearchParams, DuplicateMatch, ApiResponse, Insurance, Document } from '../types/Patient';
+import {
+  Patient,
+  PatientSearchParams,
+  DuplicateMatch,
+  ApiResponse,
+  Insurance,
+  Document,
+} from "../types/Patient";
 
 export class PatientService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:3001/api') {
+  constructor(baseUrl: string = "http://localhost:3001/api") {
     this.baseUrl = baseUrl;
   }
 
   /**
    * Get all patients
    */
-  public async getAllPatients(limit: number = 50, offset: number = 0): Promise<ApiResponse<Patient[]>> {
+  public async getAllPatients(
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<ApiResponse<Patient[]>> {
     const response = await fetch(
-      `${this.baseUrl}/patients?limit=${limit}&offset=${offset}`
+      `${this.baseUrl}/patients?limit=${limit}&offset=${offset}`,
     );
     return response.json();
   }
@@ -40,11 +50,13 @@ export class PatientService {
   /**
    * Create new patient
    */
-  public async createPatient(patientData: Partial<Patient>): Promise<ApiResponse<Patient>> {
+  public async createPatient(
+    patientData: Partial<Patient>,
+  ): Promise<ApiResponse<Patient>> {
     const response = await fetch(`${this.baseUrl}/patients`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(patientData),
     });
@@ -54,11 +66,14 @@ export class PatientService {
   /**
    * Update patient
    */
-  public async updatePatient(id: string, updates: Partial<Patient>): Promise<ApiResponse<Patient>> {
+  public async updatePatient(
+    id: string,
+    updates: Partial<Patient>,
+  ): Promise<ApiResponse<Patient>> {
     const response = await fetch(`${this.baseUrl}/patients/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(updates),
     });
@@ -70,7 +85,7 @@ export class PatientService {
    */
   public async deletePatient(id: string): Promise<ApiResponse<void>> {
     const response = await fetch(`${this.baseUrl}/patients/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     return response.json();
   }
@@ -78,7 +93,9 @@ export class PatientService {
   /**
    * Search patients
    */
-  public async searchPatients(params: PatientSearchParams): Promise<ApiResponse<Patient[]>> {
+  public async searchPatients(
+    params: PatientSearchParams,
+  ): Promise<ApiResponse<Patient[]>> {
     const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
@@ -88,7 +105,7 @@ export class PatientService {
     });
 
     const response = await fetch(
-      `${this.baseUrl}/patients/search?${queryParams.toString()}`
+      `${this.baseUrl}/patients/search?${queryParams.toString()}`,
     );
     return response.json();
   }
@@ -96,11 +113,13 @@ export class PatientService {
   /**
    * Find duplicate patients
    */
-  public async findDuplicates(patientData: Partial<Patient>): Promise<ApiResponse<DuplicateMatch[]>> {
+  public async findDuplicates(
+    patientData: Partial<Patient>,
+  ): Promise<ApiResponse<DuplicateMatch[]>> {
     const response = await fetch(`${this.baseUrl}/patients/search/duplicates`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(patientData),
     });
@@ -113,12 +132,12 @@ export class PatientService {
   public async mergePatients(
     sourceMrn: string,
     targetMrn: string,
-    reason: string
+    reason: string,
   ): Promise<ApiResponse<Patient>> {
     const response = await fetch(`${this.baseUrl}/patients/merge`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ sourceMrn, targetMrn, reason }),
     });
@@ -128,28 +147,40 @@ export class PatientService {
   /**
    * Add document to patient
    */
-  public async addDocument(patientId: string, document: Partial<Document>): Promise<ApiResponse<Patient>> {
-    const response = await fetch(`${this.baseUrl}/patients/documents/${patientId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  public async addDocument(
+    patientId: string,
+    document: Partial<Document>,
+  ): Promise<ApiResponse<Patient>> {
+    const response = await fetch(
+      `${this.baseUrl}/patients/documents/${patientId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(document),
       },
-      body: JSON.stringify(document),
-    });
+    );
     return response.json();
   }
 
   /**
    * Update patient insurance
    */
-  public async updateInsurance(patientId: string, insurance: Insurance): Promise<ApiResponse<Patient>> {
-    const response = await fetch(`${this.baseUrl}/patients/insurance/${patientId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  public async updateInsurance(
+    patientId: string,
+    insurance: Insurance,
+  ): Promise<ApiResponse<Patient>> {
+    const response = await fetch(
+      `${this.baseUrl}/patients/insurance/${patientId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(insurance),
       },
-      body: JSON.stringify(insurance),
-    });
+    );
     return response.json();
   }
 

@@ -3,7 +3,7 @@
  * Submit and track insurance claims via clearinghouse (e.g., Change Healthcare, Availity)
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 const ClearinghouseConfigSchema = z.object({
   baseUrl: z.string().url(),
@@ -21,13 +21,13 @@ export interface Claim {
     firstName: string;
     lastName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F';
+    gender: "M" | "F";
   };
   subscriberInfo?: {
     memberId: string;
     firstName: string;
     lastName: string;
-    relationship: 'Self' | 'Spouse' | 'Child' | 'Other';
+    relationship: "Self" | "Spouse" | "Child" | "Other";
   };
   providerInfo: {
     npi: string;
@@ -43,7 +43,7 @@ export interface Claim {
     name: string;
   };
   claimInfo: {
-    claimType: 'Professional' | 'Institutional';
+    claimType: "Professional" | "Institutional";
     serviceDate: Date;
     diagnosisCodes: string[];
     serviceLin: Array<{
@@ -60,7 +60,7 @@ export interface Claim {
 
 export interface ClaimStatus {
   claimId: string;
-  status: 'Submitted' | 'Accepted' | 'Rejected' | 'Paid' | 'Denied' | 'Pending';
+  status: "Submitted" | "Accepted" | "Rejected" | "Paid" | "Denied" | "Pending";
   submittedDate?: Date;
   paidAmount?: number;
   allowedAmount?: number;
@@ -97,9 +97,9 @@ export class ClearinghouseClient {
   }> {
     const edi837 = this.buildEDI837(claim);
 
-    const response = await this.request('POST', '/claims/submit', {
+    const response = await this.request("POST", "/claims/submit", {
       submitterId: this.config.submitterId,
-      format: '837',
+      format: "837",
       content: edi837,
     });
 
@@ -114,7 +114,7 @@ export class ClearinghouseClient {
    * Check claim status (276/277)
    */
   async getClaimStatus(claimId: string): Promise<ClaimStatus> {
-    const response = await this.request('GET', `/claims/${claimId}/status`);
+    const response = await this.request("GET", `/claims/${claimId}/status`);
 
     return this.parseClaimStatus(response);
   }
@@ -126,33 +126,40 @@ export class ClearinghouseClient {
     payerId?: string;
     startDate?: Date;
     endDate?: Date;
-  }): Promise<Array<{
-    remittanceId: string;
-    payerId: string;
-    payerName: string;
-    checkNumber: string;
-    checkDate: Date;
-    totalPaid: number;
-    claims: Array<{
-      claimId: string;
-      patientName: string;
-      serviceDate: Date;
-      chargedAmount: number;
-      allowedAmount: number;
-      paidAmount: number;
-      adjustments: Array<{
-        code: string;
-        amount: number;
-        description: string;
+  }): Promise<
+    Array<{
+      remittanceId: string;
+      payerId: string;
+      payerName: string;
+      checkNumber: string;
+      checkDate: Date;
+      totalPaid: number;
+      claims: Array<{
+        claimId: string;
+        patientName: string;
+        serviceDate: Date;
+        chargedAmount: number;
+        allowedAmount: number;
+        paidAmount: number;
+        adjustments: Array<{
+          code: string;
+          amount: number;
+          description: string;
+        }>;
       }>;
-    }>;
-  }>> {
+    }>
+  > {
     const queryParams = new URLSearchParams();
-    if (params.payerId) queryParams.append('payerId', params.payerId);
-    if (params.startDate) queryParams.append('startDate', params.startDate.toISOString());
-    if (params.endDate) queryParams.append('endDate', params.endDate.toISOString());
+    if (params.payerId) queryParams.append("payerId", params.payerId);
+    if (params.startDate)
+      queryParams.append("startDate", params.startDate.toISOString());
+    if (params.endDate)
+      queryParams.append("endDate", params.endDate.toISOString());
 
-    const response = await this.request('GET', `/remittance?${queryParams.toString()}`);
+    const response = await this.request(
+      "GET",
+      `/remittance?${queryParams.toString()}`,
+    );
 
     return this.parseRemittance(response);
   }
@@ -170,9 +177,9 @@ export class ClearinghouseClient {
       error: string;
     }>;
   }> {
-    const batch = claims.map(claim => this.buildEDI837(claim));
+    const batch = claims.map((claim) => this.buildEDI837(claim));
 
-    const response = await this.request('POST', '/claims/batch', {
+    const response = await this.request("POST", "/claims/batch", {
       submitterId: this.config.submitterId,
       claims: batch,
     });
@@ -189,8 +196,11 @@ export class ClearinghouseClient {
   /**
    * Void/correct claim
    */
-  async voidClaim(claimId: string, reason: string): Promise<{ success: boolean }> {
-    const response = await this.request('POST', `/claims/${claimId}/void`, {
+  async voidClaim(
+    claimId: string,
+    reason: string,
+  ): Promise<{ success: boolean }> {
+    const response = await this.request("POST", `/claims/${claimId}/void`, {
       reason,
     });
 
@@ -205,21 +215,34 @@ export class ClearinghouseClient {
     const segments: string[] = [];
 
     // ISA - Interchange Control Header
-    segments.push('ISA*00*          *00*          *ZZ*SUBMITTER      *ZZ*RECEIVER       *' +
-      new Date().toISOString().replace(/[-:]/g, '').substring(0, 12) + '*:*^*00501*000000001*0*P*:~');
+    segments.push(
+      "ISA*00*          *00*          *ZZ*SUBMITTER      *ZZ*RECEIVER       *" +
+        new Date().toISOString().replace(/[-:]/g, "").substring(0, 12) +
+        "*:*^*00501*000000001*0*P*:~",
+    );
 
     // GS - Functional Group Header
-    segments.push('GS*HC*SUBMITTER*RECEIVER*' +
-      new Date().toISOString().substring(0, 10).replace(/-/g, '') + '*' +
-      new Date().toISOString().substring(11, 16).replace(':', '') + '*1*X*005010X222A1~');
+    segments.push(
+      "GS*HC*SUBMITTER*RECEIVER*" +
+        new Date().toISOString().substring(0, 10).replace(/-/g, "") +
+        "*" +
+        new Date().toISOString().substring(11, 16).replace(":", "") +
+        "*1*X*005010X222A1~",
+    );
 
     // ST - Transaction Set Header
-    segments.push('ST*837*0001*005010X222A1~');
+    segments.push("ST*837*0001*005010X222A1~");
 
     // BHT - Beginning of Hierarchical Transaction
-    segments.push('BHT*0019*00*' + claim.claimId + '*' +
-      new Date().toISOString().substring(0, 10).replace(/-/g, '') + '*' +
-      new Date().toISOString().substring(11, 16).replace(':', '') + '*CH~');
+    segments.push(
+      "BHT*0019*00*" +
+        claim.claimId +
+        "*" +
+        new Date().toISOString().substring(0, 10).replace(/-/g, "") +
+        "*" +
+        new Date().toISOString().substring(11, 16).replace(":", "") +
+        "*CH~",
+    );
 
     // Add more segments for complete 837...
     // NM1, N3, N4, REF, PER for submitter, receiver, provider, patient
@@ -227,15 +250,15 @@ export class ClearinghouseClient {
     // LX, SV1 for service lines
 
     // SE - Transaction Set Trailer
-    segments.push('SE*' + (segments.length + 1) + '*0001~');
+    segments.push("SE*" + (segments.length + 1) + "*0001~");
 
     // GE - Functional Group Trailer
-    segments.push('GE*1*1~');
+    segments.push("GE*1*1~");
 
     // IEA - Interchange Control Trailer
-    segments.push('IEA*1*000000001~');
+    segments.push("IEA*1*000000001~");
 
-    return segments.join('\n');
+    return segments.join("\n");
   }
 
   /**
@@ -244,12 +267,16 @@ export class ClearinghouseClient {
   private parseClaimStatus(response: any): ClaimStatus {
     return {
       claimId: response.claimId,
-      status: response.status || 'Pending',
-      submittedDate: response.submittedDate ? new Date(response.submittedDate) : undefined,
+      status: response.status || "Pending",
+      submittedDate: response.submittedDate
+        ? new Date(response.submittedDate)
+        : undefined,
       paidAmount: response.paidAmount,
       allowedAmount: response.allowedAmount,
       denialReason: response.denialReason,
-      remittanceDate: response.remittanceDate ? new Date(response.remittanceDate) : undefined,
+      remittanceDate: response.remittanceDate
+        ? new Date(response.remittanceDate)
+        : undefined,
       checkNumber: response.checkNumber,
       adjustments: response.adjustments || [],
     };
@@ -265,12 +292,16 @@ export class ClearinghouseClient {
   /**
    * Make HTTP request
    */
-  private async request(method: string, path: string, body?: any): Promise<any> {
+  private async request(
+    method: string,
+    path: string,
+    body?: any,
+  ): Promise<any> {
     const url = `${this.config.baseUrl}${path}`;
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.config.apiKey}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.config.apiKey}`,
     };
 
     const controller = new AbortController();

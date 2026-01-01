@@ -1,5 +1,5 @@
-import { ImagingService } from '../../services/ImagingService';
-import { StudyList } from '../../components/imaging/StudyList';
+import { ImagingService } from "../../services/ImagingService";
+import { StudyList } from "../../components/imaging/StudyList";
 
 export class StudiesPage {
   private container: HTMLElement;
@@ -14,10 +14,10 @@ export class StudiesPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'studies-page';
+    const wrapper = document.createElement("div");
+    wrapper.className = "studies-page";
     wrapper.innerHTML = `
       <div class="page-header">
         <h1>DICOM Studies</h1>
@@ -92,38 +92,54 @@ export class StudiesPage {
 
   private attachEventListeners() {
     const refreshBtn = this.container.querySelector('[data-action="refresh"]');
-    refreshBtn?.addEventListener('click', () => this.loadStudies());
+    refreshBtn?.addEventListener("click", () => this.loadStudies());
 
     const uploadBtn = this.container.querySelector('[data-action="upload"]');
-    uploadBtn?.addEventListener('click', () => this.showUploadDialog());
+    uploadBtn?.addEventListener("click", () => this.showUploadDialog());
 
-    const applyFiltersBtn = this.container.querySelector('[data-action="apply-filters"]');
-    applyFiltersBtn?.addEventListener('click', () => this.applyFilters());
+    const applyFiltersBtn = this.container.querySelector(
+      '[data-action="apply-filters"]',
+    );
+    applyFiltersBtn?.addEventListener("click", () => this.applyFilters());
 
-    const clearFiltersBtn = this.container.querySelector('[data-action="clear-filters"]');
-    clearFiltersBtn?.addEventListener('click', () => this.clearFilters());
+    const clearFiltersBtn = this.container.querySelector(
+      '[data-action="clear-filters"]',
+    );
+    clearFiltersBtn?.addEventListener("click", () => this.clearFilters());
   }
 
   private async loadStudies() {
     try {
-      const studiesContainer = document.getElementById('studies-container');
+      const studiesContainer = document.getElementById("studies-container");
       if (!studiesContainer) return;
 
       const studies = await this.imagingService.getStudies(this.currentFilters);
       this.studyList.render(studiesContainer, studies);
     } catch (error) {
-      console.error('Error loading studies:', error);
-      this.showError('Failed to load studies');
+      console.error("Error loading studies:", error);
+      this.showError("Failed to load studies");
     }
   }
 
   private applyFilters() {
-    const patientId = (document.getElementById('filter-patient-id') as HTMLInputElement)?.value;
-    const accession = (document.getElementById('filter-accession') as HTMLInputElement)?.value;
-    const modality = (document.getElementById('filter-modality') as HTMLSelectElement)?.value;
-    const status = (document.getElementById('filter-status') as HTMLSelectElement)?.value;
-    const startDate = (document.getElementById('filter-start-date') as HTMLInputElement)?.value;
-    const endDate = (document.getElementById('filter-end-date') as HTMLInputElement)?.value;
+    const patientId = (
+      document.getElementById("filter-patient-id") as HTMLInputElement
+    )?.value;
+    const accession = (
+      document.getElementById("filter-accession") as HTMLInputElement
+    )?.value;
+    const modality = (
+      document.getElementById("filter-modality") as HTMLSelectElement
+    )?.value;
+    const status = (
+      document.getElementById("filter-status") as HTMLSelectElement
+    )?.value;
+    const startDate = (
+      document.getElementById("filter-start-date") as HTMLInputElement
+    )?.value;
+    const endDate = (
+      document.getElementById("filter-end-date") as HTMLInputElement
+    )?.value;
 
     this.currentFilters = {
       ...(patientId && { patientId }),
@@ -138,12 +154,16 @@ export class StudiesPage {
   }
 
   private clearFilters() {
-    (document.getElementById('filter-patient-id') as HTMLInputElement).value = '';
-    (document.getElementById('filter-accession') as HTMLInputElement).value = '';
-    (document.getElementById('filter-modality') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-status') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-start-date') as HTMLInputElement).value = '';
-    (document.getElementById('filter-end-date') as HTMLInputElement).value = '';
+    (document.getElementById("filter-patient-id") as HTMLInputElement).value =
+      "";
+    (document.getElementById("filter-accession") as HTMLInputElement).value =
+      "";
+    (document.getElementById("filter-modality") as HTMLSelectElement).value =
+      "";
+    (document.getElementById("filter-status") as HTMLSelectElement).value = "";
+    (document.getElementById("filter-start-date") as HTMLInputElement).value =
+      "";
+    (document.getElementById("filter-end-date") as HTMLInputElement).value = "";
 
     this.currentFilters = {};
     this.loadStudies();
@@ -151,7 +171,7 @@ export class StudiesPage {
 
   private showUploadDialog() {
     // TODO: Implement DICOM upload dialog
-    alert('DICOM upload dialog will open here');
+    alert("DICOM upload dialog will open here");
   }
 
   private showError(message: string) {
@@ -159,6 +179,6 @@ export class StudiesPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -2,8 +2,8 @@
  * PatientDemographicsPage - View/edit patient demographics
  */
 
-import PatientService from '../../services/PatientService';
-import { Patient } from '../../types/Patient';
+import PatientService from "../../services/PatientService";
+import { Patient } from "../../types/Patient";
 
 export class PatientDemographicsPage {
   private patientId: string;
@@ -26,12 +26,12 @@ export class PatientDemographicsPage {
         this.patient = response.data;
         this.initializePage();
       } else {
-        throw new Error(response.error || 'Patient not found');
+        throw new Error(response.error || "Patient not found");
       }
     } catch (error) {
-      console.error('Failed to load patient:', error);
-      alert('Failed to load patient. Please try again.');
-      window.location.href = '/patients';
+      console.error("Failed to load patient:", error);
+      alert("Failed to load patient. Please try again.");
+      window.location.href = "/patients";
     }
   }
 
@@ -69,7 +69,7 @@ export class PatientDemographicsPage {
   private render(): void {
     if (!this.patient) return;
 
-    const contentEl = document.getElementById('demographicsContent');
+    const contentEl = document.getElementById("demographicsContent");
     if (!contentEl) return;
 
     if (!this.editMode) {
@@ -102,7 +102,7 @@ export class PatientDemographicsPage {
             </div>
             <div class="demo-field">
               <label>Middle Name:</label>
-              <span>${this.patient.middleName || 'N/A'}</span>
+              <span>${this.patient.middleName || "N/A"}</span>
             </div>
             <div class="demo-field">
               <label>Last Name:</label>
@@ -118,11 +118,11 @@ export class PatientDemographicsPage {
             </div>
             <div class="demo-field">
               <label>Blood Type:</label>
-              <span>${this.patient.bloodType || 'N/A'}</span>
+              <span>${this.patient.bloodType || "N/A"}</span>
             </div>
             <div class="demo-field">
               <label>Marital Status:</label>
-              <span>${this.patient.maritalStatus || 'N/A'}</span>
+              <span>${this.patient.maritalStatus || "N/A"}</span>
             </div>
           </div>
         </section>
@@ -136,7 +136,7 @@ export class PatientDemographicsPage {
             </div>
             <div class="demo-field">
               <label>Email:</label>
-              <span>${this.patient.contact.email || 'N/A'}</span>
+              <span>${this.patient.contact.email || "N/A"}</span>
             </div>
             <div class="demo-field full-width">
               <label>Address:</label>
@@ -149,7 +149,9 @@ export class PatientDemographicsPage {
           </div>
         </section>
 
-        ${this.patient.contact.emergencyContact ? `
+        ${
+          this.patient.contact.emergencyContact
+            ? `
           <section class="demo-section">
             <h2>Emergency Contact</h2>
             <div class="demo-grid">
@@ -167,22 +169,24 @@ export class PatientDemographicsPage {
               </div>
             </div>
           </section>
-        ` : ''}
+        `
+            : ""
+        }
 
         <section class="demo-section">
           <h2>Additional Information</h2>
           <div class="demo-grid">
             <div class="demo-field">
               <label>Preferred Language:</label>
-              <span>${this.patient.preferredLanguage || 'N/A'}</span>
+              <span>${this.patient.preferredLanguage || "N/A"}</span>
             </div>
             <div class="demo-field">
               <label>Race:</label>
-              <span>${this.patient.race || 'N/A'}</span>
+              <span>${this.patient.race || "N/A"}</span>
             </div>
             <div class="demo-field">
               <label>Ethnicity:</label>
-              <span>${this.patient.ethnicity || 'N/A'}</span>
+              <span>${this.patient.ethnicity || "N/A"}</span>
             </div>
             <div class="demo-field">
               <label>Status:</label>
@@ -206,9 +210,9 @@ export class PatientDemographicsPage {
       </div>
     `;
 
-    const cancelBtn = container.querySelector('#cancelEditBtn');
+    const cancelBtn = container.querySelector("#cancelEditBtn");
     if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
+      cancelBtn.addEventListener("click", () => {
         this.editMode = false;
         this.render();
       });
@@ -219,16 +223,16 @@ export class PatientDemographicsPage {
    * Attach event listeners
    */
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('backBtn');
+    const backBtn = document.getElementById("backBtn");
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
+      backBtn.addEventListener("click", () => {
         window.location.href = `/patients/${this.patientId}`;
       });
     }
 
-    const editBtn = document.getElementById('editBtn');
+    const editBtn = document.getElementById("editBtn");
     if (editBtn) {
-      editBtn.addEventListener('click', () => {
+      editBtn.addEventListener("click", () => {
         window.location.href = `/patients/${this.patientId}/edit`;
       });
     }
@@ -236,8 +240,8 @@ export class PatientDemographicsPage {
 }
 
 // Initialize page
-document.addEventListener('DOMContentLoaded', () => {
-  const pathParts = window.location.pathname.split('/');
+document.addEventListener("DOMContentLoaded", () => {
+  const pathParts = window.location.pathname.split("/");
   const patientId = pathParts[2];
 
   if (patientId) {

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { ChevronUp, ChevronDown, ChevronsUpDown, Download } from 'lucide-react';
+import { useState, useMemo } from "react";
+import { ChevronUp, ChevronDown, ChevronsUpDown, Download } from "lucide-react";
 
 interface Column {
   key: string;
   label: string;
   sortable?: boolean;
-  format?: 'text' | 'number' | 'currency' | 'percentage' | 'date';
-  align?: 'left' | 'center' | 'right';
+  format?: "text" | "number" | "currency" | "percentage" | "date";
+  align?: "left" | "center" | "right";
   width?: string;
 }
 
@@ -30,30 +30,30 @@ export function DataTable({
   searchable = false,
   exportable = false,
   pageSize = 10,
-  className = '',
+  className = "",
   onRowClick,
 }: DataTableProps) {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const formatValue = (value: any, format?: string): string => {
-    if (value === null || value === undefined) return '-';
+    if (value === null || value === undefined) return "-";
 
     switch (format) {
-      case 'currency':
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
+      case "currency":
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
           minimumFractionDigits: 2,
         }).format(value);
-      case 'percentage':
+      case "percentage":
         return `${Number(value).toFixed(2)}%`;
-      case 'number':
-        return new Intl.NumberFormat('en-US').format(value);
-      case 'date':
-        return new Date(value).toLocaleDateString('en-US');
+      case "number":
+        return new Intl.NumberFormat("en-US").format(value);
+      case "date":
+        return new Date(value).toLocaleDateString("en-US");
       default:
         return String(value);
     }
@@ -61,10 +61,10 @@ export function DataTable({
 
   const handleSort = (columnKey: string) => {
     if (sortColumn === columnKey) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortColumn(columnKey);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
@@ -72,7 +72,7 @@ export function DataTable({
     if (sortColumn !== columnKey) {
       return <ChevronsUpDown className="w-4 h-4 text-gray-400" />;
     }
-    return sortDirection === 'asc' ? (
+    return sortDirection === "asc" ? (
       <ChevronUp className="w-4 h-4 text-blue-600" />
     ) : (
       <ChevronDown className="w-4 h-4 text-blue-600" />
@@ -86,7 +86,7 @@ export function DataTable({
       columns.some((col) => {
         const value = row[col.key];
         return String(value).toLowerCase().includes(searchTerm.toLowerCase());
-      })
+      }),
     );
   }, [data, searchTerm, columns]);
 
@@ -100,7 +100,7 @@ export function DataTable({
       if (aValue === bValue) return 0;
 
       const comparison = aValue < bValue ? -1 : 1;
-      return sortDirection === 'asc' ? comparison : -comparison;
+      return sortDirection === "asc" ? comparison : -comparison;
     });
   }, [filteredData, sortColumn, sortDirection]);
 
@@ -114,23 +114,25 @@ export function DataTable({
 
   const handleExport = () => {
     // Create CSV
-    const headers = columns.map((col) => col.label).join(',');
+    const headers = columns.map((col) => col.label).join(",");
     const rows = sortedData.map((row) =>
-      columns.map((col) => {
-        const value = row[col.key];
-        const formatted = formatValue(value, col.format);
-        // Escape commas and quotes in CSV
-        return `"${String(formatted).replace(/"/g, '""')}"`;
-      }).join(',')
+      columns
+        .map((col) => {
+          const value = row[col.key];
+          const formatted = formatValue(value, col.format);
+          // Escape commas and quotes in CSV
+          return `"${String(formatted).replace(/"/g, '""')}"`;
+        })
+        .join(","),
     );
-    const csv = [headers, ...rows].join('\n');
+    const csv = [headers, ...rows].join("\n");
 
     // Download
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `${title || 'data'}_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `${title || "data"}_${new Date().toISOString().split("T")[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -143,7 +145,9 @@ export function DataTable({
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div>
-            {title && <h3 className="text-lg font-semibold text-gray-900">{title}</h3>}
+            {title && (
+              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            )}
             <p className="text-sm text-gray-500 mt-1">
               Showing {paginatedData.length} of {sortedData.length} results
             </p>
@@ -182,11 +186,15 @@ export function DataTable({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-6 py-3 text-${column.align || 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                    column.sortable !== false ? 'cursor-pointer hover:bg-gray-100' : ''
+                  className={`px-6 py-3 text-${column.align || "left"} text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                    column.sortable !== false
+                      ? "cursor-pointer hover:bg-gray-100"
+                      : ""
                   }`}
                   style={{ width: column.width }}
-                  onClick={() => column.sortable !== false && handleSort(column.key)}
+                  onClick={() =>
+                    column.sortable !== false && handleSort(column.key)
+                  }
                 >
                   <div className="flex items-center gap-2">
                     {column.label}
@@ -212,15 +220,15 @@ export function DataTable({
                   key={rowIndex}
                   className={`${
                     onRowClick
-                      ? 'cursor-pointer hover:bg-gray-50 transition-colors'
-                      : ''
+                      ? "cursor-pointer hover:bg-gray-50 transition-colors"
+                      : ""
                   }`}
                   onClick={() => onRowClick?.(row)}
                 >
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className={`px-6 py-4 text-sm text-gray-900 text-${column.align || 'left'}`}
+                      className={`px-6 py-4 text-sm text-gray-900 text-${column.align || "left"}`}
                     >
                       {formatValue(row[column.key], column.format)}
                     </td>

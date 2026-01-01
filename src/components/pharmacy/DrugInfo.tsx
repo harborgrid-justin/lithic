@@ -3,10 +3,10 @@
  * Display detailed drug information
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { pharmacyService } from '@/services/pharmacy.service';
+import { useEffect, useState } from "react";
+import { pharmacyService } from "@/services/pharmacy.service";
 
 interface DrugInfoProps {
   drugId: string;
@@ -27,29 +27,43 @@ export function DrugInfo({ drugId }: DrugInfoProps) {
       const data = await pharmacyService.getDrugInfo(drugId);
       setDrugInfo(data);
     } catch (error) {
-      console.error('Failed to load drug info:', error);
+      console.error("Failed to load drug info:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const toggleSection = (section: string) => {
-    setExpandedSections(prev =>
+    setExpandedSections((prev) =>
       prev.includes(section)
-        ? prev.filter(s => s !== section)
-        : [...prev, section]
+        ? prev.filter((s) => s !== section)
+        : [...prev, section],
     );
   };
 
   if (loading) {
-    return <div className="text-sm text-gray-500">Loading drug information...</div>;
+    return (
+      <div className="text-sm text-gray-500">Loading drug information...</div>
+    );
   }
 
   if (!drugInfo) {
-    return <div className="text-sm text-gray-500">Drug information not available</div>;
+    return (
+      <div className="text-sm text-gray-500">
+        Drug information not available
+      </div>
+    );
   }
 
-  const Section = ({ title, content, section }: { title: string; content?: string; section: string }) => {
+  const Section = ({
+    title,
+    content,
+    section,
+  }: {
+    title: string;
+    content?: string;
+    section: string;
+  }) => {
     if (!content) return null;
 
     const isExpanded = expandedSections.includes(section);
@@ -61,9 +75,7 @@ export function DrugInfo({ drugId }: DrugInfoProps) {
           className="flex items-center justify-between w-full text-left"
         >
           <h4 className="font-semibold text-sm text-gray-900">{title}</h4>
-          <span className="text-gray-500">
-            {isExpanded ? '−' : '+'}
-          </span>
+          <span className="text-gray-500">{isExpanded ? "−" : "+"}</span>
         </button>
         {isExpanded && (
           <div className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
@@ -84,7 +96,7 @@ export function DrugInfo({ drugId }: DrugInfoProps) {
         </div>
         <div>
           <span className="font-medium text-gray-700">Brand Name:</span>
-          <div className="text-gray-900">{drugInfo.brandName || 'N/A'}</div>
+          <div className="text-gray-900">{drugInfo.brandName || "N/A"}</div>
         </div>
         <div>
           <span className="font-medium text-gray-700">Strength:</span>
@@ -105,7 +117,9 @@ export function DrugInfo({ drugId }: DrugInfoProps) {
         {drugInfo.deaSchedule && (
           <div>
             <span className="font-medium text-gray-700">DEA Schedule:</span>
-            <div className="text-orange-600 font-semibold">C-{drugInfo.deaSchedule}</div>
+            <div className="text-orange-600 font-semibold">
+              C-{drugInfo.deaSchedule}
+            </div>
           </div>
         )}
         <div>
@@ -146,14 +160,15 @@ export function DrugInfo({ drugId }: DrugInfoProps) {
       />
 
       {!drugInfo.indications &&
-       !drugInfo.dosageAndAdministration &&
-       !drugInfo.contraindications &&
-       !drugInfo.warnings &&
-       !drugInfo.adverseReactions && (
-        <div className="text-sm text-gray-500 italic">
-          Detailed drug information not available. Please consult prescribing information.
-        </div>
-      )}
+        !drugInfo.dosageAndAdministration &&
+        !drugInfo.contraindications &&
+        !drugInfo.warnings &&
+        !drugInfo.adverseReactions && (
+          <div className="text-sm text-gray-500 italic">
+            Detailed drug information not available. Please consult prescribing
+            information.
+          </div>
+        )}
     </div>
   );
 }

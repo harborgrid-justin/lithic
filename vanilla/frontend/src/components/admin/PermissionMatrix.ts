@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * PermissionMatrix Component
@@ -31,16 +31,24 @@ export class PermissionMatrix {
               <thead>
                 <tr>
                   <th>Resource</th>
-                  ${this.permissions.actions.map((action: string) => `
+                  ${this.permissions.actions
+                    .map(
+                      (action: string) => `
                     <th>${action}</th>
-                  `).join('')}
+                  `,
+                    )
+                    .join("")}
                 </tr>
               </thead>
               <tbody>
-                ${this.permissions.resources.map((resource: string) => `
+                ${this.permissions.resources
+                  .map(
+                    (resource: string) => `
                   <tr>
                     <td><strong>${resource}</strong></td>
-                    ${this.permissions.actions.map((action: string) => `
+                    ${this.permissions.actions
+                      .map(
+                        (action: string) => `
                       <td class="matrix-cell">
                         <input
                           type="checkbox"
@@ -49,9 +57,13 @@ export class PermissionMatrix {
                           disabled
                         />
                       </td>
-                    `).join('')}
+                    `,
+                      )
+                      .join("")}
                   </tr>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </tbody>
             </table>
           </div>
@@ -75,6 +87,6 @@ export class PermissionMatrix {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

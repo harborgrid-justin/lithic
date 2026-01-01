@@ -2,8 +2,8 @@
  * MergePatients Component - Merge duplicate patient records
  */
 
-import { Patient, DuplicateMatch } from '../../types/Patient';
-import PatientService from '../../services/PatientService';
+import { Patient, DuplicateMatch } from "../../types/Patient";
+import PatientService from "../../services/PatientService";
 
 export class MergePatients {
   private container: HTMLElement;
@@ -32,7 +32,7 @@ export class MergePatients {
         this.render();
       }
     } catch (error) {
-      console.error('Failed to find duplicates:', error);
+      console.error("Failed to find duplicates:", error);
       this.render();
     }
   }
@@ -42,7 +42,8 @@ export class MergePatients {
    */
   private render(): void {
     if (!this.sourcePatient) {
-      this.container.innerHTML = '<div class="no-patient">No patient selected</div>';
+      this.container.innerHTML =
+        '<div class="no-patient">No patient selected</div>';
       return;
     }
 
@@ -57,33 +58,41 @@ export class MergePatients {
         <div class="merge-layout">
           <div class="source-patient">
             <h3>Source Patient (Will be merged into target)</h3>
-            ${this.renderPatientCard(this.sourcePatient, 'source')}
+            ${this.renderPatientCard(this.sourcePatient, "source")}
           </div>
 
           <div class="merge-arrow">→</div>
 
           <div class="target-patient">
             <h3>Target Patient (Master record)</h3>
-            ${this.targetPatient ? this.renderPatientCard(this.targetPatient, 'target') : `
+            ${
+              this.targetPatient
+                ? this.renderPatientCard(this.targetPatient, "target")
+                : `
               <div class="select-target">
                 <p>Select a target patient from duplicates below</p>
               </div>
-            `}
+            `
+            }
           </div>
         </div>
 
-        ${this.duplicates.length > 0 ? `
+        ${
+          this.duplicates.length > 0
+            ? `
           <div class="duplicates-section">
             <h3>Potential Duplicates</h3>
             <div class="duplicates-list">
-              ${this.duplicates.map(dup => this.renderDuplicateCard(dup)).join('')}
+              ${this.duplicates.map((dup) => this.renderDuplicateCard(dup)).join("")}
             </div>
           </div>
-        ` : `
+        `
+            : `
           <div class="no-duplicates">
             No potential duplicates found. You can manually enter a target MRN below.
           </div>
-        `}
+        `
+        }
 
         <div class="merge-form">
           <h3>Confirm Merge</h3>
@@ -91,8 +100,8 @@ export class MergePatients {
             <div class="form-group">
               <label for="targetMrn">Target Patient MRN *</label>
               <input type="text" id="targetMrn" name="targetMrn" required
-                value="${this.targetPatient?.mrn || ''}"
-                ${this.targetPatient ? 'readonly' : ''}>
+                value="${this.targetPatient?.mrn || ""}"
+                ${this.targetPatient ? "readonly" : ""}>
             </div>
 
             <div class="form-group">
@@ -103,7 +112,7 @@ export class MergePatients {
 
             <div class="form-actions">
               <button type="submit" class="btn-primary btn-danger"
-                ${!this.targetPatient ? 'disabled' : ''}>
+                ${!this.targetPatient ? "disabled" : ""}>
                 Merge Patients
               </button>
               <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
@@ -121,7 +130,10 @@ export class MergePatients {
   /**
    * Render patient card
    */
-  private renderPatientCard(patient: Patient, type: 'source' | 'target'): string {
+  private renderPatientCard(
+    patient: Patient,
+    type: "source" | "target",
+  ): string {
     const dob = new Date(patient.dateOfBirth).toLocaleDateString();
 
     return `
@@ -141,25 +153,37 @@ export class MergePatients {
           <div class="detail">
             <strong>Phone:</strong> ${patient.contact.phone}
           </div>
-          ${patient.contact.email ? `
+          ${
+            patient.contact.email
+              ? `
             <div class="detail">
               <strong>Email:</strong> ${patient.contact.email}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
           <div class="detail">
             <strong>Address:</strong>
             ${patient.address.street}, ${patient.address.city}, ${patient.address.state}
           </div>
-          ${patient.insurance.length > 0 ? `
+          ${
+            patient.insurance.length > 0
+              ? `
             <div class="detail">
               <strong>Insurance:</strong> ${patient.insurance.length} record(s)
             </div>
-          ` : ''}
-          ${patient.documents && patient.documents.length > 0 ? `
+          `
+              : ""
+          }
+          ${
+            patient.documents && patient.documents.length > 0
+              ? `
             <div class="detail">
               <strong>Documents:</strong> ${patient.documents.length} file(s)
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </div>
     `;
@@ -171,7 +195,7 @@ export class MergePatients {
   private renderDuplicateCard(duplicate: DuplicateMatch): string {
     const { patient, score, matchedFields } = duplicate;
     const dob = new Date(patient.dateOfBirth).toLocaleDateString();
-    const scoreClass = score >= 80 ? 'high' : score >= 60 ? 'medium' : 'low';
+    const scoreClass = score >= 80 ? "high" : score >= 60 ? "medium" : "low";
 
     return `
       <div class="duplicate-card">
@@ -184,11 +208,15 @@ export class MergePatients {
           <p class="mrn">MRN: ${patient.mrn}</p>
           <p>DOB: ${dob} | Phone: ${patient.contact.phone}</p>
 
-          ${matchedFields.length > 0 ? `
+          ${
+            matchedFields.length > 0
+              ? `
             <div class="matched-fields">
-              <strong>Matched:</strong> ${matchedFields.join(', ')}
+              <strong>Matched:</strong> ${matchedFields.join(", ")}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
 
         <div class="duplicate-actions">
@@ -204,11 +232,11 @@ export class MergePatients {
    * Attach event listeners
    */
   private attachEventListeners(): void {
-    const selectButtons = this.container.querySelectorAll('.btn-select');
-    selectButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
+    const selectButtons = this.container.querySelectorAll(".btn-select");
+    selectButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
         const target = e.target as HTMLElement;
-        const patientData = target.getAttribute('data-patient');
+        const patientData = target.getAttribute("data-patient");
         if (patientData) {
           this.targetPatient = JSON.parse(patientData);
           this.render();
@@ -216,17 +244,19 @@ export class MergePatients {
       });
     });
 
-    const form = this.container.querySelector('#mergeForm') as HTMLFormElement;
+    const form = this.container.querySelector("#mergeForm") as HTMLFormElement;
     if (form) {
-      form.addEventListener('submit', async (e) => {
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
         await this.handleMerge();
       });
     }
 
-    const cancelBtn = this.container.querySelector('#cancelBtn') as HTMLButtonElement;
+    const cancelBtn = this.container.querySelector(
+      "#cancelBtn",
+    ) as HTMLButtonElement;
     if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
+      cancelBtn.addEventListener("click", () => {
         window.history.back();
       });
     }
@@ -238,39 +268,41 @@ export class MergePatients {
   private async handleMerge(): Promise<void> {
     if (!this.sourcePatient) return;
 
-    const form = this.container.querySelector('#mergeForm') as HTMLFormElement;
+    const form = this.container.querySelector("#mergeForm") as HTMLFormElement;
     const formData = new FormData(form);
-    const messageEl = this.container.querySelector('#formMessage') as HTMLElement;
+    const messageEl = this.container.querySelector(
+      "#formMessage",
+    ) as HTMLElement;
 
-    const targetMrn = formData.get('targetMrn') as string;
-    const reason = formData.get('reason') as string;
+    const targetMrn = formData.get("targetMrn") as string;
+    const reason = formData.get("reason") as string;
 
     if (!targetMrn || !reason) {
-      messageEl.className = 'form-message error';
-      messageEl.textContent = 'Please fill in all required fields';
+      messageEl.className = "form-message error";
+      messageEl.textContent = "Please fill in all required fields";
       return;
     }
 
     // Confirm before merging
     const confirmed = confirm(
-      `Are you sure you want to merge patient ${this.sourcePatient.mrn} into ${targetMrn}? This action cannot be undone.`
+      `Are you sure you want to merge patient ${this.sourcePatient.mrn} into ${targetMrn}? This action cannot be undone.`,
     );
 
     if (!confirmed) return;
 
     try {
-      messageEl.className = 'form-message loading';
-      messageEl.textContent = 'Merging patients...';
+      messageEl.className = "form-message loading";
+      messageEl.textContent = "Merging patients...";
 
       const response = await PatientService.mergePatients(
         this.sourcePatient.mrn,
         targetMrn,
-        reason
+        reason,
       );
 
       if (response.success) {
-        messageEl.className = 'form-message success';
-        messageEl.textContent = 'Patients merged successfully';
+        messageEl.className = "form-message success";
+        messageEl.textContent = "Patients merged successfully";
 
         // Redirect to target patient after 2 seconds
         setTimeout(() => {
@@ -279,11 +311,12 @@ export class MergePatients {
           }
         }, 2000);
       } else {
-        throw new Error(response.error || 'Merge failed');
+        throw new Error(response.error || "Merge failed");
       }
     } catch (error) {
-      messageEl.className = 'form-message error';
-      messageEl.textContent = error instanceof Error ? error.message : 'Merge failed';
+      messageEl.className = "form-message error";
+      messageEl.textContent =
+        error instanceof Error ? error.message : "Merge failed";
     }
   }
 }

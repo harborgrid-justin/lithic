@@ -3,7 +3,7 @@
  * Frontend service for pharmacy API calls
  */
 
-const API_BASE_URL = '/api/pharmacy';
+const API_BASE_URL = "/api/pharmacy";
 
 export interface Medication {
   id: string;
@@ -14,8 +14,8 @@ export interface Medication {
   dosageForm: string;
   strength: string;
   manufacturer: string;
-  deaSchedule?: '1' | '2' | '3' | '4' | '5';
-  formularyStatus: 'preferred' | 'alternative' | 'non-formulary';
+  deaSchedule?: "1" | "2" | "3" | "4" | "5";
+  formularyStatus: "preferred" | "alternative" | "non-formulary";
   unitPrice: number;
   packageSize: number;
   requiresPriorAuth: boolean;
@@ -48,8 +48,14 @@ export interface Prescription {
   dispensedBy?: string;
   dispensedQuantity?: number;
   lotNumber?: string;
-  status: 'pending' | 'verified' | 'filled' | 'partially_filled' | 'cancelled' | 'on_hold';
-  priority: 'routine' | 'urgent' | 'stat';
+  status:
+    | "pending"
+    | "verified"
+    | "filled"
+    | "partially_filled"
+    | "cancelled"
+    | "on_hold";
+  priority: "routine" | "urgent" | "stat";
   isControlled: boolean;
   requiresCounseling: boolean;
   diagnosis?: string;
@@ -74,7 +80,7 @@ export interface InventoryItem {
   location: string;
   reorderLevel: number;
   reorderQuantity: number;
-  status: 'active' | 'expired' | 'recalled' | 'quarantine';
+  status: "active" | "expired" | "recalled" | "quarantine";
   cost: number;
   supplier: string;
   receivedDate: string;
@@ -110,7 +116,12 @@ export interface ControlledSubstanceLog {
   id: string;
   medicationId: string;
   medication?: Medication;
-  action: 'receive' | 'dispense' | 'waste' | 'transfer' | 'inventory_adjustment';
+  action:
+    | "receive"
+    | "dispense"
+    | "waste"
+    | "transfer"
+    | "inventory_adjustment";
   quantity: number;
   runningBalance: number;
   prescriptionId?: string;
@@ -131,12 +142,12 @@ export interface FormularyEntry {
   medicationId: string;
   medication?: Medication;
   tier: 1 | 2 | 3 | 4 | 5;
-  status: 'preferred' | 'alternative' | 'non-formulary' | 'restricted';
+  status: "preferred" | "alternative" | "non-formulary" | "restricted";
   requiresPriorAuth: boolean;
   priorAuthCriteria?: string;
   quantityLimits?: {
     maxQuantity: number;
-    period: 'day' | 'week' | 'month' | 'year';
+    period: "day" | "week" | "month" | "year";
   };
   stepTherapyRequired: boolean;
   stepTherapyAlternatives?: string[];
@@ -162,8 +173,8 @@ export interface RefillRequest {
   prescriptionId: string;
   patientId: string;
   requestedDate: string;
-  requestedBy: 'patient' | 'prescriber' | 'pharmacy';
-  status: 'pending' | 'approved' | 'denied' | 'prescriber_review';
+  requestedBy: "patient" | "prescriber" | "pharmacy";
+  status: "pending" | "approved" | "denied" | "prescriber_review";
   denialReason?: string;
   processedDate?: string;
   processedBy?: string;
@@ -202,15 +213,17 @@ class PharmacyService {
   }
 
   async searchMedications(query: string): Promise<Medication[]> {
-    const response = await fetch(`${API_BASE_URL}/medications/search?q=${encodeURIComponent(query)}`);
+    const response = await fetch(
+      `${API_BASE_URL}/medications/search?q=${encodeURIComponent(query)}`,
+    );
     const data = await response.json();
     return data.data || [];
   }
 
   async createMedication(medication: Partial<Medication>): Promise<Medication> {
     const response = await fetch(`${API_BASE_URL}/medications`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(medication),
     });
     const data = await response.json();
@@ -244,20 +257,26 @@ class PharmacyService {
     return data.data;
   }
 
-  async createInventoryItem(item: Partial<InventoryItem>): Promise<InventoryItem> {
+  async createInventoryItem(
+    item: Partial<InventoryItem>,
+  ): Promise<InventoryItem> {
     const response = await fetch(`${API_BASE_URL}/inventory`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(item),
     });
     const data = await response.json();
     return data.data;
   }
 
-  async updateInventoryQuantity(id: string, quantityChange: number, reason: string): Promise<InventoryItem> {
+  async updateInventoryQuantity(
+    id: string,
+    quantityChange: number,
+    reason: string,
+  ): Promise<InventoryItem> {
     const response = await fetch(`${API_BASE_URL}/inventory/${id}/quantity`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ quantityChange, reason }),
     });
     const data = await response.json();
@@ -292,23 +311,29 @@ class PharmacyService {
     return data.data;
   }
 
-  async createPrescription(prescription: Partial<Prescription>): Promise<Prescription> {
+  async createPrescription(
+    prescription: Partial<Prescription>,
+  ): Promise<Prescription> {
     const response = await fetch(`${API_BASE_URL}/prescriptions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(prescription),
     });
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.error || 'Failed to create prescription');
+      throw new Error(data.error || "Failed to create prescription");
     }
     return data.data;
   }
 
-  async updatePrescriptionStatus(id: string, status: Prescription['status'], notes?: string): Promise<Prescription> {
+  async updatePrescriptionStatus(
+    id: string,
+    status: Prescription["status"],
+    notes?: string,
+  ): Promise<Prescription> {
     const response = await fetch(`${API_BASE_URL}/prescriptions/${id}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, notes }),
     });
     const data = await response.json();
@@ -328,14 +353,17 @@ class PharmacyService {
     idNumber?: string;
     witnessedBy?: string;
   }): Promise<DispensingRecord> {
-    const response = await fetch(`${API_BASE_URL}/dispense/${data.prescriptionId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/dispense/${data.prescriptionId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      },
+    );
     const result = await response.json();
     if (!response.ok) {
-      throw new Error(result.error || 'Failed to dispense prescription');
+      throw new Error(result.error || "Failed to dispense prescription");
     }
     return result.data;
   }
@@ -362,15 +390,19 @@ class PharmacyService {
       });
     }
 
-    const response = await fetch(`${API_BASE_URL}/controlled-substances/logs?${params}`);
+    const response = await fetch(
+      `${API_BASE_URL}/controlled-substances/logs?${params}`,
+    );
     const data = await response.json();
     return data.data || [];
   }
 
-  async logControlledSubstance(log: Partial<ControlledSubstanceLog>): Promise<ControlledSubstanceLog> {
+  async logControlledSubstance(
+    log: Partial<ControlledSubstanceLog>,
+  ): Promise<ControlledSubstanceLog> {
     const response = await fetch(`${API_BASE_URL}/controlled-substances/log`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(log),
     });
     const data = await response.json();
@@ -396,17 +428,23 @@ class PharmacyService {
     return data.data || [];
   }
 
-  async getFormularyEntry(medicationId: string): Promise<FormularyEntry | null> {
-    const response = await fetch(`${API_BASE_URL}/formulary/medication/${medicationId}`);
+  async getFormularyEntry(
+    medicationId: string,
+  ): Promise<FormularyEntry | null> {
+    const response = await fetch(
+      `${API_BASE_URL}/formulary/medication/${medicationId}`,
+    );
     if (!response.ok) return null;
     const data = await response.json();
     return data.data;
   }
 
-  async createFormularyEntry(entry: Partial<FormularyEntry>): Promise<FormularyEntry> {
+  async createFormularyEntry(
+    entry: Partial<FormularyEntry>,
+  ): Promise<FormularyEntry> {
     const response = await fetch(`${API_BASE_URL}/formulary`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(entry),
     });
     const data = await response.json();
@@ -420,8 +458,8 @@ class PharmacyService {
     patientData?: any;
   }): Promise<InteractionCheckResult> {
     const response = await fetch(`${API_BASE_URL}/interactions/check`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     const result = await response.json();
@@ -447,30 +485,40 @@ class PharmacyService {
     return data.data || [];
   }
 
-  async createRefillRequest(prescriptionId: string, requestedBy: RefillRequest['requestedBy']): Promise<RefillRequest> {
+  async createRefillRequest(
+    prescriptionId: string,
+    requestedBy: RefillRequest["requestedBy"],
+  ): Promise<RefillRequest> {
     const response = await fetch(`${API_BASE_URL}/refills`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prescriptionId, requestedBy }),
     });
     const data = await response.json();
     return data.data;
   }
 
-  async approveRefillRequest(id: string, processedBy: string): Promise<RefillRequest> {
+  async approveRefillRequest(
+    id: string,
+    processedBy: string,
+  ): Promise<RefillRequest> {
     const response = await fetch(`${API_BASE_URL}/refills/${id}/approve`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ processedBy }),
     });
     const data = await response.json();
     return data.data;
   }
 
-  async denyRefillRequest(id: string, reason: string, processedBy: string): Promise<RefillRequest> {
+  async denyRefillRequest(
+    id: string,
+    reason: string,
+    processedBy: string,
+  ): Promise<RefillRequest> {
     const response = await fetch(`${API_BASE_URL}/refills/${id}/deny`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reason, processedBy }),
     });
     const data = await response.json();
@@ -498,8 +546,8 @@ class PharmacyService {
 
   async acceptEPrescription(id: string, processedBy: string): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/eprescribe/${id}/accept`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ processedBy }),
     });
     const data = await response.json();
@@ -508,8 +556,8 @@ class PharmacyService {
 
   async rejectEPrescription(id: string, reason: string): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/eprescribe/${id}/reject`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reason }),
     });
     const data = await response.json();

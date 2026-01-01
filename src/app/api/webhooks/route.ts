@@ -3,16 +3,16 @@
  * Manage webhook subscriptions and deliveries
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { webhookManager } from '@/lib/webhooks/manager';
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { webhookManager } from "@/lib/webhooks/manager";
 import {
   WebhookRegistrationSchema,
   WebhookUpdateSchema,
   generateWebhookSecret,
   testWebhookEndpoint,
   webhookRateLimiter,
-} from '@/lib/webhooks/validators';
+} from "@/lib/webhooks/validators";
 
 /**
  * GET /api/webhooks
@@ -21,14 +21,14 @@ import {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const webhookId = searchParams.get('id');
+    const webhookId = searchParams.get("id");
 
     if (webhookId) {
       const webhook = webhookManager.get(webhookId);
       if (!webhook) {
         return NextResponse.json(
-          { error: 'Webhook not found' },
-          { status: 404 }
+          { error: "Webhook not found" },
+          { status: 404 },
         );
       }
 
@@ -41,10 +41,10 @@ export async function GET(request: NextRequest) {
       total: webhooks.length,
     });
   } catch (error) {
-    console.error('GET /api/webhooks error:', error);
+    console.error("GET /api/webhooks error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -62,10 +62,10 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: 'Validation failed',
+          error: "Validation failed",
           details: validation.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,15 +87,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         webhook,
-        message: 'Webhook registered successfully',
+        message: "Webhook registered successfully",
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error('POST /api/webhooks error:', error);
+    console.error("POST /api/webhooks error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -107,12 +107,12 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const webhookId = searchParams.get('id');
+    const webhookId = searchParams.get("id");
 
     if (!webhookId) {
       return NextResponse.json(
-        { error: 'Webhook ID is required' },
-        { status: 400 }
+        { error: "Webhook ID is required" },
+        { status: 400 },
       );
     }
 
@@ -123,10 +123,10 @@ export async function PUT(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: 'Validation failed',
+          error: "Validation failed",
           details: validation.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,21 +134,18 @@ export async function PUT(request: NextRequest) {
     const updated = webhookManager.update(webhookId, validation.data);
 
     if (!updated) {
-      return NextResponse.json(
-        { error: 'Webhook not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Webhook not found" }, { status: 404 });
     }
 
     return NextResponse.json({
       webhook: updated,
-      message: 'Webhook updated successfully',
+      message: "Webhook updated successfully",
     });
   } catch (error) {
-    console.error('PUT /api/webhooks error:', error);
+    console.error("PUT /api/webhooks error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -160,32 +157,29 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const webhookId = searchParams.get('id');
+    const webhookId = searchParams.get("id");
 
     if (!webhookId) {
       return NextResponse.json(
-        { error: 'Webhook ID is required' },
-        { status: 400 }
+        { error: "Webhook ID is required" },
+        { status: 400 },
       );
     }
 
     const deleted = webhookManager.unregister(webhookId);
 
     if (!deleted) {
-      return NextResponse.json(
-        { error: 'Webhook not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Webhook not found" }, { status: 404 });
     }
 
     return NextResponse.json({
-      message: 'Webhook deleted successfully',
+      message: "Webhook deleted successfully",
     });
   } catch (error) {
-    console.error('DELETE /api/webhooks error:', error);
+    console.error("DELETE /api/webhooks error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -213,8 +207,8 @@ export async function testWebhook(request: NextRequest) {
       const webhook = webhookManager.get(webhookId);
       if (!webhook) {
         return NextResponse.json(
-          { error: 'Webhook not found' },
-          { status: 404 }
+          { error: "Webhook not found" },
+          { status: 404 },
         );
       }
       testUrl = webhook.url;
@@ -224,8 +218,8 @@ export async function testWebhook(request: NextRequest) {
       testSecret = secret;
     } else {
       return NextResponse.json(
-        { error: 'Either webhookId or (url and secret) must be provided' },
-        { status: 400 }
+        { error: "Either webhookId or (url and secret) must be provided" },
+        { status: 400 },
       );
     }
 
@@ -236,10 +230,10 @@ export async function testWebhook(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('POST /api/webhooks/test error:', error);
+    console.error("POST /api/webhooks/test error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -251,15 +245,15 @@ export async function testWebhook(request: NextRequest) {
 export async function getDeliveries(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const webhookId = searchParams.get('webhookId');
-    const deliveryId = searchParams.get('deliveryId');
+    const webhookId = searchParams.get("webhookId");
+    const deliveryId = searchParams.get("deliveryId");
 
     if (deliveryId) {
       const delivery = webhookManager.getDelivery(deliveryId);
       if (!delivery) {
         return NextResponse.json(
-          { error: 'Delivery not found' },
-          { status: 404 }
+          { error: "Delivery not found" },
+          { status: 404 },
         );
       }
       return NextResponse.json(delivery);
@@ -274,14 +268,14 @@ export async function getDeliveries(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: 'Either webhookId or deliveryId is required' },
-      { status: 400 }
+      { error: "Either webhookId or deliveryId is required" },
+      { status: 400 },
     );
   } catch (error) {
-    console.error('GET /api/webhooks/deliveries error:', error);
+    console.error("GET /api/webhooks/deliveries error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -293,12 +287,12 @@ export async function getDeliveries(request: NextRequest) {
 export async function retryDelivery(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const deliveryId = searchParams.get('deliveryId');
+    const deliveryId = searchParams.get("deliveryId");
 
     if (!deliveryId) {
       return NextResponse.json(
-        { error: 'Delivery ID is required' },
-        { status: 400 }
+        { error: "Delivery ID is required" },
+        { status: 400 },
       );
     }
 
@@ -306,19 +300,19 @@ export async function retryDelivery(request: NextRequest) {
 
     if (!success) {
       return NextResponse.json(
-        { error: 'Delivery not found' },
-        { status: 404 }
+        { error: "Delivery not found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
-      message: 'Delivery retry scheduled',
+      message: "Delivery retry scheduled",
     });
   } catch (error) {
-    console.error('POST /api/webhooks/deliveries/retry error:', error);
+    console.error("POST /api/webhooks/deliveries/retry error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -330,12 +324,12 @@ export async function retryDelivery(request: NextRequest) {
 export async function getRateLimit(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const webhookId = searchParams.get('webhookId');
+    const webhookId = searchParams.get("webhookId");
 
     if (!webhookId) {
       return NextResponse.json(
-        { error: 'Webhook ID is required' },
-        { status: 400 }
+        { error: "Webhook ID is required" },
+        { status: 400 },
       );
     }
 
@@ -350,10 +344,10 @@ export async function getRateLimit(request: NextRequest) {
       window: 60000, // 1 minute window
     });
   } catch (error) {
-    console.error('GET /api/webhooks/rate-limit error:', error);
+    console.error("GET /api/webhooks/rate-limit error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -378,13 +372,13 @@ export async function emitEvent(request: NextRequest) {
 
     return NextResponse.json({
       eventId,
-      message: 'Event emitted successfully',
+      message: "Event emitted successfully",
     });
   } catch (error) {
-    console.error('POST /api/webhooks/emit error:', error);
+    console.error("POST /api/webhooks/emit error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

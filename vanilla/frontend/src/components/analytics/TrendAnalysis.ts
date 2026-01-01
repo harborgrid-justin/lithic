@@ -3,14 +3,14 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { LineChart } from '../../lib/charts/LineChart';
-import { ChartConfig } from '../../lib/charts/ChartBase';
+import { LineChart } from "../../lib/charts/LineChart";
+import { ChartConfig } from "../../lib/charts/ChartBase";
 
 export interface TrendData {
   metric: string;
   current: number;
   previous: number;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
   changePercent: number;
   timeSeries: Array<{ date: Date; value: number }>;
 }
@@ -27,9 +27,9 @@ export class TrendAnalysis {
   }
 
   private render(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
+    const wrapper = document.createElement("div");
     wrapper.style.cssText = `
       background: white;
       border-radius: 8px;
@@ -42,11 +42,11 @@ export class TrendAnalysis {
     wrapper.appendChild(header);
 
     // Chart
-    const chartContainer = document.createElement('div');
-    chartContainer.style.cssText = 'height: 200px; margin-top: 16px;';
+    const chartContainer = document.createElement("div");
+    chartContainer.style.cssText = "height: 200px; margin-top: 16px;";
 
-    const canvas = document.createElement('canvas');
-    canvas.style.cssText = 'width: 100%; height: 100%;';
+    const canvas = document.createElement("canvas");
+    canvas.style.cssText = "width: 100%; height: 100%;";
     chartContainer.appendChild(canvas);
 
     wrapper.appendChild(chartContainer);
@@ -58,18 +58,18 @@ export class TrendAnalysis {
   }
 
   private createHeader(): HTMLElement {
-    const header = document.createElement('div');
+    const header = document.createElement("div");
     header.style.cssText = `
       display: flex;
       justify-content: space-between;
       align-items: center;
     `;
 
-    const title = document.createElement('h3');
+    const title = document.createElement("h3");
     title.textContent = this.data.metric;
-    title.style.cssText = 'margin: 0; font-size: 16px; font-weight: 600;';
+    title.style.cssText = "margin: 0; font-size: 16px; font-weight: 600;";
 
-    const trendIndicator = document.createElement('div');
+    const trendIndicator = document.createElement("div");
     trendIndicator.style.cssText = `
       display: flex;
       align-items: center;
@@ -79,10 +79,11 @@ export class TrendAnalysis {
       color: ${this.getTrendColor()};
     `;
 
-    const arrow = document.createElement('span');
-    arrow.textContent = this.data.trend === 'up' ? '▲' : this.data.trend === 'down' ? '▼' : '■';
+    const arrow = document.createElement("span");
+    arrow.textContent =
+      this.data.trend === "up" ? "▲" : this.data.trend === "down" ? "▼" : "■";
 
-    const change = document.createElement('span');
+    const change = document.createElement("span");
     change.textContent = `${Math.abs(this.data.changePercent).toFixed(1)}%`;
 
     trendIndicator.appendChild(arrow);
@@ -103,14 +104,14 @@ export class TrendAnalysis {
             x: point.date,
             y: point.value,
           })),
-          type: 'area',
+          type: "area",
         },
       ],
       axes: {
-        x: { label: 'Date', type: 'date' },
-        y: { label: 'Value', type: 'number' },
+        x: { label: "Date", type: "date" },
+        y: { label: "Value", type: "number" },
       },
-      legend: { show: false, position: 'top' },
+      legend: { show: false, position: "top" },
       padding: { top: 20, right: 20, bottom: 40, left: 50 },
     };
 
@@ -119,11 +120,11 @@ export class TrendAnalysis {
   }
 
   private getTrendColor(): string {
-    return this.data.trend === 'up'
-      ? '#50c878'
-      : this.data.trend === 'down'
-      ? '#e74c3c'
-      : '#666';
+    return this.data.trend === "up"
+      ? "#50c878"
+      : this.data.trend === "down"
+        ? "#e74c3c"
+        : "#666";
   }
 
   public update(data: TrendData): void {

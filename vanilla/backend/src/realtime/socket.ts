@@ -4,10 +4,10 @@
  * Real-time communication server for healthcare events
  */
 
-import { Server as HTTPServer } from 'http';
-import { WebSocketServer, WebSocket } from 'ws';
-import { logger } from '../utils/logger';
-import { EventEmitter } from 'events';
+import { Server as HTTPServer } from "http";
+import { WebSocketServer, WebSocket } from "ws";
+import { logger } from "../utils/logger";
+import { EventEmitter } from "events";
 
 // Client Connection
 export interface SocketClient {
@@ -39,7 +39,7 @@ export class SocketManager extends EventEmitter {
   private pingInterval?: NodeJS.Timeout;
   private cleanupInterval?: NodeJS.Timeout;
 
-  constructor(server: HTTPServer, path: string = '/ws') {
+  constructor(server: HTTPServer, path: string = "/ws") {
     super();
 
     this.wss = new WebSocketServer({
@@ -51,19 +51,19 @@ export class SocketManager extends EventEmitter {
     this.startPingInterval();
     this.startCleanupInterval();
 
-    logger.info('WebSocket server initialized', { path });
+    logger.info("WebSocket server initialized", { path });
   }
 
   /**
    * Setup WebSocket server
    */
   private setupWebSocketServer(): void {
-    this.wss.on('connection', (ws: WebSocket, request) => {
+    this.wss.on("connection", (ws: WebSocket, request) => {
       this.handleConnection(ws, request);
     });
 
-    this.wss.on('error', (error) => {
-      logger.error('WebSocket server error', { error: error.message });
+    this.wss.on("error", (error) => {
+      logger.error("WebSocket server error", { error: error.message });
     });
   }
 
@@ -84,16 +84,16 @@ export class SocketManager extends EventEmitter {
 
     this.clients.set(clientId, client);
 
-    logger.info('WebSocket client connected', {
+    logger.info("WebSocket client connected", {
       clientId,
       ip: request.socket.remoteAddress,
     });
 
-    this.emit('connection', client);
+    this.emit("connection", client);
 
     // Send welcome message
     this.sendToClient(client, {
-      type: 'welcome',
+      type: "welcome",
       payload: {
         clientId,
         timestamp: new Date().toISOString(),
@@ -102,25 +102,25 @@ export class SocketManager extends EventEmitter {
     });
 
     // Setup message handler
-    ws.on('message', (data: Buffer) => {
+    ws.on("message", (data: Buffer) => {
       this.handleMessage(client, data);
     });
 
     // Setup close handler
-    ws.on('close', () => {
+    ws.on("close", () => {
       this.handleDisconnect(client);
     });
 
     // Setup error handler
-    ws.on('error', (error) => {
-      logger.error('WebSocket client error', {
+    ws.on("error", (error) => {
+      logger.error("WebSocket client error", {
         clientId,
         error: error.message,
       });
     });
 
     // Setup pong handler
-    ws.on('pong', () => {
+    ws.on("pong", () => {
       client.lastActivity = new Date();
     });
   }
@@ -134,22 +134,22 @@ export class SocketManager extends EventEmitter {
 
       client.lastActivity = new Date();
 
-      logger.debug('WebSocket message received', {
+      logger.debug("WebSocket message received", {
         clientId: client.id,
         type: message.type,
       });
 
-      this.emit('message', client, message);
+      this.emit("message", client, message);
     } catch (error: any) {
-      logger.error('Failed to parse WebSocket message', {
+      logger.error("Failed to parse WebSocket message", {
         clientId: client.id,
         error: error.message,
       });
 
       this.sendToClient(client, {
-        type: 'error',
+        type: "error",
         payload: {
-          error: 'Invalid message format',
+          error: "Invalid message format",
         },
         timestamp: new Date().toISOString(),
       });
@@ -160,13 +160,13 @@ export class SocketManager extends EventEmitter {
    * Handle client disconnect
    */
   private handleDisconnect(client: SocketClient): void {
-    logger.info('WebSocket client disconnected', {
+    logger.info("WebSocket client disconnected", {
       clientId: client.id,
       userId: client.userId,
     });
 
     this.clients.delete(client.id);
-    this.emit('disconnect', client);
+    this.emit("disconnect", client);
   }
 
   /**
@@ -181,7 +181,7 @@ export class SocketManager extends EventEmitter {
       client.ws.send(JSON.stringify(message));
       return true;
     } catch (error: any) {
-      logger.error('Failed to send message to client', {
+      logger.error("Failed to send message to client", {
         clientId: client.id,
         error: error.message,
       });
@@ -209,7 +209,10 @@ export class SocketManager extends EventEmitter {
   /**
    * Broadcast message to all clients
    */
-  broadcast(message: SocketMessage, filter?: (client: SocketClient) => boolean): number {
+  broadcast(
+    message: SocketMessage,
+    filter?: (client: SocketClient) => boolean,
+  ): number {
     let sent = 0;
 
     for (const client of this.clients.values()) {
@@ -220,7 +223,7 @@ export class SocketManager extends EventEmitter {
       }
     }
 
-    logger.debug('Broadcast message sent', {
+    logger.debug("Broadcast message sent", {
       type: message.type,
       recipientsCount: sent,
     });
@@ -232,13 +235,19 @@ export class SocketManager extends EventEmitter {
    * Broadcast to channel (topic)
    */
   broadcastToChannel(channel: string, message: SocketMessage): number {
-    return this.broadcast(message, (client) => client.subscriptions.has(channel));
+    return this.broadcast(message, (client) =>
+      client.subscriptions.has(channel),
+    );
   }
 
   /**
    * Authenticate client
    */
-  authenticateClient(clientId: string, userId: string, roles: string[] = []): boolean {
+  authenticateClient(
+    clientId: string,
+    userId: string,
+    roles: string[] = [],
+  ): boolean {
     const client = this.clients.get(clientId);
 
     if (!client) {
@@ -249,13 +258,13 @@ export class SocketManager extends EventEmitter {
     client.userId = userId;
     client.roles = roles;
 
-    logger.info('Client authenticated', {
+    logger.info("Client authenticated", {
       clientId,
       userId,
       roles,
     });
 
-    this.emit('authenticated', client);
+    this.emit("authenticated", client);
 
     return true;
   }
@@ -272,13 +281,13 @@ export class SocketManager extends EventEmitter {
 
     client.subscriptions.add(channel);
 
-    logger.debug('Client subscribed to channel', {
+    logger.debug("Client subscribed to channel", {
       clientId,
       userId: client.userId,
       channel,
     });
 
-    this.emit('subscribe', client, channel);
+    this.emit("subscribe", client, channel);
 
     return true;
   }
@@ -295,13 +304,13 @@ export class SocketManager extends EventEmitter {
 
     client.subscriptions.delete(channel);
 
-    logger.debug('Client unsubscribed from channel', {
+    logger.debug("Client unsubscribed from channel", {
       clientId,
       userId: client.userId,
       channel,
     });
 
-    this.emit('unsubscribe', client, channel);
+    this.emit("unsubscribe", client, channel);
 
     return true;
   }
@@ -318,7 +327,7 @@ export class SocketManager extends EventEmitter {
    */
   getUserClients(userId: string): SocketClient[] {
     return Array.from(this.clients.values()).filter(
-      (client) => client.userId === userId
+      (client) => client.userId === userId,
     );
   }
 
@@ -327,7 +336,7 @@ export class SocketManager extends EventEmitter {
    */
   getAuthenticatedClients(): SocketClient[] {
     return Array.from(this.clients.values()).filter(
-      (client) => client.authenticated
+      (client) => client.authenticated,
     );
   }
 
@@ -336,7 +345,7 @@ export class SocketManager extends EventEmitter {
    */
   getChannelClients(channel: string): SocketClient[] {
     return Array.from(this.clients.values()).filter((client) =>
-      client.subscriptions.has(channel)
+      client.subscriptions.has(channel),
     );
   }
 
@@ -352,7 +361,7 @@ export class SocketManager extends EventEmitter {
 
     if (reason) {
       this.sendToClient(client, {
-        type: 'disconnect',
+        type: "disconnect",
         payload: { reason },
         timestamp: new Date().toISOString(),
       });
@@ -385,12 +394,12 @@ export class SocketManager extends EventEmitter {
 
       for (const [clientId, client] of this.clients.entries()) {
         if (now - client.lastActivity.getTime() > timeout) {
-          logger.warn('Disconnecting inactive client', {
+          logger.warn("Disconnecting inactive client", {
             clientId,
             lastActivity: client.lastActivity,
           });
 
-          this.disconnectClient(clientId, 'Inactivity timeout');
+          this.disconnectClient(clientId, "Inactivity timeout");
         }
       }
     }, 60000); // Check every minute
@@ -433,13 +442,16 @@ export class SocketManager extends EventEmitter {
     }
 
     this.wss.close();
-    logger.info('WebSocket server closed');
+    logger.info("WebSocket server closed");
   }
 }
 
 /**
  * Create socket manager
  */
-export function createSocketManager(server: HTTPServer, path?: string): SocketManager {
+export function createSocketManager(
+  server: HTTPServer,
+  path?: string,
+): SocketManager {
   return new SocketManager(server, path);
 }

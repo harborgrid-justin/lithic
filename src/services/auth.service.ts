@@ -1,8 +1,8 @@
-import { prisma } from '@/lib/db';
-import { hashPassword, verifyPassword } from '@/lib/encryption';
-import { logAudit } from '@/lib/audit';
-import { createSession } from '@/lib/session';
-import { generateToken } from '@/lib/encryption';
+import { prisma } from "@/lib/db";
+import { hashPassword, verifyPassword } from "@/lib/encryption";
+import { logAudit } from "@/lib/audit";
+import { createSession } from "@/lib/session";
+import { generateToken } from "@/lib/encryption";
 
 export interface RegisterUserData {
   email: string;
@@ -32,7 +32,7 @@ export async function registerUser(data: RegisterUserData) {
   });
 
   if (existingUser) {
-    throw new Error('User with this email already exists');
+    throw new Error("User with this email already exists");
   }
 
   // Hash password
@@ -48,10 +48,10 @@ export async function registerUser(data: RegisterUserData) {
       organizationId: data.organizationId,
       title: data.title,
       npi: data.npi,
-      status: 'PENDING',
+      status: "PENDING",
       lastPasswordChange: new Date(),
-      createdBy: 'system',
-      updatedBy: 'system',
+      createdBy: "system",
+      updatedBy: "system",
     },
   });
 
@@ -67,8 +67,8 @@ export async function registerUser(data: RegisterUserData) {
 
   // Log user creation
   await logAudit({
-    action: 'CREATE',
-    resource: 'User',
+    action: "CREATE",
+    resource: "User",
     resourceId: user.id,
     description: `New user registered: ${user.email}`,
     metadata: {
@@ -99,11 +99,11 @@ export async function authenticateUser(data: LoginData) {
   });
 
   if (!user) {
-    throw new Error('Invalid credentials');
+    throw new Error("Invalid credentials");
   }
 
   // Check if account is locked
-  if (user.status === 'LOCKED' || user.status === 'SUSPENDED') {
+  if (user.status === "LOCKED" || user.status === "SUSPENDED") {
     throw new Error(`Account is ${user.status.toLowerCase()}`);
   }
 
@@ -113,15 +113,15 @@ export async function authenticateUser(data: LoginData) {
   if (!isValid) {
     await logAudit({
       userId: user.id,
-      action: 'LOGIN_FAILED',
-      resource: 'User',
-      description: 'Failed login attempt - invalid password',
+      action: "LOGIN_FAILED",
+      resource: "User",
+      description: "Failed login attempt - invalid password",
       ipAddress: data.ipAddress,
       userAgent: data.userAgent,
       organizationId: user.organizationId,
     });
 
-    throw new Error('Invalid credentials');
+    throw new Error("Invalid credentials");
   }
 
   // Update last login
@@ -143,9 +143,9 @@ export async function authenticateUser(data: LoginData) {
   // Log successful login
   await logAudit({
     userId: user.id,
-    action: 'LOGIN',
-    resource: 'User',
-    description: 'User logged in successfully',
+    action: "LOGIN",
+    resource: "User",
+    description: "User logged in successfully",
     ipAddress: data.ipAddress,
     userAgent: data.userAgent,
     organizationId: user.organizationId,
@@ -163,7 +163,7 @@ export async function authenticateUser(data: LoginData) {
 export async function changePassword(
   userId: string,
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -171,14 +171,14 @@ export async function changePassword(
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   // Verify current password
   const isValid = await verifyPassword(currentPassword, user.passwordHash);
 
   if (!isValid) {
-    throw new Error('Current password is incorrect');
+    throw new Error("Current password is incorrect");
   }
 
   // Hash new password
@@ -197,10 +197,10 @@ export async function changePassword(
   // Log password change
   await logAudit({
     userId,
-    action: 'PASSWORD_CHANGED',
-    resource: 'User',
+    action: "PASSWORD_CHANGED",
+    resource: "User",
     resourceId: userId,
-    description: 'User changed their password',
+    description: "User changed their password",
     organizationId: user.organizationId,
   });
 
@@ -240,9 +240,9 @@ export async function requestPasswordReset(email: string) {
   // Log password reset request
   await logAudit({
     userId: user.id,
-    action: 'PASSWORD_RESET',
-    resource: 'User',
-    description: 'Password reset requested',
+    action: "PASSWORD_RESET",
+    resource: "User",
+    description: "Password reset requested",
     organizationId: user.organizationId,
   });
 
@@ -254,14 +254,16 @@ export async function requestPasswordReset(email: string) {
  */
 export async function resetPassword(token: string, newPassword: string) {
   // Find valid reset token
-  const resetToken = await prisma.$queryRaw<Array<{ identifier: string; expires: Date }>>`
+  const resetToken = await prisma.$queryRaw<
+    Array<{ identifier: string; expires: Date }>
+  >`
     SELECT identifier, expires FROM verification_tokens
     WHERE token = ${token} AND expires > NOW()
     LIMIT 1
   `;
 
   if (!resetToken || resetToken.length === 0) {
-    throw new Error('Invalid or expired reset token');
+    throw new Error("Invalid or expired reset token");
   }
 
   const email = resetToken[0].identifier;
@@ -273,7 +275,7 @@ export async function resetPassword(token: string, newPassword: string) {
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   // Hash new password
@@ -297,9 +299,9 @@ export async function resetPassword(token: string, newPassword: string) {
   // Log password reset
   await logAudit({
     userId: user.id,
-    action: 'PASSWORD_RESET',
-    resource: 'User',
-    description: 'Password reset completed',
+    action: "PASSWORD_RESET",
+    resource: "User",
+    description: "Password reset completed",
     organizationId: user.organizationId,
   });
 
@@ -311,14 +313,16 @@ export async function resetPassword(token: string, newPassword: string) {
  */
 export async function verifyEmail(token: string) {
   // Find valid verification token
-  const verificationToken = await prisma.$queryRaw<Array<{ identifier: string; expires: Date }>>`
+  const verificationToken = await prisma.$queryRaw<
+    Array<{ identifier: string; expires: Date }>
+  >`
     SELECT identifier, expires FROM verification_tokens
     WHERE token = ${token} AND expires > NOW()
     LIMIT 1
   `;
 
   if (!verificationToken || verificationToken.length === 0) {
-    throw new Error('Invalid or expired verification token');
+    throw new Error("Invalid or expired verification token");
   }
 
   const email = verificationToken[0].identifier;
@@ -328,8 +332,8 @@ export async function verifyEmail(token: string) {
     where: { email },
     data: {
       emailVerified: new Date(),
-      status: 'ACTIVE',
-      updatedBy: 'system',
+      status: "ACTIVE",
+      updatedBy: "system",
     },
   });
 
@@ -341,9 +345,9 @@ export async function verifyEmail(token: string) {
   // Log email verification
   await logAudit({
     userId: user.id,
-    action: 'CREATE',
-    resource: 'User',
-    description: 'Email verified',
+    action: "CREATE",
+    resource: "User",
+    description: "Email verified",
     organizationId: user.organizationId,
   });
 
@@ -357,7 +361,7 @@ export async function deactivateUser(userId: string, reason?: string) {
   const user = await prisma.user.update({
     where: { id: userId },
     data: {
-      status: 'INACTIVE',
+      status: "INACTIVE",
       deletedAt: new Date(),
       updatedBy: userId,
     },
@@ -365,21 +369,21 @@ export async function deactivateUser(userId: string, reason?: string) {
 
   // Revoke all sessions
   await prisma.session.updateMany({
-    where: { userId, status: 'active' },
+    where: { userId, status: "active" },
     data: {
-      status: 'revoked',
+      status: "revoked",
       logoutAt: new Date(),
-      logoutReason: reason || 'Account deactivated',
+      logoutReason: reason || "Account deactivated",
     },
   });
 
   // Log deactivation
   await logAudit({
     userId,
-    action: 'DELETE',
-    resource: 'User',
+    action: "DELETE",
+    resource: "User",
     resourceId: userId,
-    description: `User account deactivated: ${reason || 'No reason provided'}`,
+    description: `User account deactivated: ${reason || "No reason provided"}`,
     metadata: { reason },
     organizationId: user.organizationId,
   });
@@ -394,7 +398,7 @@ export async function reactivateUser(userId: string) {
   const user = await prisma.user.update({
     where: { id: userId },
     data: {
-      status: 'ACTIVE',
+      status: "ACTIVE",
       deletedAt: null,
       updatedBy: userId,
     },
@@ -403,10 +407,10 @@ export async function reactivateUser(userId: string) {
   // Log reactivation
   await logAudit({
     userId,
-    action: 'UPDATE',
-    resource: 'User',
+    action: "UPDATE",
+    resource: "User",
     resourceId: userId,
-    description: 'User account reactivated',
+    description: "User account reactivated",
     organizationId: user.organizationId,
   });
 
@@ -441,7 +445,7 @@ export async function updateUserProfile(
     phone?: string;
     title?: string;
     avatar?: string;
-  }
+  },
 ) {
   const user = await prisma.user.update({
     where: { id: userId },
@@ -454,10 +458,10 @@ export async function updateUserProfile(
   // Log profile update
   await logAudit({
     userId,
-    action: 'UPDATE',
-    resource: 'User',
+    action: "UPDATE",
+    resource: "User",
     resourceId: userId,
-    description: 'User profile updated',
+    description: "User profile updated",
     metadata: data,
     organizationId: user.organizationId,
   });

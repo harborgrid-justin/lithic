@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Series, Instance } from '@/services/imaging.service';
+import { useState } from "react";
+import { Series, Instance } from "@/services/imaging.service";
 
 interface ImageThumbnailsProps {
   series: Series[];
@@ -15,23 +15,25 @@ export default function ImageThumbnails({
   onSelectInstance,
 }: ImageThumbnailsProps) {
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(
-    series.length > 0 ? series[0].id : null
+    series.length > 0 ? series[0].id : null,
   );
 
-  const currentSeries = series.find(s => s.id === selectedSeriesId) || series[0];
+  const currentSeries =
+    series.find((s) => s.id === selectedSeriesId) || series[0];
 
   return (
     <div className="flex flex-col h-full bg-gray-800">
       {/* Series Selector */}
       <div className="p-2 border-b border-gray-700">
         <select
-          value={selectedSeriesId || ''}
-          onChange={e => setSelectedSeriesId(e.target.value)}
+          value={selectedSeriesId || ""}
+          onChange={(e) => setSelectedSeriesId(e.target.value)}
           className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm"
         >
-          {series.map(s => (
+          {series.map((s) => (
             <option key={s.id} value={s.id}>
-              Series {s.seriesNumber}: {s.seriesDescription} ({s.numberOfInstances} images)
+              Series {s.seriesNumber}: {s.seriesDescription} (
+              {s.numberOfInstances} images)
             </option>
           ))}
         </select>
@@ -40,13 +42,13 @@ export default function ImageThumbnails({
       {/* Thumbnails Grid */}
       <div className="flex-1 overflow-y-auto p-2">
         <div className="grid grid-cols-2 gap-2">
-          {currentSeries?.instances.map(instance => (
+          {currentSeries?.instances.map((instance) => (
             <div
               key={instance.id}
               className={`cursor-pointer border-2 rounded overflow-hidden transition-all ${
                 selectedInstanceId === instance.id
-                  ? 'border-blue-500 shadow-lg'
-                  : 'border-gray-600 hover:border-gray-400'
+                  ? "border-blue-500 shadow-lg"
+                  : "border-gray-600 hover:border-gray-400"
               }`}
               onClick={() => onSelectInstance?.(instance, currentSeries)}
             >

@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
+import { SchedulingService } from "../../services/SchedulingService";
 
 export class SchedulingDashboardPage {
   private container: HTMLElement;
@@ -175,20 +175,24 @@ export class SchedulingDashboardPage {
 
   private attachEventListeners(): void {
     // New appointment button
-    document.getElementById('newAppointmentBtn')?.addEventListener('click', () => {
-      window.location.hash = '/scheduling/appointments/new';
-    });
+    document
+      .getElementById("newAppointmentBtn")
+      ?.addEventListener("click", () => {
+        window.location.hash = "/scheduling/appointments/new";
+      });
 
     // Refresh button
-    document.getElementById('refreshBtn')?.addEventListener('click', async () => {
-      await this.loadDashboardData();
-    });
+    document
+      .getElementById("refreshBtn")
+      ?.addEventListener("click", async () => {
+        await this.loadDashboardData();
+      });
 
     // Quick action buttons
-    document.querySelectorAll('.action-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    document.querySelectorAll(".action-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const action = (e.currentTarget as HTMLElement).dataset.action;
-        this.handleQuickAction(action || '');
+        this.handleQuickAction(action || "");
       });
     });
   }
@@ -215,29 +219,39 @@ export class SchedulingDashboardPage {
       const alerts = this.generateAlerts(stats);
       this.renderAlerts(alerts);
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      this.showError('Failed to load dashboard data');
+      console.error("Error loading dashboard data:", error);
+      this.showError("Failed to load dashboard data");
     }
   }
 
   private updateStats(stats: any): void {
-    document.getElementById('todayTotal')!.textContent = stats.today.totalAppointments.toString();
-    document.getElementById('checkedIn')!.textContent = stats.today.checkedIn.toString();
-    document.getElementById('inProgress')!.textContent = stats.today.inProgress.toString();
-    document.getElementById('waitingRoom')!.textContent = (stats.today.checkedIn - stats.today.inProgress).toString();
-    document.getElementById('noShows')!.textContent = stats.today.noShows.toString();
-    document.getElementById('waitlist')!.textContent = stats.waitlist.active.toString();
+    document.getElementById("todayTotal")!.textContent =
+      stats.today.totalAppointments.toString();
+    document.getElementById("checkedIn")!.textContent =
+      stats.today.checkedIn.toString();
+    document.getElementById("inProgress")!.textContent =
+      stats.today.inProgress.toString();
+    document.getElementById("waitingRoom")!.textContent = (
+      stats.today.checkedIn - stats.today.inProgress
+    ).toString();
+    document.getElementById("noShows")!.textContent =
+      stats.today.noShows.toString();
+    document.getElementById("waitlist")!.textContent =
+      stats.waitlist.active.toString();
   }
 
   private renderTodaySchedule(appointments: any[]): void {
-    const container = document.getElementById('todaySchedule')!;
+    const container = document.getElementById("todaySchedule")!;
 
     if (appointments.length === 0) {
-      container.innerHTML = '<div class="empty-state">No appointments scheduled for today</div>';
+      container.innerHTML =
+        '<div class="empty-state">No appointments scheduled for today</div>';
       return;
     }
 
-    container.innerHTML = appointments.map(apt => `
+    container.innerHTML = appointments
+      .map(
+        (apt) => `
       <div class="schedule-item" data-id="${apt.id}">
         <div class="time">${this.formatTime(apt.startTime)}</div>
         <div class="details">
@@ -247,59 +261,77 @@ export class SchedulingDashboardPage {
         </div>
         <div class="status status-${apt.status}">${apt.status}</div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private renderUpcomingAppointments(appointments: any[]): void {
-    const container = document.getElementById('upcomingAppointments')!;
+    const container = document.getElementById("upcomingAppointments")!;
 
     if (appointments.length === 0) {
-      container.innerHTML = '<div class="empty-state">No upcoming appointments</div>';
+      container.innerHTML =
+        '<div class="empty-state">No upcoming appointments</div>';
       return;
     }
 
-    container.innerHTML = appointments.slice(0, 5).map(apt => `
+    container.innerHTML = appointments
+      .slice(0, 5)
+      .map(
+        (apt) => `
       <div class="appointment-item" data-id="${apt.id}">
         <div class="date">${this.formatDate(apt.startTime)}</div>
         <div class="patient">${apt.patientName}</div>
         <div class="provider">${apt.providerName}</div>
-        ${!apt.confirmed ? '<span class="badge badge-warning">Not Confirmed</span>' : ''}
+        ${!apt.confirmed ? '<span class="badge badge-warning">Not Confirmed</span>' : ""}
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private renderWaitlist(entries: any[]): void {
-    const container = document.getElementById('priorityWaitlist')!;
+    const container = document.getElementById("priorityWaitlist")!;
 
     if (entries.length === 0) {
-      container.innerHTML = '<div class="empty-state">No waitlist entries</div>';
+      container.innerHTML =
+        '<div class="empty-state">No waitlist entries</div>';
       return;
     }
 
-    container.innerHTML = entries.slice(0, 5).map(entry => `
+    container.innerHTML = entries
+      .slice(0, 5)
+      .map(
+        (entry) => `
       <div class="waitlist-item priority-${entry.priority}" data-id="${entry.id}">
         <div class="priority-badge">${entry.priority}</div>
         <div class="patient">${entry.patientName}</div>
         <div class="reason">${entry.reason}</div>
         <button class="btn-small" data-action="notify">Notify</button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private renderAlerts(alerts: any[]): void {
-    const container = document.getElementById('alertsList')!;
+    const container = document.getElementById("alertsList")!;
 
     if (alerts.length === 0) {
       container.innerHTML = '<div class="empty-state">No alerts</div>';
       return;
     }
 
-    container.innerHTML = alerts.map(alert => `
+    container.innerHTML = alerts
+      .map(
+        (alert) => `
       <div class="alert-item alert-${alert.type}">
         <div class="alert-icon">${alert.icon}</div>
         <div class="alert-message">${alert.message}</div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private generateAlerts(stats: any): any[] {
@@ -307,25 +339,25 @@ export class SchedulingDashboardPage {
 
     if (stats.upcoming.needingConfirmation > 0) {
       alerts.push({
-        type: 'warning',
-        icon: '⚠️',
-        message: `${stats.upcoming.needingConfirmation} appointments need confirmation`
+        type: "warning",
+        icon: "⚠️",
+        message: `${stats.upcoming.needingConfirmation} appointments need confirmation`,
       });
     }
 
     if (stats.upcoming.needingInsuranceVerification > 0) {
       alerts.push({
-        type: 'warning',
-        icon: '💳',
-        message: `${stats.upcoming.needingInsuranceVerification} appointments need insurance verification`
+        type: "warning",
+        icon: "💳",
+        message: `${stats.upcoming.needingInsuranceVerification} appointments need insurance verification`,
       });
     }
 
     if (stats.waitlist.urgent > 0) {
       alerts.push({
-        type: 'urgent',
-        icon: '🚨',
-        message: `${stats.waitlist.urgent} urgent waitlist entries`
+        type: "urgent",
+        icon: "🚨",
+        message: `${stats.waitlist.urgent} urgent waitlist entries`,
       });
     }
 
@@ -334,12 +366,12 @@ export class SchedulingDashboardPage {
 
   private handleQuickAction(action: string): void {
     const routes: Record<string, string> = {
-      'new-appointment': '/scheduling/appointments/new',
-      'check-in': '/scheduling/check-in',
-      'view-calendar': '/scheduling/calendar',
-      'manage-waitlist': '/scheduling/waitlist',
-      'providers': '/scheduling/providers',
-      'resources': '/scheduling/resources'
+      "new-appointment": "/scheduling/appointments/new",
+      "check-in": "/scheduling/check-in",
+      "view-calendar": "/scheduling/calendar",
+      "manage-waitlist": "/scheduling/waitlist",
+      providers: "/scheduling/providers",
+      resources: "/scheduling/resources",
     };
 
     if (routes[action]) {
@@ -349,17 +381,21 @@ export class SchedulingDashboardPage {
 
   private formatTime(dateStr: string): string {
     const date = new Date(dateStr);
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
   }
 
   private formatDate(dateStr: string): string {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
   private showError(message: string): void {
-    const alert = document.createElement('div');
-    alert.className = 'alert alert-error';
+    const alert = document.createElement("div");
+    alert.className = "alert alert-error";
     alert.textContent = message;
     this.container.prepend(alert);
     setTimeout(() => alert.remove(), 5000);

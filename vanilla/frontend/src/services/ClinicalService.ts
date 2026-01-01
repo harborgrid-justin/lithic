@@ -1,5 +1,5 @@
 // Frontend Clinical Service - API Client
-const API_BASE_URL = '/api/clinical';
+const API_BASE_URL = "/api/clinical";
 
 interface ApiResponse<T> {
   success: boolean;
@@ -12,8 +12,8 @@ export class ClinicalService {
 
   static async createEncounter(data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/encounters`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
@@ -25,11 +25,16 @@ export class ClinicalService {
   }
 
   static async getEncountersByPatient(patientId: string): Promise<any[]> {
-    const response = await fetch(`${API_BASE_URL}/encounters/patient/${patientId}`);
+    const response = await fetch(
+      `${API_BASE_URL}/encounters/patient/${patientId}`,
+    );
     return this.handleResponse(response);
   }
 
-  static async getEncountersByProvider(providerId: string, status?: string): Promise<any[]> {
+  static async getEncountersByProvider(
+    providerId: string,
+    status?: string,
+  ): Promise<any[]> {
     const url = status
       ? `${API_BASE_URL}/encounters/provider/${providerId}?status=${status}`
       : `${API_BASE_URL}/encounters/provider/${providerId}`;
@@ -38,44 +43,57 @@ export class ClinicalService {
   }
 
   static async getEncounterSummary(encounterId: string): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/encounters/${encounterId}/summary`);
+    const response = await fetch(
+      `${API_BASE_URL}/encounters/${encounterId}/summary`,
+    );
     return this.handleResponse(response);
   }
 
   static async updateEncounter(encounterId: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/encounters/${encounterId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
   }
 
   static async startEncounter(encounterId: string): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/encounters/${encounterId}/start`, {
-      method: 'POST',
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/encounters/${encounterId}/start`,
+      {
+        method: "POST",
+      },
+    );
     return this.handleResponse(response);
   }
 
   static async completeEncounter(encounterId: string): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/encounters/${encounterId}/complete`, {
-      method: 'POST',
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/encounters/${encounterId}/complete`,
+      {
+        method: "POST",
+      },
+    );
     return this.handleResponse(response);
   }
 
   static async signEncounter(encounterId: string, signData: any): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/encounters/${encounterId}/sign`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signData),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/encounters/${encounterId}/sign`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signData),
+      },
+    );
     return this.handleResponse(response);
   }
 
   static async getDashboardStats(providerId: string): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/encounters/dashboard/stats?providerId=${providerId}`);
+    const response = await fetch(
+      `${API_BASE_URL}/encounters/dashboard/stats?providerId=${providerId}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -83,8 +101,8 @@ export class ClinicalService {
 
   static async createNote(data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/notes`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
@@ -96,7 +114,9 @@ export class ClinicalService {
   }
 
   static async getNotesByEncounter(encounterId: string): Promise<any[]> {
-    const response = await fetch(`${API_BASE_URL}/notes/encounter/${encounterId}`);
+    const response = await fetch(
+      `${API_BASE_URL}/notes/encounter/${encounterId}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -107,8 +127,8 @@ export class ClinicalService {
 
   static async updateNote(noteId: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/notes/${noteId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
@@ -116,8 +136,8 @@ export class ClinicalService {
 
   static async signNote(noteId: string, signData: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/notes/${noteId}/sign`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(signData),
     });
     return this.handleResponse(response);
@@ -125,8 +145,8 @@ export class ClinicalService {
 
   static async addAddendum(noteId: string, addendumText: string): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/notes/${noteId}/addendum`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ addendumText }),
     });
     return this.handleResponse(response);
@@ -144,19 +164,24 @@ export class ClinicalService {
 
   static async recordVitals(data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/vitals`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
   }
 
   static async getVitalsByEncounter(encounterId: string): Promise<any[]> {
-    const response = await fetch(`${API_BASE_URL}/vitals/encounter/${encounterId}`);
+    const response = await fetch(
+      `${API_BASE_URL}/vitals/encounter/${encounterId}`,
+    );
     return this.handleResponse(response);
   }
 
-  static async getVitalsByPatient(patientId: string, limit?: number): Promise<any[]> {
+  static async getVitalsByPatient(
+    patientId: string,
+    limit?: number,
+  ): Promise<any[]> {
     const url = limit
       ? `${API_BASE_URL}/vitals/patient/${patientId}?limit=${limit}`
       : `${API_BASE_URL}/vitals/patient/${patientId}`;
@@ -168,24 +193,27 @@ export class ClinicalService {
 
   static async createProblem(data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/problems`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
   }
 
-  static async getProblemsByPatient(patientId: string, activeOnly = true): Promise<any[]> {
+  static async getProblemsByPatient(
+    patientId: string,
+    activeOnly = true,
+  ): Promise<any[]> {
     const response = await fetch(
-      `${API_BASE_URL}/problems/patient/${patientId}?activeOnly=${activeOnly}`
+      `${API_BASE_URL}/problems/patient/${patientId}?activeOnly=${activeOnly}`,
     );
     return this.handleResponse(response);
   }
 
   static async updateProblem(problemId: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/problems/${problemId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
@@ -195,24 +223,27 @@ export class ClinicalService {
 
   static async createAllergy(data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/allergies`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
   }
 
-  static async getAllergiesByPatient(patientId: string, activeOnly = true): Promise<any[]> {
+  static async getAllergiesByPatient(
+    patientId: string,
+    activeOnly = true,
+  ): Promise<any[]> {
     const response = await fetch(
-      `${API_BASE_URL}/allergies/patient/${patientId}?activeOnly=${activeOnly}`
+      `${API_BASE_URL}/allergies/patient/${patientId}?activeOnly=${activeOnly}`,
     );
     return this.handleResponse(response);
   }
 
   static async updateAllergy(allergyId: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/allergies/${allergyId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
@@ -222,26 +253,32 @@ export class ClinicalService {
 
   static async createMedication(data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/medications`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
   }
 
-  static async getMedicationsByPatient(patientId: string, activeOnly = true): Promise<any[]> {
+  static async getMedicationsByPatient(
+    patientId: string,
+    activeOnly = true,
+  ): Promise<any[]> {
     const response = await fetch(
-      `${API_BASE_URL}/medications/patient/${patientId}?activeOnly=${activeOnly}`
+      `${API_BASE_URL}/medications/patient/${patientId}?activeOnly=${activeOnly}`,
     );
     return this.handleResponse(response);
   }
 
   static async updateMedication(medicationId: string, data: any): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/medications/${medicationId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/medications/${medicationId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      },
+    );
     return this.handleResponse(response);
   }
 
@@ -249,15 +286,17 @@ export class ClinicalService {
 
   static async createOrder(data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/orders`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
   }
 
   static async getOrdersByEncounter(encounterId: string): Promise<any[]> {
-    const response = await fetch(`${API_BASE_URL}/orders/encounter/${encounterId}`);
+    const response = await fetch(
+      `${API_BASE_URL}/orders/encounter/${encounterId}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -268,8 +307,8 @@ export class ClinicalService {
 
   static async updateOrder(orderId: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return this.handleResponse(response);
@@ -277,8 +316,8 @@ export class ClinicalService {
 
   static async signOrder(orderId: string, signData: any): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/orders/${orderId}/sign`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(signData),
     });
     return this.handleResponse(response);
@@ -287,12 +326,16 @@ export class ClinicalService {
   // ============ Code Searches ============
 
   static async searchICD10(query: string): Promise<any[]> {
-    const response = await fetch(`${API_BASE_URL}/problems/icd10/search?query=${encodeURIComponent(query)}`);
+    const response = await fetch(
+      `${API_BASE_URL}/problems/icd10/search?query=${encodeURIComponent(query)}`,
+    );
     return this.handleResponse(response);
   }
 
   static async searchCPT(query: string): Promise<any[]> {
-    const response = await fetch(`${API_BASE_URL}/orders/cpt/search?query=${encodeURIComponent(query)}`);
+    const response = await fetch(
+      `${API_BASE_URL}/orders/cpt/search?query=${encodeURIComponent(query)}`,
+    );
     return this.handleResponse(response);
   }
 
@@ -302,7 +345,7 @@ export class ClinicalService {
     const result: ApiResponse<T> = await response.json();
 
     if (!response.ok || !result.success) {
-      throw new Error(result.error || 'An error occurred');
+      throw new Error(result.error || "An error occurred");
     }
 
     return result.data as T;

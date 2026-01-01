@@ -10,7 +10,14 @@
     "lint": "eslint . --ext .ts",
     "test": "jest"
   },
-  "keywords": ["healthcare", "ehr", "clinical", "documentation", "medical", "hipaa"],
+  "keywords": [
+    "healthcare",
+    "ehr",
+    "clinical",
+    "documentation",
+    "medical",
+    "hipaa"
+  ],
   "author": "Lithic Health",
   "license": "MIT",
   "dependencies": {

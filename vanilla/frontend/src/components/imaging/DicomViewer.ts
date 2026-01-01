@@ -3,7 +3,7 @@ export class DicomViewer {
   private ctx: CanvasRenderingContext2D | null = null;
   private instances: any[] = [];
   private currentIndex: number = 0;
-  private currentTool: string = 'pan';
+  private currentTool: string = "pan";
 
   // Image properties
   private imageData: ImageData | null = null;
@@ -39,9 +39,9 @@ export class DicomViewer {
 
     // Create canvas if not exists
     if (!this.canvas) {
-      this.canvas = document.createElement('canvas');
-      this.canvas.className = 'dicom-canvas';
-      this.ctx = this.canvas.getContext('2d');
+      this.canvas = document.createElement("canvas");
+      this.canvas.className = "dicom-canvas";
+      this.ctx = this.canvas.getContext("2d");
       container.appendChild(this.canvas);
 
       // Set canvas size
@@ -78,11 +78,14 @@ export class DicomViewer {
       // Render
       this.render();
     } catch (error) {
-      console.error('Error loading instance:', error);
+      console.error("Error loading instance:", error);
     }
   }
 
-  private generateMockDicomPixelData(width: number, height: number): Uint8Array {
+  private generateMockDicomPixelData(
+    width: number,
+    height: number,
+  ): Uint8Array {
     // Generate simulated CT/MRI-like image
     const data = new Uint8Array(width * height);
 
@@ -93,7 +96,9 @@ export class DicomViewer {
         // Create some anatomical-looking structures
         const centerX = width / 2;
         const centerY = height / 2;
-        const distFromCenter = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+        const distFromCenter = Math.sqrt(
+          Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2),
+        );
 
         // Circular structure (simulating organ)
         if (distFromCenter < 150) {
@@ -142,10 +147,10 @@ export class DicomViewer {
       }
 
       const idx = i * 4;
-      data[idx] = value;     // R
+      data[idx] = value; // R
       data[idx + 1] = value; // G
       data[idx + 2] = value; // B
-      data[idx + 3] = 255;   // A
+      data[idx + 3] = 255; // A
     }
   }
 
@@ -160,15 +165,18 @@ export class DicomViewer {
 
     // Apply transformations
     this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
-    this.ctx.rotate(this.rotation * Math.PI / 180);
+    this.ctx.rotate((this.rotation * Math.PI) / 180);
     this.ctx.scale(this.scale, this.scale);
-    this.ctx.translate(-this.width / 2 + this.offsetX, -this.height / 2 + this.offsetY);
+    this.ctx.translate(
+      -this.width / 2 + this.offsetX,
+      -this.height / 2 + this.offsetY,
+    );
 
     // Create temporary canvas for image
-    const tempCanvas = document.createElement('canvas');
+    const tempCanvas = document.createElement("canvas");
     tempCanvas.width = this.width;
     tempCanvas.height = this.height;
-    const tempCtx = tempCanvas.getContext('2d');
+    const tempCtx = tempCanvas.getContext("2d");
 
     if (tempCtx) {
       tempCtx.putImageData(this.imageData, 0, 0);
@@ -187,17 +195,31 @@ export class DicomViewer {
     if (!this.ctx) return;
 
     this.ctx.save();
-    this.ctx.strokeStyle = '#00FF00';
+    this.ctx.strokeStyle = "#00FF00";
     this.ctx.lineWidth = 2;
-    this.ctx.font = '14px Arial';
-    this.ctx.fillStyle = '#00FF00';
+    this.ctx.font = "14px Arial";
+    this.ctx.fillStyle = "#00FF00";
 
-    this.measurements.forEach(measurement => {
-      if (measurement.type === 'length') {
-        this.drawLine(measurement.x1, measurement.y1, measurement.x2, measurement.y2);
-        const length = this.calculateDistance(measurement.x1, measurement.y1, measurement.x2, measurement.y2);
-        this.ctx!.fillText(`${length.toFixed(2)} mm`, measurement.x2 + 5, measurement.y2);
-      } else if (measurement.type === 'angle') {
+    this.measurements.forEach((measurement) => {
+      if (measurement.type === "length") {
+        this.drawLine(
+          measurement.x1,
+          measurement.y1,
+          measurement.x2,
+          measurement.y2,
+        );
+        const length = this.calculateDistance(
+          measurement.x1,
+          measurement.y1,
+          measurement.x2,
+          measurement.y2,
+        );
+        this.ctx!.fillText(
+          `${length.toFixed(2)} mm`,
+          measurement.x2 + 5,
+          measurement.y2,
+        );
+      } else if (measurement.type === "angle") {
         this.drawAngle(measurement);
       }
     });
@@ -209,14 +231,19 @@ export class DicomViewer {
     if (!this.ctx) return;
 
     this.ctx.save();
-    this.ctx.fillStyle = '#FFFF00';
-    this.ctx.font = '14px Arial';
+    this.ctx.fillStyle = "#FFFF00";
+    this.ctx.font = "14px Arial";
 
-    this.annotations.forEach(annotation => {
-      if (annotation.type === 'text') {
+    this.annotations.forEach((annotation) => {
+      if (annotation.type === "text") {
         this.ctx!.fillText(annotation.text, annotation.x, annotation.y);
-      } else if (annotation.type === 'arrow') {
-        this.drawArrow(annotation.x1, annotation.y1, annotation.x2, annotation.y2);
+      } else if (annotation.type === "arrow") {
+        this.drawArrow(
+          annotation.x1,
+          annotation.y1,
+          annotation.x2,
+          annotation.y2,
+        );
       }
     });
 
@@ -240,9 +267,15 @@ export class DicomViewer {
     this.ctx.beginPath();
     this.ctx.moveTo(x1, y1);
     this.ctx.lineTo(x2, y2);
-    this.ctx.lineTo(x2 - headLength * Math.cos(angle - Math.PI / 6), y2 - headLength * Math.sin(angle - Math.PI / 6));
+    this.ctx.lineTo(
+      x2 - headLength * Math.cos(angle - Math.PI / 6),
+      y2 - headLength * Math.sin(angle - Math.PI / 6),
+    );
     this.ctx.moveTo(x2, y2);
-    this.ctx.lineTo(x2 - headLength * Math.cos(angle + Math.PI / 6), y2 - headLength * Math.sin(angle + Math.PI / 6));
+    this.ctx.lineTo(
+      x2 - headLength * Math.cos(angle + Math.PI / 6),
+      y2 - headLength * Math.sin(angle + Math.PI / 6),
+    );
     this.ctx.stroke();
   }
 
@@ -260,17 +293,31 @@ export class DicomViewer {
     this.ctx.fillText(`${angle.toFixed(1)}°`, x2 + 10, y2 - 10);
   }
 
-  private calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
+  private calculateDistance(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+  ): number {
     // In real implementation, convert to mm using pixel spacing
-    const pixelDistance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    const pixelDistance = Math.sqrt(
+      Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2),
+    );
     const pixelSpacing = 0.5; // Mock pixel spacing in mm
     return pixelDistance * pixelSpacing;
   }
 
-  private calculateAngle(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): number {
+  private calculateAngle(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    x3: number,
+    y3: number,
+  ): number {
     const angle1 = Math.atan2(y1 - y2, x1 - x2);
     const angle2 = Math.atan2(y3 - y2, x3 - x2);
-    let angle = (angle2 - angle1) * 180 / Math.PI;
+    let angle = ((angle2 - angle1) * 180) / Math.PI;
     if (angle < 0) angle += 360;
     return angle;
   }
@@ -278,11 +325,11 @@ export class DicomViewer {
   private attachEventListeners() {
     if (!this.canvas) return;
 
-    this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-    this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-    this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e));
-    this.canvas.addEventListener('wheel', (e) => this.handleWheel(e));
-    this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));
+    this.canvas.addEventListener("mousemove", (e) => this.handleMouseMove(e));
+    this.canvas.addEventListener("mouseup", (e) => this.handleMouseUp(e));
+    this.canvas.addEventListener("wheel", (e) => this.handleWheel(e));
+    this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
   }
 
   private handleMouseDown(e: MouseEvent) {
@@ -297,11 +344,11 @@ export class DicomViewer {
     const deltaX = e.offsetX - this.lastX;
     const deltaY = e.offsetY - this.lastY;
 
-    if (this.currentTool === 'pan') {
+    if (this.currentTool === "pan") {
       this.offsetX += deltaX / this.scale;
       this.offsetY += deltaY / this.scale;
       this.render();
-    } else if (this.currentTool === 'window') {
+    } else if (this.currentTool === "window") {
       this.windowWidth += deltaX;
       this.windowCenter += deltaY;
       this.windowWidth = Math.max(1, this.windowWidth);
@@ -323,7 +370,7 @@ export class DicomViewer {
   private handleWheel(e: WheelEvent) {
     e.preventDefault();
 
-    if (this.currentTool === 'zoom') {
+    if (this.currentTool === "zoom") {
       const delta = e.deltaY > 0 ? 0.9 : 1.1;
       this.scale *= delta;
       this.scale = Math.max(0.1, Math.min(10, this.scale));
@@ -340,14 +387,14 @@ export class DicomViewer {
   }
 
   private updateWindowLevelDisplay() {
-    const wwEl = document.getElementById('ww');
-    const wcEl = document.getElementById('wc');
+    const wwEl = document.getElementById("ww");
+    const wcEl = document.getElementById("wc");
     if (wwEl) wwEl.textContent = Math.round(this.windowWidth).toString();
     if (wcEl) wcEl.textContent = Math.round(this.windowCenter).toString();
   }
 
   private updateZoomDisplay() {
-    const zoomEl = document.getElementById('zoom');
+    const zoomEl = document.getElementById("zoom");
     if (zoomEl) zoomEl.textContent = Math.round(this.scale * 100).toString();
   }
 
@@ -404,7 +451,7 @@ export class DicomViewer {
   }
 
   private updateImageCounter() {
-    const currentEl = document.getElementById('current-image');
+    const currentEl = document.getElementById("current-image");
     if (currentEl) currentEl.textContent = (this.currentIndex + 1).toString();
   }
 

@@ -12,6 +12,7 @@
 ## What's Included
 
 ### Backend (Express + TypeScript)
+
 - ✅ **9 TypeScript files** (~2,900 lines)
 - ✅ **40+ REST API endpoints**
 - ✅ **3 Services:** Analytics, Reporting, Export
@@ -20,6 +21,7 @@
 - ✅ **Complete type system:** 20+ interfaces
 
 ### Frontend (Vanilla TypeScript)
+
 - ✅ **28 TypeScript files** (~3,700 lines)
 - ✅ **4 Chart classes:** Canvas-based rendering
 - ✅ **12 Reusable components:** Widgets, tables, filters, builders
@@ -36,18 +38,18 @@
 ```typescript
 // In your main Express app (e.g., app.ts or server.ts)
 
-import dashboardRoutes from './routes/analytics/dashboards';
-import reportRoutes from './routes/analytics/reports';
-import metricRoutes from './routes/analytics/metrics';
-import exportRoutes from './routes/analytics/exports';
-import scheduledRoutes from './routes/analytics/scheduled';
+import dashboardRoutes from "./routes/analytics/dashboards";
+import reportRoutes from "./routes/analytics/reports";
+import metricRoutes from "./routes/analytics/metrics";
+import exportRoutes from "./routes/analytics/exports";
+import scheduledRoutes from "./routes/analytics/scheduled";
 
 // Mount analytics routes
-app.use('/api/analytics/dashboards', dashboardRoutes);
-app.use('/api/analytics/reports', reportRoutes);
-app.use('/api/analytics/metrics', metricRoutes);
-app.use('/api/analytics/exports', exportRoutes);
-app.use('/api/analytics/scheduled', scheduledRoutes);
+app.use("/api/analytics/dashboards", dashboardRoutes);
+app.use("/api/analytics/reports", reportRoutes);
+app.use("/api/analytics/metrics", metricRoutes);
+app.use("/api/analytics/exports", exportRoutes);
+app.use("/api/analytics/scheduled", scheduledRoutes);
 ```
 
 ### 2. Frontend Integration
@@ -55,21 +57,21 @@ app.use('/api/analytics/scheduled', scheduledRoutes);
 ```typescript
 // In your router or main app
 
-import { AnalyticsDashboardPage } from './pages/analytics/AnalyticsDashboardPage';
-import { DashboardsPage } from './pages/analytics/DashboardsPage';
-import { QualityPage } from './pages/analytics/QualityPage';
+import { AnalyticsDashboardPage } from "./pages/analytics/AnalyticsDashboardPage";
+import { DashboardsPage } from "./pages/analytics/DashboardsPage";
+import { QualityPage } from "./pages/analytics/QualityPage";
 // ... import other pages
 
 // Route setup (example with hash routing)
 const routes = {
-  '#/analytics': AnalyticsDashboardPage,
-  '#/analytics/dashboards': DashboardsPage,
-  '#/analytics/quality': QualityPage,
+  "#/analytics": AnalyticsDashboardPage,
+  "#/analytics/dashboards": DashboardsPage,
+  "#/analytics/quality": QualityPage,
   // ... add other routes
 };
 
 // Initialize page
-const container = document.getElementById('app');
+const container = document.getElementById("app");
 if (container) {
   new AnalyticsDashboardPage(container);
 }
@@ -80,20 +82,20 @@ if (container) {
 ```typescript
 // Example: Add a KPI card to your page
 
-import { KPICard } from './components/analytics/KPICard';
+import { KPICard } from "./components/analytics/KPICard";
 
-const container = document.getElementById('kpi-container');
+const container = document.getElementById("kpi-container");
 if (container) {
   new KPICard(container, {
-    title: 'Patient Volume',
+    title: "Patient Volume",
     value: 1234,
-    unit: 'patients',
+    unit: "patients",
     trend: {
       value: 5.2,
-      direction: 'up',
-      isPositive: true
+      direction: "up",
+      isPositive: true,
     },
-    color: '#4a90e2'
+    color: "#4a90e2",
   });
 }
 ```
@@ -103,26 +105,28 @@ if (container) {
 ```typescript
 // Example: Create a line chart
 
-import { LineChart } from './lib/charts/LineChart';
+import { LineChart } from "./lib/charts/LineChart";
 
-const canvas = document.createElement('canvas');
+const canvas = document.createElement("canvas");
 canvas.width = 800;
 canvas.height = 400;
 document.body.appendChild(canvas);
 
 const chart = new LineChart(canvas, {
-  series: [{
-    name: 'Patient Visits',
-    data: [
-      { x: new Date('2024-01-01'), y: 120 },
-      { x: new Date('2024-01-02'), y: 135 },
-      { x: new Date('2024-01-03'), y: 142 }
-    ]
-  }],
+  series: [
+    {
+      name: "Patient Visits",
+      data: [
+        { x: new Date("2024-01-01"), y: 120 },
+        { x: new Date("2024-01-02"), y: 135 },
+        { x: new Date("2024-01-03"), y: 142 },
+      ],
+    },
+  ],
   axes: {
-    x: { label: 'Date', type: 'date' },
-    y: { label: 'Visits', type: 'number' }
-  }
+    x: { label: "Date", type: "date" },
+    y: { label: "Visits", type: "number" },
+  },
 });
 
 chart.render();
@@ -133,6 +137,7 @@ chart.render();
 ## API Endpoints
 
 ### Dashboards
+
 ```
 GET    /api/analytics/dashboards           # List dashboards
 GET    /api/analytics/dashboards/:id       # Get dashboard
@@ -144,6 +149,7 @@ POST   /api/analytics/dashboards/widget-data
 ```
 
 ### Metrics
+
 ```
 GET  /api/analytics/metrics                      # List metrics
 GET  /api/analytics/metrics/:id                  # Get metric
@@ -155,6 +161,7 @@ GET  /api/analytics/metrics/population-health    # Population health
 ```
 
 ### Reports
+
 ```
 GET    /api/analytics/reports              # List reports
 GET    /api/analytics/reports/:id          # Get report
@@ -165,6 +172,7 @@ GET    /api/analytics/reports/templates
 ```
 
 ### Exports
+
 ```
 POST /api/analytics/exports                # Create export
 GET  /api/analytics/exports                # List exports
@@ -236,6 +244,7 @@ GET  /api/analytics/exports/download/:id   # Download file
 ## Key Features
 
 ### 🎯 Dashboards
+
 - Drag-and-drop widget layout
 - Resizable widgets
 - Real-time data updates
@@ -243,6 +252,7 @@ GET  /api/analytics/exports/download/:id   # Download file
 - Save/share dashboards
 
 ### 📊 Charts (Canvas API)
+
 - Line charts (with area fill)
 - Bar charts (grouped)
 - Pie/donut charts
@@ -251,12 +261,14 @@ GET  /api/analytics/exports/download/:id   # Download file
 - Responsive design
 
 ### 📈 Metrics
+
 - **Quality:** HEDIS, CMS measures
 - **Financial:** Revenue, expenses, margins
 - **Operational:** Wait times, utilization
 - **Population:** Risk scores, cohorts
 
 ### 📑 Reports
+
 - Visual report builder
 - Custom sections
 - Multiple formats (PDF, Excel, CSV)
@@ -264,6 +276,7 @@ GET  /api/analytics/exports/download/:id   # Download file
 - Email distribution
 
 ### 💾 Exports
+
 - Dashboard exports
 - Report exports
 - Data exports
@@ -286,27 +299,32 @@ GET  /api/analytics/exports/download/:id   # Download file
 ## Healthcare-Specific Features
 
 ✅ **HEDIS Quality Measures**
+
 - Breast cancer screening
 - Diabetes care
 - Preventive care
 
 ✅ **CMS Metrics**
+
 - Star ratings
 - Quality reporting
 - Value-based care
 
 ✅ **Population Health**
+
 - Risk stratification
 - Chronic disease management
 - High-risk cohorts
 
 ✅ **Financial Analytics**
+
 - Revenue cycle
 - AR days
 - Collection rates
 - Payer mix
 
 ✅ **HIPAA Compliance**
+
 - Audit logging
 - PHI tracking
 - Access controls

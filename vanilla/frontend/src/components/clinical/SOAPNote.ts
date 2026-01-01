@@ -2,10 +2,10 @@
 export class SOAPNote {
   private container: HTMLElement;
   private data: any = {
-    subjective: '',
-    objective: '',
-    assessment: '',
-    plan: '',
+    subjective: "",
+    objective: "",
+    assessment: "",
+    plan: "",
   };
   private onChange?: (data: any) => void;
   private readOnly: boolean = false;
@@ -31,7 +31,7 @@ export class SOAPNote {
             class="soap-textarea"
             rows="6"
             placeholder="Chief complaint, history of present illness, review of systems..."
-            ${this.readOnly ? 'readonly' : ''}
+            ${this.readOnly ? "readonly" : ""}
           >${this.data.subjective}</textarea>
         </div>
 
@@ -45,7 +45,7 @@ export class SOAPNote {
             class="soap-textarea"
             rows="6"
             placeholder="Vital signs, physical examination, laboratory and imaging results..."
-            ${this.readOnly ? 'readonly' : ''}
+            ${this.readOnly ? "readonly" : ""}
           >${this.data.objective}</textarea>
         </div>
 
@@ -59,7 +59,7 @@ export class SOAPNote {
             class="soap-textarea"
             rows="6"
             placeholder="Primary and secondary diagnoses, clinical impressions, ICD-10 codes..."
-            ${this.readOnly ? 'readonly' : ''}
+            ${this.readOnly ? "readonly" : ""}
           >${this.data.assessment}</textarea>
         </div>
 
@@ -73,7 +73,7 @@ export class SOAPNote {
             class="soap-textarea"
             rows="6"
             placeholder="Treatment plan, medications, orders, follow-up instructions..."
-            ${this.readOnly ? 'readonly' : ''}
+            ${this.readOnly ? "readonly" : ""}
           >${this.data.plan}</textarea>
         </div>
       </div>
@@ -85,19 +85,27 @@ export class SOAPNote {
   }
 
   private attachEventListeners(): void {
-    const textareas = this.container.querySelectorAll('.soap-textarea');
-    textareas.forEach(textarea => {
-      textarea.addEventListener('input', () => {
+    const textareas = this.container.querySelectorAll(".soap-textarea");
+    textareas.forEach((textarea) => {
+      textarea.addEventListener("input", () => {
         this.updateData();
       });
     });
   }
 
   private updateData(): void {
-    this.data.subjective = (this.container.querySelector('#subjective') as HTMLTextAreaElement)?.value || '';
-    this.data.objective = (this.container.querySelector('#objective') as HTMLTextAreaElement)?.value || '';
-    this.data.assessment = (this.container.querySelector('#assessment') as HTMLTextAreaElement)?.value || '';
-    this.data.plan = (this.container.querySelector('#plan') as HTMLTextAreaElement)?.value || '';
+    this.data.subjective =
+      (this.container.querySelector("#subjective") as HTMLTextAreaElement)
+        ?.value || "";
+    this.data.objective =
+      (this.container.querySelector("#objective") as HTMLTextAreaElement)
+        ?.value || "";
+    this.data.assessment =
+      (this.container.querySelector("#assessment") as HTMLTextAreaElement)
+        ?.value || "";
+    this.data.plan =
+      (this.container.querySelector("#plan") as HTMLTextAreaElement)?.value ||
+      "";
 
     if (this.onChange) {
       this.onChange(this.data);
@@ -120,16 +128,16 @@ export class SOAPNote {
 
   clear(): void {
     this.data = {
-      subjective: '',
-      objective: '',
-      assessment: '',
-      plan: '',
+      subjective: "",
+      objective: "",
+      assessment: "",
+      plan: "",
     };
     this.render();
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

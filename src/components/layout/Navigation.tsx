@@ -1,38 +1,38 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
-  title: string
-  href: string
+  title: string;
+  href: string;
 }
 
 interface NavigationProps {
-  items: NavItem[]
+  items: NavItem[];
 }
 
 export function Navigation({ items }: NavigationProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <nav className="flex items-center space-x-6 text-sm font-medium">
       {items.map((item) => {
-        const isActive = pathname === item.href
+        const isActive = pathname === item.href;
         return (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
               "transition-colors hover:text-foreground/80",
-              isActive ? "text-foreground" : "text-foreground/60"
+              isActive ? "text-foreground" : "text-foreground/60",
             )}
           >
             {item.title}
           </Link>
-        )
+        );
       })}
     </nav>
-  )
+  );
 }

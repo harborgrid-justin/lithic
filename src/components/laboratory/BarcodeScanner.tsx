@@ -1,28 +1,30 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Barcode, Search, CheckCircle2, XCircle } from 'lucide-react';
-import SpecimenService from '@/services/specimen.service';
-import { Specimen } from '@/types/laboratory';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Barcode, Search, CheckCircle2, XCircle } from "lucide-react";
+import SpecimenService from "@/services/specimen.service";
+import { Specimen } from "@/types/laboratory";
 
 interface BarcodeScannerProps {
   onSpecimenFound?: (specimen: Specimen) => void;
 }
 
-export default function BarcodeScanner({ onSpecimenFound }: BarcodeScannerProps) {
-  const [barcode, setBarcode] = useState('');
+export default function BarcodeScanner({
+  onSpecimenFound,
+}: BarcodeScannerProps) {
+  const [barcode, setBarcode] = useState("");
   const [loading, setLoading] = useState(false);
   const [specimen, setSpecimen] = useState<Specimen | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleScan = async () => {
     if (!barcode.trim()) {
-      setError('Please enter a barcode');
+      setError("Please enter a barcode");
       return;
     }
 
@@ -35,7 +37,7 @@ export default function BarcodeScanner({ onSpecimenFound }: BarcodeScannerProps)
       setSpecimen(foundSpecimen);
       onSpecimenFound?.(foundSpecimen);
     } catch (err) {
-      setError('Specimen not found');
+      setError("Specimen not found");
       setSpecimen(null);
     } finally {
       setLoading(false);
@@ -43,21 +45,21 @@ export default function BarcodeScanner({ onSpecimenFound }: BarcodeScannerProps)
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleScan();
     }
   };
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      COLLECTED: 'bg-blue-100 text-blue-800',
-      RECEIVED: 'bg-green-100 text-green-800',
-      PROCESSING: 'bg-yellow-100 text-yellow-800',
-      STORED: 'bg-purple-100 text-purple-800',
-      REJECTED: 'bg-red-100 text-red-800',
-      DISPOSED: 'bg-gray-100 text-gray-800',
+      COLLECTED: "bg-blue-100 text-blue-800",
+      RECEIVED: "bg-green-100 text-green-800",
+      PROCESSING: "bg-yellow-100 text-yellow-800",
+      STORED: "bg-purple-100 text-purple-800",
+      REJECTED: "bg-red-100 text-red-800",
+      DISPOSED: "bg-gray-100 text-gray-800",
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   return (
@@ -84,7 +86,7 @@ export default function BarcodeScanner({ onSpecimenFound }: BarcodeScannerProps)
             />
             <Button onClick={handleScan} disabled={loading}>
               <Search className="h-4 w-4 mr-2" />
-              {loading ? 'Searching...' : 'Search'}
+              {loading ? "Searching..." : "Search"}
             </Button>
           </div>
         </div>
@@ -108,12 +110,16 @@ export default function BarcodeScanner({ onSpecimenFound }: BarcodeScannerProps)
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-muted-foreground">Accession Number</div>
-                <div className="font-mono font-semibold">{specimen.accessionNumber}</div>
+                <div className="font-mono font-semibold">
+                  {specimen.accessionNumber}
+                </div>
               </div>
 
               <div>
                 <div className="text-muted-foreground">Barcode</div>
-                <div className="font-mono font-semibold">{specimen.barcode}</div>
+                <div className="font-mono font-semibold">
+                  {specimen.barcode}
+                </div>
               </div>
 
               <div>
@@ -135,7 +141,9 @@ export default function BarcodeScanner({ onSpecimenFound }: BarcodeScannerProps)
 
               <div>
                 <div className="text-muted-foreground">Volume</div>
-                <div>{specimen.volume} {specimen.volumeUnit}</div>
+                <div>
+                  {specimen.volume} {specimen.volumeUnit}
+                </div>
               </div>
 
               <div className="col-span-2">
@@ -156,9 +164,11 @@ export default function BarcodeScanner({ onSpecimenFound }: BarcodeScannerProps)
               )}
             </div>
 
-            {specimen.status === 'REJECTED' && specimen.rejectionReason && (
+            {specimen.status === "REJECTED" && specimen.rejectionReason && (
               <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                <div className="text-sm font-semibold text-destructive">Rejection Reason:</div>
+                <div className="text-sm font-semibold text-destructive">
+                  Rejection Reason:
+                </div>
                 <div className="text-sm">{specimen.rejectionReason}</div>
               </div>
             )}

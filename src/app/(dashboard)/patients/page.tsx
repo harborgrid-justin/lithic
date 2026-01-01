@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Patient } from '@/types/patient';
-import { patientService } from '@/services/patient.service';
-import { PatientList } from '@/components/patients/PatientList';
-import { PatientSearch } from '@/components/patients/PatientSearch';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Patient } from "@/types/patient";
+import { patientService } from "@/services/patient.service";
+import { PatientList } from "@/components/patients/PatientList";
+import { PatientSearch } from "@/components/patients/PatientSearch";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function PatientsPage() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function PatientsPage() {
       const result = await patientService.getPatients({ limit: 50 });
       setPatients(result.patients);
     } catch (error) {
-      console.error('Failed to load patients:', error);
+      console.error("Failed to load patients:", error);
     } finally {
       setLoading(false);
     }
@@ -37,14 +37,14 @@ export default function PatientsPage() {
       const results = await patientService.searchPatients(params);
       setPatients(results);
     } catch (error) {
-      console.error('Failed to search patients:', error);
+      console.error("Failed to search patients:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handlePatientClick = (patient: Patient) => {
-    router.push('/patients/' + patient.id);
+    router.push("/patients/" + patient.id);
   };
 
   return (
@@ -63,7 +63,7 @@ export default function PatientsPage() {
           >
             Advanced Search
           </Button>
-          <Button onClick={() => router.push('/patients/new')}>
+          <Button onClick={() => router.push("/patients/new")}>
             <Plus className="h-4 w-4 mr-2" />
             New Patient
           </Button>
@@ -71,10 +71,7 @@ export default function PatientsPage() {
       </div>
 
       {showAdvancedSearch && (
-        <PatientSearch
-          onSearch={handleSearch}
-          onReset={loadPatients}
-        />
+        <PatientSearch onSearch={handleSearch} onReset={loadPatients} />
       )}
 
       <PatientList

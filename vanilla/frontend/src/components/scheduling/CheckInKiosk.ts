@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
+import { SchedulingService } from "../../services/SchedulingService";
 
 export class CheckInKiosk {
   private container: HTMLElement;
@@ -57,32 +57,39 @@ export class CheckInKiosk {
   }
 
   private attachEventListeners(): void {
-    document.getElementById('searchBtn')?.addEventListener('click', async () => {
-      const query = (document.getElementById('patientSearch') as HTMLInputElement).value;
-      await this.searchAppointments(query);
-    });
+    document
+      .getElementById("searchBtn")
+      ?.addEventListener("click", async () => {
+        const query = (
+          document.getElementById("patientSearch") as HTMLInputElement
+        ).value;
+        await this.searchAppointments(query);
+      });
   }
 
   private async searchAppointments(query: string): Promise<void> {
     try {
-      const appointments = await this.schedulingService.searchTodayAppointments(query);
+      const appointments =
+        await this.schedulingService.searchTodayAppointments(query);
       this.displayAppointments(appointments);
     } catch (error) {
-      console.error('Error searching appointments:', error);
+      console.error("Error searching appointments:", error);
     }
   }
 
   private displayAppointments(appointments: any[]): void {
-    const foundSection = document.getElementById('appointmentsFound')!;
-    const listContainer = document.getElementById('appointmentsList')!;
+    const foundSection = document.getElementById("appointmentsFound")!;
+    const listContainer = document.getElementById("appointmentsList")!;
 
     if (appointments.length === 0) {
-      listContainer.innerHTML = '<p>No appointments found for today.</p>';
-      foundSection.style.display = 'block';
+      listContainer.innerHTML = "<p>No appointments found for today.</p>";
+      foundSection.style.display = "block";
       return;
     }
 
-    listContainer.innerHTML = appointments.map(apt => `
+    listContainer.innerHTML = appointments
+      .map(
+        (apt) => `
       <div class="appointment-option" data-id="${apt.id}">
         <div class="appointment-time">${new Date(apt.startTime).toLocaleTimeString()}</div>
         <div class="appointment-details">
@@ -91,9 +98,11 @@ export class CheckInKiosk {
         </div>
         <button class="btn btn-primary" onclick="this.checkIn('${apt.id}')">Check In</button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
 
-    foundSection.style.display = 'block';
+    foundSection.style.display = "block";
   }
 
   private async checkIn(appointmentId: string): Promise<void> {
@@ -101,15 +110,15 @@ export class CheckInKiosk {
       await this.schedulingService.checkIn(appointmentId);
       this.showSuccess();
     } catch (error) {
-      console.error('Error checking in:', error);
-      alert('Failed to check in. Please see the front desk.');
+      console.error("Error checking in:", error);
+      alert("Failed to check in. Please see the front desk.");
     }
   }
 
   private showSuccess(): void {
-    document.getElementById('appointmentsFound')!.style.display = 'none';
-    const successSection = document.getElementById('checkInSuccess')!;
-    successSection.style.display = 'block';
+    document.getElementById("appointmentsFound")!.style.display = "none";
+    const successSection = document.getElementById("checkInSuccess")!;
+    successSection.style.display = "block";
 
     setTimeout(() => {
       this.render(); // Reset after 5 seconds

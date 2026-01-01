@@ -3,8 +3,15 @@
  * Manages laboratory orders, results, and panels
  */
 
-import { getLOINCCode, COMMON_PANELS } from '../../../shared/constants/loinc-codes';
-import { getReferenceRange, getAbnormalityFlag, isCritical } from '../../../shared/constants/reference-ranges';
+import {
+  getLOINCCode,
+  COMMON_PANELS,
+} from "../../../shared/constants/loinc-codes";
+import {
+  getReferenceRange,
+  getAbnormalityFlag,
+  isCritical,
+} from "../../../shared/constants/reference-ranges";
 
 export interface LabOrder {
   id: string;
@@ -15,8 +22,15 @@ export interface LabOrder {
   orderingProviderId: string;
   orderingProviderName: string;
   orderDateTime: Date;
-  priority: 'routine' | 'urgent' | 'stat' | 'asap';
-  status: 'pending' | 'collected' | 'received' | 'processing' | 'completed' | 'cancelled' | 'on-hold';
+  priority: "routine" | "urgent" | "stat" | "asap";
+  status:
+    | "pending"
+    | "collected"
+    | "received"
+    | "processing"
+    | "completed"
+    | "cancelled"
+    | "on-hold";
   tests: LabTest[];
   clinicalInfo?: string;
   diagnosis?: string;
@@ -36,8 +50,8 @@ export interface LabTest {
   testCode: string;
   category: string;
   specimenType: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
-  priority: 'routine' | 'urgent' | 'stat';
+  status: "pending" | "in-progress" | "completed" | "cancelled";
+  priority: "routine" | "urgent" | "stat";
   orderedDateTime: Date;
   collectedDateTime?: Date;
   resultedDateTime?: Date;
@@ -52,16 +66,16 @@ export interface LabResult {
   loincCode: string;
   testName: string;
   value: string | number;
-  valueType: 'numeric' | 'text' | 'coded';
+  valueType: "numeric" | "text" | "coded";
   unit?: string;
   referenceRange?: {
     min?: number;
     max?: number;
     text?: string;
   };
-  abnormalFlag?: 'L' | 'H' | 'LL' | 'HH' | 'N' | 'A';
+  abnormalFlag?: "L" | "H" | "LL" | "HH" | "N" | "A";
   critical: boolean;
-  status: 'preliminary' | 'final' | 'corrected' | 'cancelled';
+  status: "preliminary" | "final" | "corrected" | "cancelled";
   performedDateTime: Date;
   verifiedDateTime?: Date;
   verifiedBy?: string;
@@ -91,7 +105,7 @@ export interface QualityControl {
   id: string;
   testCode: string;
   testName: string;
-  controlLevel: 'low' | 'normal' | 'high';
+  controlLevel: "low" | "normal" | "high";
   lotNumber: string;
   expirationDate: Date;
   expectedValue: number;
@@ -128,13 +142,13 @@ export class LaboratoryService {
         code: panel.code,
         name: panel.name,
         description: panel.name,
-        category: 'chemistry',
+        category: "chemistry",
         tests: panel.tests,
-        specimenTypes: ['blood-serum', 'blood-plasma'],
+        specimenTypes: ["blood-serum", "blood-plasma"],
         turnaroundTime: 4,
         active: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       this.panels.set(labPanel.id, labPanel);
@@ -144,7 +158,12 @@ export class LaboratoryService {
   /**
    * Create new lab order
    */
-  async createOrder(orderData: Omit<LabOrder, 'id' | 'orderNumber' | 'status' | 'createdAt' | 'updatedAt'>): Promise<LabOrder> {
+  async createOrder(
+    orderData: Omit<
+      LabOrder,
+      "id" | "orderNumber" | "status" | "createdAt" | "updatedAt"
+    >,
+  ): Promise<LabOrder> {
     const id = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const orderNumber = `LAB${Date.now()}`;
 
@@ -152,9 +171,9 @@ export class LaboratoryService {
       ...orderData,
       id,
       orderNumber,
-      status: 'pending',
+      status: "pending",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.orders.set(id, order);
@@ -165,10 +184,13 @@ export class LaboratoryService {
   /**
    * Create order from panel
    */
-  async createOrderFromPanel(panelId: string, orderData: Partial<LabOrder>): Promise<LabOrder> {
+  async createOrderFromPanel(
+    panelId: string,
+    orderData: Partial<LabOrder>,
+  ): Promise<LabOrder> {
     const panel = this.panels.get(panelId);
     if (!panel) {
-      throw new Error('Panel not found');
+      throw new Error("Panel not found");
     }
 
     const tests: LabTest[] = panel.tests.map((loincCode, index) => {
@@ -177,43 +199,47 @@ export class LaboratoryService {
       return {
         id: `TEST-${Date.now()}-${index}`,
         loincCode,
-        testName: loincData?.commonName || loincData?.displayName || 'Unknown Test',
+        testName:
+          loincData?.commonName || loincData?.displayName || "Unknown Test",
         testCode: loincCode,
-        category: loincData?.category || 'unknown',
-        specimenType: panel.specimenTypes[0] || 'blood-serum',
-        status: 'pending',
-        priority: orderData.priority || 'routine',
-        orderedDateTime: new Date()
+        category: loincData?.category || "unknown",
+        specimenType: panel.specimenTypes[0] || "blood-serum",
+        status: "pending",
+        priority: orderData.priority || "routine",
+        orderedDateTime: new Date(),
       };
     });
 
     return this.createOrder({
-      patientId: orderData.patientId || '',
-      patientName: orderData.patientName || '',
-      patientMRN: orderData.patientMRN || '',
-      orderingProviderId: orderData.orderingProviderId || '',
-      orderingProviderName: orderData.orderingProviderName || '',
+      patientId: orderData.patientId || "",
+      patientName: orderData.patientName || "",
+      patientMRN: orderData.patientMRN || "",
+      orderingProviderId: orderData.orderingProviderId || "",
+      orderingProviderName: orderData.orderingProviderName || "",
       orderDateTime: orderData.orderDateTime || new Date(),
-      priority: orderData.priority || 'routine',
+      priority: orderData.priority || "routine",
       tests,
       clinicalInfo: orderData.clinicalInfo,
-      diagnosis: orderData.diagnosis
+      diagnosis: orderData.diagnosis,
     });
   }
 
   /**
    * Update order status
    */
-  async updateOrderStatus(orderId: string, status: LabOrder['status']): Promise<LabOrder> {
+  async updateOrderStatus(
+    orderId: string,
+    status: LabOrder["status"],
+  ): Promise<LabOrder> {
     const order = this.orders.get(orderId);
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error("Order not found");
     }
 
     order.status = status;
     order.updatedAt = new Date();
 
-    if (status === 'completed') {
+    if (status === "completed") {
       order.completedDateTime = new Date();
     }
 
@@ -225,13 +251,15 @@ export class LaboratoryService {
   /**
    * Add result to order
    */
-  async addResult(resultData: Omit<LabResult, 'id' | 'createdAt' | 'updatedAt'>): Promise<LabResult> {
+  async addResult(
+    resultData: Omit<LabResult, "id" | "createdAt" | "updatedAt">,
+  ): Promise<LabResult> {
     const id = `RES-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     // Get patient info to determine abnormal flags
     const order = this.orders.get(resultData.orderId);
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error("Order not found");
     }
 
     // Calculate reference range and abnormal flag for numeric values
@@ -239,19 +267,32 @@ export class LaboratoryService {
     let abnormalFlag = resultData.abnormalFlag;
     let critical = resultData.critical;
 
-    if (resultData.valueType === 'numeric' && typeof resultData.value === 'number') {
+    if (
+      resultData.valueType === "numeric" &&
+      typeof resultData.value === "number"
+    ) {
       // For demo purposes, use default age/gender
-      const refRange = getReferenceRange(resultData.loincCode, 35, 'male');
+      const refRange = getReferenceRange(resultData.loincCode, 35, "male");
 
       if (refRange) {
         referenceRange = {
           min: refRange.minValue,
           max: refRange.maxValue,
-          text: `${refRange.minValue || ''}-${refRange.maxValue || ''} ${refRange.unit}`
+          text: `${refRange.minValue || ""}-${refRange.maxValue || ""} ${refRange.unit}`,
         };
 
-        abnormalFlag = getAbnormalityFlag(resultData.loincCode, resultData.value, 35, 'male');
-        critical = isCritical(resultData.loincCode, resultData.value, 35, 'male');
+        abnormalFlag = getAbnormalityFlag(
+          resultData.loincCode,
+          resultData.value,
+          35,
+          "male",
+        );
+        critical = isCritical(
+          resultData.loincCode,
+          resultData.value,
+          35,
+          "male",
+        );
       }
     }
 
@@ -262,24 +303,24 @@ export class LaboratoryService {
       abnormalFlag,
       critical,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.results.set(id, result);
 
     // Update test status
-    const test = order.tests.find(t => t.id === resultData.testId);
+    const test = order.tests.find((t) => t.id === resultData.testId);
     if (test) {
-      test.status = 'completed';
+      test.status = "completed";
       test.resultedDateTime = new Date();
       test.results = test.results || [];
       test.results.push(result);
     }
 
     // Check if all tests are completed
-    const allCompleted = order.tests.every(t => t.status === 'completed');
+    const allCompleted = order.tests.every((t) => t.status === "completed");
     if (allCompleted) {
-      await this.updateOrderStatus(order.id, 'completed');
+      await this.updateOrderStatus(order.id, "completed");
     }
 
     this.orders.set(order.id, order);
@@ -293,10 +334,10 @@ export class LaboratoryService {
   async verifyResult(resultId: string, verifiedBy: string): Promise<LabResult> {
     const result = this.results.get(resultId);
     if (!result) {
-      throw new Error('Result not found');
+      throw new Error("Result not found");
     }
 
-    result.status = 'final';
+    result.status = "final";
     result.verifiedDateTime = new Date();
     result.verifiedBy = verifiedBy;
     result.updatedAt = new Date();
@@ -318,16 +359,16 @@ export class LaboratoryService {
    */
   async getOrdersByPatient(patientId: string): Promise<LabOrder[]> {
     return Array.from(this.orders.values())
-      .filter(order => order.patientId === patientId)
+      .filter((order) => order.patientId === patientId)
       .sort((a, b) => b.orderDateTime.getTime() - a.orderDateTime.getTime());
   }
 
   /**
    * Get orders by status
    */
-  async getOrdersByStatus(status: LabOrder['status']): Promise<LabOrder[]> {
+  async getOrdersByStatus(status: LabOrder["status"]): Promise<LabOrder[]> {
     return Array.from(this.orders.values())
-      .filter(order => order.status === status)
+      .filter((order) => order.status === status)
       .sort((a, b) => b.orderDateTime.getTime() - a.orderDateTime.getTime());
   }
 
@@ -336,11 +377,13 @@ export class LaboratoryService {
    */
   async getPendingOrders(): Promise<LabOrder[]> {
     return Array.from(this.orders.values())
-      .filter(order => order.status !== 'completed' && order.status !== 'cancelled')
+      .filter(
+        (order) => order.status !== "completed" && order.status !== "cancelled",
+      )
       .sort((a, b) => {
         // STAT orders first
-        if (a.priority === 'stat' && b.priority !== 'stat') return -1;
-        if (b.priority === 'stat' && a.priority !== 'stat') return 1;
+        if (a.priority === "stat" && b.priority !== "stat") return -1;
+        if (b.priority === "stat" && a.priority !== "stat") return 1;
 
         // Then by order date
         return a.orderDateTime.getTime() - b.orderDateTime.getTime();
@@ -352,8 +395,10 @@ export class LaboratoryService {
    */
   async getCriticalResults(): Promise<LabResult[]> {
     return Array.from(this.results.values())
-      .filter(result => result.critical)
-      .sort((a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime());
+      .filter((result) => result.critical)
+      .sort(
+        (a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime(),
+      );
   }
 
   /**
@@ -361,8 +406,10 @@ export class LaboratoryService {
    */
   async getResultsForOrder(orderId: string): Promise<LabResult[]> {
     return Array.from(this.results.values())
-      .filter(result => result.orderId === orderId)
-      .sort((a, b) => a.performedDateTime.getTime() - b.performedDateTime.getTime());
+      .filter((result) => result.orderId === orderId)
+      .sort(
+        (a, b) => a.performedDateTime.getTime() - b.performedDateTime.getTime(),
+      );
   }
 
   /**
@@ -370,11 +417,13 @@ export class LaboratoryService {
    */
   async getResultsForPatient(patientId: string): Promise<LabResult[]> {
     const patientOrders = await this.getOrdersByPatient(patientId);
-    const orderIds = patientOrders.map(o => o.id);
+    const orderIds = patientOrders.map((o) => o.id);
 
     return Array.from(this.results.values())
-      .filter(result => orderIds.includes(result.orderId))
-      .sort((a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime());
+      .filter((result) => orderIds.includes(result.orderId))
+      .sort(
+        (a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime(),
+      );
   }
 
   /**
@@ -391,40 +440,46 @@ export class LaboratoryService {
 
     if (criteria.patientId) {
       const patientOrders = await this.getOrdersByPatient(criteria.patientId);
-      const orderIds = patientOrders.map(o => o.id);
-      results = results.filter(r => orderIds.includes(r.orderId));
+      const orderIds = patientOrders.map((o) => o.id);
+      results = results.filter((r) => orderIds.includes(r.orderId));
     }
 
     if (criteria.loincCode) {
-      results = results.filter(r => r.loincCode === criteria.loincCode);
+      results = results.filter((r) => r.loincCode === criteria.loincCode);
     }
 
     if (criteria.dateFrom) {
-      results = results.filter(r => r.performedDateTime >= criteria.dateFrom!);
+      results = results.filter(
+        (r) => r.performedDateTime >= criteria.dateFrom!,
+      );
     }
 
     if (criteria.dateTo) {
-      results = results.filter(r => r.performedDateTime <= criteria.dateTo!);
+      results = results.filter((r) => r.performedDateTime <= criteria.dateTo!);
     }
 
     if (criteria.critical !== undefined) {
-      results = results.filter(r => r.critical === criteria.critical);
+      results = results.filter((r) => r.critical === criteria.critical);
     }
 
-    return results.sort((a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime());
+    return results.sort(
+      (a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime(),
+    );
   }
 
   /**
    * Create lab panel
    */
-  async createPanel(panelData: Omit<LabPanel, 'id' | 'createdAt' | 'updatedAt'>): Promise<LabPanel> {
+  async createPanel(
+    panelData: Omit<LabPanel, "id" | "createdAt" | "updatedAt">,
+  ): Promise<LabPanel> {
     const id = `PANEL-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     const panel: LabPanel = {
       ...panelData,
       id,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.panels.set(id, panel);
@@ -437,7 +492,7 @@ export class LaboratoryService {
    */
   async getPanels(): Promise<LabPanel[]> {
     return Array.from(this.panels.values())
-      .filter(panel => panel.active)
+      .filter((panel) => panel.active)
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
@@ -451,16 +506,19 @@ export class LaboratoryService {
   /**
    * Record quality control
    */
-  async recordQC(qcData: Omit<QualityControl, 'id' | 'passed'>): Promise<QualityControl> {
+  async recordQC(
+    qcData: Omit<QualityControl, "id" | "passed">,
+  ): Promise<QualityControl> {
     const id = `QC-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
-    const passed = qcData.measuredValue >= qcData.acceptableRange.min &&
-                   qcData.measuredValue <= qcData.acceptableRange.max;
+    const passed =
+      qcData.measuredValue >= qcData.acceptableRange.min &&
+      qcData.measuredValue <= qcData.acceptableRange.max;
 
     const qc: QualityControl = {
       ...qcData,
       id,
-      passed
+      passed,
     };
 
     this.qcRecords.set(id, qc);
@@ -471,35 +529,45 @@ export class LaboratoryService {
   /**
    * Get QC records
    */
-  async getQCRecords(testCode?: string, dateFrom?: Date, dateTo?: Date): Promise<QualityControl[]> {
+  async getQCRecords(
+    testCode?: string,
+    dateFrom?: Date,
+    dateTo?: Date,
+  ): Promise<QualityControl[]> {
     let records = Array.from(this.qcRecords.values());
 
     if (testCode) {
-      records = records.filter(qc => qc.testCode === testCode);
+      records = records.filter((qc) => qc.testCode === testCode);
     }
 
     if (dateFrom) {
-      records = records.filter(qc => qc.performedDateTime >= dateFrom);
+      records = records.filter((qc) => qc.performedDateTime >= dateFrom);
     }
 
     if (dateTo) {
-      records = records.filter(qc => qc.performedDateTime <= dateTo);
+      records = records.filter((qc) => qc.performedDateTime <= dateTo);
     }
 
-    return records.sort((a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime());
+    return records.sort(
+      (a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime(),
+    );
   }
 
   /**
    * Get failed QC records
    */
   async getFailedQC(dateFrom?: Date): Promise<QualityControl[]> {
-    let records = Array.from(this.qcRecords.values()).filter(qc => !qc.passed);
+    let records = Array.from(this.qcRecords.values()).filter(
+      (qc) => !qc.passed,
+    );
 
     if (dateFrom) {
-      records = records.filter(qc => qc.performedDateTime >= dateFrom);
+      records = records.filter((qc) => qc.performedDateTime >= dateFrom);
     }
 
-    return records.sort((a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime());
+    return records.sort(
+      (a, b) => b.performedDateTime.getTime() - a.performedDateTime.getTime(),
+    );
   }
 
   /**
@@ -508,16 +576,16 @@ export class LaboratoryService {
   async cancelOrder(orderId: string, reason: string): Promise<LabOrder> {
     const order = this.orders.get(orderId);
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error("Order not found");
     }
 
-    order.status = 'cancelled';
-    order.notes = (order.notes || '') + `\nCancelled: ${reason}`;
+    order.status = "cancelled";
+    order.notes = (order.notes || "") + `\nCancelled: ${reason}`;
     order.updatedAt = new Date();
 
     // Cancel all tests
-    order.tests.forEach(test => {
-      test.status = 'cancelled';
+    order.tests.forEach((test) => {
+      test.status = "cancelled";
     });
 
     this.orders.set(orderId, order);

@@ -3,9 +3,9 @@
  * Header Layout Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
-import { authService as auth } from '../../services/auth';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
+import { authService as auth } from "../../services/auth";
 
 export interface HeaderProps {
   title?: string;
@@ -19,38 +19,38 @@ export class Header extends Component<HeaderProps, {}> {
   }
 
   protected getClassName(): string {
-    return 'header';
+    return "header";
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
-    const container = createElement('div', {
-      className: 'header-container',
+    const container = createElement("div", {
+      className: "header-container",
     });
 
     // Left section
-    const leftSection = createElement('div', {
-      className: 'header-left',
+    const leftSection = createElement("div", {
+      className: "header-left",
     });
 
-    const menuBtn = createElement('button', {
-      className: 'header-menu-btn',
-      innerHTML: '☰',
-      attributes: { 'aria-label': 'Toggle menu' },
+    const menuBtn = createElement("button", {
+      className: "header-menu-btn",
+      innerHTML: "☰",
+      attributes: { "aria-label": "Toggle menu" },
       events: {
         click: () => this.props.onMenuClick?.(),
       },
     });
 
-    const logo = createElement('div', {
-      className: 'header-logo',
+    const logo = createElement("div", {
+      className: "header-logo",
     });
 
-    const logoText = createElement('span', {
-      className: 'header-logo-text',
-      textContent: this.props.title || 'Lithic Healthcare',
+    const logoText = createElement("span", {
+      className: "header-logo-text",
+      textContent: this.props.title || "Lithic Healthcare",
     });
 
     logo.appendChild(logoText);
@@ -58,33 +58,33 @@ export class Header extends Component<HeaderProps, {}> {
     leftSection.appendChild(logo);
 
     // Right section
-    const rightSection = createElement('div', {
-      className: 'header-right',
+    const rightSection = createElement("div", {
+      className: "header-right",
     });
 
     const user = auth.getCurrentUser();
 
     if (user) {
-      const userInfo = createElement('div', {
-        className: 'header-user',
+      const userInfo = createElement("div", {
+        className: "header-user",
       });
 
-      const userName = createElement('span', {
-        className: 'header-user-name',
+      const userName = createElement("span", {
+        className: "header-user-name",
         textContent: `${user.firstName} ${user.lastName}`,
       });
 
-      const userRole = createElement('span', {
-        className: 'header-user-role',
+      const userRole = createElement("span", {
+        className: "header-user-role",
         textContent: user.role,
       });
 
       userInfo.appendChild(userName);
       userInfo.appendChild(userRole);
 
-      const logoutBtn = createElement('button', {
-        className: 'header-logout-btn btn btn-ghost',
-        textContent: 'Logout',
+      const logoutBtn = createElement("button", {
+        className: "header-logout-btn btn btn-ghost",
+        textContent: "Logout",
         events: {
           click: () => this.props.onLogout?.(),
         },

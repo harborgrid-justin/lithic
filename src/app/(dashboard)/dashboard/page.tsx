@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Activity,
@@ -7,10 +7,10 @@ import {
   TrendingUp,
   Clock,
   AlertCircle,
-} from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -18,10 +18,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs"
-import { useAuth } from "@/hooks/useAuth"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/table";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 const stats = [
   {
@@ -52,7 +52,7 @@ const stats = [
     icon: Clock,
     trend: "up",
   },
-]
+];
 
 const recentAppointments = [
   {
@@ -95,7 +95,7 @@ const recentAppointments = [
     type: "Checkup",
     status: "Confirmed",
   },
-]
+];
 
 const alerts = [
   {
@@ -116,10 +116,10 @@ const alerts = [
     time: "2 hours ago",
     severity: "info",
   },
-]
+];
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   return (
     <div className="space-y-8">
@@ -140,7 +140,7 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => {
-          const Icon = stat.icon
+          const Icon = stat.icon;
           return (
             <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                 <p className="text-xs text-muted-foreground">
                   <span
                     className={cn(
-                      stat.trend === "up" ? "text-green-600" : "text-red-600"
+                      stat.trend === "up" ? "text-green-600" : "text-red-600",
                     )}
                   >
                     {stat.change}
@@ -163,7 +163,7 @@ export default function DashboardPage() {
                 </p>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
@@ -199,8 +199,8 @@ export default function DashboardPage() {
                           appointment.status === "Urgent"
                             ? "destructive"
                             : appointment.status === "In Progress"
-                            ? "default"
-                            : "secondary"
+                              ? "default"
+                              : "secondary"
                         }
                       >
                         {appointment.status}
@@ -231,7 +231,9 @@ export default function DashboardPage() {
                   <div
                     className={cn(
                       "mt-0.5 h-2 w-2 rounded-full",
-                      alert.severity === "warning" ? "bg-yellow-500" : "bg-blue-500"
+                      alert.severity === "warning"
+                        ? "bg-yellow-500"
+                        : "bg-blue-500",
                     )}
                   />
                   <div className="flex-1 space-y-1">
@@ -276,5 +278,5 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

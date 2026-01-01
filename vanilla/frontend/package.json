@@ -8,7 +8,14 @@
     "build": "webpack --mode production",
     "lint": "eslint . --ext .ts"
   },
-  "keywords": ["healthcare", "ehr", "clinical", "documentation", "frontend", "vanilla-typescript"],
+  "keywords": [
+    "healthcare",
+    "ehr",
+    "clinical",
+    "documentation",
+    "frontend",
+    "vanilla-typescript"
+  ],
   "author": "Lithic Health",
   "license": "MIT",
   "devDependencies": {

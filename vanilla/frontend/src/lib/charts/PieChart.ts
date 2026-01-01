@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { ChartBase, ChartConfig } from './ChartBase';
+import { ChartBase, ChartConfig } from "./ChartBase";
 
 export interface PieChartConfig extends ChartConfig {
   innerRadius?: number; // 0 for pie, > 0 for donut
@@ -43,7 +43,8 @@ export class PieChart extends ChartBase {
     const series = this.config.series[0];
     if (!series || series.data.length === 0) return;
 
-    const { paddingLeft, paddingTop, chartWidth, chartHeight } = this.dimensions;
+    const { paddingLeft, paddingTop, chartWidth, chartHeight } =
+      this.dimensions;
 
     // Calculate center and radius
     const centerX = paddingLeft + chartWidth / 2;
@@ -56,7 +57,8 @@ export class PieChart extends ChartBase {
     let currentAngle = -Math.PI / 2; // Start from top
 
     series.data.forEach((point, index) => {
-      const sliceAngle = (point.y / total) * 2 * Math.PI * this.animationProgress;
+      const sliceAngle =
+        (point.y / total) * 2 * Math.PI * this.animationProgress;
       const endAngle = currentAngle + sliceAngle;
 
       const color = this.colors[index % this.colors.length];
@@ -78,7 +80,7 @@ export class PieChart extends ChartBase {
         currentAngle,
         endAngle,
         color,
-        isHovered
+        isHovered,
       );
 
       // Store slice for hit detection
@@ -101,7 +103,7 @@ export class PieChart extends ChartBase {
           currentAngle,
           endAngle,
           point,
-          total
+          total,
         );
       }
 
@@ -111,9 +113,15 @@ export class PieChart extends ChartBase {
     // Draw center hole for donut chart
     if (this.config.innerRadius && this.config.innerRadius > 0) {
       this.ctx.save();
-      this.ctx.fillStyle = '#fff';
+      this.ctx.fillStyle = "#fff";
       this.ctx.beginPath();
-      this.ctx.arc(centerX, centerY, this.config.innerRadius * radius, 0, Math.PI * 2);
+      this.ctx.arc(
+        centerX,
+        centerY,
+        this.config.innerRadius * radius,
+        0,
+        Math.PI * 2,
+      );
       this.ctx.fill();
       this.ctx.restore();
     }
@@ -126,12 +134,12 @@ export class PieChart extends ChartBase {
     startAngle: number,
     endAngle: number,
     color: string,
-    isHighlighted: boolean
+    isHighlighted: boolean,
   ): void {
     this.ctx.save();
 
     this.ctx.fillStyle = color;
-    this.ctx.strokeStyle = '#fff';
+    this.ctx.strokeStyle = "#fff";
     this.ctx.lineWidth = 2;
 
     this.ctx.beginPath();
@@ -153,7 +161,7 @@ export class PieChart extends ChartBase {
 
     // Add shadow on hover
     if (isHighlighted) {
-      this.ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+      this.ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
       this.ctx.shadowBlur = 10;
       this.ctx.shadowOffsetX = 0;
       this.ctx.shadowOffsetY = 4;
@@ -169,7 +177,7 @@ export class PieChart extends ChartBase {
     startAngle: number,
     endAngle: number,
     point: any,
-    total: number
+    total: number,
   ): void {
     const midAngle = (startAngle + endAngle) / 2;
     const labelRadius = radius * 0.7;
@@ -178,12 +186,12 @@ export class PieChart extends ChartBase {
     const y = centerY + Math.sin(midAngle) * labelRadius;
 
     this.ctx.save();
-    this.ctx.fillStyle = '#fff';
-    this.ctx.font = 'bold 12px Arial, sans-serif';
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
+    this.ctx.fillStyle = "#fff";
+    this.ctx.font = "bold 12px Arial, sans-serif";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
 
-    let label = '';
+    let label = "";
 
     if (this.config.showPercentages) {
       const percentage = ((point.y / total) * 100).toFixed(1);
@@ -191,7 +199,9 @@ export class PieChart extends ChartBase {
     }
 
     if (this.config.showValues) {
-      label += label ? `\n${this.formatValue(point.y)}` : this.formatValue(point.y);
+      label += label
+        ? `\n${this.formatValue(point.y)}`
+        : this.formatValue(point.y);
     }
 
     this.ctx.fillText(label, x, y);
@@ -201,7 +211,14 @@ export class PieChart extends ChartBase {
     // Draw label line and external label for small slices
     const percentage = (point.y / total) * 100;
     if (percentage < 10) {
-      this.drawExternalLabel(centerX, centerY, radius, midAngle, point, percentage);
+      this.drawExternalLabel(
+        centerX,
+        centerY,
+        radius,
+        midAngle,
+        point,
+        percentage,
+      );
     }
   }
 
@@ -211,7 +228,7 @@ export class PieChart extends ChartBase {
     radius: number,
     angle: number,
     point: any,
-    percentage: number
+    percentage: number,
   ): void {
     const lineStartRadius = radius + 5;
     const lineEndRadius = radius + 30;
@@ -223,7 +240,7 @@ export class PieChart extends ChartBase {
 
     // Draw line
     this.ctx.save();
-    this.ctx.strokeStyle = '#666';
+    this.ctx.strokeStyle = "#666";
     this.ctx.lineWidth = 1;
     this.ctx.beginPath();
     this.ctx.moveTo(x1, y1);
@@ -231,13 +248,14 @@ export class PieChart extends ChartBase {
     this.ctx.stroke();
 
     // Draw label
-    this.ctx.fillStyle = '#333';
-    this.ctx.font = '11px Arial, sans-serif';
-    this.ctx.textAlign = angle > Math.PI / 2 && angle < (3 * Math.PI) / 2 ? 'right' : 'left';
-    this.ctx.textBaseline = 'middle';
+    this.ctx.fillStyle = "#333";
+    this.ctx.font = "11px Arial, sans-serif";
+    this.ctx.textAlign =
+      angle > Math.PI / 2 && angle < (3 * Math.PI) / 2 ? "right" : "left";
+    this.ctx.textBaseline = "middle";
 
-    let label = '';
-    if (typeof point.x === 'string') {
+    let label = "";
+    if (typeof point.x === "string") {
       label = point.x;
     }
 
@@ -247,7 +265,10 @@ export class PieChart extends ChartBase {
     this.ctx.restore();
   }
 
-  protected getPointAtPosition(x: number, y: number): { seriesIndex: number; pointIndex: number } | null {
+  protected getPointAtPosition(
+    x: number,
+    y: number,
+  ): { seriesIndex: number; pointIndex: number } | null {
     for (const slice of this.slices) {
       const dx = x - slice.centerX;
       const dy = y - slice.centerY;
@@ -276,7 +297,10 @@ export class PieChart extends ChartBase {
         }
 
         if (angle >= startAngle && angle <= endAngle) {
-          return { seriesIndex: slice.seriesIndex, pointIndex: slice.pointIndex };
+          return {
+            seriesIndex: slice.seriesIndex,
+            pointIndex: slice.pointIndex,
+          };
         }
       }
     }
@@ -287,7 +311,10 @@ export class PieChart extends ChartBase {
   protected drawLegend(): void {
     if (!this.config.legend?.show) return;
 
-    if (this.config.series.length === 0 || this.config.series[0].data.length === 0) {
+    if (
+      this.config.series.length === 0 ||
+      this.config.series[0].data.length === 0
+    ) {
       return;
     }
 
@@ -301,7 +328,7 @@ export class PieChart extends ChartBase {
     let y = this.dimensions.paddingTop;
 
     this.ctx.save();
-    this.ctx.font = '11px Arial, sans-serif';
+    this.ctx.font = "11px Arial, sans-serif";
 
     series.data.forEach((point, index) => {
       const color = this.colors[index % this.colors.length];
@@ -312,15 +339,15 @@ export class PieChart extends ChartBase {
       this.ctx.fillRect(x, currentY, iconSize, iconSize);
 
       // Draw label
-      let label = '';
-      if (typeof point.x === 'string') {
+      let label = "";
+      if (typeof point.x === "string") {
         label = point.x;
       } else {
         label = `Item ${index + 1}`;
       }
 
-      this.ctx.fillStyle = '#333';
-      this.ctx.textAlign = 'left';
+      this.ctx.fillStyle = "#333";
+      this.ctx.textAlign = "left";
       this.ctx.fillText(label, x + iconSize + 5, currentY + iconSize);
     });
 

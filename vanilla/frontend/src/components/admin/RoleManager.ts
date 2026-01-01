@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * RoleManager Component
@@ -23,7 +23,7 @@ export class RoleManager {
         <div class="role-manager">
           <h3>Role Management</h3>
           <div class="roles-grid">
-            ${this.roles.map((role) => this.renderRoleCard(role)).join('')}
+            ${this.roles.map((role) => this.renderRoleCard(role)).join("")}
           </div>
         </div>
       `;
@@ -41,18 +41,23 @@ export class RoleManager {
       <div class="role-card" data-role-id="${role.id}">
         <div class="role-card__header">
           <h4>${role.name}</h4>
-          <span class="badge badge--${role.isSystem ? 'primary' : 'secondary'}">
-            ${role.isSystem ? 'System' : 'Custom'}
+          <span class="badge badge--${role.isSystem ? "primary" : "secondary"}">
+            ${role.isSystem ? "System" : "Custom"}
           </span>
         </div>
         <p class="role-card__description">${role.description}</p>
         <div class="role-card__permissions">
           <strong>Permissions:</strong>
           <ul>
-            ${role.permissions.slice(0, 5).map((p: any) => `
+            ${role.permissions
+              .slice(0, 5)
+              .map(
+                (p: any) => `
               <li>${p.resource}:${p.action}</li>
-            `).join('')}
-            ${role.permissions.length > 5 ? `<li>+${role.permissions.length - 5} more</li>` : ''}
+            `,
+              )
+              .join("")}
+            ${role.permissions.length > 5 ? `<li>+${role.permissions.length - 5} more</li>` : ""}
           </ul>
         </div>
       </div>
@@ -68,11 +73,13 @@ export class RoleManager {
 
       // Highlight assigned roles
       userRoles.forEach((roleName: string) => {
-        const roleCard = document.querySelector(`[data-role-name="${roleName}"]`);
-        roleCard?.classList.add('role-card--assigned');
+        const roleCard = document.querySelector(
+          `[data-role-name="${roleName}"]`,
+        );
+        roleCard?.classList.add("role-card--assigned");
       });
     } catch (error) {
-      console.error('Failed to load user roles:', error);
+      console.error("Failed to load user roles:", error);
     }
   }
 
@@ -85,6 +92,6 @@ export class RoleManager {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

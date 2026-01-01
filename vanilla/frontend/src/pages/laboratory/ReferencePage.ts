@@ -3,13 +3,13 @@
  * View LOINC codes and reference ranges
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { ReferenceRanges } from '../../components/laboratory/ReferenceRanges';
+import { labService } from "../../services/LaboratoryService";
+import { ReferenceRanges } from "../../components/laboratory/ReferenceRanges";
 
 export class ReferencePage {
   private container: HTMLElement;
   private referenceRanges: ReferenceRanges | null = null;
-  private activeTab: 'loinc' | 'ranges' = 'loinc';
+  private activeTab: "loinc" | "ranges" = "loinc";
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -45,7 +45,7 @@ export class ReferencePage {
     try {
       const loincCodes = await labService.getLOINCCodes();
 
-      const loincTab = this.container.querySelector('#loincTab');
+      const loincTab = this.container.querySelector("#loincTab");
       if (loincTab) {
         loincTab.innerHTML = `
           <div class="loinc-codes">
@@ -53,20 +53,20 @@ export class ReferencePage {
               <input type="text" id="loincSearch" placeholder="Search LOINC codes...">
             </div>
             <div id="loincList" class="loinc-list">
-              ${loincCodes.map((loinc: any) => this.renderLOINCCard(loinc)).join('')}
+              ${loincCodes.map((loinc: any) => this.renderLOINCCard(loinc)).join("")}
             </div>
           </div>
         `;
 
-        const searchInput = loincTab.querySelector('#loincSearch');
+        const searchInput = loincTab.querySelector("#loincSearch");
         if (searchInput) {
-          searchInput.addEventListener('input', (e) => {
+          searchInput.addEventListener("input", (e) => {
             this.handleLOINCSearch((e.target as HTMLInputElement).value);
           });
         }
       }
     } catch (error) {
-      console.error('Error loading LOINC codes:', error);
+      console.error("Error loading LOINC codes:", error);
     }
   }
 
@@ -87,11 +87,15 @@ export class ReferencePage {
           <div class="loinc-detail">
             <strong>Category:</strong> <span class="category-badge">${loinc.category}</span>
           </div>
-          ${loinc.unit ? `
+          ${
+            loinc.unit
+              ? `
             <div class="loinc-detail">
               <strong>Unit:</strong> ${loinc.unit}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </div>
     `;
@@ -106,14 +110,15 @@ export class ReferencePage {
     try {
       const results = await labService.searchLOINCCodes(query);
 
-      const loincList = this.container.querySelector('#loincList');
+      const loincList = this.container.querySelector("#loincList");
       if (loincList) {
-        loincList.innerHTML = results.length > 0
-          ? results.map((loinc: any) => this.renderLOINCCard(loinc)).join('')
-          : '<p>No LOINC codes found</p>';
+        loincList.innerHTML =
+          results.length > 0
+            ? results.map((loinc: any) => this.renderLOINCCard(loinc)).join("")
+            : "<p>No LOINC codes found</p>";
       }
     } catch (error) {
-      console.error('Error searching LOINC codes:', error);
+      console.error("Error searching LOINC codes:", error);
     }
   }
 
@@ -121,13 +126,13 @@ export class ReferencePage {
     try {
       const ranges = await labService.getReferenceRanges();
 
-      const rangesTab = this.container.querySelector('#rangesTab');
+      const rangesTab = this.container.querySelector("#rangesTab");
       if (rangesTab) {
         this.referenceRanges = new ReferenceRanges(rangesTab as HTMLElement);
         this.referenceRanges.setRanges(ranges);
       }
     } catch (error) {
-      console.error('Error loading reference ranges:', error);
+      console.error("Error loading reference ranges:", error);
     }
   }
 
@@ -135,48 +140,52 @@ export class ReferencePage {
     try {
       const panels = await labService.getCommonPanels();
 
-      const panelsTab = this.container.querySelector('#panelsTab');
+      const panelsTab = this.container.querySelector("#panelsTab");
       if (panelsTab) {
         panelsTab.innerHTML = `
           <div class="common-panels">
-            ${Object.entries(panels).map(([key, panel]: [string, any]) => `
+            ${Object.entries(panels)
+              .map(
+                ([key, panel]: [string, any]) => `
               <div class="panel-card">
                 <h3>${panel.name}</h3>
                 <div class="panel-code">Code: ${panel.code}</div>
                 <div class="panel-tests">
                   <strong>Included Tests:</strong>
                   <ul>
-                    ${panel.tests.map((testCode: string) => `<li>${testCode}</li>`).join('')}
+                    ${panel.tests.map((testCode: string) => `<li>${testCode}</li>`).join("")}
                   </ul>
                 </div>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         `;
       }
     } catch (error) {
-      console.error('Error loading common panels:', error);
+      console.error("Error loading common panels:", error);
     }
   }
 
   private switchTab(tab: string): void {
     // Update tab buttons
-    const tabBtns = this.container.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
+    const tabBtns = this.container.querySelectorAll(".tab-btn");
+    tabBtns.forEach((btn) => {
+      btn.classList.toggle("active", btn.getAttribute("data-tab") === tab);
     });
 
     // Update tab panes
-    const tabPanes = this.container.querySelectorAll('.tab-pane');
-    tabPanes.forEach(pane => {
-      pane.classList.toggle('active', pane.id === `${tab}Tab`);
+    const tabPanes = this.container.querySelectorAll(".tab-pane");
+    tabPanes.forEach((pane) => {
+      pane.classList.toggle("active", pane.id === `${tab}Tab`);
     });
 
     // Load tab content if not already loaded
-    if (tab === 'ranges' && !this.referenceRanges) {
+    if (tab === "ranges" && !this.referenceRanges) {
       this.loadReferenceRanges();
-    } else if (tab === 'panels') {
-      const panelsTab = this.container.querySelector('#panelsTab');
+    } else if (tab === "panels") {
+      const panelsTab = this.container.querySelector("#panelsTab");
       if (panelsTab && !panelsTab.innerHTML) {
         this.loadCommonPanels();
       }
@@ -184,10 +193,10 @@ export class ReferencePage {
   }
 
   private attachEventListeners(): void {
-    const tabBtns = this.container.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.getAttribute('data-tab');
+    const tabBtns = this.container.querySelectorAll(".tab-btn");
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tab = btn.getAttribute("data-tab");
         if (tab) {
           this.switchTab(tab);
         }
@@ -199,6 +208,6 @@ export class ReferencePage {
     if (this.referenceRanges) {
       this.referenceRanges.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -20,7 +20,7 @@ export class LabReport {
 
   private render(): void {
     if (!this.order) {
-      this.container.innerHTML = '<p>No order data available</p>';
+      this.container.innerHTML = "<p>No order data available</p>";
       return;
     }
 
@@ -60,33 +60,47 @@ export class LabReport {
               <div><strong>Priority:</strong> ${this.order.priority.toUpperCase()}</div>
               <div><strong>Status:</strong> ${this.formatStatus(this.order.status)}</div>
             </div>
-            ${this.order.clinicalInfo ? `
+            ${
+              this.order.clinicalInfo
+                ? `
               <div class="clinical-info">
                 <strong>Clinical Information:</strong>
                 <p>${this.order.clinicalInfo}</p>
               </div>
-            ` : ''}
-            ${this.order.diagnosis ? `
+            `
+                : ""
+            }
+            ${
+              this.order.diagnosis
+                ? `
               <div class="diagnosis">
                 <strong>Diagnosis:</strong>
                 <p>${this.order.diagnosis}</p>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
 
           <div class="report-section">
             <h3>Laboratory Results</h3>
-            ${this.results.length > 0 ? this.renderResultsTable() : '<p>No results available</p>'}
+            ${this.results.length > 0 ? this.renderResultsTable() : "<p>No results available</p>"}
           </div>
 
-          ${this.hasAbnormalResults() ? `
+          ${
+            this.hasAbnormalResults()
+              ? `
             <div class="report-section abnormal-section">
               <h3>Abnormal Results Summary</h3>
               ${this.renderAbnormalSummary()}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
 
-          ${this.hasCriticalResults() ? `
+          ${
+            this.hasCriticalResults()
+              ? `
             <div class="report-section critical-section">
               <h3>Critical Results</h3>
               <div class="critical-alert">
@@ -94,7 +108,9 @@ export class LabReport {
                 ${this.renderCriticalResults()}
               </div>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
 
           <div class="report-footer">
             <div class="signatures">
@@ -133,113 +149,127 @@ export class LabReport {
           </tr>
         </thead>
         <tbody>
-          ${this.results.map(result => this.renderResultRow(result)).join('')}
+          ${this.results.map((result) => this.renderResultRow(result)).join("")}
         </tbody>
       </table>
     `;
   }
 
   private renderResultRow(result: any): string {
-    const flagClass = result.abnormalFlag && result.abnormalFlag !== 'N' ? 'abnormal' : '';
-    const criticalClass = result.critical ? 'critical' : '';
+    const flagClass =
+      result.abnormalFlag && result.abnormalFlag !== "N" ? "abnormal" : "";
+    const criticalClass = result.critical ? "critical" : "";
 
     return `
       <tr class="${flagClass} ${criticalClass}">
         <td><strong>${result.testName}</strong></td>
-        <td class="result-value">${result.value}${result.critical ? ' <span class="critical-badge">!</span>' : ''}</td>
-        <td>${result.unit || '-'}</td>
+        <td class="result-value">${result.value}${result.critical ? ' <span class="critical-badge">!</span>' : ""}</td>
+        <td>${result.unit || "-"}</td>
         <td>${this.formatReferenceRange(result.referenceRange)}</td>
-        <td>${result.abnormalFlag && result.abnormalFlag !== 'N' ? result.abnormalFlag : '-'}</td>
+        <td>${result.abnormalFlag && result.abnormalFlag !== "N" ? result.abnormalFlag : "-"}</td>
         <td>${this.formatDateTime(result.performedDateTime)}</td>
       </tr>
     `;
   }
 
   private renderAbnormalSummary(): string {
-    const abnormalResults = this.results.filter(r =>
-      r.abnormalFlag && r.abnormalFlag !== 'N' && !r.critical
+    const abnormalResults = this.results.filter(
+      (r) => r.abnormalFlag && r.abnormalFlag !== "N" && !r.critical,
     );
 
     return `
       <ul class="abnormal-list">
-        ${abnormalResults.map(result => `
+        ${abnormalResults
+          .map(
+            (result) => `
           <li>
             <strong>${result.testName}:</strong>
-            ${result.value} ${result.unit || ''} (${this.formatReferenceRange(result.referenceRange)})
+            ${result.value} ${result.unit || ""} (${this.formatReferenceRange(result.referenceRange)})
             <span class="flag">${result.abnormalFlag}</span>
           </li>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </ul>
     `;
   }
 
   private renderCriticalResults(): string {
-    const criticalResults = this.results.filter(r => r.critical);
+    const criticalResults = this.results.filter((r) => r.critical);
 
     return `
       <ul class="critical-list">
-        ${criticalResults.map(result => `
+        ${criticalResults
+          .map(
+            (result) => `
           <li>
             <strong>${result.testName}:</strong>
-            ${result.value} ${result.unit || ''} (${this.formatReferenceRange(result.referenceRange)})
+            ${result.value} ${result.unit || ""} (${this.formatReferenceRange(result.referenceRange)})
           </li>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </ul>
     `;
   }
 
   private hasAbnormalResults(): boolean {
-    return this.results.some(r => r.abnormalFlag && r.abnormalFlag !== 'N' && !r.critical);
+    return this.results.some(
+      (r) => r.abnormalFlag && r.abnormalFlag !== "N" && !r.critical,
+    );
   }
 
   private hasCriticalResults(): boolean {
-    return this.results.some(r => r.critical);
+    return this.results.some((r) => r.critical);
   }
 
   private formatStatus(status: string): string {
-    return status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return status
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatDateTime(date: Date | string): string {
     const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private formatReferenceRange(range?: any): string {
-    if (!range) return '-';
+    if (!range) return "-";
     if (range.text) return range.text;
     if (range.min !== undefined && range.max !== undefined) {
       return `${range.min} - ${range.max}`;
     }
     if (range.max !== undefined) return `< ${range.max}`;
     if (range.min !== undefined) return `> ${range.min}`;
-    return '-';
+    return "-";
   }
 
   private attachEventListeners(): void {
-    const printBtn = this.container.querySelector('#printBtn');
-    const downloadBtn = this.container.querySelector('#downloadBtn');
+    const printBtn = this.container.querySelector("#printBtn");
+    const downloadBtn = this.container.querySelector("#downloadBtn");
 
     if (printBtn) {
-      printBtn.addEventListener('click', () => this.print());
+      printBtn.addEventListener("click", () => this.print());
     }
 
     if (downloadBtn) {
-      downloadBtn.addEventListener('click', () => this.download());
+      downloadBtn.addEventListener("click", () => this.download());
     }
   }
 
   private print(): void {
-    const reportContent = this.container.querySelector('#reportContent');
+    const reportContent = this.container.querySelector("#reportContent");
     if (!reportContent) return;
 
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
     printWindow.document.write(`
@@ -276,10 +306,12 @@ export class LabReport {
 
   private download(): void {
     // In a real implementation, this would generate a PDF
-    alert('PDF download functionality would be implemented here using a library like jsPDF');
+    alert(
+      "PDF download functionality would be implemented here using a library like jsPDF",
+    );
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

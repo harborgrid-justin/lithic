@@ -1,11 +1,26 @@
-'use client';
+"use client";
 
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Users, FileText, Settings, Activity, Lock } from 'lucide-react';
-import Link from 'next/link';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Shield,
+  Users,
+  FileText,
+  Settings,
+  Activity,
+  Lock,
+} from "lucide-react";
+import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -13,13 +28,13 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
   }, [status, router]);
 
   useEffect(() => {
-    fetch('/api/admin/organizations?action=stats')
+    fetch("/api/admin/organizations?action=stats")
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -29,52 +44,56 @@ export default function AdminDashboard() {
       .catch(console.error);
   }, []);
 
-  if (status === 'loading') {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   const adminCards = [
     {
-      title: 'User Management',
-      description: 'Manage users, roles, and permissions',
+      title: "User Management",
+      description: "Manage users, roles, and permissions",
       icon: Users,
-      href: '/admin/users',
-      color: 'text-blue-600',
+      href: "/admin/users",
+      color: "text-blue-600",
     },
     {
-      title: 'Security',
-      description: 'Security settings and monitoring',
+      title: "Security",
+      description: "Security settings and monitoring",
       icon: Shield,
-      href: '/admin/security',
-      color: 'text-green-600',
+      href: "/admin/security",
+      color: "text-green-600",
     },
     {
-      title: 'Audit Logs',
-      description: 'View and export audit logs',
+      title: "Audit Logs",
+      description: "View and export audit logs",
       icon: FileText,
-      href: '/admin/audit',
-      color: 'text-purple-600',
+      href: "/admin/audit",
+      color: "text-purple-600",
     },
     {
-      title: 'Roles & Permissions',
-      description: 'Configure access control',
+      title: "Roles & Permissions",
+      description: "Configure access control",
       icon: Lock,
-      href: '/admin/roles',
-      color: 'text-orange-600',
+      href: "/admin/roles",
+      color: "text-orange-600",
     },
     {
-      title: 'Organizations',
-      description: 'Organization settings',
+      title: "Organizations",
+      description: "Organization settings",
       icon: Settings,
-      href: '/admin/organizations',
-      color: 'text-red-600',
+      href: "/admin/organizations",
+      color: "text-red-600",
     },
     {
-      title: 'Integrations',
-      description: 'Manage third-party integrations',
+      title: "Integrations",
+      description: "Manage third-party integrations",
       icon: Activity,
-      href: '/admin/integrations',
-      color: 'text-indigo-600',
+      href: "/admin/integrations",
+      color: "text-indigo-600",
     },
   ];
 
@@ -82,7 +101,9 @@ export default function AdminDashboard() {
     <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Manage your organization security and settings</p>
+        <p className="text-muted-foreground">
+          Manage your organization security and settings
+        </p>
       </div>
 
       {stats && (
@@ -93,7 +114,9 @@ export default function AdminDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.users?.total || 0}</div>
+              <div className="text-2xl font-bold">
+                {stats.users?.total || 0}
+              </div>
               <p className="text-xs text-muted-foreground">
                 {stats.users?.active || 0} active
               </p>
@@ -102,25 +125,35 @@ export default function AdminDashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Patients
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.patients?.total || 0}</div>
+              <div className="text-2xl font-bold">
+                {stats.patients?.total || 0}
+              </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Today&apos;s Appointments</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Today&apos;s Appointments
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.appointments?.today || 0}</div>
+              <div className="text-2xl font-bold">
+                {stats.appointments?.today || 0}
+              </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Month Revenue</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                This Month Revenue
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">

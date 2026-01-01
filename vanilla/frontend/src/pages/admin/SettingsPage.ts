@@ -1,6 +1,6 @@
-import { MFASetup } from '../../components/admin/MFASetup';
-import { SessionManager } from '../../components/admin/SessionManager';
-import adminService from '../../services/AdminService';
+import { MFASetup } from "../../components/admin/MFASetup";
+import { SessionManager } from "../../components/admin/SessionManager";
+import adminService from "../../services/AdminService";
 
 /**
  * SettingsPage
@@ -141,14 +141,16 @@ export class SettingsPage {
     this.attachEventListeners();
 
     // Render MFA setup
-    const mfaContainer = document.getElementById('mfa-setup-container');
+    const mfaContainer = document.getElementById("mfa-setup-container");
     if (mfaContainer) {
       this.mfaSetup = new MFASetup(mfaContainer);
       await this.mfaSetup.render();
     }
 
     // Render session manager
-    const sessionContainer = document.getElementById('session-manager-container');
+    const sessionContainer = document.getElementById(
+      "session-manager-container",
+    );
     if (sessionContainer) {
       this.sessionManager = new SessionManager(sessionContainer);
       await this.sessionManager.render();
@@ -160,7 +162,7 @@ export class SettingsPage {
       const response = await adminService.getCurrentUser();
       const user = response.user;
 
-      const profileInfo = document.getElementById('profile-info');
+      const profileInfo = document.getElementById("profile-info");
       if (profileInfo) {
         profileInfo.innerHTML = `
           <dl class="info-list">
@@ -174,15 +176,15 @@ export class SettingsPage {
             <dd>${user.organizationId}</dd>
 
             <dt>Roles</dt>
-            <dd>${user.roles?.join(', ') || 'No roles assigned'}</dd>
+            <dd>${user.roles?.join(", ") || "No roles assigned"}</dd>
 
             <dt>Last Login</dt>
-            <dd>${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never'}</dd>
+            <dd>${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : "Never"}</dd>
           </dl>
         `;
       }
     } catch (error: any) {
-      const profileInfo = document.getElementById('profile-info');
+      const profileInfo = document.getElementById("profile-info");
       if (profileInfo) {
         profileInfo.innerHTML = `<p class="error-text">Failed to load profile: ${error.message}</p>`;
       }
@@ -190,38 +192,48 @@ export class SettingsPage {
   }
 
   private attachEventListeners(): void {
-    const passwordForm = document.getElementById('change-password-form') as HTMLFormElement;
-    const preferencesForm = document.getElementById('preferences-form') as HTMLFormElement;
-    const logoutAllBtn = document.getElementById('logout-all-btn');
+    const passwordForm = document.getElementById(
+      "change-password-form",
+    ) as HTMLFormElement;
+    const preferencesForm = document.getElementById(
+      "preferences-form",
+    ) as HTMLFormElement;
+    const logoutAllBtn = document.getElementById("logout-all-btn");
 
-    passwordForm?.addEventListener('submit', async (e) => {
+    passwordForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.changePassword();
     });
 
-    preferencesForm?.addEventListener('submit', (e) => {
+    preferencesForm?.addEventListener("submit", (e) => {
       e.preventDefault();
       this.savePreferences();
     });
 
-    logoutAllBtn?.addEventListener('click', () => this.logoutAllSessions());
+    logoutAllBtn?.addEventListener("click", () => this.logoutAllSessions());
   }
 
   private async changePassword(): Promise<void> {
-    const oldPassword = (document.getElementById('old-password') as HTMLInputElement).value;
-    const newPassword = (document.getElementById('new-password') as HTMLInputElement).value;
-    const confirmPassword = (document.getElementById('confirm-password') as HTMLInputElement).value;
+    const oldPassword = (
+      document.getElementById("old-password") as HTMLInputElement
+    ).value;
+    const newPassword = (
+      document.getElementById("new-password") as HTMLInputElement
+    ).value;
+    const confirmPassword = (
+      document.getElementById("confirm-password") as HTMLInputElement
+    ).value;
 
-    const errorDiv = document.getElementById('password-error');
-    const successDiv = document.getElementById('password-success');
+    const errorDiv = document.getElementById("password-error");
+    const successDiv = document.getElementById("password-success");
 
     // Validate
     if (newPassword !== confirmPassword) {
       if (errorDiv) {
-        errorDiv.textContent = 'New passwords do not match';
-        errorDiv.style.display = 'block';
+        errorDiv.textContent = "New passwords do not match";
+        errorDiv.style.display = "block";
       }
-      if (successDiv) successDiv.style.display = 'none';
+      if (successDiv) successDiv.style.display = "none";
       return;
     }
 
@@ -229,39 +241,50 @@ export class SettingsPage {
       await adminService.changePassword(oldPassword, newPassword);
 
       if (successDiv) {
-        successDiv.textContent = 'Password changed successfully';
-        successDiv.style.display = 'block';
+        successDiv.textContent = "Password changed successfully";
+        successDiv.style.display = "block";
       }
-      if (errorDiv) errorDiv.style.display = 'none';
+      if (errorDiv) errorDiv.style.display = "none";
 
       // Clear form
-      (document.getElementById('change-password-form') as HTMLFormElement).reset();
+      (
+        document.getElementById("change-password-form") as HTMLFormElement
+      ).reset();
     } catch (error: any) {
       if (errorDiv) {
         errorDiv.textContent = error.message;
-        errorDiv.style.display = 'block';
+        errorDiv.style.display = "block";
       }
-      if (successDiv) successDiv.style.display = 'none';
+      if (successDiv) successDiv.style.display = "none";
     }
   }
 
   private savePreferences(): void {
-    const emailNotifications = (document.getElementById('email-notifications') as HTMLInputElement).checked;
-    const securityAlerts = (document.getElementById('security-alerts') as HTMLInputElement).checked;
-    const timezone = (document.getElementById('timezone') as HTMLSelectElement).value;
+    const emailNotifications = (
+      document.getElementById("email-notifications") as HTMLInputElement
+    ).checked;
+    const securityAlerts = (
+      document.getElementById("security-alerts") as HTMLInputElement
+    ).checked;
+    const timezone = (document.getElementById("timezone") as HTMLSelectElement)
+      .value;
 
     // In production, this would save to backend
-    console.log('Saving preferences:', {
+    console.log("Saving preferences:", {
       emailNotifications,
       securityAlerts,
       timezone,
     });
 
-    alert('Preferences saved successfully');
+    alert("Preferences saved successfully");
   }
 
   private async logoutAllSessions(): Promise<void> {
-    if (!confirm('Are you sure you want to logout all sessions? You will need to login again.')) {
+    if (
+      !confirm(
+        "Are you sure you want to logout all sessions? You will need to login again.",
+      )
+    ) {
       return;
     }
 
@@ -271,7 +294,7 @@ export class SettingsPage {
 
       // Redirect to login
       await adminService.logout();
-      window.location.href = '/login';
+      window.location.href = "/login";
     } catch (error: any) {
       alert(`Failed to logout all sessions: ${error.message}`);
     }
@@ -280,6 +303,6 @@ export class SettingsPage {
   destroy(): void {
     this.mfaSetup?.destroy();
     this.sessionManager?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

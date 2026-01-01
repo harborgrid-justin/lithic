@@ -80,14 +80,16 @@ export class EncounterForm {
   }
 
   private attachEventListeners(): void {
-    const form = this.container.querySelector('#encounter-form') as HTMLFormElement;
-    form?.addEventListener('submit', (e) => {
+    const form = this.container.querySelector(
+      "#encounter-form",
+    ) as HTMLFormElement;
+    form?.addEventListener("submit", (e) => {
       e.preventDefault();
       this.handleSubmit(form);
     });
 
-    const cancelBtn = this.container.querySelector('#cancel-btn');
-    cancelBtn?.addEventListener('click', () => {
+    const cancelBtn = this.container.querySelector("#cancel-btn");
+    cancelBtn?.addEventListener("click", () => {
       form?.reset();
     });
   }
@@ -111,12 +113,14 @@ export class EncounterForm {
   }
 
   reset(): void {
-    const form = this.container.querySelector('#encounter-form') as HTMLFormElement;
+    const form = this.container.querySelector(
+      "#encounter-form",
+    ) as HTMLFormElement;
     form?.reset();
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

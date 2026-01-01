@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken';
-import { Pool } from 'pg';
-import { UserService } from './UserService';
-import { SessionService } from './SessionService';
-import { MFAService } from './MFAService';
-import { AuditService, AuditAction, ResourceType } from './AuditService';
-import { RoleService } from './RoleService';
+import jwt from "jsonwebtoken";
+import { Pool } from "pg";
+import { UserService } from "./UserService";
+import { SessionService } from "./SessionService";
+import { MFAService } from "./MFAService";
+import { AuditService, AuditAction, ResourceType } from "./AuditService";
+import { RoleService } from "./RoleService";
 
 /**
  * AuthService - Authentication service with JWT, MFA, and session management
@@ -24,7 +24,7 @@ export interface TokenPayload {
   organizationId: string;
   roles: string[];
   sessionId: string;
-  type: 'access' | 'refresh' | 'mfa-temp';
+  type: "access" | "refresh" | "mfa-temp";
 }
 
 export interface LoginCredentials {
@@ -44,16 +44,16 @@ export class AuthService {
 
   private readonly accessTokenSecret: string;
   private readonly refreshTokenSecret: string;
-  private readonly accessTokenExpiry = '15m';
-  private readonly refreshTokenExpiry = '7d';
-  private readonly mfaTempTokenExpiry = '5m';
+  private readonly accessTokenExpiry = "15m";
+  private readonly refreshTokenExpiry = "7d";
+  private readonly mfaTempTokenExpiry = "5m";
 
   constructor(
     userService: UserService,
     sessionService: SessionService,
     mfaService: MFAService,
     auditService: AuditService,
-    roleService: RoleService
+    roleService: RoleService,
   ) {
     this.userService = userService;
     this.sessionService = sessionService;
@@ -61,14 +61,18 @@ export class AuthService {
     this.auditService = auditService;
     this.roleService = roleService;
 
-    this.accessTokenSecret = process.env.JWT_ACCESS_SECRET || 'access-secret-change-in-production';
-    this.refreshTokenSecret = process.env.JWT_REFRESH_SECRET || 'refresh-secret-change-in-production';
+    this.accessTokenSecret =
+      process.env.JWT_ACCESS_SECRET || "access-secret-change-in-production";
+    this.refreshTokenSecret =
+      process.env.JWT_REFRESH_SECRET || "refresh-secret-change-in-production";
 
     if (
-      this.accessTokenSecret === 'access-secret-change-in-production' ||
-      this.refreshTokenSecret === 'refresh-secret-change-in-production'
+      this.accessTokenSecret === "access-secret-change-in-production" ||
+      this.refreshTokenSecret === "refresh-secret-change-in-production"
     ) {
-      console.warn('WARNING: Using default JWT secrets. Set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET in production!');
+      console.warn(
+        "WARNING: Using default JWT secrets. Set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET in production!",
+      );
     }
   }
 
@@ -86,17 +90,17 @@ export class AuthService {
       await this.auditService.log({
         userId: email,
         userEmail: email,
-        organizationId: 'unknown',
+        organizationId: "unknown",
         action: AuditAction.LOGIN_FAILED,
         resourceType: ResourceType.USER,
-        status: 'failure',
+        status: "failure",
         ipAddress,
         userAgent,
-        details: { reason: 'Invalid credentials' },
-        severity: 'medium',
+        details: { reason: "Invalid credentials" },
+        severity: "medium",
       });
 
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
     // Check if user is active
@@ -108,14 +112,14 @@ export class AuthService {
         action: AuditAction.LOGIN_FAILED,
         resourceType: ResourceType.USER,
         resourceId: user.id,
-        status: 'failure',
+        status: "failure",
         ipAddress,
         userAgent,
-        details: { reason: 'Account deactivated' },
-        severity: 'high',
+        details: { reason: "Account deactivated" },
+        severity: "high",
       });
 
-      throw new Error('Account is deactivated');
+      throw new Error("Account is deactivated");
     }
 
     // Check MFA requirement
@@ -126,8 +130,8 @@ export class AuthService {
       const tempToken = this.generateMFATempToken(user);
 
       return {
-        accessToken: '',
-        refreshToken: '',
+        accessToken: "",
+        refreshToken: "",
         expiresIn: 0,
         requireMFA: true,
         tempToken,
@@ -146,14 +150,14 @@ export class AuthService {
           action: AuditAction.LOGIN_FAILED,
           resourceType: ResourceType.USER,
           resourceId: user.id,
-          status: 'failure',
+          status: "failure",
           ipAddress,
           userAgent,
-          details: { reason: 'Invalid MFA token' },
-          severity: 'high',
+          details: { reason: "Invalid MFA token" },
+          severity: "high",
         });
 
-        throw new Error('Invalid MFA token');
+        throw new Error("Invalid MFA token");
       }
 
       // Audit MFA verification
@@ -164,10 +168,10 @@ export class AuthService {
         action: AuditAction.MFA_VERIFIED,
         resourceType: ResourceType.USER,
         resourceId: user.id,
-        status: 'success',
+        status: "success",
         ipAddress,
         userAgent,
-        severity: 'low',
+        severity: "low",
       });
     }
 
@@ -177,7 +181,7 @@ export class AuthService {
       user.email,
       user.organizationId,
       ipAddress,
-      userAgent
+      userAgent,
     );
 
     // Update last login
@@ -194,7 +198,7 @@ export class AuthService {
       organizationId: user.organizationId,
       roles: roleNames,
       sessionId: session.id,
-      type: 'access',
+      type: "access",
     });
 
     return tokens;
@@ -204,7 +208,7 @@ export class AuthService {
    * Logout user
    */
   async logout(sessionId: string): Promise<void> {
-    await this.sessionService.invalidateSession(sessionId, 'User logout');
+    await this.sessionService.invalidateSession(sessionId, "User logout");
   }
 
   /**
@@ -215,28 +219,28 @@ export class AuthService {
       // Verify refresh token
       const payload = jwt.verify(
         refreshToken,
-        this.refreshTokenSecret
+        this.refreshTokenSecret,
       ) as TokenPayload;
 
-      if (payload.type !== 'refresh') {
-        throw new Error('Invalid token type');
+      if (payload.type !== "refresh") {
+        throw new Error("Invalid token type");
       }
 
       // Validate session
       const session = await this.sessionService.validateSession(
         payload.sessionId,
-        '' // IP validation can be added here
+        "", // IP validation can be added here
       );
 
       if (!session) {
-        throw new Error('Invalid session');
+        throw new Error("Invalid session");
       }
 
       // Get user
       const user = await this.userService.getUserById(payload.userId);
 
       if (!user || !user.isActive) {
-        throw new Error('User not found or inactive');
+        throw new Error("User not found or inactive");
       }
 
       // Get user roles
@@ -250,10 +254,10 @@ export class AuthService {
         organizationId: user.organizationId,
         roles: roleNames,
         sessionId: session.id,
-        type: 'access',
+        type: "access",
       });
     } catch (error) {
-      throw new Error('Invalid refresh token');
+      throw new Error("Invalid refresh token");
     }
   }
 
@@ -264,14 +268,14 @@ export class AuthService {
     try {
       const payload = jwt.verify(token, this.accessTokenSecret) as TokenPayload;
 
-      if (payload.type !== 'access') {
+      if (payload.type !== "access") {
         return null;
       }
 
       // Validate session
       const session = await this.sessionService.validateSession(
         payload.sessionId,
-        '' // IP can be validated here
+        "", // IP can be validated here
       );
 
       if (!session) {
@@ -289,9 +293,12 @@ export class AuthService {
    */
   verifyMFATempToken(tempToken: string): TokenPayload | null {
     try {
-      const payload = jwt.verify(tempToken, this.accessTokenSecret) as TokenPayload;
+      const payload = jwt.verify(
+        tempToken,
+        this.accessTokenSecret,
+      ) as TokenPayload;
 
-      if (payload.type !== 'mfa-temp') {
+      if (payload.type !== "mfa-temp") {
         return null;
       }
 
@@ -308,17 +315,20 @@ export class AuthService {
     tempToken: string,
     mfaToken: string,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<AuthTokens> {
     // Verify temp token
     const tempPayload = this.verifyMFATempToken(tempToken);
 
     if (!tempPayload) {
-      throw new Error('Invalid or expired temporary token');
+      throw new Error("Invalid or expired temporary token");
     }
 
     // Verify MFA
-    const mfaValid = await this.mfaService.verifyMFA(tempPayload.userId, mfaToken);
+    const mfaValid = await this.mfaService.verifyMFA(
+      tempPayload.userId,
+      mfaToken,
+    );
 
     if (!mfaValid) {
       await this.auditService.log({
@@ -328,14 +338,14 @@ export class AuthService {
         action: AuditAction.LOGIN_FAILED,
         resourceType: ResourceType.USER,
         resourceId: tempPayload.userId,
-        status: 'failure',
+        status: "failure",
         ipAddress,
         userAgent,
-        details: { reason: 'Invalid MFA token' },
-        severity: 'high',
+        details: { reason: "Invalid MFA token" },
+        severity: "high",
       });
 
-      throw new Error('Invalid MFA token');
+      throw new Error("Invalid MFA token");
     }
 
     // Create session
@@ -344,7 +354,7 @@ export class AuthService {
       tempPayload.email,
       tempPayload.organizationId,
       ipAddress,
-      userAgent
+      userAgent,
     );
 
     // Update last login
@@ -357,7 +367,7 @@ export class AuthService {
       organizationId: tempPayload.organizationId,
       roles: tempPayload.roles,
       sessionId: session.id,
-      type: 'access',
+      type: "access",
     });
   }
 
@@ -365,8 +375,8 @@ export class AuthService {
    * Generate JWT tokens
    */
   private generateTokens(payload: TokenPayload): AuthTokens {
-    const accessPayload = { ...payload, type: 'access' };
-    const refreshPayload = { ...payload, type: 'refresh' };
+    const accessPayload = { ...payload, type: "access" };
+    const refreshPayload = { ...payload, type: "refresh" };
 
     const accessToken = jwt.sign(accessPayload, this.accessTokenSecret, {
       expiresIn: this.accessTokenExpiry,
@@ -392,8 +402,8 @@ export class AuthService {
       email: user.email,
       organizationId: user.organizationId,
       roles: [],
-      sessionId: '',
-      type: 'mfa-temp',
+      sessionId: "",
+      type: "mfa-temp",
     };
 
     return jwt.sign(payload, this.accessTokenSecret, {
@@ -411,23 +421,23 @@ export class AuthService {
     const errors: string[] = [];
 
     if (password.length < 12) {
-      errors.push('Password must be at least 12 characters long');
+      errors.push("Password must be at least 12 characters long");
     }
 
     if (!/[a-z]/.test(password)) {
-      errors.push('Password must contain at least one lowercase letter');
+      errors.push("Password must contain at least one lowercase letter");
     }
 
     if (!/[A-Z]/.test(password)) {
-      errors.push('Password must contain at least one uppercase letter');
+      errors.push("Password must contain at least one uppercase letter");
     }
 
     if (!/[0-9]/.test(password)) {
-      errors.push('Password must contain at least one number');
+      errors.push("Password must contain at least one number");
     }
 
     if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-      errors.push('Password must contain at least one special character');
+      errors.push("Password must contain at least one special character");
     }
 
     return {

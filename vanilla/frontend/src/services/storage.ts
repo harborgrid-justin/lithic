@@ -13,7 +13,7 @@ interface StorageItem<T> {
 }
 
 class StorageService {
-  private prefix: string = 'lithic_';
+  private prefix: string = "lithic_";
 
   /**
    * Set item in localStorage
@@ -109,7 +109,7 @@ class StorageService {
   getLocalKeys(): string[] {
     return Object.keys(localStorage)
       .filter((key) => key.startsWith(this.prefix))
-      .map((key) => key.replace(this.prefix, ''));
+      .map((key) => key.replace(this.prefix, ""));
   }
 
   /**
@@ -118,7 +118,7 @@ class StorageService {
   getSessionKeys(): string[] {
     return Object.keys(sessionStorage)
       .filter((key) => key.startsWith(this.prefix))
-      .map((key) => key.replace(this.prefix, ''));
+      .map((key) => key.replace(this.prefix, ""));
   }
 
   /**
@@ -128,7 +128,7 @@ class StorageService {
     storage: Storage,
     key: string,
     value: T,
-    options?: StorageOptions
+    options?: StorageOptions,
   ): void {
     try {
       const item: StorageItem<T> = {
@@ -188,8 +188,8 @@ class StorageService {
    */
   isAvailable(): boolean {
     try {
-      const testKey = '__storage_test__';
-      localStorage.setItem(testKey, 'test');
+      const testKey = "__storage_test__";
+      localStorage.setItem(testKey, "test");
       localStorage.removeItem(testKey);
       return true;
     } catch {

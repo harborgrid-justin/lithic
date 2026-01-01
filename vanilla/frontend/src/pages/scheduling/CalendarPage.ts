@@ -3,14 +3,14 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
-import { DragDropCalendar } from '../../components/scheduling/DragDropCalendar';
+import { SchedulingService } from "../../services/SchedulingService";
+import { DragDropCalendar } from "../../components/scheduling/DragDropCalendar";
 
 export class CalendarPage {
   private container: HTMLElement;
   private schedulingService: SchedulingService;
   private calendar: DragDropCalendar | null = null;
-  private currentView: 'day' | 'week' | 'month' = 'week';
+  private currentView: "day" | "week" | "month" = "week";
   private currentDate: Date = new Date();
   private selectedProvider: string | null = null;
 
@@ -30,9 +30,9 @@ export class CalendarPage {
           </div>
           <div class="header-controls">
             <div class="view-selector">
-              <button class="view-btn ${this.currentView === 'day' ? 'active' : ''}" data-view="day">Day</button>
-              <button class="view-btn ${this.currentView === 'week' ? 'active' : ''}" data-view="week">Week</button>
-              <button class="view-btn ${this.currentView === 'month' ? 'active' : ''}" data-view="month">Month</button>
+              <button class="view-btn ${this.currentView === "day" ? "active" : ""}" data-view="day">Day</button>
+              <button class="view-btn ${this.currentView === "week" ? "active" : ""}" data-view="week">Week</button>
+              <button class="view-btn ${this.currentView === "month" ? "active" : ""}" data-view="month">Month</button>
             </div>
             <div class="date-navigation">
               <button class="nav-btn" id="prevBtn">‹</button>
@@ -97,13 +97,15 @@ export class CalendarPage {
   }
 
   private async initializeCalendar(): Promise<void> {
-    const container = document.getElementById('calendarContainer')!;
+    const container = document.getElementById("calendarContainer")!;
     this.calendar = new DragDropCalendar(container, {
       view: this.currentView,
       date: this.currentDate,
-      onAppointmentClick: (appointmentId) => this.handleAppointmentClick(appointmentId),
+      onAppointmentClick: (appointmentId) =>
+        this.handleAppointmentClick(appointmentId),
       onSlotClick: (startTime) => this.handleSlotClick(startTime),
-      onAppointmentDrop: (appointmentId, newStartTime) => this.handleAppointmentDrop(appointmentId, newStartTime)
+      onAppointmentDrop: (appointmentId, newStartTime) =>
+        this.handleAppointmentDrop(appointmentId, newStartTime),
     });
 
     await this.loadCalendarData();
@@ -112,32 +114,51 @@ export class CalendarPage {
 
   private attachEventListeners(): void {
     // View selection
-    document.querySelectorAll('.view-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const view = (e.target as HTMLElement).dataset.view as 'day' | 'week' | 'month';
+    document.querySelectorAll(".view-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const view = (e.target as HTMLElement).dataset.view as
+          | "day"
+          | "week"
+          | "month";
         this.changeView(view);
       });
     });
 
     // Navigation
-    document.getElementById('prevBtn')?.addEventListener('click', () => this.navigateDate(-1));
-    document.getElementById('nextBtn')?.addEventListener('click', () => this.navigateDate(1));
-    document.getElementById('todayBtn')?.addEventListener('click', () => this.goToToday());
+    document
+      .getElementById("prevBtn")
+      ?.addEventListener("click", () => this.navigateDate(-1));
+    document
+      .getElementById("nextBtn")
+      ?.addEventListener("click", () => this.navigateDate(1));
+    document
+      .getElementById("todayBtn")
+      ?.addEventListener("click", () => this.goToToday());
 
     // Filters
-    document.getElementById('providerFilter')?.addEventListener('change', (e) => {
-      this.selectedProvider = (e.target as HTMLSelectElement).value || null;
-      this.loadCalendarData();
-    });
+    document
+      .getElementById("providerFilter")
+      ?.addEventListener("change", (e) => {
+        this.selectedProvider = (e.target as HTMLSelectElement).value || null;
+        this.loadCalendarData();
+      });
 
-    document.getElementById('facilityFilter')?.addEventListener('change', () => this.loadCalendarData());
-    document.getElementById('specialtyFilter')?.addEventListener('change', () => this.loadCalendarData());
-    document.getElementById('statusFilter')?.addEventListener('change', () => this.loadCalendarData());
+    document
+      .getElementById("facilityFilter")
+      ?.addEventListener("change", () => this.loadCalendarData());
+    document
+      .getElementById("specialtyFilter")
+      ?.addEventListener("change", () => this.loadCalendarData());
+    document
+      .getElementById("statusFilter")
+      ?.addEventListener("change", () => this.loadCalendarData());
 
     // New appointment
-    document.getElementById('newAppointmentBtn')?.addEventListener('click', () => {
-      window.location.hash = '/scheduling/appointments/new';
-    });
+    document
+      .getElementById("newAppointmentBtn")
+      ?.addEventListener("click", () => {
+        window.location.hash = "/scheduling/appointments/new";
+      });
   }
 
   private async loadCalendarData(): Promise<void> {
@@ -148,30 +169,38 @@ export class CalendarPage {
       const appointments = await this.schedulingService.getAppointments({
         startDate,
         endDate,
-        ...filters
+        ...filters,
       });
 
       const availability = await this.schedulingService.getAvailability({
         startDate,
         endDate,
-        providerId: this.selectedProvider || undefined
+        providerId: this.selectedProvider || undefined,
       });
 
       this.calendar?.updateData(appointments, availability);
     } catch (error) {
-      console.error('Error loading calendar data:', error);
+      console.error("Error loading calendar data:", error);
     }
   }
 
   private async loadProviders(): Promise<void> {
     try {
       const providers = await this.schedulingService.getProviders();
-      const select = document.getElementById('providerFilter') as HTMLSelectElement;
+      const select = document.getElementById(
+        "providerFilter",
+      ) as HTMLSelectElement;
 
-      select.innerHTML = '<option value="">All Providers</option>' +
-        providers.map(p => `<option value="${p.id}">${p.fullName} - ${p.specialty}</option>`).join('');
+      select.innerHTML =
+        '<option value="">All Providers</option>' +
+        providers
+          .map(
+            (p) =>
+              `<option value="${p.id}">${p.fullName} - ${p.specialty}</option>`,
+          )
+          .join("");
     } catch (error) {
-      console.error('Error loading providers:', error);
+      console.error("Error loading providers:", error);
     }
   }
 
@@ -180,18 +209,18 @@ export class CalendarPage {
     const endDate = new Date(this.currentDate);
 
     switch (this.currentView) {
-      case 'day':
+      case "day":
         startDate.setHours(0, 0, 0, 0);
         endDate.setHours(23, 59, 59, 999);
         break;
-      case 'week':
+      case "week":
         const dayOfWeek = startDate.getDay();
         startDate.setDate(startDate.getDate() - dayOfWeek);
         startDate.setHours(0, 0, 0, 0);
         endDate.setDate(startDate.getDate() + 6);
         endDate.setHours(23, 59, 59, 999);
         break;
-      case 'month':
+      case "month":
         startDate.setDate(1);
         startDate.setHours(0, 0, 0, 0);
         endDate.setMonth(endDate.getMonth() + 1);
@@ -205,17 +234,25 @@ export class CalendarPage {
 
   private getFilters(): any {
     return {
-      providerId: (document.getElementById('providerFilter') as HTMLSelectElement).value || undefined,
-      facilityId: (document.getElementById('facilityFilter') as HTMLSelectElement).value || undefined,
-      specialty: (document.getElementById('specialtyFilter') as HTMLSelectElement).value || undefined,
-      status: (document.getElementById('statusFilter') as HTMLSelectElement).value || undefined
+      providerId:
+        (document.getElementById("providerFilter") as HTMLSelectElement)
+          .value || undefined,
+      facilityId:
+        (document.getElementById("facilityFilter") as HTMLSelectElement)
+          .value || undefined,
+      specialty:
+        (document.getElementById("specialtyFilter") as HTMLSelectElement)
+          .value || undefined,
+      status:
+        (document.getElementById("statusFilter") as HTMLSelectElement).value ||
+        undefined,
     };
   }
 
-  private changeView(view: 'day' | 'week' | 'month'): void {
+  private changeView(view: "day" | "week" | "month"): void {
     this.currentView = view;
-    document.querySelectorAll('.view-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-view') === view);
+    document.querySelectorAll(".view-btn").forEach((btn) => {
+      btn.classList.toggle("active", btn.getAttribute("data-view") === view);
     });
     this.calendar?.setView(view);
     this.updateDateDisplay();
@@ -224,13 +261,13 @@ export class CalendarPage {
 
   private navigateDate(direction: number): void {
     switch (this.currentView) {
-      case 'day':
+      case "day":
         this.currentDate.setDate(this.currentDate.getDate() + direction);
         break;
-      case 'week':
-        this.currentDate.setDate(this.currentDate.getDate() + (direction * 7));
+      case "week":
+        this.currentDate.setDate(this.currentDate.getDate() + direction * 7);
         break;
-      case 'month':
+      case "month":
         this.currentDate.setMonth(this.currentDate.getMonth() + direction);
         break;
     }
@@ -247,25 +284,25 @@ export class CalendarPage {
   }
 
   private updateDateDisplay(): void {
-    const display = document.getElementById('dateDisplay')!;
+    const display = document.getElementById("dateDisplay")!;
     const { startDate, endDate } = this.getDateRange();
 
     switch (this.currentView) {
-      case 'day':
-        display.textContent = startDate.toLocaleDateString('en-US', {
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric'
+      case "day":
+        display.textContent = startDate.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
         });
         break;
-      case 'week':
-        display.textContent = `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+      case "week":
+        display.textContent = `${startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
         break;
-      case 'month':
-        display.textContent = startDate.toLocaleDateString('en-US', {
-          month: 'long',
-          year: 'numeric'
+      case "month":
+        display.textContent = startDate.toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
         });
         break;
     }
@@ -278,18 +315,24 @@ export class CalendarPage {
   private handleSlotClick(startTime: Date): void {
     const params = new URLSearchParams({
       startTime: startTime.toISOString(),
-      providerId: this.selectedProvider || ''
+      providerId: this.selectedProvider || "",
     });
     window.location.hash = `/scheduling/appointments/new?${params.toString()}`;
   }
 
-  private async handleAppointmentDrop(appointmentId: string, newStartTime: Date): Promise<void> {
+  private async handleAppointmentDrop(
+    appointmentId: string,
+    newStartTime: Date,
+  ): Promise<void> {
     try {
-      await this.schedulingService.rescheduleAppointment(appointmentId, newStartTime);
+      await this.schedulingService.rescheduleAppointment(
+        appointmentId,
+        newStartTime,
+      );
       this.loadCalendarData();
     } catch (error) {
-      console.error('Error rescheduling appointment:', error);
-      alert('Failed to reschedule appointment. Please try again.');
+      console.error("Error rescheduling appointment:", error);
+      alert("Failed to reschedule appointment. Please try again.");
       this.loadCalendarData(); // Reload to revert changes
     }
   }

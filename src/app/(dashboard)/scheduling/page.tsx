@@ -1,14 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Plus, Calendar as CalendarIcon, Users, Clock, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import Calendar from '@/components/scheduling/Calendar';
-import { schedulingService } from '@/services/scheduling.service';
-import type { Appointment, Provider } from '@/types/scheduling';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Plus,
+  Calendar as CalendarIcon,
+  Users,
+  Clock,
+  AlertCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Calendar from "@/components/scheduling/Calendar";
+import { schedulingService } from "@/services/scheduling.service";
+import type { Appointment, Provider } from "@/types/scheduling";
+import { toast } from "sonner";
 
 export default function SchedulingPage() {
   const router = useRouter();
@@ -35,8 +41,8 @@ export default function SchedulingPage() {
 
       const [appointmentsData, providersData] = await Promise.all([
         schedulingService.getAppointments({
-          startDate: today.toISOString().split('T')[0],
-          endDate: endDate.toISOString().split('T')[0],
+          startDate: today.toISOString().split("T")[0],
+          endDate: endDate.toISOString().split("T")[0],
         }),
         schedulingService.getProviders(),
       ]);
@@ -45,12 +51,16 @@ export default function SchedulingPage() {
       setProviders(providersData);
 
       // Calculate stats
-      const todayStr = today.toISOString().split('T')[0];
+      const todayStr = today.toISOString().split("T")[0];
       const todayAppts = appointmentsData.filter(
-        (apt) => apt.startTime.split('T')[0] === todayStr
+        (apt) => apt.startTime.split("T")[0] === todayStr,
       );
-      const confirmed = appointmentsData.filter((apt) => apt.status === 'confirmed');
-      const pending = appointmentsData.filter((apt) => apt.status === 'scheduled');
+      const confirmed = appointmentsData.filter(
+        (apt) => apt.status === "confirmed",
+      );
+      const pending = appointmentsData.filter(
+        (apt) => apt.status === "scheduled",
+      );
 
       setStats({
         today: todayAppts.length,
@@ -59,7 +69,7 @@ export default function SchedulingPage() {
         pending: pending.length,
       });
     } catch (error) {
-      toast.error('Failed to load scheduling data');
+      toast.error("Failed to load scheduling data");
       console.error(error);
     } finally {
       setLoading(false);
@@ -71,7 +81,7 @@ export default function SchedulingPage() {
   };
 
   const handleTimeSlotClick = (date: Date, time: string) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toISOString().split("T")[0];
     router.push(`/scheduling/appointments/new?date=${dateStr}&time=${time}`);
   };
 
@@ -81,14 +91,19 @@ export default function SchedulingPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Scheduling</h1>
-          <p className="text-gray-600 mt-1">Manage appointments and provider schedules</p>
+          <p className="text-gray-600 mt-1">
+            Manage appointments and provider schedules
+          </p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" onClick={() => router.push('/scheduling/waitlist')}>
+          <Button
+            variant="outline"
+            onClick={() => router.push("/scheduling/waitlist")}
+          >
             <AlertCircle className="h-4 w-4 mr-2" />
             Waitlist
           </Button>
-          <Button onClick={() => router.push('/scheduling/appointments/new')}>
+          <Button onClick={() => router.push("/scheduling/appointments/new")}>
             <Plus className="h-4 w-4 mr-2" />
             New Appointment
           </Button>
@@ -101,7 +116,9 @@ export default function SchedulingPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Today&apos;s Appointments</p>
+                <p className="text-sm text-gray-600">
+                  Today&apos;s Appointments
+                </p>
                 <p className="text-3xl font-bold mt-1">{stats.today}</p>
               </div>
               <CalendarIcon className="h-8 w-8 text-primary-600" />
@@ -156,7 +173,7 @@ export default function SchedulingPage() {
             <Button
               variant="outline"
               className="h-auto py-4 flex-col"
-              onClick={() => router.push('/scheduling/calendar')}
+              onClick={() => router.push("/scheduling/calendar")}
             >
               <CalendarIcon className="h-6 w-6 mb-2" />
               Calendar View
@@ -164,7 +181,7 @@ export default function SchedulingPage() {
             <Button
               variant="outline"
               className="h-auto py-4 flex-col"
-              onClick={() => router.push('/scheduling/appointments')}
+              onClick={() => router.push("/scheduling/appointments")}
             >
               <Clock className="h-6 w-6 mb-2" />
               All Appointments
@@ -172,7 +189,7 @@ export default function SchedulingPage() {
             <Button
               variant="outline"
               className="h-auto py-4 flex-col"
-              onClick={() => router.push('/scheduling/providers')}
+              onClick={() => router.push("/scheduling/providers")}
             >
               <Users className="h-6 w-6 mb-2" />
               Provider Schedules
@@ -180,7 +197,7 @@ export default function SchedulingPage() {
             <Button
               variant="outline"
               className="h-auto py-4 flex-col"
-              onClick={() => router.push('/scheduling/resources')}
+              onClick={() => router.push("/scheduling/resources")}
             >
               <CalendarIcon className="h-6 w-6 mb-2" />
               Resources

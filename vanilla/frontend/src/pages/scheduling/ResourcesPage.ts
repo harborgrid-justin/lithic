@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
+import { SchedulingService } from "../../services/SchedulingService";
 
 export class ResourcesPage {
   private container: HTMLElement;
@@ -36,13 +36,15 @@ export class ResourcesPage {
       const resources = await this.schedulingService.getResources();
       this.renderResources(resources);
     } catch (error) {
-      console.error('Error loading resources:', error);
+      console.error("Error loading resources:", error);
     }
   }
 
   private renderResources(resources: any[]): void {
-    const list = document.getElementById('resourcesList')!;
-    list.innerHTML = resources.map(r => `
+    const list = document.getElementById("resourcesList")!;
+    list.innerHTML = resources
+      .map(
+        (r) => `
       <div class="resource-item status-${r.status}" data-id="${r.id}">
         <div class="resource-info">
           <h3>${r.name}</h3>
@@ -51,7 +53,9 @@ export class ResourcesPage {
         <div class="resource-status">${r.status}</div>
         <button class="btn btn-small">Manage</button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   destroy(): void {}

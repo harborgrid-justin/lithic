@@ -35,7 +35,7 @@ export interface CodeableConcept {
 }
 
 export interface Identifier {
-  use?: 'usual' | 'official' | 'temp' | 'secondary' | 'old';
+  use?: "usual" | "official" | "temp" | "secondary" | "old";
   type?: CodeableConcept;
   system?: string;
   value?: string;
@@ -56,7 +56,14 @@ export interface Reference {
 }
 
 export interface HumanName {
-  use?: 'usual' | 'official' | 'temp' | 'nickname' | 'anonymous' | 'old' | 'maiden';
+  use?:
+    | "usual"
+    | "official"
+    | "temp"
+    | "nickname"
+    | "anonymous"
+    | "old"
+    | "maiden";
   text?: string;
   family?: string;
   given?: string[];
@@ -66,16 +73,16 @@ export interface HumanName {
 }
 
 export interface ContactPoint {
-  system?: 'phone' | 'fax' | 'email' | 'pager' | 'url' | 'sms' | 'other';
+  system?: "phone" | "fax" | "email" | "pager" | "url" | "sms" | "other";
   value?: string;
-  use?: 'home' | 'work' | 'temp' | 'old' | 'mobile';
+  use?: "home" | "work" | "temp" | "old" | "mobile";
   rank?: number;
   period?: Period;
 }
 
 export interface Address {
-  use?: 'home' | 'work' | 'temp' | 'old' | 'billing';
-  type?: 'postal' | 'physical' | 'both';
+  use?: "home" | "work" | "temp" | "old" | "billing";
+  type?: "postal" | "physical" | "both";
   text?: string;
   line?: string[];
   city?: string;
@@ -88,7 +95,7 @@ export interface Address {
 
 export interface Quantity {
   value?: number;
-  comparator?: '<' | '<=' | '>=' | '>';
+  comparator?: "<" | "<=" | ">=" | ">";
   unit?: string;
   system?: string;
   code?: string;
@@ -108,12 +115,12 @@ export interface Annotation {
 
 // Patient Resource
 export interface Patient extends FHIRResource {
-  resourceType: 'Patient';
+  resourceType: "Patient";
   identifier?: Identifier[];
   active?: boolean;
   name?: HumanName[];
   telecom?: ContactPoint[];
-  gender?: 'male' | 'female' | 'other' | 'unknown';
+  gender?: "male" | "female" | "other" | "unknown";
   birthDate?: string;
   deceasedBoolean?: boolean;
   deceasedDateTime?: string;
@@ -134,7 +141,7 @@ export interface PatientContact {
   name?: HumanName;
   telecom?: ContactPoint[];
   address?: Address;
-  gender?: 'male' | 'female' | 'other' | 'unknown';
+  gender?: "male" | "female" | "other" | "unknown";
   organization?: Reference;
   period?: Period;
 }
@@ -146,7 +153,7 @@ export interface PatientCommunication {
 
 export interface PatientLink {
   other: Reference;
-  type: 'replaced-by' | 'replaces' | 'refer' | 'seealso';
+  type: "replaced-by" | "replaces" | "refer" | "seealso";
 }
 
 export interface Attachment {
@@ -162,13 +169,13 @@ export interface Attachment {
 
 // Practitioner Resource
 export interface Practitioner extends FHIRResource {
-  resourceType: 'Practitioner';
+  resourceType: "Practitioner";
   identifier?: Identifier[];
   active?: boolean;
   name?: HumanName[];
   telecom?: ContactPoint[];
   address?: Address[];
-  gender?: 'male' | 'female' | 'other' | 'unknown';
+  gender?: "male" | "female" | "other" | "unknown";
   birthDate?: string;
   photo?: Attachment[];
   qualification?: PractitionerQualification[];
@@ -184,11 +191,19 @@ export interface PractitionerQualification {
 
 // Observation Resource
 export interface Observation extends FHIRResource {
-  resourceType: 'Observation';
+  resourceType: "Observation";
   identifier?: Identifier[];
   basedOn?: Reference[];
   partOf?: Reference[];
-  status: 'registered' | 'preliminary' | 'final' | 'amended' | 'corrected' | 'cancelled' | 'entered-in-error' | 'unknown';
+  status:
+    | "registered"
+    | "preliminary"
+    | "final"
+    | "amended"
+    | "corrected"
+    | "cancelled"
+    | "entered-in-error"
+    | "unknown";
   category?: CodeableConcept[];
   code: CodeableConcept;
   subject?: Reference;
@@ -238,7 +253,7 @@ export interface ObservationComponent {
 
 // Condition Resource
 export interface Condition extends FHIRResource {
-  resourceType: 'Condition';
+  resourceType: "Condition";
   identifier?: Identifier[];
   clinicalStatus?: CodeableConcept;
   verificationStatus?: CodeableConcept;
@@ -279,13 +294,29 @@ export interface ConditionEvidence {
 
 // MedicationRequest Resource
 export interface MedicationRequest extends FHIRResource {
-  resourceType: 'MedicationRequest';
+  resourceType: "MedicationRequest";
   identifier?: Identifier[];
-  status: 'active' | 'on-hold' | 'cancelled' | 'completed' | 'entered-in-error' | 'stopped' | 'draft' | 'unknown';
+  status:
+    | "active"
+    | "on-hold"
+    | "cancelled"
+    | "completed"
+    | "entered-in-error"
+    | "stopped"
+    | "draft"
+    | "unknown";
   statusReason?: CodeableConcept;
-  intent: 'proposal' | 'plan' | 'order' | 'original-order' | 'reflex-order' | 'filler-order' | 'instance-order' | 'option';
+  intent:
+    | "proposal"
+    | "plan"
+    | "order"
+    | "original-order"
+    | "reflex-order"
+    | "filler-order"
+    | "instance-order"
+    | "option";
   category?: CodeableConcept[];
-  priority?: 'routine' | 'urgent' | 'asap' | 'stat';
+  priority?: "routine" | "urgent" | "asap" | "stat";
   doNotPerform?: boolean;
   reportedBoolean?: boolean;
   reportedReference?: Reference;
@@ -347,13 +378,13 @@ export interface TimingRepeat {
   countMax?: number;
   duration?: number;
   durationMax?: number;
-  durationUnit?: 's' | 'min' | 'h' | 'd' | 'wk' | 'mo' | 'a';
+  durationUnit?: "s" | "min" | "h" | "d" | "wk" | "mo" | "a";
   frequency?: number;
   frequencyMax?: number;
   period?: number;
   periodMax?: number;
-  periodUnit?: 's' | 'min' | 'h' | 'd' | 'wk' | 'mo' | 'a';
-  dayOfWeek?: ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun')[];
+  periodUnit?: "s" | "min" | "h" | "d" | "wk" | "mo" | "a";
+  dayOfWeek?: ("mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun")[];
   timeOfDay?: string[];
   when?: string[];
   offset?: number;
@@ -361,7 +392,7 @@ export interface TimingRepeat {
 
 export interface Duration {
   value?: number;
-  comparator?: '<' | '<=' | '>=' | '>';
+  comparator?: "<" | "<=" | ">=" | ">";
   unit?: string;
   system?: string;
   code?: string;
@@ -402,13 +433,13 @@ export interface MedicationRequestSubstitution {
 
 // AllergyIntolerance Resource
 export interface AllergyIntolerance extends FHIRResource {
-  resourceType: 'AllergyIntolerance';
+  resourceType: "AllergyIntolerance";
   identifier?: Identifier[];
   clinicalStatus?: CodeableConcept;
   verificationStatus?: CodeableConcept;
-  type?: 'allergy' | 'intolerance';
-  category?: ('food' | 'medication' | 'environment' | 'biologic')[];
-  criticality?: 'low' | 'high' | 'unable-to-assess';
+  type?: "allergy" | "intolerance";
+  category?: ("food" | "medication" | "environment" | "biologic")[];
+  criticality?: "low" | "high" | "unable-to-assess";
   code?: CodeableConcept;
   patient: Reference;
   encounter?: Reference;
@@ -430,16 +461,25 @@ export interface AllergyIntoleranceReaction {
   manifestation: CodeableConcept[];
   description?: string;
   onset?: string;
-  severity?: 'mild' | 'moderate' | 'severe';
+  severity?: "mild" | "moderate" | "severe";
   exposureRoute?: CodeableConcept;
   note?: Annotation[];
 }
 
 // Encounter Resource
 export interface Encounter extends FHIRResource {
-  resourceType: 'Encounter';
+  resourceType: "Encounter";
   identifier?: Identifier[];
-  status: 'planned' | 'arrived' | 'triaged' | 'in-progress' | 'onleave' | 'finished' | 'cancelled' | 'entered-in-error' | 'unknown';
+  status:
+    | "planned"
+    | "arrived"
+    | "triaged"
+    | "in-progress"
+    | "onleave"
+    | "finished"
+    | "cancelled"
+    | "entered-in-error"
+    | "unknown";
   statusHistory?: EncounterStatusHistory[];
   class: Coding;
   classHistory?: EncounterClassHistory[];
@@ -499,17 +539,27 @@ export interface EncounterHospitalization {
 
 export interface EncounterLocation {
   location: Reference;
-  status?: 'planned' | 'active' | 'reserved' | 'completed';
+  status?: "planned" | "active" | "reserved" | "completed";
   physicalType?: CodeableConcept;
   period?: Period;
 }
 
 // DiagnosticReport Resource
 export interface DiagnosticReport extends FHIRResource {
-  resourceType: 'DiagnosticReport';
+  resourceType: "DiagnosticReport";
   identifier?: Identifier[];
   basedOn?: Reference[];
-  status: 'registered' | 'partial' | 'preliminary' | 'final' | 'amended' | 'corrected' | 'appended' | 'cancelled' | 'entered-in-error' | 'unknown';
+  status:
+    | "registered"
+    | "partial"
+    | "preliminary"
+    | "final"
+    | "amended"
+    | "corrected"
+    | "appended"
+    | "cancelled"
+    | "entered-in-error"
+    | "unknown";
   category?: CodeableConcept[];
   code: CodeableConcept;
   subject?: Reference;
@@ -535,9 +585,9 @@ export interface DiagnosticReportMedia {
 
 // Immunization Resource
 export interface Immunization extends FHIRResource {
-  resourceType: 'Immunization';
+  resourceType: "Immunization";
   identifier?: Identifier[];
-  status: 'completed' | 'entered-in-error' | 'not-done';
+  status: "completed" | "entered-in-error" | "not-done";
   statusReason?: CodeableConcept;
   vaccineCode: CodeableConcept;
   patient: Reference;

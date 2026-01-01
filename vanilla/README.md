@@ -5,6 +5,7 @@ Enterprise-grade Clinical Documentation and Electronic Health Record (EHR) syste
 ## Features
 
 ### Clinical Documentation
+
 - **Encounter Management**: Track patient encounters from scheduling to completion
 - **Clinical Notes**: SOAP notes, progress notes, admission/discharge summaries
 - **Rich Text Editor**: Full-featured note editor with formatting capabilities
@@ -12,6 +13,7 @@ Enterprise-grade Clinical Documentation and Electronic Health Record (EHR) syste
 - **Templates**: Pre-built clinical note templates for efficiency
 
 ### EHR Capabilities
+
 - **Vital Signs**: Record and trend vital signs over time
 - **Problem List**: ICD-10 coded problem list with status tracking
 - **Allergies**: Comprehensive allergy tracking with severity levels
@@ -20,6 +22,7 @@ Enterprise-grade Clinical Documentation and Electronic Health Record (EHR) syste
 - **Clinical Coding**: ICD-10 and CPT code lookup and integration
 
 ### Enterprise Features
+
 - **No Framework Dependencies**: Pure Vanilla TypeScript for maximum flexibility
 - **Type Safety**: Full TypeScript implementation
 - **RESTful API**: Clean, documented REST API
@@ -29,6 +32,7 @@ Enterprise-grade Clinical Documentation and Electronic Health Record (EHR) syste
 ## Architecture
 
 ### Backend (Express + TypeScript)
+
 ```
 /home/user/lithic/vanilla/backend/
 ├── src/
@@ -40,6 +44,7 @@ Enterprise-grade Clinical Documentation and Electronic Health Record (EHR) syste
 ```
 
 ### Frontend (Vanilla TypeScript)
+
 ```
 /home/user/lithic/vanilla/frontend/
 ├── src/
@@ -53,6 +58,7 @@ Enterprise-grade Clinical Documentation and Electronic Health Record (EHR) syste
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - TypeScript 5+
 
@@ -96,6 +102,7 @@ The frontend dev server will start on http://localhost:8080
 ## API Endpoints
 
 ### Encounters
+
 - `POST /api/clinical/encounters` - Create encounter
 - `GET /api/clinical/encounters/:id` - Get encounter
 - `PUT /api/clinical/encounters/:id` - Update encounter
@@ -104,6 +111,7 @@ The frontend dev server will start on http://localhost:8080
 - `POST /api/clinical/encounters/:id/sign` - Sign encounter
 
 ### Clinical Notes
+
 - `POST /api/clinical/notes` - Create note
 - `GET /api/clinical/notes/:id` - Get note
 - `PUT /api/clinical/notes/:id` - Update note
@@ -111,27 +119,32 @@ The frontend dev server will start on http://localhost:8080
 - `POST /api/clinical/notes/:id/addendum` - Add addendum
 
 ### Vitals
+
 - `POST /api/clinical/vitals` - Record vitals
 - `GET /api/clinical/vitals/patient/:id` - Get patient vitals
 - `GET /api/clinical/vitals/encounter/:id` - Get encounter vitals
 
 ### Problems
+
 - `POST /api/clinical/problems` - Add problem
 - `GET /api/clinical/problems/patient/:id` - Get patient problems
 - `PUT /api/clinical/problems/:id` - Update problem
 - `GET /api/clinical/problems/icd10/search` - Search ICD-10 codes
 
 ### Allergies
+
 - `POST /api/clinical/allergies` - Add allergy
 - `GET /api/clinical/allergies/patient/:id` - Get patient allergies
 - `PUT /api/clinical/allergies/:id` - Update allergy
 
 ### Medications
+
 - `POST /api/clinical/medications` - Prescribe medication
 - `GET /api/clinical/medications/patient/:id` - Get patient medications
 - `PUT /api/clinical/medications/:id` - Update medication
 
 ### Orders
+
 - `POST /api/clinical/orders` - Create order
 - `GET /api/clinical/orders/encounter/:id` - Get encounter orders
 - `POST /api/clinical/orders/:id/sign` - Sign order
@@ -140,6 +153,7 @@ The frontend dev server will start on http://localhost:8080
 ## Components
 
 ### Frontend Components
+
 - **EncounterList**: Display list of encounters
 - **EncounterForm**: Create/edit encounters
 - **SOAPNote**: SOAP note editor
@@ -152,6 +166,7 @@ The frontend dev server will start on http://localhost:8080
 - **OrdersPanel**: Clinical orders display
 
 ### Frontend Pages
+
 - **ClinicalDashboardPage**: Provider dashboard
 - **EncounterListPage**: Patient encounter history
 - **EncounterDetailPage**: Detailed encounter view
@@ -165,21 +180,27 @@ The frontend dev server will start on http://localhost:8080
 ## Clinical Features
 
 ### ICD-10 Coding
+
 The system includes built-in ICD-10 code lookup with common diagnoses:
+
 - I10 - Essential (primary) hypertension
 - E11.9 - Type 2 diabetes mellitus without complications
 - J44.9 - Chronic obstructive pulmonary disease, unspecified
 - And more...
 
 ### CPT Coding
+
 Built-in CPT code reference for procedures and services:
+
 - 99213-99215 - Office visits (established patient)
 - 99203-99204 - Office visits (new patient)
 - 80053 - Comprehensive metabolic panel
 - And more...
 
 ### E-Signature Workflow
+
 Secure electronic signature with:
+
 - Password/PIN verification
 - IP address tracking
 - Timestamp recording

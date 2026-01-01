@@ -5,29 +5,34 @@
  * retry logic, rate limiting, and comprehensive error handling
  */
 
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
-import { logger } from '../../utils/logger';
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
+import { logger } from "../../utils/logger";
 
 // FHIR Resource Types
 export type FHIRResourceType =
-  | 'Patient'
-  | 'Practitioner'
-  | 'Observation'
-  | 'Condition'
-  | 'MedicationRequest'
-  | 'MedicationStatement'
-  | 'AllergyIntolerance'
-  | 'Immunization'
-  | 'DiagnosticReport'
-  | 'Procedure'
-  | 'Encounter'
-  | 'CarePlan'
-  | 'DocumentReference'
-  | 'Organization'
-  | 'Location';
+  | "Patient"
+  | "Practitioner"
+  | "Observation"
+  | "Condition"
+  | "MedicationRequest"
+  | "MedicationStatement"
+  | "AllergyIntolerance"
+  | "Immunization"
+  | "DiagnosticReport"
+  | "Procedure"
+  | "Encounter"
+  | "CarePlan"
+  | "DocumentReference"
+  | "Organization"
+  | "Location";
 
 // FHIR Bundle Types
-export type BundleType = 'searchset' | 'transaction' | 'batch' | 'collection' | 'document';
+export type BundleType =
+  | "searchset"
+  | "transaction"
+  | "batch"
+  | "collection"
+  | "document";
 
 // FHIR Search Parameters
 export interface FHIRSearchParams {
@@ -36,9 +41,9 @@ export interface FHIRSearchParams {
 
 // FHIR Operation Outcome
 export interface OperationOutcome {
-  resourceType: 'OperationOutcome';
+  resourceType: "OperationOutcome";
   issue: Array<{
-    severity: 'fatal' | 'error' | 'warning' | 'information';
+    severity: "fatal" | "error" | "warning" | "information";
     code: string;
     diagnostics?: string;
     details?: {
@@ -49,7 +54,7 @@ export interface OperationOutcome {
 
 // FHIR Bundle
 export interface Bundle<T = any> {
-  resourceType: 'Bundle';
+  resourceType: "Bundle";
   type: BundleType;
   total?: number;
   link?: Array<{
@@ -60,11 +65,11 @@ export interface Bundle<T = any> {
     fullUrl?: string;
     resource?: T;
     search?: {
-      mode: 'match' | 'include';
+      mode: "match" | "include";
       score?: number;
     };
     request?: {
-      method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+      method: "GET" | "POST" | "PUT" | "DELETE";
       url: string;
     };
     response?: {
@@ -116,8 +121,8 @@ export class FHIRClient {
       baseURL: config.baseUrl,
       timeout: config.timeout || 30000,
       headers: {
-        'Content-Type': 'application/fhir+json',
-        Accept: 'application/fhir+json',
+        "Content-Type": "application/fhir+json",
+        Accept: "application/fhir+json",
         ...config.headers,
       },
     });
@@ -140,7 +145,7 @@ export class FHIRClient {
         // Rate limiting check
         await this.checkRateLimit();
 
-        logger.debug('FHIR Request', {
+        logger.debug("FHIR Request", {
           method: config.method?.toUpperCase(),
           url: config.url,
           params: config.params,
@@ -148,7 +153,7 @@ export class FHIRClient {
 
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     // Response interceptor
@@ -157,7 +162,7 @@ export class FHIRClient {
         // Update rate limit info
         this.updateRateLimit(response.headers);
 
-        logger.debug('FHIR Response', {
+        logger.debug("FHIR Response", {
           status: response.status,
           resourceType: response.data?.resourceType,
         });
@@ -166,7 +171,7 @@ export class FHIRClient {
       },
       async (error: AxiosError) => {
         return this.handleError(error);
-      }
+      },
     );
   }
 
@@ -185,23 +190,26 @@ export class FHIRClient {
    * Update rate limit from response headers
    */
   private updateRateLimit(headers: any): void {
-    if (headers['x-ratelimit-remaining']) {
-      this.rateLimitRemaining = parseInt(headers['x-ratelimit-remaining'], 10);
+    if (headers["x-ratelimit-remaining"]) {
+      this.rateLimitRemaining = parseInt(headers["x-ratelimit-remaining"], 10);
     }
-    if (headers['x-ratelimit-reset']) {
-      this.rateLimitReset = parseInt(headers['x-ratelimit-reset'], 10) * 1000;
+    if (headers["x-ratelimit-reset"]) {
+      this.rateLimitReset = parseInt(headers["x-ratelimit-reset"], 10) * 1000;
     }
   }
 
   /**
    * Handle errors with retry logic
    */
-  private async handleError(error: AxiosError, retryCount: number = 0): Promise<any> {
+  private async handleError(
+    error: AxiosError,
+    retryCount: number = 0,
+  ): Promise<any> {
     const status = error.response?.status;
     const data = error.response?.data as OperationOutcome | undefined;
 
     // Log error
-    logger.error('FHIR Error', {
+    logger.error("FHIR Error", {
       status,
       message: error.message,
       operationOutcome: data,
@@ -215,7 +223,9 @@ export class FHIRClient {
       retryCount < this.retryConfig.maxRetries
     ) {
       const delay = this.retryConfig.retryDelay * Math.pow(2, retryCount);
-      logger.info(`Retrying FHIR request in ${delay}ms (attempt ${retryCount + 1})`);
+      logger.info(
+        `Retrying FHIR request in ${delay}ms (attempt ${retryCount + 1})`,
+      );
 
       await this.sleep(delay);
 
@@ -249,7 +259,7 @@ export class FHIRClient {
    */
   async search<T = any>(
     resourceType: FHIRResourceType,
-    params?: FHIRSearchParams
+    params?: FHIRSearchParams,
   ): Promise<Bundle<T>> {
     const response = await this.client.get(`/${resourceType}`, { params });
     return response.data;
@@ -258,7 +268,10 @@ export class FHIRClient {
   /**
    * Create a resource
    */
-  async create<T = any>(resourceType: FHIRResourceType, resource: T): Promise<T> {
+  async create<T = any>(
+    resourceType: FHIRResourceType,
+    resource: T,
+  ): Promise<T> {
     const response = await this.client.post(`/${resourceType}`, resource);
     return response.data;
   }
@@ -266,7 +279,11 @@ export class FHIRClient {
   /**
    * Update a resource
    */
-  async update<T = any>(resourceType: FHIRResourceType, id: string, resource: T): Promise<T> {
+  async update<T = any>(
+    resourceType: FHIRResourceType,
+    id: string,
+    resource: T,
+  ): Promise<T> {
     const response = await this.client.put(`/${resourceType}/${id}`, resource);
     return response.data;
   }
@@ -277,10 +294,10 @@ export class FHIRClient {
   async patch<T = any>(
     resourceType: FHIRResourceType,
     id: string,
-    patch: any
+    patch: any,
   ): Promise<T> {
     const response = await this.client.patch(`/${resourceType}/${id}`, patch, {
-      headers: { 'Content-Type': 'application/json-patch+json' },
+      headers: { "Content-Type": "application/json-patch+json" },
     });
     return response.data;
   }
@@ -296,7 +313,7 @@ export class FHIRClient {
    * Execute a transaction or batch bundle
    */
   async transaction<T = any>(bundle: Bundle<T>): Promise<Bundle<T>> {
-    const response = await this.client.post('/', bundle);
+    const response = await this.client.post("/", bundle);
     return response.data;
   }
 
@@ -305,9 +322,11 @@ export class FHIRClient {
    */
   async history<T = any>(
     resourceType: FHIRResourceType,
-    id?: string
+    id?: string,
   ): Promise<Bundle<T>> {
-    const url = id ? `/${resourceType}/${id}/_history` : `/${resourceType}/_history`;
+    const url = id
+      ? `/${resourceType}/${id}/_history`
+      : `/${resourceType}/_history`;
     const response = await this.client.get(url);
     return response.data;
   }
@@ -319,9 +338,9 @@ export class FHIRClient {
     operation: string,
     resourceType?: FHIRResourceType,
     id?: string,
-    parameters?: any
+    parameters?: any,
   ): Promise<T> {
-    let url = '';
+    let url = "";
     if (resourceType && id) {
       url = `/${resourceType}/${id}/$${operation}`;
     } else if (resourceType) {
@@ -338,7 +357,7 @@ export class FHIRClient {
    * Get capability statement
    */
   async capabilities(): Promise<any> {
-    const response = await this.client.get('/metadata');
+    const response = await this.client.get("/metadata");
     return response.data;
   }
 
@@ -348,13 +367,13 @@ export class FHIRClient {
   async validate<T = any>(
     resourceType: FHIRResourceType,
     resource: T,
-    profile?: string
+    profile?: string,
   ): Promise<OperationOutcome> {
     const params = profile ? { profile } : undefined;
     const response = await this.client.post(
       `/${resourceType}/$validate`,
       resource,
-      { params }
+      { params },
     );
     return response.data;
   }
@@ -363,7 +382,7 @@ export class FHIRClient {
    * Execute GraphQL query
    */
   async graphql<T = any>(query: string, variables?: any): Promise<T> {
-    const response = await this.client.post('/$graphql', {
+    const response = await this.client.post("/$graphql", {
       query,
       variables,
     });
@@ -395,10 +414,10 @@ export class FHIRError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public operationOutcome?: OperationOutcome
+    public operationOutcome?: OperationOutcome,
   ) {
     super(message);
-    this.name = 'FHIRError';
+    this.name = "FHIRError";
   }
 }
 
@@ -413,13 +432,13 @@ export function createFHIRClient(config: FHIRClientConfig): FHIRClient {
  * Default FHIR client from environment
  */
 export const defaultFHIRClient = createFHIRClient({
-  baseUrl: process.env.FHIR_BASE_URL || 'http://localhost:8080/fhir',
+  baseUrl: process.env.FHIR_BASE_URL || "http://localhost:8080/fhir",
   credentials: {
     clientId: process.env.FHIR_CLIENT_ID,
     clientSecret: process.env.FHIR_CLIENT_SECRET,
     accessToken: process.env.FHIR_ACCESS_TOKEN,
   },
-  timeout: parseInt(process.env.FHIR_TIMEOUT || '30000', 10),
-  retryAttempts: parseInt(process.env.FHIR_RETRY_ATTEMPTS || '3', 10),
-  retryDelay: parseInt(process.env.FHIR_RETRY_DELAY || '1000', 10),
+  timeout: parseInt(process.env.FHIR_TIMEOUT || "30000", 10),
+  retryAttempts: parseInt(process.env.FHIR_RETRY_ATTEMPTS || "3", 10),
+  retryDelay: parseInt(process.env.FHIR_RETRY_DELAY || "1000", 10),
 });

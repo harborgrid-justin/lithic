@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { AuthController } from '../../controllers/AuthController';
+import { Router } from "express";
+import { AuthController } from "../../controllers/AuthController";
 
 /**
  * Token refresh route
@@ -11,7 +11,7 @@ export function createRefreshRoute(authController: AuthController): Router {
    * POST /auth/refresh
    * Refresh access token using refresh token
    */
-  router.post('/', authController.refreshToken);
+  router.post("/", authController.refreshToken);
 
   return router;
 }

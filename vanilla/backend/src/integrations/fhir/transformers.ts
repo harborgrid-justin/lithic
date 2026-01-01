@@ -21,7 +21,7 @@ import {
   CodeableConcept,
   Reference,
   Quantity,
-} from './resources';
+} from "./resources";
 
 // Internal Patient Model (simplified)
 export interface InternalPatient {
@@ -31,7 +31,7 @@ export interface InternalPatient {
   middleName?: string;
   lastName: string;
   dateOfBirth: string;
-  gender: 'male' | 'female' | 'other' | 'unknown';
+  gender: "male" | "female" | "other" | "unknown";
   ssn?: string;
   email?: string;
   phone?: string;
@@ -113,7 +113,7 @@ export class PatientTransformer {
   static toFHIR(patient: InternalPatient): FHIRPatient {
     const name: HumanName[] = [
       {
-        use: 'official',
+        use: "official",
         family: patient.lastName,
         given: patient.middleName
           ? [patient.firstName, patient.middleName]
@@ -124,68 +124,68 @@ export class PatientTransformer {
     const telecom: ContactPoint[] = [];
     if (patient.email) {
       telecom.push({
-        system: 'email',
+        system: "email",
         value: patient.email,
-        use: 'home',
+        use: "home",
       });
     }
     if (patient.phone) {
       telecom.push({
-        system: 'phone',
+        system: "phone",
         value: patient.phone,
-        use: 'home',
+        use: "home",
       });
     }
 
     const address: Address[] = patient.address
       ? [
           {
-            use: 'home',
+            use: "home",
             line: [patient.address.street],
             city: patient.address.city,
             state: patient.address.state,
             postalCode: patient.address.zipCode,
-            country: patient.address.country || 'US',
+            country: patient.address.country || "US",
           },
         ]
       : [];
 
     const identifier: Identifier[] = [
       {
-        use: 'usual',
+        use: "usual",
         type: {
           coding: [
             {
-              system: 'http://terminology.hl7.org/CodeSystem/v2-0203',
-              code: 'MR',
-              display: 'Medical Record Number',
+              system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+              code: "MR",
+              display: "Medical Record Number",
             },
           ],
         },
-        system: 'urn:oid:2.16.840.1.113883.4.1',
+        system: "urn:oid:2.16.840.1.113883.4.1",
         value: patient.mrn,
       },
     ];
 
     if (patient.ssn) {
       identifier.push({
-        use: 'official',
+        use: "official",
         type: {
           coding: [
             {
-              system: 'http://terminology.hl7.org/CodeSystem/v2-0203',
-              code: 'SS',
-              display: 'Social Security Number',
+              system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+              code: "SS",
+              display: "Social Security Number",
             },
           ],
         },
-        system: 'http://hl7.org/fhir/sid/us-ssn',
+        system: "http://hl7.org/fhir/sid/us-ssn",
         value: patient.ssn,
       });
     }
 
     const fhirPatient: FHIRPatient = {
-      resourceType: 'Patient',
+      resourceType: "Patient",
       id: patient.id,
       identifier,
       active: patient.active !== false,
@@ -204,9 +204,9 @@ export class PatientTransformer {
             {
               coding: [
                 {
-                  system: 'http://terminology.hl7.org/CodeSystem/v2-0131',
-                  code: 'C',
-                  display: 'Emergency Contact',
+                  system: "http://terminology.hl7.org/CodeSystem/v2-0131",
+                  code: "C",
+                  display: "Emergency Contact",
                 },
               ],
               text: patient.emergencyContact.relationship,
@@ -217,7 +217,7 @@ export class PatientTransformer {
           },
           telecom: [
             {
-              system: 'phone',
+              system: "phone",
               value: patient.emergencyContact.phone,
             },
           ],
@@ -234,46 +234,45 @@ export class PatientTransformer {
   static fromFHIR(fhirPatient: FHIRPatient): InternalPatient {
     const mrIdentifier = fhirPatient.identifier?.find(
       (id) =>
-        id.type?.coding?.some((c) => c.code === 'MR') ||
-        id.use === 'usual'
+        id.type?.coding?.some((c) => c.code === "MR") || id.use === "usual",
     );
 
-    const ssn = fhirPatient.identifier?.find(
-      (id) => id.type?.coding?.some((c) => c.code === 'SS')
+    const ssn = fhirPatient.identifier?.find((id) =>
+      id.type?.coding?.some((c) => c.code === "SS"),
     )?.value;
 
     const primaryName = fhirPatient.name?.[0];
-    const email = fhirPatient.telecom?.find((t) => t.system === 'email')?.value;
-    const phone = fhirPatient.telecom?.find((t) => t.system === 'phone')?.value;
+    const email = fhirPatient.telecom?.find((t) => t.system === "email")?.value;
+    const phone = fhirPatient.telecom?.find((t) => t.system === "phone")?.value;
     const primaryAddress = fhirPatient.address?.[0];
 
     const emergencyContact = fhirPatient.contact?.[0];
 
     return {
       id: fhirPatient.id,
-      mrn: mrIdentifier?.value || '',
-      firstName: primaryName?.given?.[0] || '',
+      mrn: mrIdentifier?.value || "",
+      firstName: primaryName?.given?.[0] || "",
       middleName: primaryName?.given?.[1],
-      lastName: primaryName?.family || '',
-      dateOfBirth: fhirPatient.birthDate || '',
-      gender: fhirPatient.gender || 'unknown',
+      lastName: primaryName?.family || "",
+      dateOfBirth: fhirPatient.birthDate || "",
+      gender: fhirPatient.gender || "unknown",
       ssn,
       email,
       phone,
       address: primaryAddress
         ? {
-            street: primaryAddress.line?.[0] || '',
-            city: primaryAddress.city || '',
-            state: primaryAddress.state || '',
-            zipCode: primaryAddress.postalCode || '',
+            street: primaryAddress.line?.[0] || "",
+            city: primaryAddress.city || "",
+            state: primaryAddress.state || "",
+            zipCode: primaryAddress.postalCode || "",
             country: primaryAddress.country,
           }
         : undefined,
       emergencyContact: emergencyContact
         ? {
-            name: emergencyContact.name?.text || '',
-            relationship: emergencyContact.relationship?.[0]?.text || '',
-            phone: emergencyContact.telecom?.[0]?.value || '',
+            name: emergencyContact.name?.text || "",
+            relationship: emergencyContact.relationship?.[0]?.text || "",
+            phone: emergencyContact.telecom?.[0]?.value || "",
           }
         : undefined,
       active: fhirPatient.active,
@@ -301,7 +300,7 @@ export class ObservationTransformer {
     };
 
     const fhirObs: FHIRObservation = {
-      resourceType: 'Observation',
+      resourceType: "Observation",
       id: obs.id,
       status: obs.status as any,
       code,
@@ -312,11 +311,11 @@ export class ObservationTransformer {
     };
 
     // Add value based on type
-    if (typeof obs.value === 'number') {
+    if (typeof obs.value === "number") {
       fhirObs.valueQuantity = {
         value: obs.value,
         unit: obs.unit,
-        system: 'http://unitsofmeasure.org',
+        system: "http://unitsofmeasure.org",
         code: obs.unit,
       };
     } else {
@@ -329,7 +328,8 @@ export class ObservationTransformer {
         {
           coding: [
             {
-              system: 'http://terminology.hl7.org/CodeSystem/observation-category',
+              system:
+                "http://terminology.hl7.org/CodeSystem/observation-category",
               code: obs.category,
             },
           ],
@@ -343,7 +343,8 @@ export class ObservationTransformer {
         {
           coding: [
             {
-              system: 'http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation',
+              system:
+                "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
               code: obs.interpretation,
             },
           ],
@@ -378,9 +379,9 @@ export class ObservationTransformer {
    */
   static fromFHIR(fhirObs: FHIRObservation): InternalObservation {
     const coding = fhirObs.code.coding?.[0];
-    const patientRef = fhirObs.subject?.reference?.split('/')[1] || '';
+    const patientRef = fhirObs.subject?.reference?.split("/")[1] || "";
 
-    let value: number | string = '';
+    let value: number | string = "";
     let unit: string | undefined;
 
     if (fhirObs.valueQuantity) {
@@ -389,19 +390,22 @@ export class ObservationTransformer {
     } else if (fhirObs.valueString) {
       value = fhirObs.valueString;
     } else if (fhirObs.valueCodeableConcept) {
-      value = fhirObs.valueCodeableConcept.text || fhirObs.valueCodeableConcept.coding?.[0]?.display || '';
+      value =
+        fhirObs.valueCodeableConcept.text ||
+        fhirObs.valueCodeableConcept.coding?.[0]?.display ||
+        "";
     }
 
     return {
       id: fhirObs.id,
       patientId: patientRef,
-      code: coding?.code || '',
-      codeSystem: coding?.system || '',
-      display: coding?.display || fhirObs.code.text || '',
+      code: coding?.code || "",
+      codeSystem: coding?.system || "",
+      display: coding?.display || fhirObs.code.text || "",
       value,
       unit,
       status: fhirObs.status,
-      effectiveDate: fhirObs.effectiveDateTime || '',
+      effectiveDate: fhirObs.effectiveDateTime || "",
       category: fhirObs.category?.[0]?.coding?.[0]?.code,
       interpretation: fhirObs.interpretation?.[0]?.coding?.[0]?.code,
       referenceRange: fhirObs.referenceRange?.[0]
@@ -424,12 +428,12 @@ export class ConditionTransformer {
    */
   static toFHIR(condition: InternalCondition): FHIRCondition {
     return {
-      resourceType: 'Condition',
+      resourceType: "Condition",
       id: condition.id,
       clinicalStatus: {
         coding: [
           {
-            system: 'http://terminology.hl7.org/CodeSystem/condition-clinical',
+            system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
             code: condition.clinicalStatus,
           },
         ],
@@ -437,7 +441,8 @@ export class ConditionTransformer {
       verificationStatus: {
         coding: [
           {
-            system: 'http://terminology.hl7.org/CodeSystem/condition-ver-status',
+            system:
+              "http://terminology.hl7.org/CodeSystem/condition-ver-status",
             code: condition.verificationStatus,
           },
         ],
@@ -461,7 +466,7 @@ export class ConditionTransformer {
         ? {
             coding: [
               {
-                system: 'http://snomed.info/sct',
+                system: "http://snomed.info/sct",
                 code: condition.severity,
               },
             ],
@@ -476,16 +481,17 @@ export class ConditionTransformer {
    */
   static fromFHIR(fhirCondition: FHIRCondition): InternalCondition {
     const coding = fhirCondition.code?.coding?.[0];
-    const patientRef = fhirCondition.subject?.reference?.split('/')[1] || '';
+    const patientRef = fhirCondition.subject?.reference?.split("/")[1] || "";
 
     return {
       id: fhirCondition.id,
       patientId: patientRef,
-      code: coding?.code || '',
-      codeSystem: coding?.system || '',
-      display: coding?.display || fhirCondition.code?.text || '',
-      clinicalStatus: fhirCondition.clinicalStatus?.coding?.[0]?.code || '',
-      verificationStatus: fhirCondition.verificationStatus?.coding?.[0]?.code || '',
+      code: coding?.code || "",
+      codeSystem: coding?.system || "",
+      display: coding?.display || fhirCondition.code?.text || "",
+      clinicalStatus: fhirCondition.clinicalStatus?.coding?.[0]?.code || "",
+      verificationStatus:
+        fhirCondition.verificationStatus?.coding?.[0]?.code || "",
       severity: fhirCondition.severity?.coding?.[0]?.code,
       onsetDate: fhirCondition.onsetDateTime,
       abatementDate: fhirCondition.abatementDateTime,
@@ -503,14 +509,14 @@ export class MedicationRequestTransformer {
    */
   static toFHIR(medReq: InternalMedicationRequest): FHIRMedicationRequest {
     return {
-      resourceType: 'MedicationRequest',
+      resourceType: "MedicationRequest",
       id: medReq.id,
       status: medReq.status as any,
       intent: medReq.intent as any,
       medicationCodeableConcept: {
         coding: [
           {
-            system: 'http://www.nlm.nih.gov/research/umls/rxnorm',
+            system: "http://www.nlm.nih.gov/research/umls/rxnorm",
             code: medReq.medicationCode,
             display: medReq.medicationName,
           },
@@ -545,22 +551,24 @@ export class MedicationRequestTransformer {
   /**
    * Convert FHIR MedicationRequest to internal medication request
    */
-  static fromFHIR(fhirMedReq: FHIRMedicationRequest): InternalMedicationRequest {
+  static fromFHIR(
+    fhirMedReq: FHIRMedicationRequest,
+  ): InternalMedicationRequest {
     const medication = fhirMedReq.medicationCodeableConcept;
     const coding = medication?.coding?.[0];
-    const patientRef = fhirMedReq.subject?.reference?.split('/')[1] || '';
-    const requesterRef = fhirMedReq.requester?.reference?.split('/')[1] || '';
+    const patientRef = fhirMedReq.subject?.reference?.split("/")[1] || "";
+    const requesterRef = fhirMedReq.requester?.reference?.split("/")[1] || "";
 
     return {
       id: fhirMedReq.id,
       patientId: patientRef,
-      medicationCode: coding?.code || '',
-      medicationName: coding?.display || medication?.text || '',
+      medicationCode: coding?.code || "",
+      medicationName: coding?.display || medication?.text || "",
       status: fhirMedReq.status,
       intent: fhirMedReq.intent,
-      authoredOn: fhirMedReq.authoredOn || '',
+      authoredOn: fhirMedReq.authoredOn || "",
       requesterId: requesterRef,
-      dosageInstructions: fhirMedReq.dosageInstruction?.[0]?.text || '',
+      dosageInstructions: fhirMedReq.dosageInstruction?.[0]?.text || "",
       quantityValue: fhirMedReq.dispenseRequest?.quantity?.value,
       quantityUnit: fhirMedReq.dispenseRequest?.quantity?.unit,
       refills: fhirMedReq.dispenseRequest?.numberOfRepeatsAllowed,
@@ -573,7 +581,11 @@ export class MedicationRequestTransformer {
 /**
  * Helper function to create a FHIR Reference
  */
-export function createReference(resourceType: string, id: string, display?: string): Reference {
+export function createReference(
+  resourceType: string,
+  id: string,
+  display?: string,
+): Reference {
   return {
     reference: `${resourceType}/${id}`,
     type: resourceType,
@@ -588,7 +600,7 @@ export function createCodeableConcept(
   system: string,
   code: string,
   display?: string,
-  text?: string
+  text?: string,
 ): CodeableConcept {
   return {
     coding: [
@@ -608,8 +620,8 @@ export function createCodeableConcept(
 export function createQuantity(
   value: number,
   unit: string,
-  system: string = 'http://unitsofmeasure.org',
-  code?: string
+  system: string = "http://unitsofmeasure.org",
+  code?: string,
 ): Quantity {
   return {
     value,

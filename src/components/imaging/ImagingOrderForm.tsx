@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { imagingService, ImagingOrder } from '@/services/imaging.service';
+import { useState } from "react";
+import { imagingService, ImagingOrder } from "@/services/imaging.service";
 
 interface ImagingOrderFormProps {
   order?: ImagingOrder;
@@ -21,35 +21,37 @@ export default function ImagingOrderForm({
   onCancel,
 }: ImagingOrderFormProps) {
   const [formData, setFormData] = useState({
-    patientId: order?.patientId || patientId || '',
-    patientName: order?.patientName || patientName || '',
-    patientMRN: order?.patientMRN || patientMRN || '',
-    modality: order?.modality || '',
-    bodyPart: order?.bodyPart || '',
-    procedure: order?.procedure || '',
-    procedureCode: order?.procedureCode || '',
-    clinicalIndication: order?.clinicalIndication || '',
-    orderingPhysician: order?.orderingPhysician || '',
-    priority: order?.priority || 'ROUTINE',
+    patientId: order?.patientId || patientId || "",
+    patientName: order?.patientName || patientName || "",
+    patientMRN: order?.patientMRN || patientMRN || "",
+    modality: order?.modality || "",
+    bodyPart: order?.bodyPart || "",
+    procedure: order?.procedure || "",
+    procedureCode: order?.procedureCode || "",
+    clinicalIndication: order?.clinicalIndication || "",
+    orderingPhysician: order?.orderingPhysician || "",
+    priority: order?.priority || "ROUTINE",
     contrast: order?.contrast || false,
     transportRequired: order?.transportRequired || false,
-    pregnancyStatus: order?.pregnancyStatus || 'UNKNOWN',
-    isolationPrecautions: order?.isolationPrecautions || '',
-    notes: order?.notes || '',
-    scheduledDate: order?.scheduledDate || '',
+    pregnancyStatus: order?.pregnancyStatus || "UNKNOWN",
+    isolationPrecautions: order?.isolationPrecautions || "",
+    notes: order?.notes || "",
+    scheduledDate: order?.scheduledDate || "",
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -67,7 +69,7 @@ export default function ImagingOrderForm({
       }
       onSubmit?.(result);
     } catch (err) {
-      setError('Failed to save order');
+      setError("Failed to save order");
       console.error(err);
     } finally {
       setLoading(false);
@@ -355,7 +357,7 @@ export default function ImagingOrderForm({
           disabled={loading}
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
         >
-          {loading ? 'Saving...' : order?.id ? 'Update Order' : 'Create Order'}
+          {loading ? "Saving..." : order?.id ? "Update Order" : "Create Order"}
         </button>
       </div>
     </form>

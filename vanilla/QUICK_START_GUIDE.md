@@ -51,6 +51,7 @@ npx tsx watch src/server.ts
 **Backend will run on:** `http://localhost:3001`
 
 You should see:
+
 ```
 🏥 Lithic Patient Management API running on port 3001
 📋 Health check: http://localhost:3001/health
@@ -97,10 +98,12 @@ curl http://localhost:3001/api/patients
 ### Test Frontend
 
 Open your browser to:
+
 - **Patient List:** http://localhost:8080/patients
 - **API Docs:** http://localhost:3001/api
 
 You should see:
+
 - Two mock patients (John Doe, Jane Smith)
 - Search functionality
 - Pagination controls
@@ -110,26 +113,31 @@ You should see:
 ## Quick Feature Tour
 
 ### 1. View Patients
+
 - Go to http://localhost:8080/patients
 - See list of all patients
 - Use search to filter
 
 ### 2. Create New Patient
+
 - Click "New Patient" button
 - Fill out the form
 - Submit to create
 
 ### 3. View Patient Details
+
 - Click "View" on any patient
 - See patient card with demographics
 - View tabs: Demographics, Insurance, Documents, History
 
 ### 4. Search for Duplicates
+
 - Create a patient with similar data
 - System will detect potential duplicates
 - View match scores
 
 ### 5. Merge Patients
+
 - Go to patient detail page
 - Click "Merge" button
 - Select target patient
@@ -137,18 +145,21 @@ You should see:
 - Confirm merge
 
 ### 6. Add Insurance
+
 - Go to patient detail
 - Click "Insurance" tab
 - Add primary or secondary insurance
 - Verify details
 
 ### 7. Upload Documents
+
 - Go to patient detail
 - Click "Documents" tab
 - Upload consent forms, insurance cards, etc.
 - View/download documents
 
 ### 8. View History
+
 - Go to patient detail
 - Click "History" tab
 - See complete audit trail
@@ -159,6 +170,7 @@ You should see:
 ## API Endpoints Quick Reference
 
 ### Patients
+
 ```bash
 # List all
 GET /api/patients
@@ -196,6 +208,7 @@ DELETE /api/patients/:id
 ```
 
 ### Search
+
 ```bash
 # Quick search
 GET /api/patients/search?query=John
@@ -214,6 +227,7 @@ Content-Type: application/json
 ```
 
 ### Merge
+
 ```bash
 POST /api/patients/merge
 Content-Type: application/json
@@ -229,6 +243,7 @@ Content-Type: application/json
 ## Sample Requests
 
 ### Create Patient (cURL)
+
 ```bash
 curl -X POST http://localhost:3001/api/patients \
   -H "Content-Type: application/json" \
@@ -255,11 +270,13 @@ curl -X POST http://localhost:3001/api/patients \
 ```
 
 ### Search Patients (cURL)
+
 ```bash
 curl "http://localhost:3001/api/patients/search?firstName=Alice&lastName=Smith"
 ```
 
 ### Add Insurance (cURL)
+
 ```bash
 curl -X POST http://localhost:3001/api/patients/insurance/{PATIENT_ID} \
   -H "Content-Type: application/json" \
@@ -282,12 +299,14 @@ curl -X POST http://localhost:3001/api/patients/insurance/{PATIENT_ID} \
 ### Making Changes
 
 #### Backend Changes
+
 1. Edit files in `backend/src/`
 2. Server auto-reloads (ts-node-dev)
 3. Test API endpoint
 4. Check console for errors
 
 #### Frontend Changes
+
 1. Edit files in `frontend/src/`
 2. Webpack rebuilds automatically
 3. Browser auto-refreshes
@@ -296,9 +315,10 @@ curl -X POST http://localhost:3001/api/patients/insurance/{PATIENT_ID} \
 ### Debugging
 
 #### Backend Debugging
+
 ```typescript
 // Add console logs in server.ts or services
-console.log('Patient data:', patient);
+console.log("Patient data:", patient);
 
 // Check request/response
 app.use((req, res, next) => {
@@ -308,9 +328,10 @@ app.use((req, res, next) => {
 ```
 
 #### Frontend Debugging
+
 ```typescript
 // Add console logs in components
-console.log('Loading patient:', patientId);
+console.log("Loading patient:", patientId);
 
 // Use browser DevTools
 // Network tab - check API calls
@@ -323,7 +344,9 @@ console.log('Loading patient:', patientId);
 ## Common Issues & Solutions
 
 ### Issue: Backend won't start
+
 **Solution:**
+
 ```bash
 # Check if port 3001 is in use
 lsof -i :3001
@@ -336,7 +359,9 @@ npm install
 ```
 
 ### Issue: Frontend won't build
+
 **Solution:**
+
 ```bash
 # Clear webpack cache
 rm -rf node_modules/.cache
@@ -350,14 +375,18 @@ npx vite
 ```
 
 ### Issue: CORS errors
+
 **Solution:**
 Backend already has CORS enabled. Check that:
+
 - Backend is running on port 3001
 - Frontend is requesting from http://localhost:3001
 - CORS headers are present in response
 
 ### Issue: TypeScript errors
+
 **Solution:**
+
 ```bash
 # Check TypeScript version
 npx tsc --version
@@ -375,6 +404,7 @@ npm run build
 ## Production Build
 
 ### Backend Production Build
+
 ```bash
 cd backend
 npm run build
@@ -382,6 +412,7 @@ node dist/server.js
 ```
 
 ### Frontend Production Build
+
 ```bash
 cd frontend
 npm run build
@@ -460,6 +491,7 @@ UPLOAD_DIR=/uploads
 ## Support
 
 If you encounter issues:
+
 1. Check console logs (backend and frontend)
 2. Verify all dependencies are installed
 3. Ensure ports 3001 and 8080 are available
@@ -471,6 +503,7 @@ If you encounter issues:
 ## Success Indicators
 
 You'll know everything is working when:
+
 - ✅ Backend shows: "Lithic Patient Management API running"
 - ✅ Frontend opens in browser automatically
 - ✅ You see 2 mock patients in the list

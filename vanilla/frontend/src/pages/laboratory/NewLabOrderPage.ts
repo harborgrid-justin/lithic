@@ -3,8 +3,8 @@
  * Create new laboratory order
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { LabOrderForm } from '../../components/laboratory/LabOrderForm';
+import { labService } from "../../services/LaboratoryService";
+import { LabOrderForm } from "../../components/laboratory/LabOrderForm";
 
 export class NewLabOrderPage {
   private container: HTMLElement;
@@ -35,35 +35,35 @@ export class NewLabOrderPage {
     try {
       const panels = await labService.getPanels();
 
-      const formContainer = this.container.querySelector('#orderFormContainer');
+      const formContainer = this.container.querySelector("#orderFormContainer");
       if (formContainer) {
         this.orderForm = new LabOrderForm(formContainer as HTMLElement, {
-          onSubmit: (orderData) => this.handleSubmit(orderData)
+          onSubmit: (orderData) => this.handleSubmit(orderData),
         });
         this.orderForm.setPanels(panels);
       }
     } catch (error) {
-      console.error('Error loading panels:', error);
+      console.error("Error loading panels:", error);
     }
   }
 
   private async handleSubmit(orderData: any): Promise<void> {
     try {
       const order = await labService.createOrder(orderData);
-      alert('Order created successfully!');
+      alert("Order created successfully!");
       window.location.href = `/laboratory/orders/${order.id}`;
     } catch (error: any) {
-      console.error('Error creating order:', error);
-      alert('Error creating order: ' + error.message);
+      console.error("Error creating order:", error);
+      alert("Error creating order: " + error.message);
     }
   }
 
   private attachEventListeners(): void {
-    const backBtn = this.container.querySelector('#backBtn');
+    const backBtn = this.container.querySelector("#backBtn");
 
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        window.location.href = '/laboratory/orders';
+      backBtn.addEventListener("click", () => {
+        window.location.href = "/laboratory/orders";
       });
     }
   }
@@ -72,6 +72,6 @@ export class NewLabOrderPage {
     if (this.orderForm) {
       this.orderForm.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

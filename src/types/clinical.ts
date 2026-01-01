@@ -3,7 +3,7 @@
  * Agent 3: Clinical Documentation
  */
 
-import type { BaseEntity } from './index';
+import type { BaseEntity } from "./index";
 
 // ============================================================================
 // Clinical Note Types
@@ -33,27 +33,27 @@ export interface ClinicalNote extends BaseEntity {
 }
 
 export enum NoteType {
-  SOAP = 'SOAP',
-  HISTORY_PHYSICAL = 'HISTORY_PHYSICAL',
-  PROGRESS_NOTE = 'PROGRESS_NOTE',
-  PROCEDURE_NOTE = 'PROCEDURE_NOTE',
-  CONSULTATION = 'CONSULTATION',
-  DISCHARGE_SUMMARY = 'DISCHARGE_SUMMARY',
-  OPERATIVE_REPORT = 'OPERATIVE_REPORT',
-  TELEPHONE_ENCOUNTER = 'TELEPHONE_ENCOUNTER',
-  REFILL_REQUEST = 'REFILL_REQUEST',
-  NURSE_NOTE = 'NURSE_NOTE',
-  EMERGENCY_DEPARTMENT = 'EMERGENCY_DEPARTMENT',
+  SOAP = "SOAP",
+  HISTORY_PHYSICAL = "HISTORY_PHYSICAL",
+  PROGRESS_NOTE = "PROGRESS_NOTE",
+  PROCEDURE_NOTE = "PROCEDURE_NOTE",
+  CONSULTATION = "CONSULTATION",
+  DISCHARGE_SUMMARY = "DISCHARGE_SUMMARY",
+  OPERATIVE_REPORT = "OPERATIVE_REPORT",
+  TELEPHONE_ENCOUNTER = "TELEPHONE_ENCOUNTER",
+  REFILL_REQUEST = "REFILL_REQUEST",
+  NURSE_NOTE = "NURSE_NOTE",
+  EMERGENCY_DEPARTMENT = "EMERGENCY_DEPARTMENT",
 }
 
 export enum NoteStatus {
-  DRAFT = 'DRAFT',
-  PENDING_SIGNATURE = 'PENDING_SIGNATURE',
-  SIGNED = 'SIGNED',
-  PENDING_COSIGN = 'PENDING_COSIGN',
-  COSIGNED = 'COSIGNED',
-  AMENDED = 'AMENDED',
-  DELETED = 'DELETED',
+  DRAFT = "DRAFT",
+  PENDING_SIGNATURE = "PENDING_SIGNATURE",
+  SIGNED = "SIGNED",
+  PENDING_COSIGN = "PENDING_COSIGN",
+  COSIGNED = "COSIGNED",
+  AMENDED = "AMENDED",
+  DELETED = "DELETED",
 }
 
 export interface NoteAddendum extends BaseEntity {
@@ -92,39 +92,39 @@ export interface Encounter extends BaseEntity {
 }
 
 export enum EncounterType {
-  OFFICE_VISIT = 'OFFICE_VISIT',
-  HOSPITAL_INPATIENT = 'HOSPITAL_INPATIENT',
-  EMERGENCY = 'EMERGENCY',
-  URGENT_CARE = 'URGENT_CARE',
-  TELEMEDICINE = 'TELEMEDICINE',
-  HOME_VISIT = 'HOME_VISIT',
-  NURSING_HOME = 'NURSING_HOME',
-  CONSULTATION = 'CONSULTATION',
-  SURGICAL = 'SURGICAL',
-  PREVENTIVE = 'PREVENTIVE',
+  OFFICE_VISIT = "OFFICE_VISIT",
+  HOSPITAL_INPATIENT = "HOSPITAL_INPATIENT",
+  EMERGENCY = "EMERGENCY",
+  URGENT_CARE = "URGENT_CARE",
+  TELEMEDICINE = "TELEMEDICINE",
+  HOME_VISIT = "HOME_VISIT",
+  NURSING_HOME = "NURSING_HOME",
+  CONSULTATION = "CONSULTATION",
+  SURGICAL = "SURGICAL",
+  PREVENTIVE = "PREVENTIVE",
 }
 
 export enum EncounterClass {
-  AMBULATORY = 'AMBULATORY',
-  EMERGENCY = 'EMERGENCY',
-  INPATIENT = 'INPATIENT',
-  OBSERVATION = 'OBSERVATION',
-  VIRTUAL = 'VIRTUAL',
+  AMBULATORY = "AMBULATORY",
+  EMERGENCY = "EMERGENCY",
+  INPATIENT = "INPATIENT",
+  OBSERVATION = "OBSERVATION",
+  VIRTUAL = "VIRTUAL",
 }
 
 export enum EncounterPriority {
-  ROUTINE = 'ROUTINE',
-  URGENT = 'URGENT',
-  EMERGENCY = 'EMERGENCY',
-  ELECTIVE = 'ELECTIVE',
+  ROUTINE = "ROUTINE",
+  URGENT = "URGENT",
+  EMERGENCY = "EMERGENCY",
+  ELECTIVE = "ELECTIVE",
 }
 
 export enum EncounterStatus {
-  PLANNED = 'PLANNED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  NO_SHOW = 'NO_SHOW',
+  PLANNED = "PLANNED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  NO_SHOW = "NO_SHOW",
 }
 
 // ============================================================================
@@ -137,12 +137,12 @@ export interface VitalSigns extends BaseEntity {
   recordedAt: Date;
   recordedBy: string;
   height: number | null;
-  heightUnit: 'cm' | 'in' | null;
+  heightUnit: "cm" | "in" | null;
   weight: number | null;
-  weightUnit: 'kg' | 'lb' | null;
+  weightUnit: "kg" | "lb" | null;
   bmi: number | null;
   temperature: number | null;
-  temperatureUnit: 'F' | 'C' | null;
+  temperatureUnit: "F" | "C" | null;
   temperatureSite: TemperatureSite | null;
   systolicBP: number | null;
   diastolicBP: number | null;
@@ -158,17 +158,17 @@ export interface VitalSigns extends BaseEntity {
 }
 
 export enum TemperatureSite {
-  ORAL = 'ORAL',
-  RECTAL = 'RECTAL',
-  AXILLARY = 'AXILLARY',
-  TYMPANIC = 'TYMPANIC',
-  TEMPORAL = 'TEMPORAL',
+  ORAL = "ORAL",
+  RECTAL = "RECTAL",
+  AXILLARY = "AXILLARY",
+  TYMPANIC = "TYMPANIC",
+  TEMPORAL = "TEMPORAL",
 }
 
 export enum BPPosition {
-  SITTING = 'SITTING',
-  STANDING = 'STANDING',
-  LYING = 'LYING',
+  SITTING = "SITTING",
+  STANDING = "STANDING",
+  LYING = "LYING",
 }
 
 // ============================================================================
@@ -179,7 +179,7 @@ export interface ProblemList extends BaseEntity {
   patientId: string;
   problem: string;
   icdCode: string;
-  icdVersion: 'ICD-10' | 'ICD-11';
+  icdVersion: "ICD-10" | "ICD-11";
   snomedCode: string | null;
   status: ProblemStatus;
   severity: ProblemSeverity;
@@ -191,17 +191,17 @@ export interface ProblemList extends BaseEntity {
 }
 
 export enum ProblemStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  RESOLVED = 'RESOLVED',
-  RECURRENT = 'RECURRENT',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  RESOLVED = "RESOLVED",
+  RECURRENT = "RECURRENT",
 }
 
 export enum ProblemSeverity {
-  MILD = 'MILD',
-  MODERATE = 'MODERATE',
-  SEVERE = 'SEVERE',
-  LIFE_THREATENING = 'LIFE_THREATENING',
+  MILD = "MILD",
+  MODERATE = "MODERATE",
+  SEVERE = "SEVERE",
+  LIFE_THREATENING = "LIFE_THREATENING",
 }
 
 // ============================================================================
@@ -213,7 +213,7 @@ export interface Diagnosis extends BaseEntity {
   encounterId: string;
   diagnosis: string;
   icdCode: string;
-  icdVersion: 'ICD-10' | 'ICD-11';
+  icdVersion: "ICD-10" | "ICD-11";
   type: DiagnosisType;
   rank: number;
   onsetDate: Date | null;
@@ -224,18 +224,18 @@ export interface Diagnosis extends BaseEntity {
 }
 
 export enum DiagnosisType {
-  PRIMARY = 'PRIMARY',
-  SECONDARY = 'SECONDARY',
-  ADMITTING = 'ADMITTING',
-  DISCHARGE = 'DISCHARGE',
-  DIFFERENTIAL = 'DIFFERENTIAL',
+  PRIMARY = "PRIMARY",
+  SECONDARY = "SECONDARY",
+  ADMITTING = "ADMITTING",
+  DISCHARGE = "DISCHARGE",
+  DIFFERENTIAL = "DIFFERENTIAL",
 }
 
 export enum DiagnosisStatus {
-  PROVISIONAL = 'PROVISIONAL',
-  CONFIRMED = 'CONFIRMED',
-  RULED_OUT = 'RULED_OUT',
-  RESOLVED = 'RESOLVED',
+  PROVISIONAL = "PROVISIONAL",
+  CONFIRMED = "CONFIRMED",
+  RULED_OUT = "RULED_OUT",
+  RESOLVED = "RESOLVED",
 }
 
 // ============================================================================
@@ -262,11 +262,11 @@ export interface Procedure extends BaseEntity {
 }
 
 export enum ProcedureStatus {
-  SCHEDULED = 'SCHEDULED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  ABORTED = 'ABORTED',
+  SCHEDULED = "SCHEDULED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  ABORTED = "ABORTED",
 }
 
 // ============================================================================
@@ -290,28 +290,28 @@ export interface CarePlan extends BaseEntity {
 }
 
 export enum CarePlanCategory {
-  DISEASE_MANAGEMENT = 'DISEASE_MANAGEMENT',
-  PREVENTIVE_CARE = 'PREVENTIVE_CARE',
-  REHABILITATION = 'REHABILITATION',
-  POST_OPERATIVE = 'POST_OPERATIVE',
-  CHRONIC_CARE = 'CHRONIC_CARE',
-  PALLIATIVE_CARE = 'PALLIATIVE_CARE',
+  DISEASE_MANAGEMENT = "DISEASE_MANAGEMENT",
+  PREVENTIVE_CARE = "PREVENTIVE_CARE",
+  REHABILITATION = "REHABILITATION",
+  POST_OPERATIVE = "POST_OPERATIVE",
+  CHRONIC_CARE = "CHRONIC_CARE",
+  PALLIATIVE_CARE = "PALLIATIVE_CARE",
 }
 
 export enum CarePlanStatus {
-  DRAFT = 'DRAFT',
-  ACTIVE = 'ACTIVE',
-  ON_HOLD = 'ON_HOLD',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  REVOKED = 'REVOKED',
+  DRAFT = "DRAFT",
+  ACTIVE = "ACTIVE",
+  ON_HOLD = "ON_HOLD",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  REVOKED = "REVOKED",
 }
 
 export enum CarePlanIntent {
-  PROPOSAL = 'PROPOSAL',
-  PLAN = 'PLAN',
-  ORDER = 'ORDER',
-  OPTION = 'OPTION',
+  PROPOSAL = "PROPOSAL",
+  PLAN = "PLAN",
+  ORDER = "ORDER",
+  OPTION = "OPTION",
 }
 
 export interface DateRange {
@@ -322,8 +322,8 @@ export interface DateRange {
 export interface CarePlanGoal {
   id: string;
   description: string;
-  priority: 'high' | 'medium' | 'low';
-  status: 'proposed' | 'active' | 'achieved' | 'suspended' | 'cancelled';
+  priority: "high" | "medium" | "low";
+  status: "proposed" | "active" | "achieved" | "suspended" | "cancelled";
   targetDate: Date | null;
   outcomeReference: string | null;
 }
@@ -343,24 +343,24 @@ export interface CarePlanActivity {
 }
 
 export enum ActivityKind {
-  APPOINTMENT = 'APPOINTMENT',
-  DIAGNOSTIC = 'DIAGNOSTIC',
-  MEDICATION = 'MEDICATION',
-  OBSERVATION = 'OBSERVATION',
-  PROCEDURE = 'PROCEDURE',
-  NUTRITION = 'NUTRITION',
-  EDUCATION = 'EDUCATION',
-  OTHER = 'OTHER',
+  APPOINTMENT = "APPOINTMENT",
+  DIAGNOSTIC = "DIAGNOSTIC",
+  MEDICATION = "MEDICATION",
+  OBSERVATION = "OBSERVATION",
+  PROCEDURE = "PROCEDURE",
+  NUTRITION = "NUTRITION",
+  EDUCATION = "EDUCATION",
+  OTHER = "OTHER",
 }
 
 export enum ActivityStatus {
-  NOT_STARTED = 'NOT_STARTED',
-  SCHEDULED = 'SCHEDULED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  ON_HOLD = 'ON_HOLD',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  STOPPED = 'STOPPED',
+  NOT_STARTED = "NOT_STARTED",
+  SCHEDULED = "SCHEDULED",
+  IN_PROGRESS = "IN_PROGRESS",
+  ON_HOLD = "ON_HOLD",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  STOPPED = "STOPPED",
 }
 
 // ============================================================================
@@ -389,31 +389,31 @@ export interface Order extends BaseEntity {
 }
 
 export enum OrderType {
-  LABORATORY = 'LABORATORY',
-  IMAGING = 'IMAGING',
-  MEDICATION = 'MEDICATION',
-  PROCEDURE = 'PROCEDURE',
-  REFERRAL = 'REFERRAL',
-  NURSING = 'NURSING',
-  DIET = 'DIET',
-  THERAPY = 'THERAPY',
+  LABORATORY = "LABORATORY",
+  IMAGING = "IMAGING",
+  MEDICATION = "MEDICATION",
+  PROCEDURE = "PROCEDURE",
+  REFERRAL = "REFERRAL",
+  NURSING = "NURSING",
+  DIET = "DIET",
+  THERAPY = "THERAPY",
 }
 
 export enum OrderPriority {
-  ROUTINE = 'ROUTINE',
-  URGENT = 'URGENT',
-  STAT = 'STAT',
-  ASAP = 'ASAP',
+  ROUTINE = "ROUTINE",
+  URGENT = "URGENT",
+  STAT = "STAT",
+  ASAP = "ASAP",
 }
 
 export enum OrderStatus {
-  DRAFT = 'DRAFT',
-  ACTIVE = 'ACTIVE',
-  ON_HOLD = 'ON_HOLD',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  DISCONTINUED = 'DISCONTINUED',
-  ENTERED_IN_ERROR = 'ENTERED_IN_ERROR',
+  DRAFT = "DRAFT",
+  ACTIVE = "ACTIVE",
+  ON_HOLD = "ON_HOLD",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  DISCONTINUED = "DISCONTINUED",
+  ENTERED_IN_ERROR = "ENTERED_IN_ERROR",
 }
 
 // ============================================================================
@@ -437,21 +437,21 @@ export interface ClinicalAlert {
 }
 
 export enum AlertType {
-  DRUG_INTERACTION = 'DRUG_INTERACTION',
-  DRUG_ALLERGY = 'DRUG_ALLERGY',
-  DUPLICATE_THERAPY = 'DUPLICATE_THERAPY',
-  LAB_CRITICAL = 'LAB_CRITICAL',
-  VITAL_ABNORMAL = 'VITAL_ABNORMAL',
-  PREVENTIVE_CARE_DUE = 'PREVENTIVE_CARE_DUE',
-  QUALITY_MEASURE = 'QUALITY_MEASURE',
-  CLINICAL_GUIDELINE = 'CLINICAL_GUIDELINE',
+  DRUG_INTERACTION = "DRUG_INTERACTION",
+  DRUG_ALLERGY = "DRUG_ALLERGY",
+  DUPLICATE_THERAPY = "DUPLICATE_THERAPY",
+  LAB_CRITICAL = "LAB_CRITICAL",
+  VITAL_ABNORMAL = "VITAL_ABNORMAL",
+  PREVENTIVE_CARE_DUE = "PREVENTIVE_CARE_DUE",
+  QUALITY_MEASURE = "QUALITY_MEASURE",
+  CLINICAL_GUIDELINE = "CLINICAL_GUIDELINE",
 }
 
 export enum AlertSeverity {
-  INFO = 'INFO',
-  WARNING = 'WARNING',
-  CRITICAL = 'CRITICAL',
-  EMERGENCY = 'EMERGENCY',
+  INFO = "INFO",
+  WARNING = "WARNING",
+  CRITICAL = "CRITICAL",
+  EMERGENCY = "EMERGENCY",
 }
 
 // ============================================================================
@@ -475,7 +475,7 @@ export interface FHIRMeta {
 }
 
 export interface FHIRNarrative {
-  status: 'generated' | 'extensions' | 'additional' | 'empty';
+  status: "generated" | "extensions" | "additional" | "empty";
   div: string;
 }
 
@@ -495,7 +495,7 @@ export interface FHIRReference {
 }
 
 export interface FHIRIdentifier {
-  use?: 'usual' | 'official' | 'temp' | 'secondary' | 'old';
+  use?: "usual" | "official" | "temp" | "secondary" | "old";
   type?: FHIRCodeableConcept;
   system?: string;
   value?: string;
@@ -540,10 +540,10 @@ export interface TemplateSection {
 }
 
 export enum SectionType {
-  TEXT = 'TEXT',
-  STRUCTURED = 'STRUCTURED',
-  CHECKLIST = 'CHECKLIST',
-  TABLE = 'TABLE',
+  TEXT = "TEXT",
+  STRUCTURED = "STRUCTURED",
+  CHECKLIST = "CHECKLIST",
+  TABLE = "TABLE",
 }
 
 export interface TemplateField {
@@ -558,14 +558,14 @@ export interface TemplateField {
 }
 
 export enum FieldType {
-  TEXT = 'TEXT',
-  TEXTAREA = 'TEXTAREA',
-  NUMBER = 'NUMBER',
-  DATE = 'DATE',
-  SELECT = 'SELECT',
-  MULTISELECT = 'MULTISELECT',
-  CHECKBOX = 'CHECKBOX',
-  RADIO = 'RADIO',
+  TEXT = "TEXT",
+  TEXTAREA = "TEXTAREA",
+  NUMBER = "NUMBER",
+  DATE = "DATE",
+  SELECT = "SELECT",
+  MULTISELECT = "MULTISELECT",
+  CHECKBOX = "CHECKBOX",
+  RADIO = "RADIO",
 }
 
 // ============================================================================

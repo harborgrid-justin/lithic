@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Denial } from '@/types/billing';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { AlertTriangle, CheckCircle, Clock, FileText } from 'lucide-react';
+import { useState } from "react";
+import { Denial } from "@/types/billing";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { AlertTriangle, CheckCircle, Clock, FileText } from "lucide-react";
 
 interface DenialManagerProps {
   denials: Denial[];
@@ -11,45 +11,55 @@ interface DenialManagerProps {
   onAppeal?: (id: string, notes: string) => void;
 }
 
-export default function DenialManager({ denials, onUpdateDenial, onAppeal }: DenialManagerProps) {
+export default function DenialManager({
+  denials,
+  onUpdateDenial,
+  onAppeal,
+}: DenialManagerProps) {
   const [selectedDenial, setSelectedDenial] = useState<Denial | null>(null);
-  const [appealNotes, setAppealNotes] = useState('');
-  const [filterStatus, setFilterStatus] = useState<Denial['status'] | 'all'>('all');
-  const [filterPriority, setFilterPriority] = useState<Denial['priority'] | 'all'>('all');
+  const [appealNotes, setAppealNotes] = useState("");
+  const [filterStatus, setFilterStatus] = useState<Denial["status"] | "all">(
+    "all",
+  );
+  const [filterPriority, setFilterPriority] = useState<
+    Denial["priority"] | "all"
+  >("all");
 
   const filteredDenials = denials.filter((denial) => {
-    const matchesStatus = filterStatus === 'all' || denial.status === filterStatus;
-    const matchesPriority = filterPriority === 'all' || denial.priority === filterPriority;
+    const matchesStatus =
+      filterStatus === "all" || denial.status === filterStatus;
+    const matchesPriority =
+      filterPriority === "all" || denial.priority === filterPriority;
     return matchesStatus && matchesPriority;
   });
 
   const handleAppeal = (denialId: string) => {
     if (appealNotes.trim() && onAppeal) {
       onAppeal(denialId, appealNotes);
-      setAppealNotes('');
+      setAppealNotes("");
       setSelectedDenial(null);
     }
   };
 
   const getPriorityColor = (priority: string) => {
     const colors: Record<string, string> = {
-      low: 'bg-gray-100 text-gray-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-red-100 text-red-800',
+      low: "bg-gray-100 text-gray-800",
+      medium: "bg-yellow-100 text-yellow-800",
+      high: "bg-red-100 text-red-800",
     };
-    return colors[priority] || 'bg-gray-100 text-gray-800';
+    return colors[priority] || "bg-gray-100 text-gray-800";
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending':
+      case "pending":
         return <Clock className="w-5 h-5 text-yellow-500" />;
-      case 'in_progress':
+      case "in_progress":
         return <FileText className="w-5 h-5 text-blue-500" />;
-      case 'appealed':
+      case "appealed":
         return <AlertTriangle className="w-5 h-5 text-orange-500" />;
-      case 'overturned':
-      case 'resubmitted':
+      case "overturned":
+      case "resubmitted":
         return <CheckCircle className="w-5 h-5 text-green-500" />;
       default:
         return <AlertTriangle className="w-5 h-5 text-gray-500" />;
@@ -58,9 +68,9 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
 
   const stats = {
     total: denials.length,
-    pending: denials.filter((d) => d.status === 'pending').length,
-    inProgress: denials.filter((d) => d.status === 'in_progress').length,
-    appealed: denials.filter((d) => d.status === 'appealed').length,
+    pending: denials.filter((d) => d.status === "pending").length,
+    inProgress: denials.filter((d) => d.status === "in_progress").length,
+    appealed: denials.filter((d) => d.status === "appealed").length,
     totalAmount: denials.reduce((sum, d) => sum + d.deniedAmount, 0),
   };
 
@@ -86,7 +96,9 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
         </div>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-sm text-red-700">Total Amount</p>
-          <p className="text-2xl font-bold text-red-900">{formatCurrency(stats.totalAmount)}</p>
+          <p className="text-2xl font-bold text-red-900">
+            {formatCurrency(stats.totalAmount)}
+          </p>
         </div>
       </div>
 
@@ -167,7 +179,10 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredDenials.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan={9}
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     No denials found
                   </td>
                 </tr>
@@ -188,13 +203,15 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
                       {formatDate(denial.denialDate)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {denial.denialReason.replace('_', ' ')}
+                      {denial.denialReason.replace("_", " ")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
                       {formatCurrency(denial.deniedAmount)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(denial.priority)}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(denial.priority)}`}
+                      >
                         {denial.priority.toUpperCase()}
                       </span>
                     </td>
@@ -202,15 +219,16 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
                       <div className="flex items-center gap-2">
                         {getStatusIcon(denial.status)}
                         <span className="text-sm capitalize">
-                          {denial.status.replace('_', ' ')}
+                          {denial.status.replace("_", " ")}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {denial.assignedTo || '-'}
+                      {denial.assignedTo || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {(denial.status === 'pending' || denial.status === 'in_progress') && (
+                      {(denial.status === "pending" ||
+                        denial.status === "in_progress") && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -237,7 +255,9 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Denial Details</h3>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Denial Details
+                  </h3>
                   <p className="text-sm text-gray-500 mt-1">
                     Claim: {selectedDenial.claimNumber}
                   </p>
@@ -255,7 +275,9 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-500">Patient</p>
-                  <p className="font-medium text-gray-900">{selectedDenial.patientName}</p>
+                  <p className="font-medium text-gray-900">
+                    {selectedDenial.patientName}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Denial Date</p>
@@ -274,7 +296,7 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
                   <p className="font-medium text-gray-900">
                     {selectedDenial.appealDeadline
                       ? formatDate(selectedDenial.appealDeadline)
-                      : 'N/A'}
+                      : "N/A"}
                   </p>
                 </div>
               </div>
@@ -282,7 +304,7 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
               <div>
                 <p className="text-sm text-gray-500 mb-1">Denial Reason</p>
                 <p className="font-medium text-gray-900">
-                  {selectedDenial.denialReason.replace('_', ' ')}
+                  {selectedDenial.denialReason.replace("_", " ")}
                 </p>
               </div>
 
@@ -298,7 +320,8 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
                 </div>
               )}
 
-              {(selectedDenial.status === 'pending' || selectedDenial.status === 'in_progress') && (
+              {(selectedDenial.status === "pending" ||
+                selectedDenial.status === "in_progress") && (
                 <div className="pt-4 border-t border-gray-200">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Appeal Notes
@@ -313,7 +336,9 @@ export default function DenialManager({ denials, onUpdateDenial, onAppeal }: Den
                   <div className="mt-4 flex justify-end gap-3">
                     <button
                       onClick={() => {
-                        onUpdateDenial?.(selectedDenial.id, { status: 'in_progress' });
+                        onUpdateDenial?.(selectedDenial.id, {
+                          status: "in_progress",
+                        });
                         setSelectedDenial(null);
                       }}
                       className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import LabOrderList from '@/components/laboratory/LabOrderList';
-import { LabOrder } from '@/types/laboratory';
-import Link from 'next/link';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import LabOrderList from "@/components/laboratory/LabOrderList";
+import { LabOrder } from "@/types/laboratory";
+import Link from "next/link";
 
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<LabOrder | null>(null);
@@ -27,7 +27,7 @@ export default function OrdersPage() {
         </Link>
       </div>
 
-      <LabOrderList 
+      <LabOrderList
         onViewOrder={(order) => {
           setSelectedOrder(order);
           window.location.href = `/laboratory/orders/${order.id}`;

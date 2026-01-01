@@ -2,7 +2,7 @@
  * ClaimsListPage - Display and manage all claims
  */
 
-import { BillingService } from '../../services/BillingService';
+import { BillingService } from "../../services/BillingService";
 
 export class ClaimsListPage {
   private container: HTMLElement;
@@ -126,15 +126,15 @@ export class ClaimsListPage {
       const response = await this.billingService.getClaims({
         page: this.currentPage,
         limit: this.pageSize,
-        ...this.filters
+        ...this.filters,
       });
 
       this.renderClaims(response.data);
       this.renderSummary(response.summary);
       this.renderPagination(response.pagination);
     } catch (error) {
-      console.error('Error loading claims:', error);
-      this.showError('Failed to load claims');
+      console.error("Error loading claims:", error);
+      this.showError("Failed to load claims");
     }
   }
 
@@ -142,35 +142,39 @@ export class ClaimsListPage {
     try {
       const [payers, providers] = await Promise.all([
         this.billingService.getPayers(),
-        this.billingService.getProviders()
+        this.billingService.getProviders(),
       ]);
 
-      const payerFilter = document.getElementById('payerFilter') as HTMLSelectElement;
+      const payerFilter = document.getElementById(
+        "payerFilter",
+      ) as HTMLSelectElement;
       if (payerFilter) {
         payers.forEach((payer: any) => {
-          const option = document.createElement('option');
+          const option = document.createElement("option");
           option.value = payer.id;
           option.textContent = payer.name;
           payerFilter.appendChild(option);
         });
       }
 
-      const providerFilter = document.getElementById('providerFilter') as HTMLSelectElement;
+      const providerFilter = document.getElementById(
+        "providerFilter",
+      ) as HTMLSelectElement;
       if (providerFilter) {
         providers.forEach((provider: any) => {
-          const option = document.createElement('option');
+          const option = document.createElement("option");
           option.value = provider.id;
           option.textContent = provider.name;
           providerFilter.appendChild(option);
         });
       }
     } catch (error) {
-      console.error('Error loading filter options:', error);
+      console.error("Error loading filter options:", error);
     }
   }
 
   private renderClaims(claims: any[]): void {
-    const tbody = document.getElementById('claimsTableBody');
+    const tbody = document.getElementById("claimsTableBody");
     if (!tbody) return;
 
     if (claims.length === 0) {
@@ -184,7 +188,9 @@ export class ClaimsListPage {
       return;
     }
 
-    tbody.innerHTML = claims.map(claim => `
+    tbody.innerHTML = claims
+      .map(
+        (claim) => `
       <tr data-claim-id="${claim.id}">
         <td>
           <input type="checkbox" class="claim-checkbox" value="${claim.id}" />
@@ -213,13 +219,15 @@ export class ClaimsListPage {
           </div>
         </td>
       </tr>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private renderActionButtons(claim: any): string {
-    let buttons = '';
+    let buttons = "";
 
-    if (claim.status === 'draft' || claim.status === 'ready') {
+    if (claim.status === "draft" || claim.status === "ready") {
       buttons += `
         <button class="btn-icon" onclick="window.claimsList.editClaim('${claim.id}')" title="Edit">
           <i class="icon-edit"></i>
@@ -230,7 +238,7 @@ export class ClaimsListPage {
       `;
     }
 
-    if (claim.status === 'denied') {
+    if (claim.status === "denied") {
       buttons += `
         <button class="btn-icon" onclick="window.claimsList.createAppeal('${claim.id}')" title="Appeal">
           <i class="icon-appeal"></i>
@@ -238,7 +246,7 @@ export class ClaimsListPage {
       `;
     }
 
-    if (claim.status === 'paid') {
+    if (claim.status === "paid") {
       buttons += `
         <button class="btn-icon" onclick="window.claimsList.printClaim('${claim.id}')" title="Print">
           <i class="icon-print"></i>
@@ -250,7 +258,7 @@ export class ClaimsListPage {
   }
 
   private renderSummary(summary: any): void {
-    const container = document.getElementById('claimsSummary');
+    const container = document.getElementById("claimsSummary");
     if (!container) return;
 
     container.innerHTML = `
@@ -276,7 +284,7 @@ export class ClaimsListPage {
   }
 
   private renderPagination(pagination: any): void {
-    const container = document.getElementById('paginationContainer');
+    const container = document.getElementById("paginationContainer");
     if (!container) return;
 
     const pages = [];
@@ -285,7 +293,7 @@ export class ClaimsListPage {
 
     // Previous button
     pages.push(`
-      <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''}
+      <button class="pagination-btn" ${currentPage === 1 ? "disabled" : ""}
         onclick="window.claimsList.goToPage(${currentPage - 1})">
         Previous
       </button>
@@ -299,7 +307,7 @@ export class ClaimsListPage {
         (i >= currentPage - 2 && i <= currentPage + 2)
       ) {
         pages.push(`
-          <button class="pagination-btn ${i === currentPage ? 'active' : ''}"
+          <button class="pagination-btn ${i === currentPage ? "active" : ""}"
             onclick="window.claimsList.goToPage(${i})">
             ${i}
           </button>
@@ -311,7 +319,7 @@ export class ClaimsListPage {
 
     // Next button
     pages.push(`
-      <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''}
+      <button class="pagination-btn" ${currentPage === totalPages ? "disabled" : ""}
         onclick="window.claimsList.goToPage(${currentPage + 1})">
         Next
       </button>
@@ -319,53 +327,55 @@ export class ClaimsListPage {
 
     container.innerHTML = `
       <div class="pagination-info">
-        Showing ${((currentPage - 1) * this.pageSize) + 1} -
+        Showing ${(currentPage - 1) * this.pageSize + 1} -
         ${Math.min(currentPage * this.pageSize, pagination.total)} of ${pagination.total}
       </div>
       <div class="pagination-buttons">
-        ${pages.join('')}
+        ${pages.join("")}
       </div>
     `;
   }
 
   private attachEventListeners(): void {
     // New claim button
-    const newClaimBtn = document.getElementById('newClaimBtn');
+    const newClaimBtn = document.getElementById("newClaimBtn");
     if (newClaimBtn) {
-      newClaimBtn.addEventListener('click', () => {
-        window.location.hash = '#/billing/claims/new';
+      newClaimBtn.addEventListener("click", () => {
+        window.location.hash = "#/billing/claims/new";
       });
     }
 
     // Batch submit button
-    const batchSubmitBtn = document.getElementById('batchSubmitBtn');
+    const batchSubmitBtn = document.getElementById("batchSubmitBtn");
     if (batchSubmitBtn) {
-      batchSubmitBtn.addEventListener('click', () => {
+      batchSubmitBtn.addEventListener("click", () => {
         this.handleBatchSubmit();
       });
     }
 
     // Apply filters
-    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+    const applyFiltersBtn = document.getElementById("applyFiltersBtn");
     if (applyFiltersBtn) {
-      applyFiltersBtn.addEventListener('click', () => {
+      applyFiltersBtn.addEventListener("click", () => {
         this.applyFilters();
       });
     }
 
     // Clear filters
-    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
     if (clearFiltersBtn) {
-      clearFiltersBtn.addEventListener('click', () => {
+      clearFiltersBtn.addEventListener("click", () => {
         this.clearFilters();
       });
     }
 
     // Search input
-    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const searchInput = document.getElementById(
+      "searchInput",
+    ) as HTMLInputElement;
     if (searchInput) {
       let searchTimeout: NodeJS.Timeout;
-      searchInput.addEventListener('input', () => {
+      searchInput.addEventListener("input", () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
           this.applyFilters();
@@ -374,11 +384,13 @@ export class ClaimsListPage {
     }
 
     // Select all checkbox
-    const selectAll = document.getElementById('selectAll') as HTMLInputElement;
+    const selectAll = document.getElementById("selectAll") as HTMLInputElement;
     if (selectAll) {
-      selectAll.addEventListener('change', (e) => {
-        const checkboxes = document.querySelectorAll('.claim-checkbox') as NodeListOf<HTMLInputElement>;
-        checkboxes.forEach(cb => {
+      selectAll.addEventListener("change", (e) => {
+        const checkboxes = document.querySelectorAll(
+          ".claim-checkbox",
+        ) as NodeListOf<HTMLInputElement>;
+        checkboxes.forEach((cb) => {
           cb.checked = (e.target as HTMLInputElement).checked;
         });
       });
@@ -386,20 +398,28 @@ export class ClaimsListPage {
   }
 
   private applyFilters(): void {
-    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    const statusFilter = document.getElementById('statusFilter') as HTMLSelectElement;
-    const payerFilter = document.getElementById('payerFilter') as HTMLSelectElement;
-    const providerFilter = document.getElementById('providerFilter') as HTMLSelectElement;
-    const startDate = document.getElementById('startDate') as HTMLInputElement;
-    const endDate = document.getElementById('endDate') as HTMLInputElement;
+    const searchInput = document.getElementById(
+      "searchInput",
+    ) as HTMLInputElement;
+    const statusFilter = document.getElementById(
+      "statusFilter",
+    ) as HTMLSelectElement;
+    const payerFilter = document.getElementById(
+      "payerFilter",
+    ) as HTMLSelectElement;
+    const providerFilter = document.getElementById(
+      "providerFilter",
+    ) as HTMLSelectElement;
+    const startDate = document.getElementById("startDate") as HTMLInputElement;
+    const endDate = document.getElementById("endDate") as HTMLInputElement;
 
     this.filters = {
-      search: searchInput?.value || '',
-      status: statusFilter?.value || '',
-      payerId: payerFilter?.value || '',
-      providerId: providerFilter?.value || '',
-      startDate: startDate?.value || '',
-      endDate: endDate?.value || ''
+      search: searchInput?.value || "",
+      status: statusFilter?.value || "",
+      payerId: payerFilter?.value || "",
+      providerId: providerFilter?.value || "",
+      startDate: startDate?.value || "",
+      endDate: endDate?.value || "",
     };
 
     this.currentPage = 1;
@@ -407,12 +427,12 @@ export class ClaimsListPage {
   }
 
   private clearFilters(): void {
-    (document.getElementById('searchInput') as HTMLInputElement).value = '';
-    (document.getElementById('statusFilter') as HTMLSelectElement).value = '';
-    (document.getElementById('payerFilter') as HTMLSelectElement).value = '';
-    (document.getElementById('providerFilter') as HTMLSelectElement).value = '';
-    (document.getElementById('startDate') as HTMLInputElement).value = '';
-    (document.getElementById('endDate') as HTMLInputElement).value = '';
+    (document.getElementById("searchInput") as HTMLInputElement).value = "";
+    (document.getElementById("statusFilter") as HTMLSelectElement).value = "";
+    (document.getElementById("payerFilter") as HTMLSelectElement).value = "";
+    (document.getElementById("providerFilter") as HTMLSelectElement).value = "";
+    (document.getElementById("startDate") as HTMLInputElement).value = "";
+    (document.getElementById("endDate") as HTMLInputElement).value = "";
 
     this.filters = {};
     this.currentPage = 1;
@@ -423,7 +443,7 @@ export class ClaimsListPage {
     const selectedClaims = this.getSelectedClaims();
 
     if (selectedClaims.length === 0) {
-      alert('Please select claims to submit');
+      alert("Please select claims to submit");
       return;
     }
 
@@ -431,21 +451,23 @@ export class ClaimsListPage {
       try {
         const result = await this.billingService.submitBatchClaims({
           claimIds: selectedClaims,
-          submissionMethod: 'electronic'
+          submissionMethod: "electronic",
         });
 
         alert(`Successfully submitted ${result.totalSubmitted} claims`);
         this.loadClaims();
       } catch (error) {
-        console.error('Error submitting batch claims:', error);
-        alert('Failed to submit claims');
+        console.error("Error submitting batch claims:", error);
+        alert("Failed to submit claims");
       }
     }
   }
 
   private getSelectedClaims(): string[] {
-    const checkboxes = document.querySelectorAll('.claim-checkbox:checked') as NodeListOf<HTMLInputElement>;
-    return Array.from(checkboxes).map(cb => cb.value);
+    const checkboxes = document.querySelectorAll(
+      ".claim-checkbox:checked",
+    ) as NodeListOf<HTMLInputElement>;
+    return Array.from(checkboxes).map((cb) => cb.value);
   }
 
   private formatDate(dateString: string): string {
@@ -458,10 +480,10 @@ export class ClaimsListPage {
   }
 
   private showError(message: string): void {
-    const container = this.container.querySelector('.claims-list-page');
+    const container = this.container.querySelector(".claims-list-page");
     if (container) {
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'alert alert-error';
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "alert alert-error";
       errorDiv.textContent = message;
       container.insertBefore(errorDiv, container.firstChild);
     }
@@ -482,14 +504,14 @@ export class ClaimsListPage {
   }
 
   public async submitClaim(claimId: string): Promise<void> {
-    if (confirm('Submit this claim?')) {
+    if (confirm("Submit this claim?")) {
       try {
         await this.billingService.submitClaim(claimId);
-        alert('Claim submitted successfully');
+        alert("Claim submitted successfully");
         this.loadClaims();
       } catch (error) {
-        console.error('Error submitting claim:', error);
-        alert('Failed to submit claim');
+        console.error("Error submitting claim:", error);
+        alert("Failed to submit claim");
       }
     }
   }
@@ -499,7 +521,7 @@ export class ClaimsListPage {
   }
 
   public printClaim(claimId: string): void {
-    window.open(`/api/billing/claims/${claimId}/print`, '_blank');
+    window.open(`/api/billing/claims/${claimId}/print`, "_blank");
   }
 }
 

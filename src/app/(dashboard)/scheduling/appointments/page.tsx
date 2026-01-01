@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Plus, Search, Filter, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
-import AppointmentCard from '@/components/scheduling/AppointmentCard';
-import { schedulingService } from '@/services/scheduling.service';
-import type { Appointment, AppointmentFilters } from '@/types/scheduling';
-import { toast } from 'sonner';
-import { debounce } from '@/lib/utils';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Plus, Search, Filter, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import AppointmentCard from "@/components/scheduling/AppointmentCard";
+import { schedulingService } from "@/services/scheduling.service";
+import type { Appointment, AppointmentFilters } from "@/types/scheduling";
+import { toast } from "sonner";
+import { debounce } from "@/lib/utils";
 
 export default function AppointmentsPage() {
   const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<AppointmentFilters>({});
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     loadAppointments();
@@ -30,7 +30,7 @@ export default function AppointmentsPage() {
       const data = await schedulingService.getAppointments(filters);
       setAppointments(data);
     } catch (error) {
-      toast.error('Failed to load appointments');
+      toast.error("Failed to load appointments");
       console.error(error);
     } finally {
       setLoading(false);
@@ -42,7 +42,7 @@ export default function AppointmentsPage() {
   }, 300);
 
   const handleStatusFilter = (status: string) => {
-    if (status === 'all') {
+    if (status === "all") {
       const { status: _, ...rest } = filters;
       setFilters(rest);
     } else {
@@ -63,7 +63,7 @@ export default function AppointmentsPage() {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button onClick={() => router.push('/scheduling/appointments/new')}>
+          <Button onClick={() => router.push("/scheduling/appointments/new")}>
             <Plus className="h-4 w-4 mr-2" />
             New Appointment
           </Button>
@@ -102,20 +102,27 @@ export default function AppointmentsPage() {
             <option value="procedure">Procedure</option>
             <option value="telemedicine">Telemedicine</option>
           </Select>
-          <Input type="date" onChange={(e) => setFilters({ ...filters, startDate: e.target.value })} />
+          <Input
+            type="date"
+            onChange={(e) =>
+              setFilters({ ...filters, startDate: e.target.value })
+            }
+          />
         </div>
       </Card>
 
       {/* Appointments List */}
       <div className="space-y-4">
         {loading ? (
-          <div className="text-center py-12 text-gray-500">Loading appointments...</div>
+          <div className="text-center py-12 text-gray-500">
+            Loading appointments...
+          </div>
         ) : appointments.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500">No appointments found</p>
             <Button
               className="mt-4"
-              onClick={() => router.push('/scheduling/appointments/new')}
+              onClick={() => router.push("/scheduling/appointments/new")}
             >
               <Plus className="h-4 w-4 mr-2" />
               Create First Appointment
@@ -126,7 +133,9 @@ export default function AppointmentsPage() {
             <AppointmentCard
               key={appointment.id}
               appointment={appointment}
-              onClick={() => router.push(`/scheduling/appointments/${appointment.id}`)}
+              onClick={() =>
+                router.push(`/scheduling/appointments/${appointment.id}`)
+              }
             />
           ))
         )}
@@ -136,7 +145,8 @@ export default function AppointmentsPage() {
       {appointments.length > 0 && (
         <div className="flex items-center justify-between border-t pt-4">
           <p className="text-sm text-gray-600">
-            Showing {appointments.length} appointment{appointments.length !== 1 ? 's' : ''}
+            Showing {appointments.length} appointment
+            {appointments.length !== 1 ? "s" : ""}
           </p>
           <div className="flex space-x-2">
             <Button variant="outline" size="sm" disabled>

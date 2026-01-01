@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,12 +8,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Monitor, Smartphone, Tablet, XCircle } from 'lucide-react';
-import toast from 'react-hot-toast';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Monitor, Smartphone, Tablet, XCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function SessionManager() {
   const [sessions, setSessions] = useState<any[]>([]);
@@ -27,42 +27,42 @@ export default function SessionManager() {
     setLoading(true);
     try {
       // This would need a new API endpoint
-      const response = await fetch('/api/admin/sessions');
+      const response = await fetch("/api/admin/sessions");
       const data = await response.json();
 
       if (data.success) {
         setSessions(data.data);
       }
     } catch (error) {
-      console.error('Failed to fetch sessions:', error);
+      console.error("Failed to fetch sessions:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const revokeSession = async (sessionId: string) => {
-    if (!confirm('Are you sure you want to revoke this session?')) return;
+    if (!confirm("Are you sure you want to revoke this session?")) return;
 
     try {
       const response = await fetch(`/api/admin/sessions/${sessionId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Session revoked successfully');
+        toast.success("Session revoked successfully");
         fetchSessions();
       } else {
-        toast.error(data.error || 'Failed to revoke session');
+        toast.error(data.error || "Failed to revoke session");
       }
     } catch (error) {
-      toast.error('Failed to revoke session');
+      toast.error("Failed to revoke session");
     }
   };
 
   const getDeviceIcon = (userAgent: string) => {
-    if (userAgent.includes('Mobile')) return <Smartphone className="h-4 w-4" />;
-    if (userAgent.includes('Tablet')) return <Tablet className="h-4 w-4" />;
+    if (userAgent.includes("Mobile")) return <Smartphone className="h-4 w-4" />;
+    if (userAgent.includes("Tablet")) return <Tablet className="h-4 w-4" />;
     return <Monitor className="h-4 w-4" />;
   };
 
@@ -91,7 +91,10 @@ export default function SessionManager() {
             <TableBody>
               {sessions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell
+                    colSpan={6}
+                    className="text-center py-8 text-muted-foreground"
+                  >
                     No active sessions found
                   </TableCell>
                 </TableRow>
@@ -101,18 +104,26 @@ export default function SessionManager() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getDeviceIcon(session.userAgent)}
-                        <span className="text-sm">{session.device?.browser || 'Unknown'}</span>
+                        <span className="text-sm">
+                          {session.device?.browser || "Unknown"}
+                        </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm">{session.ipAddress}</TableCell>
                     <TableCell className="text-sm">
-                      {session.location?.city || 'Unknown'}
+                      {session.ipAddress}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {session.location?.city || "Unknown"}
                     </TableCell>
                     <TableCell className="text-sm">
                       {new Date(session.lastActivityAt).toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={session.status === 'active' ? 'default' : 'secondary'}>
+                      <Badge
+                        variant={
+                          session.status === "active" ? "default" : "secondary"
+                        }
+                      >
                         {session.status}
                       </Badge>
                     </TableCell>

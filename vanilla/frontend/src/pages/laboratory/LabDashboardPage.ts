@@ -3,8 +3,8 @@
  * Main dashboard for laboratory information system
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { CriticalAlerts } from '../../components/laboratory/CriticalAlerts';
+import { labService } from "../../services/LaboratoryService";
+import { CriticalAlerts } from "../../components/laboratory/CriticalAlerts";
 
 export class LabDashboardPage {
   private container: HTMLElement;
@@ -104,34 +104,42 @@ export class LabDashboardPage {
     try {
       // Load critical results
       const criticalResults = await labService.getCriticalResults();
-      const criticalContainer = this.container.querySelector('#criticalAlertsContainer');
+      const criticalContainer = this.container.querySelector(
+        "#criticalAlertsContainer",
+      );
       if (criticalContainer) {
-        this.criticalAlerts = new CriticalAlerts(criticalContainer as HTMLElement, {
-          onAcknowledge: (resultId) => this.handleAcknowledgeCritical(resultId)
-        });
+        this.criticalAlerts = new CriticalAlerts(
+          criticalContainer as HTMLElement,
+          {
+            onAcknowledge: (resultId) =>
+              this.handleAcknowledgeCritical(resultId),
+          },
+        );
         this.criticalAlerts.setAlerts(criticalResults);
       }
 
       // Update stats
       const pendingOrders = await labService.getPendingOrders();
-      this.updateStat('pendingCount', pendingOrders.length);
-      this.updateStat('criticalCount', criticalResults.length);
+      this.updateStat("pendingCount", pendingOrders.length);
+      this.updateStat("criticalCount", criticalResults.length);
 
       // Load recent orders
       this.loadRecentOrders();
-
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error("Error loading dashboard data:", error);
     }
   }
 
   private async loadRecentOrders(): Promise<void> {
     try {
       const orders = await labService.getPendingOrders();
-      const container = this.container.querySelector('#recentOrdersContainer');
+      const container = this.container.querySelector("#recentOrdersContainer");
 
       if (container) {
-        container.innerHTML = orders.slice(0, 5).map((order: any) => `
+        container.innerHTML = orders
+          .slice(0, 5)
+          .map(
+            (order: any) => `
           <div class="order-item">
             <div class="order-info">
               <strong>${order.orderNumber}</strong>
@@ -142,10 +150,12 @@ export class LabDashboardPage {
               <a href="/laboratory/orders/${order.id}" class="btn-link">View</a>
             </div>
           </div>
-        `).join('');
+        `,
+          )
+          .join("");
       }
     } catch (error) {
-      console.error('Error loading recent orders:', error);
+      console.error("Error loading recent orders:", error);
     }
   }
 
@@ -157,23 +167,23 @@ export class LabDashboardPage {
   }
 
   private handleAcknowledgeCritical(resultId: string): void {
-    console.log('Acknowledging critical result:', resultId);
+    console.log("Acknowledging critical result:", resultId);
     // In real implementation, would notify provider and log acknowledgment
-    alert('Critical result acknowledged. Provider notification sent.');
+    alert("Critical result acknowledged. Provider notification sent.");
   }
 
   private attachEventListeners(): void {
-    const newOrderBtn = this.container.querySelector('#newOrderBtn');
-    const refreshBtn = this.container.querySelector('#refreshBtn');
+    const newOrderBtn = this.container.querySelector("#newOrderBtn");
+    const refreshBtn = this.container.querySelector("#refreshBtn");
 
     if (newOrderBtn) {
-      newOrderBtn.addEventListener('click', () => {
-        window.location.href = '/laboratory/orders/new';
+      newOrderBtn.addEventListener("click", () => {
+        window.location.href = "/laboratory/orders/new";
       });
     }
 
     if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => {
+      refreshBtn.addEventListener("click", () => {
         this.loadData();
       });
     }
@@ -183,6 +193,6 @@ export class LabDashboardPage {
     if (this.criticalAlerts) {
       this.criticalAlerts.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

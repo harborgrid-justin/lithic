@@ -30,6 +30,6 @@ export class DispensingPage {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

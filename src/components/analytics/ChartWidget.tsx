@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -24,10 +24,10 @@ import {
   Legend,
   ResponsiveContainer,
   Cell,
-} from 'recharts';
+} from "recharts";
 
 interface ChartWidgetProps {
-  type: 'line' | 'bar' | 'area' | 'pie' | 'radar' | 'scatter';
+  type: "line" | "bar" | "area" | "pie" | "radar" | "scatter";
   data: any[];
   config: {
     xAxis?: string;
@@ -43,14 +43,14 @@ interface ChartWidgetProps {
 }
 
 const DEFAULT_COLORS = [
-  '#3b82f6', // blue
-  '#10b981', // green
-  '#f59e0b', // amber
-  '#ef4444', // red
-  '#8b5cf6', // violet
-  '#ec4899', // pink
-  '#06b6d4', // cyan
-  '#f97316', // orange
+  "#3b82f6", // blue
+  "#10b981", // green
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#8b5cf6", // violet
+  "#ec4899", // pink
+  "#06b6d4", // cyan
+  "#f97316", // orange
 ];
 
 export function ChartWidget({
@@ -58,11 +58,11 @@ export function ChartWidget({
   data,
   config,
   title,
-  className = '',
+  className = "",
 }: ChartWidgetProps) {
   const {
-    xAxis = 'name',
-    yAxis = 'value',
+    xAxis = "name",
+    yAxis = "value",
     colors = DEFAULT_COLORS,
     stacked = false,
     showLegend = true,
@@ -82,9 +82,9 @@ export function ChartWidget({
         <YAxis stroke="#6b7280" fontSize={12} />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '6px',
+            backgroundColor: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: "6px",
           }}
         />
         {showLegend && <Legend />}
@@ -111,9 +111,9 @@ export function ChartWidget({
         <YAxis stroke="#6b7280" fontSize={12} />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '6px',
+            backgroundColor: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: "6px",
           }}
         />
         {showLegend && <Legend />}
@@ -122,7 +122,7 @@ export function ChartWidget({
             key={key}
             dataKey={key}
             fill={colors[index % colors.length]}
-            stackId={stacked ? 'stack' : undefined}
+            stackId={stacked ? "stack" : undefined}
             radius={[4, 4, 0, 0]}
           />
         ))}
@@ -138,9 +138,9 @@ export function ChartWidget({
         <YAxis stroke="#6b7280" fontSize={12} />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '6px',
+            backgroundColor: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: "6px",
           }}
         />
         {showLegend && <Legend />}
@@ -152,7 +152,7 @@ export function ChartWidget({
             stroke={colors[index % colors.length]}
             fill={colors[index % colors.length]}
             fillOpacity={0.6}
-            stackId={stacked ? 'stack' : undefined}
+            stackId={stacked ? "stack" : undefined}
           />
         ))}
       </AreaChart>
@@ -183,9 +183,9 @@ export function ChartWidget({
           </Pie>
           <Tooltip
             contentStyle={{
-              backgroundColor: '#fff',
-              border: '1px solid #e5e7eb',
-              borderRadius: '6px',
+              backgroundColor: "#fff",
+              border: "1px solid #e5e7eb",
+              borderRadius: "6px",
             }}
           />
           {showLegend && <Legend />}
@@ -202,9 +202,9 @@ export function ChartWidget({
         <PolarRadiusAxis stroke="#6b7280" fontSize={12} />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '6px',
+            backgroundColor: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: "6px",
           }}
         />
         {showLegend && <Legend />}
@@ -227,37 +227,38 @@ export function ChartWidget({
       <ScatterChart>
         {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />}
         <XAxis dataKey={xAxis} stroke="#6b7280" fontSize={12} />
-        <YAxis dataKey={Array.isArray(yAxis) ? yAxis[0] : yAxis} stroke="#6b7280" fontSize={12} />
+        <YAxis
+          dataKey={Array.isArray(yAxis) ? yAxis[0] : yAxis}
+          stroke="#6b7280"
+          fontSize={12}
+        />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '6px',
+            backgroundColor: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: "6px",
           }}
-          cursor={{ strokeDasharray: '3 3' }}
+          cursor={{ strokeDasharray: "3 3" }}
         />
         {showLegend && <Legend />}
-        <Scatter
-          data={data}
-          fill={colors[0]}
-        />
+        <Scatter data={data} fill={colors[0]} />
       </ScatterChart>
     </ResponsiveContainer>
   );
 
   const renderChart = () => {
     switch (type) {
-      case 'line':
+      case "line":
         return renderLineChart();
-      case 'bar':
+      case "bar":
         return renderBarChart();
-      case 'area':
+      case "area":
         return renderAreaChart();
-      case 'pie':
+      case "pie":
         return renderPieChart();
-      case 'radar':
+      case "radar":
         return renderRadarChart();
-      case 'scatter':
+      case "scatter":
         return renderScatterChart();
       default:
         return renderLineChart();
@@ -265,13 +266,13 @@ export function ChartWidget({
   };
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+    <div
+      className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}
+    >
       {title && (
         <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
       )}
-      <div className="w-full">
-        {renderChart()}
-      </div>
+      <div className="w-full">{renderChart()}</div>
     </div>
   );
 }

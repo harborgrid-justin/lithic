@@ -3,8 +3,8 @@
  * Lithic Healthcare Platform
  */
 
-import { Router } from 'express';
-import { analyticsController } from '../../controllers/AnalyticsController';
+import { Router } from "express";
+import { analyticsController } from "../../controllers/AnalyticsController";
 
 const router = Router();
 
@@ -14,7 +14,7 @@ const router = Router();
  * @query   reportId - Filter by report configuration ID
  * @access  Private
  */
-router.get('/', analyticsController.getScheduledReports);
+router.get("/", analyticsController.getScheduledReports);
 
 /**
  * @route   POST /api/analytics/scheduled
@@ -23,21 +23,21 @@ router.get('/', analyticsController.getScheduledReports);
  * @body    schedule - Schedule configuration
  * @access  Private
  */
-router.post('/', analyticsController.createScheduledReport);
+router.post("/", analyticsController.createScheduledReport);
 
 /**
  * @route   PUT /api/analytics/scheduled/:id
  * @desc    Update a scheduled report
  * @access  Private
  */
-router.put('/:id', analyticsController.updateScheduledReport);
+router.put("/:id", analyticsController.updateScheduledReport);
 
 /**
  * @route   DELETE /api/analytics/scheduled/:id
  * @desc    Delete a scheduled report
  * @access  Private
  */
-router.delete('/:id', analyticsController.deleteScheduledReport);
+router.delete("/:id", analyticsController.deleteScheduledReport);
 
 /**
  * @route   POST /api/analytics/scheduled/:id/toggle
@@ -45,7 +45,7 @@ router.delete('/:id', analyticsController.deleteScheduledReport);
  * @body    isActive - Boolean flag
  * @access  Private
  */
-router.post('/:id/toggle', analyticsController.toggleScheduledReport);
+router.post("/:id/toggle", analyticsController.toggleScheduledReport);
 
 /**
  * @route   GET /api/analytics/audit
@@ -57,6 +57,6 @@ router.post('/:id/toggle', analyticsController.toggleScheduledReport);
  * @query   endDate - Filter by date range end
  * @access  Private (Admin)
  */
-router.get('/audit', analyticsController.getAuditLog);
+router.get("/audit", analyticsController.getAuditLog);
 
 export default router;

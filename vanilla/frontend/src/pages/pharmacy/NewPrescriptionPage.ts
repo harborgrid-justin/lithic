@@ -30,6 +30,6 @@ export class NewPrescriptionPage {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -5,11 +5,14 @@
  */
 
 export interface CalendarOptions {
-  view: 'day' | 'week' | 'month';
+  view: "day" | "week" | "month";
   date: Date;
   onAppointmentClick?: (appointmentId: string) => void;
   onSlotClick?: (startTime: Date) => void;
-  onAppointmentDrop?: (appointmentId: string, newStartTime: Date) => Promise<void>;
+  onAppointmentDrop?: (
+    appointmentId: string,
+    newStartTime: Date,
+  ) => Promise<void>;
 }
 
 export class DragDropCalendar {
@@ -31,7 +34,7 @@ export class DragDropCalendar {
     this.render();
   }
 
-  setView(view: 'day' | 'week' | 'month'): void {
+  setView(view: "day" | "week" | "month"): void {
     this.options.view = view;
     this.render();
   }
@@ -43,13 +46,13 @@ export class DragDropCalendar {
 
   private render(): void {
     switch (this.options.view) {
-      case 'day':
+      case "day":
         this.renderDayView();
         break;
-      case 'week':
+      case "week":
         this.renderWeekView();
         break;
-      case 'month':
+      case "month":
         this.renderMonthView();
         break;
     }
@@ -61,18 +64,26 @@ export class DragDropCalendar {
     this.container.innerHTML = `
       <div class="calendar-day-view">
         <div class="time-column">
-          ${hours.map(hour => `
+          ${hours
+            .map(
+              (hour) => `
             <div class="time-slot" data-hour="${hour}">
               ${this.formatHour(hour)}
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
         <div class="appointments-column" data-droppable="true">
-          ${hours.map(hour => `
+          ${hours
+            .map(
+              (hour) => `
             <div class="hour-slot" data-hour="${hour}" data-date="${this.options.date.toISOString()}">
               ${this.renderAppointmentsForHour(hour)}
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       </div>
     `;
@@ -94,28 +105,44 @@ export class DragDropCalendar {
       <div class="calendar-week-view">
         <div class="calendar-header">
           <div class="time-header"></div>
-          ${weekDays.map(date => `
+          ${weekDays
+            .map(
+              (date) => `
             <div class="day-header">
-              <div class="day-name">${date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+              <div class="day-name">${date.toLocaleDateString("en-US", { weekday: "short" })}</div>
               <div class="day-date">${date.getDate()}</div>
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
         <div class="calendar-body">
           <div class="time-column">
-            ${hours.map(hour => `
+            ${hours
+              .map(
+                (hour) => `
               <div class="time-slot">${this.formatHour(hour)}</div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
-          ${weekDays.map(date => `
+          ${weekDays
+            .map(
+              (date) => `
             <div class="day-column" data-date="${date.toISOString()}" data-droppable="true">
-              ${hours.map(hour => `
+              ${hours
+                .map(
+                  (hour) => `
                 <div class="hour-slot" data-hour="${hour}" data-date="${date.toISOString()}">
                   ${this.renderAppointmentsForSlot(date, hour)}
                 </div>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       </div>
     `;
@@ -124,8 +151,16 @@ export class DragDropCalendar {
   }
 
   private renderMonthView(): void {
-    const monthStart = new Date(this.options.date.getFullYear(), this.options.date.getMonth(), 1);
-    const monthEnd = new Date(this.options.date.getFullYear(), this.options.date.getMonth() + 1, 0);
+    const monthStart = new Date(
+      this.options.date.getFullYear(),
+      this.options.date.getMonth(),
+      1,
+    );
+    const monthEnd = new Date(
+      this.options.date.getFullYear(),
+      this.options.date.getMonth() + 1,
+      0,
+    );
 
     const firstDayOfWeek = monthStart.getDay();
     const daysInMonth = monthEnd.getDate();
@@ -148,16 +183,24 @@ export class DragDropCalendar {
     this.container.innerHTML = `
       <div class="calendar-month-view">
         <div class="month-header">
-          ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => `
+          ${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            .map(
+              (day) => `
             <div class="day-header">${day}</div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
         <div class="month-body">
-          ${weeks.map(week => `
+          ${weeks
+            .map(
+              (week) => `
             <div class="week-row">
-              ${week.map(date => this.renderMonthDay(date)).join('')}
+              ${week.map((date) => this.renderMonthDay(date)).join("")}
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       </div>
     `;
@@ -170,20 +213,25 @@ export class DragDropCalendar {
     const dayAppointments = this.getAppointmentsForDate(date);
 
     return `
-      <div class="month-day ${!isCurrentMonth ? 'other-month' : ''}"
+      <div class="month-day ${!isCurrentMonth ? "other-month" : ""}"
            data-date="${date.toISOString()}"
            data-droppable="true">
         <div class="day-number">${date.getDate()}</div>
         <div class="day-appointments">
-          ${dayAppointments.slice(0, 3).map(apt => `
+          ${dayAppointments
+            .slice(0, 3)
+            .map(
+              (apt) => `
             <div class="appointment-pill"
                  data-id="${apt.id}"
                  draggable="true"
                  style="background-color: ${this.getStatusColor(apt.status)}">
-              ${new Date(apt.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} - ${apt.patientName}
+              ${new Date(apt.startTime).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} - ${apt.patientName}
             </div>
-          `).join('')}
-          ${dayAppointments.length > 3 ? `<div class="more-appointments">+${dayAppointments.length - 3} more</div>` : ''}
+          `,
+            )
+            .join("")}
+          ${dayAppointments.length > 3 ? `<div class="more-appointments">+${dayAppointments.length - 3} more</div>` : ""}
         </div>
       </div>
     `;
@@ -195,12 +243,12 @@ export class DragDropCalendar {
     const endTime = new Date(startTime);
     endTime.setHours(hour + 1);
 
-    const appointments = this.appointments.filter(apt => {
+    const appointments = this.appointments.filter((apt) => {
       const aptStart = new Date(apt.startTime);
       return aptStart >= startTime && aptStart < endTime;
     });
 
-    return appointments.map(apt => this.renderAppointmentCard(apt)).join('');
+    return appointments.map((apt) => this.renderAppointmentCard(apt)).join("");
   }
 
   private renderAppointmentsForSlot(date: Date, hour: number): string {
@@ -209,15 +257,27 @@ export class DragDropCalendar {
     const slotEnd = new Date(slotStart);
     slotEnd.setHours(hour + 1);
 
-    const appointments = this.appointments.filter(apt => {
+    const appointments = this.appointments.filter((apt) => {
       const aptStart = new Date(apt.startTime);
-      const aptDate = new Date(aptStart.getFullYear(), aptStart.getMonth(), aptStart.getDate());
-      const checkDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const aptDate = new Date(
+        aptStart.getFullYear(),
+        aptStart.getMonth(),
+        aptStart.getDate(),
+      );
+      const checkDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+      );
 
-      return aptDate.getTime() === checkDate.getTime() && aptStart >= slotStart && aptStart < slotEnd;
+      return (
+        aptDate.getTime() === checkDate.getTime() &&
+        aptStart >= slotStart &&
+        aptStart < slotEnd
+      );
     });
 
-    return appointments.map(apt => this.renderAppointmentCard(apt)).join('');
+    return appointments.map((apt) => this.renderAppointmentCard(apt)).join("");
   }
 
   private renderAppointmentCard(appointment: any): string {
@@ -230,7 +290,7 @@ export class DragDropCalendar {
            data-id="${appointment.id}"
            draggable="true"
            style="height: ${height}px; min-height: 40px;">
-        <div class="appointment-time">${startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</div>
+        <div class="appointment-time">${startTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</div>
         <div class="appointment-patient">${appointment.patientName}</div>
         <div class="appointment-provider">${appointment.providerName}</div>
         <div class="appointment-type">${appointment.appointmentType}</div>
@@ -239,7 +299,7 @@ export class DragDropCalendar {
   }
 
   private getAppointmentsForDate(date: Date): any[] {
-    return this.appointments.filter(apt => {
+    return this.appointments.filter((apt) => {
       const aptDate = new Date(apt.startTime);
       return (
         aptDate.getFullYear() === date.getFullYear() &&
@@ -251,45 +311,63 @@ export class DragDropCalendar {
 
   private attachDragDropListeners(): void {
     // Make appointment cards draggable
-    this.container.querySelectorAll('[draggable="true"]').forEach(element => {
-      element.addEventListener('dragstart', (e) => this.handleDragStart(e as DragEvent));
-      element.addEventListener('dragend', (e) => this.handleDragEnd(e as DragEvent));
+    this.container.querySelectorAll('[draggable="true"]').forEach((element) => {
+      element.addEventListener("dragstart", (e) =>
+        this.handleDragStart(e as DragEvent),
+      );
+      element.addEventListener("dragend", (e) =>
+        this.handleDragEnd(e as DragEvent),
+      );
     });
 
     // Make time slots droppable
-    this.container.querySelectorAll('[data-droppable="true"], .hour-slot, .month-day').forEach(element => {
-      element.addEventListener('dragover', (e) => this.handleDragOver(e as DragEvent));
-      element.addEventListener('drop', (e) => this.handleDrop(e as DragEvent));
-      element.addEventListener('dragleave', (e) => this.handleDragLeave(e as DragEvent));
-    });
+    this.container
+      .querySelectorAll('[data-droppable="true"], .hour-slot, .month-day')
+      .forEach((element) => {
+        element.addEventListener("dragover", (e) =>
+          this.handleDragOver(e as DragEvent),
+        );
+        element.addEventListener("drop", (e) =>
+          this.handleDrop(e as DragEvent),
+        );
+        element.addEventListener("dragleave", (e) =>
+          this.handleDragLeave(e as DragEvent),
+        );
+      });
 
     // Click handlers
-    this.container.querySelectorAll('.appointment-card, .appointment-pill').forEach(element => {
-      element.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const appointmentId = (e.currentTarget as HTMLElement).dataset.id;
-        if (appointmentId && this.options.onAppointmentClick) {
-          this.options.onAppointmentClick(appointmentId);
-        }
-      });
-    });
-
-    this.container.querySelectorAll('.hour-slot, .month-day').forEach(element => {
-      element.addEventListener('click', (e) => {
-        if ((e.target as HTMLElement).classList.contains('hour-slot') ||
-            (e.target as HTMLElement).classList.contains('month-day')) {
-          const dateStr = (e.currentTarget as HTMLElement).dataset.date;
-          const hour = (e.currentTarget as HTMLElement).dataset.hour;
-          if (dateStr && this.options.onSlotClick) {
-            const slotTime = new Date(dateStr);
-            if (hour) {
-              slotTime.setHours(parseInt(hour));
-            }
-            this.options.onSlotClick(slotTime);
+    this.container
+      .querySelectorAll(".appointment-card, .appointment-pill")
+      .forEach((element) => {
+        element.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const appointmentId = (e.currentTarget as HTMLElement).dataset.id;
+          if (appointmentId && this.options.onAppointmentClick) {
+            this.options.onAppointmentClick(appointmentId);
           }
-        }
+        });
       });
-    });
+
+    this.container
+      .querySelectorAll(".hour-slot, .month-day")
+      .forEach((element) => {
+        element.addEventListener("click", (e) => {
+          if (
+            (e.target as HTMLElement).classList.contains("hour-slot") ||
+            (e.target as HTMLElement).classList.contains("month-day")
+          ) {
+            const dateStr = (e.currentTarget as HTMLElement).dataset.date;
+            const hour = (e.currentTarget as HTMLElement).dataset.hour;
+            if (dateStr && this.options.onSlotClick) {
+              const slotTime = new Date(dateStr);
+              if (hour) {
+                slotTime.setHours(parseInt(hour));
+              }
+              this.options.onSlotClick(slotTime);
+            }
+          }
+        });
+      });
   }
 
   private handleDragStart(e: DragEvent): void {
@@ -297,21 +375,21 @@ export class DragDropCalendar {
     this.draggedAppointmentId = this.draggedElement.dataset.id || null;
 
     if (e.dataTransfer) {
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', this.draggedAppointmentId || '');
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", this.draggedAppointmentId || "");
     }
 
-    this.draggedElement.classList.add('dragging');
+    this.draggedElement.classList.add("dragging");
   }
 
   private handleDragEnd(e: DragEvent): void {
     if (this.draggedElement) {
-      this.draggedElement.classList.remove('dragging');
+      this.draggedElement.classList.remove("dragging");
     }
 
     // Remove all drop-target highlights
-    this.container.querySelectorAll('.drop-target').forEach(el => {
-      el.classList.remove('drop-target');
+    this.container.querySelectorAll(".drop-target").forEach((el) => {
+      el.classList.remove("drop-target");
     });
 
     this.draggedElement = null;
@@ -322,16 +400,16 @@ export class DragDropCalendar {
     e.preventDefault();
 
     if (e.dataTransfer) {
-      e.dataTransfer.dropEffect = 'move';
+      e.dataTransfer.dropEffect = "move";
     }
 
     const dropTarget = e.currentTarget as HTMLElement;
-    dropTarget.classList.add('drop-target');
+    dropTarget.classList.add("drop-target");
   }
 
   private handleDragLeave(e: DragEvent): void {
     const dropTarget = e.currentTarget as HTMLElement;
-    dropTarget.classList.remove('drop-target');
+    dropTarget.classList.remove("drop-target");
   }
 
   private async handleDrop(e: DragEvent): Promise<void> {
@@ -339,7 +417,7 @@ export class DragDropCalendar {
     e.stopPropagation();
 
     const dropTarget = e.currentTarget as HTMLElement;
-    dropTarget.classList.remove('drop-target');
+    dropTarget.classList.remove("drop-target");
 
     if (!this.draggedAppointmentId) return;
 
@@ -357,9 +435,12 @@ export class DragDropCalendar {
     // Call the drop handler
     if (this.options.onAppointmentDrop) {
       try {
-        await this.options.onAppointmentDrop(this.draggedAppointmentId, newStartTime);
+        await this.options.onAppointmentDrop(
+          this.draggedAppointmentId,
+          newStartTime,
+        );
       } catch (error) {
-        console.error('Error handling appointment drop:', error);
+        console.error("Error handling appointment drop:", error);
       }
     }
   }
@@ -373,25 +454,25 @@ export class DragDropCalendar {
   }
 
   private formatHour(hour: number): string {
-    const period = hour >= 12 ? 'PM' : 'AM';
+    const period = hour >= 12 ? "PM" : "AM";
     const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
     return `${displayHour} ${period}`;
   }
 
   private getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      'scheduled': '#3b82f6',
-      'confirmed': '#10b981',
-      'checked-in': '#f59e0b',
-      'in-progress': '#8b5cf6',
-      'completed': '#6b7280',
-      'cancelled': '#ef4444',
-      'no-show': '#dc2626'
+      scheduled: "#3b82f6",
+      confirmed: "#10b981",
+      "checked-in": "#f59e0b",
+      "in-progress": "#8b5cf6",
+      completed: "#6b7280",
+      cancelled: "#ef4444",
+      "no-show": "#dc2626",
     };
-    return colors[status] || '#6b7280';
+    return colors[status] || "#6b7280";
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

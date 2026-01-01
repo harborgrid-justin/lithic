@@ -3,13 +3,15 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-const API_BASE = '/api/analytics';
+const API_BASE = "/api/analytics";
 
 export class AnalyticsAPIService {
   // ==================== Dashboards ====================
 
   async getDashboards(category?: string): Promise<any> {
-    const url = category ? `${API_BASE}/dashboards?category=${category}` : `${API_BASE}/dashboards`;
+    const url = category
+      ? `${API_BASE}/dashboards?category=${category}`
+      : `${API_BASE}/dashboards`;
     const response = await fetch(url);
     return response.json();
   }
@@ -21,8 +23,8 @@ export class AnalyticsAPIService {
 
   async createDashboard(data: any): Promise<any> {
     const response = await fetch(`${API_BASE}/dashboards`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -30,8 +32,8 @@ export class AnalyticsAPIService {
 
   async updateDashboard(id: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE}/dashboards/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -39,15 +41,15 @@ export class AnalyticsAPIService {
 
   async deleteDashboard(id: string): Promise<any> {
     const response = await fetch(`${API_BASE}/dashboards/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     return response.json();
   }
 
   async getWidgetData(config: any): Promise<any> {
     const response = await fetch(`${API_BASE}/dashboards/widget-data`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(config),
     });
     return response.json();
@@ -56,7 +58,9 @@ export class AnalyticsAPIService {
   // ==================== Metrics ====================
 
   async getMetrics(category?: string): Promise<any> {
-    const url = category ? `${API_BASE}/metrics?category=${category}` : `${API_BASE}/metrics`;
+    const url = category
+      ? `${API_BASE}/metrics?category=${category}`
+      : `${API_BASE}/metrics`;
     const response = await fetch(url);
     return response.json();
   }
@@ -68,8 +72,8 @@ export class AnalyticsAPIService {
 
   async calculateMetric(id: string, params?: any): Promise<any> {
     const response = await fetch(`${API_BASE}/metrics/${id}/calculate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params || {}),
     });
     return response.json();
@@ -77,20 +81,25 @@ export class AnalyticsAPIService {
 
   async getQualityMeasures(filters?: any): Promise<any> {
     const params = new URLSearchParams(filters);
-    const response = await fetch(`${API_BASE}/metrics/quality/measures?${params}`);
+    const response = await fetch(
+      `${API_BASE}/metrics/quality/measures?${params}`,
+    );
     return response.json();
   }
 
   async getFinancialMetrics(startDate: string, endDate: string): Promise<any> {
     const response = await fetch(
-      `${API_BASE}/metrics/financial?startDate=${startDate}&endDate=${endDate}`
+      `${API_BASE}/metrics/financial?startDate=${startDate}&endDate=${endDate}`,
     );
     return response.json();
   }
 
-  async getOperationalMetrics(startDate: string, endDate: string): Promise<any> {
+  async getOperationalMetrics(
+    startDate: string,
+    endDate: string,
+  ): Promise<any> {
     const response = await fetch(
-      `${API_BASE}/metrics/operational?startDate=${startDate}&endDate=${endDate}`
+      `${API_BASE}/metrics/operational?startDate=${startDate}&endDate=${endDate}`,
     );
     return response.json();
   }
@@ -118,8 +127,8 @@ export class AnalyticsAPIService {
 
   async createReport(data: any): Promise<any> {
     const response = await fetch(`${API_BASE}/reports`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -127,8 +136,8 @@ export class AnalyticsAPIService {
 
   async updateReport(id: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE}/reports/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -136,15 +145,15 @@ export class AnalyticsAPIService {
 
   async deleteReport(id: string): Promise<any> {
     const response = await fetch(`${API_BASE}/reports/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     return response.json();
   }
 
   async generateReport(id: string, params?: any): Promise<any> {
     const response = await fetch(`${API_BASE}/reports/${id}/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params || {}),
     });
     return response.json();
@@ -175,8 +184,8 @@ export class AnalyticsAPIService {
 
   async createScheduledReport(data: any): Promise<any> {
     const response = await fetch(`${API_BASE}/scheduled`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -184,8 +193,8 @@ export class AnalyticsAPIService {
 
   async updateScheduledReport(id: string, data: any): Promise<any> {
     const response = await fetch(`${API_BASE}/scheduled/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -193,15 +202,15 @@ export class AnalyticsAPIService {
 
   async deleteScheduledReport(id: string): Promise<any> {
     const response = await fetch(`${API_BASE}/scheduled/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     return response.json();
   }
 
   async toggleScheduledReport(id: string, isActive: boolean): Promise<any> {
     const response = await fetch(`${API_BASE}/scheduled/${id}/toggle`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive }),
     });
     return response.json();
@@ -211,8 +220,8 @@ export class AnalyticsAPIService {
 
   async createExport(data: any): Promise<any> {
     const response = await fetch(`${API_BASE}/exports`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return response.json();
@@ -230,7 +239,7 @@ export class AnalyticsAPIService {
 
   async cancelExport(id: string): Promise<any> {
     const response = await fetch(`${API_BASE}/exports/${id}/cancel`, {
-      method: 'POST',
+      method: "POST",
     });
     return response.json();
   }

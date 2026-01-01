@@ -1,6 +1,6 @@
-import { ImagingService } from '../../services/ImagingService';
-import { ModalityStatus } from '../../components/imaging/ModalityStatus';
-import { RadiologyWorklist } from '../../components/imaging/RadiologyWorklist';
+import { ImagingService } from "../../services/ImagingService";
+import { ModalityStatus } from "../../components/imaging/ModalityStatus";
+import { RadiologyWorklist } from "../../components/imaging/RadiologyWorklist";
 
 export class ImagingDashboardPage {
   private container: HTMLElement;
@@ -16,10 +16,10 @@ export class ImagingDashboardPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'imaging-dashboard-page';
+    const wrapper = document.createElement("div");
+    wrapper.className = "imaging-dashboard-page";
     wrapper.innerHTML = `
       <div class="dashboard-header">
         <h1>Imaging Dashboard</h1>
@@ -104,15 +104,19 @@ export class ImagingDashboardPage {
       this.updateStatistics(stats);
 
       // Load and render modality status
-      const modalityContainer = document.getElementById('modality-status-container');
+      const modalityContainer = document.getElementById(
+        "modality-status-container",
+      );
       if (modalityContainer) {
         this.modalityStatus.render(modalityContainer);
       }
 
       // Load and render today's worklist
-      const worklistContainer = document.getElementById('worklist-container');
+      const worklistContainer = document.getElementById("worklist-container");
       if (worklistContainer) {
-        this.worklist.render(worklistContainer, { date: new Date().toISOString().split('T')[0] });
+        this.worklist.render(worklistContainer, {
+          date: new Date().toISOString().split("T")[0],
+        });
       }
 
       // Load recent studies
@@ -121,35 +125,39 @@ export class ImagingDashboardPage {
       // Load critical reports
       await this.loadCriticalReports();
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      this.showError('Failed to load dashboard data');
+      console.error("Error loading dashboard data:", error);
+      this.showError("Failed to load dashboard data");
     }
   }
 
   private updateStatistics(stats: any) {
-    const pendingOrders = document.getElementById('pending-orders');
-    const inProgress = document.getElementById('in-progress');
-    const unreadStudies = document.getElementById('unread-studies');
-    const criticalResults = document.getElementById('critical-results');
+    const pendingOrders = document.getElementById("pending-orders");
+    const inProgress = document.getElementById("in-progress");
+    const unreadStudies = document.getElementById("unread-studies");
+    const criticalResults = document.getElementById("critical-results");
 
-    if (pendingOrders) pendingOrders.textContent = stats.pendingOrders || '0';
-    if (inProgress) inProgress.textContent = stats.inProgress || '0';
-    if (unreadStudies) unreadStudies.textContent = stats.unreadStudies || '0';
-    if (criticalResults) criticalResults.textContent = stats.criticalResults || '0';
+    if (pendingOrders) pendingOrders.textContent = stats.pendingOrders || "0";
+    if (inProgress) inProgress.textContent = stats.inProgress || "0";
+    if (unreadStudies) unreadStudies.textContent = stats.unreadStudies || "0";
+    if (criticalResults)
+      criticalResults.textContent = stats.criticalResults || "0";
   }
 
   private async loadRecentStudies() {
     try {
       const studies = await this.imagingService.getRecentStudies(10);
-      const container = this.container.querySelector('.recent-studies-section .studies-list');
+      const container = this.container.querySelector(
+        ".recent-studies-section .studies-list",
+      );
 
       if (!container) return;
 
-      container.innerHTML = studies.length > 0
-        ? studies.map(study => this.createStudyCard(study)).join('')
-        : '<div class="empty-state">No recent studies</div>';
+      container.innerHTML =
+        studies.length > 0
+          ? studies.map((study) => this.createStudyCard(study)).join("")
+          : '<div class="empty-state">No recent studies</div>';
     } catch (error) {
-      console.error('Error loading recent studies:', error);
+      console.error("Error loading recent studies:", error);
     }
   }
 
@@ -161,7 +169,7 @@ export class ImagingDashboardPage {
             <strong>${study.patientName}</strong>
             <span class="study-date">${this.formatDate(study.studyDate)}</span>
           </div>
-          <div class="study-description">${study.studyDescription || 'N/A'}</div>
+          <div class="study-description">${study.studyDescription || "N/A"}</div>
           <div class="study-meta">
             <span class="badge badge-${this.getModalityColor(study.modality)}">${study.modality}</span>
             <span class="badge badge-${this.getStatusColor(study.readingStatus)}">${study.readingStatus}</span>
@@ -178,15 +186,18 @@ export class ImagingDashboardPage {
   private async loadCriticalReports() {
     try {
       const reports = await this.imagingService.getCriticalReports();
-      const container = this.container.querySelector('.critical-reports-section .reports-list');
+      const container = this.container.querySelector(
+        ".critical-reports-section .reports-list",
+      );
 
       if (!container) return;
 
-      container.innerHTML = reports.length > 0
-        ? reports.map(report => this.createReportCard(report)).join('')
-        : '<div class="empty-state">No critical reports pending notification</div>';
+      container.innerHTML =
+        reports.length > 0
+          ? reports.map((report) => this.createReportCard(report)).join("")
+          : '<div class="empty-state">No critical reports pending notification</div>';
     } catch (error) {
-      console.error('Error loading critical reports:', error);
+      console.error("Error loading critical reports:", error);
     }
   }
 
@@ -214,35 +225,37 @@ export class ImagingDashboardPage {
 
   private async attachEventListeners() {
     // New order button
-    const newOrderBtn = this.container.querySelector('[data-action="new-order"]');
-    newOrderBtn?.addEventListener('click', () => {
-      window.location.href = '#/imaging/orders/new';
+    const newOrderBtn = this.container.querySelector(
+      '[data-action="new-order"]',
+    );
+    newOrderBtn?.addEventListener("click", () => {
+      window.location.href = "#/imaging/orders/new";
     });
 
     // Refresh button
     const refreshBtn = this.container.querySelector('[data-action="refresh"]');
-    refreshBtn?.addEventListener('click', () => {
+    refreshBtn?.addEventListener("click", () => {
       this.loadDashboardData();
     });
 
     // Study view buttons
-    this.container.addEventListener('click', async (e) => {
+    this.container.addEventListener("click", async (e) => {
       const target = e.target as HTMLElement;
-      const studyCard = target.closest('.study-card');
-      const reportCard = target.closest('.report-card');
+      const studyCard = target.closest(".study-card");
+      const reportCard = target.closest(".report-card");
 
-      if (target.dataset.action === 'view-study' && studyCard) {
-        const studyUID = studyCard.getAttribute('data-study-uid');
+      if (target.dataset.action === "view-study" && studyCard) {
+        const studyUID = studyCard.getAttribute("data-study-uid");
         window.location.href = `#/imaging/studies/${studyUID}`;
       }
 
-      if (target.dataset.action === 'notify' && reportCard) {
-        const reportId = reportCard.getAttribute('data-report-id');
+      if (target.dataset.action === "notify" && reportCard) {
+        const reportId = reportCard.getAttribute("data-report-id");
         await this.notifyCriticalReport(reportId!);
       }
 
-      if (target.dataset.action === 'view' && reportCard) {
-        const reportId = reportCard.getAttribute('data-report-id');
+      if (target.dataset.action === "view" && reportCard) {
+        const reportId = reportCard.getAttribute("data-report-id");
         window.location.href = `#/imaging/reports/${reportId}`;
       }
     });
@@ -251,45 +264,45 @@ export class ImagingDashboardPage {
   private async notifyCriticalReport(reportId: string) {
     try {
       await this.imagingService.notifyCriticalResult(reportId);
-      this.showSuccess('Critical result notification sent');
+      this.showSuccess("Critical result notification sent");
       await this.loadCriticalReports();
     } catch (error) {
-      console.error('Error sending notification:', error);
-      this.showError('Failed to send notification');
+      console.error("Error sending notification:", error);
+      this.showError("Failed to send notification");
     }
   }
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private getModalityColor(modality: string): string {
     const colors: Record<string, string> = {
-      'CT': 'blue',
-      'MRI': 'purple',
-      'XRAY': 'green',
-      'US': 'cyan',
-      'NM': 'orange',
-      'PET': 'red',
+      CT: "blue",
+      MRI: "purple",
+      XRAY: "green",
+      US: "cyan",
+      NM: "orange",
+      PET: "red",
     };
-    return colors[modality] || 'gray';
+    return colors[modality] || "gray";
   }
 
   private getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      'UNREAD': 'warning',
-      'PRELIMINARY': 'info',
-      'FINAL': 'success',
-      'AMENDED': 'secondary',
+      UNREAD: "warning",
+      PRELIMINARY: "info",
+      FINAL: "success",
+      AMENDED: "secondary",
     };
-    return colors[status] || 'gray';
+    return colors[status] || "gray";
   }
 
   private showSuccess(message: string) {
@@ -303,6 +316,6 @@ export class ImagingDashboardPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

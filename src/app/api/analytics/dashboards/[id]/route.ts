@@ -1,30 +1,28 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 // Mock database - in production, this would use a real database
 const mockDashboards: Record<string, any> = {
-  'dash-1': {
-    id: 'dash-1',
-    name: 'Executive Dashboard',
-    description: 'High-level overview of key metrics',
-    type: 'custom',
+  "dash-1": {
+    id: "dash-1",
+    name: "Executive Dashboard",
+    description: "High-level overview of key metrics",
+    type: "custom",
     widgets: [
       {
-        id: 'widget-1',
-        type: 'kpi',
-        title: 'Total Revenue',
-        dataSource: 'financial',
-        config: { metrics: ['total_revenue'] },
+        id: "widget-1",
+        type: "kpi",
+        title: "Total Revenue",
+        dataSource: "financial",
+        config: { metrics: ["total_revenue"] },
       },
     ],
-    layout: [
-      { widgetId: 'widget-1', x: 0, y: 0, w: 3, h: 1 },
-    ],
+    layout: [{ widgetId: "widget-1", x: 0, y: 0, w: 3, h: 1 }],
     filters: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    createdBy: 'admin',
+    createdBy: "admin",
     shared: true,
-    tags: ['executive', 'overview'],
+    tags: ["executive", "overview"],
   },
 };
 
@@ -45,17 +43,17 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     if (!dashboard) {
       return NextResponse.json(
-        { error: 'Dashboard not found' },
-        { status: 404 }
+        { error: "Dashboard not found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(dashboard);
   } catch (error) {
-    console.error('Error fetching dashboard:', error);
+    console.error("Error fetching dashboard:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard' },
-      { status: 500 }
+      { error: "Failed to fetch dashboard" },
+      { status: 500 },
     );
   }
 }
@@ -71,8 +69,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     if (!mockDashboards[id]) {
       return NextResponse.json(
-        { error: 'Dashboard not found' },
-        { status: 404 }
+        { error: "Dashboard not found" },
+        { status: 404 },
       );
     }
 
@@ -87,10 +85,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(updatedDashboard);
   } catch (error) {
-    console.error('Error updating dashboard:', error);
+    console.error("Error updating dashboard:", error);
     return NextResponse.json(
-      { error: 'Failed to update dashboard' },
-      { status: 500 }
+      { error: "Failed to update dashboard" },
+      { status: 500 },
     );
   }
 }
@@ -105,8 +103,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     if (!mockDashboards[id]) {
       return NextResponse.json(
-        { error: 'Dashboard not found' },
-        { status: 404 }
+        { error: "Dashboard not found" },
+        { status: 404 },
       );
     }
 
@@ -114,10 +112,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting dashboard:', error);
+    console.error("Error deleting dashboard:", error);
     return NextResponse.json(
-      { error: 'Failed to delete dashboard' },
-      { status: 500 }
+      { error: "Failed to delete dashboard" },
+      { status: 500 },
     );
   }
 }

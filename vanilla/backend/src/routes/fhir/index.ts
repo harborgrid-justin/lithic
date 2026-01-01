@@ -4,15 +4,19 @@
  * RESTful endpoints for FHIR R4 resource operations
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
-import { defaultFHIRClient, FHIRError, FHIRResourceType } from '../../integrations/fhir/client';
+import { Router, Request, Response, NextFunction } from "express";
+import {
+  defaultFHIRClient,
+  FHIRError,
+  FHIRResourceType,
+} from "../../integrations/fhir/client";
 import {
   PatientTransformer,
   ObservationTransformer,
   ConditionTransformer,
   MedicationRequestTransformer,
-} from '../../integrations/fhir/transformers';
-import { logger } from '../../utils/logger';
+} from "../../integrations/fhir/transformers";
+import { logger } from "../../utils/logger";
 
 const router = Router();
 
@@ -21,7 +25,7 @@ const router = Router();
  */
 const handleFHIRError = (error: any, res: Response) => {
   if (error instanceof FHIRError) {
-    logger.error('FHIR Operation Error', {
+    logger.error("FHIR Operation Error", {
       statusCode: error.statusCode,
       message: error.message,
       operationOutcome: error.operationOutcome,
@@ -34,10 +38,10 @@ const handleFHIRError = (error: any, res: Response) => {
     });
   }
 
-  logger.error('Unexpected FHIR Error', { error: error.message });
+  logger.error("Unexpected FHIR Error", { error: error.message });
   return res.status(500).json({
     success: false,
-    error: 'Internal server error',
+    error: "Internal server error",
   });
 };
 
@@ -45,7 +49,7 @@ const handleFHIRError = (error: any, res: Response) => {
  * GET /fhir/metadata
  * Get FHIR server capability statement
  */
-router.get('/metadata', async (req: Request, res: Response) => {
+router.get("/metadata", async (req: Request, res: Response) => {
   try {
     const capabilities = await defaultFHIRClient.capabilities();
 
@@ -62,13 +66,13 @@ router.get('/metadata', async (req: Request, res: Response) => {
  * GET /fhir/:resourceType/:id
  * Read a specific FHIR resource by ID
  */
-router.get('/:resourceType/:id', async (req: Request, res: Response) => {
+router.get("/:resourceType/:id", async (req: Request, res: Response) => {
   try {
     const { resourceType, id } = req.params;
 
     const resource = await defaultFHIRClient.read(
       resourceType as FHIRResourceType,
-      id
+      id,
     );
 
     res.json({
@@ -84,14 +88,14 @@ router.get('/:resourceType/:id', async (req: Request, res: Response) => {
  * GET /fhir/:resourceType
  * Search FHIR resources
  */
-router.get('/:resourceType', async (req: Request, res: Response) => {
+router.get("/:resourceType", async (req: Request, res: Response) => {
   try {
     const { resourceType } = req.params;
     const searchParams = req.query as any;
 
     const bundle = await defaultFHIRClient.search(
       resourceType as FHIRResourceType,
-      searchParams
+      searchParams,
     );
 
     res.json({
@@ -108,14 +112,14 @@ router.get('/:resourceType', async (req: Request, res: Response) => {
  * POST /fhir/:resourceType
  * Create a new FHIR resource
  */
-router.post('/:resourceType', async (req: Request, res: Response) => {
+router.post("/:resourceType", async (req: Request, res: Response) => {
   try {
     const { resourceType } = req.params;
     const resource = req.body;
 
     const created = await defaultFHIRClient.create(
       resourceType as FHIRResourceType,
-      resource
+      resource,
     );
 
     res.status(201).json({
@@ -131,7 +135,7 @@ router.post('/:resourceType', async (req: Request, res: Response) => {
  * PUT /fhir/:resourceType/:id
  * Update a FHIR resource
  */
-router.put('/:resourceType/:id', async (req: Request, res: Response) => {
+router.put("/:resourceType/:id", async (req: Request, res: Response) => {
   try {
     const { resourceType, id } = req.params;
     const resource = req.body;
@@ -139,7 +143,7 @@ router.put('/:resourceType/:id', async (req: Request, res: Response) => {
     const updated = await defaultFHIRClient.update(
       resourceType as FHIRResourceType,
       id,
-      resource
+      resource,
     );
 
     res.json({
@@ -155,7 +159,7 @@ router.put('/:resourceType/:id', async (req: Request, res: Response) => {
  * PATCH /fhir/:resourceType/:id
  * Patch a FHIR resource
  */
-router.patch('/:resourceType/:id', async (req: Request, res: Response) => {
+router.patch("/:resourceType/:id", async (req: Request, res: Response) => {
   try {
     const { resourceType, id } = req.params;
     const patch = req.body;
@@ -163,7 +167,7 @@ router.patch('/:resourceType/:id', async (req: Request, res: Response) => {
     const patched = await defaultFHIRClient.patch(
       resourceType as FHIRResourceType,
       id,
-      patch
+      patch,
     );
 
     res.json({
@@ -179,7 +183,7 @@ router.patch('/:resourceType/:id', async (req: Request, res: Response) => {
  * DELETE /fhir/:resourceType/:id
  * Delete a FHIR resource
  */
-router.delete('/:resourceType/:id', async (req: Request, res: Response) => {
+router.delete("/:resourceType/:id", async (req: Request, res: Response) => {
   try {
     const { resourceType, id } = req.params;
 
@@ -195,29 +199,32 @@ router.delete('/:resourceType/:id', async (req: Request, res: Response) => {
  * GET /fhir/:resourceType/:id/_history
  * Get resource version history
  */
-router.get('/:resourceType/:id/_history', async (req: Request, res: Response) => {
-  try {
-    const { resourceType, id } = req.params;
+router.get(
+  "/:resourceType/:id/_history",
+  async (req: Request, res: Response) => {
+    try {
+      const { resourceType, id } = req.params;
 
-    const history = await defaultFHIRClient.history(
-      resourceType as FHIRResourceType,
-      id
-    );
+      const history = await defaultFHIRClient.history(
+        resourceType as FHIRResourceType,
+        id,
+      );
 
-    res.json({
-      success: true,
-      data: history,
-    });
-  } catch (error) {
-    handleFHIRError(error, res);
-  }
-});
+      res.json({
+        success: true,
+        data: history,
+      });
+    } catch (error) {
+      handleFHIRError(error, res);
+    }
+  },
+);
 
 /**
  * POST /fhir
  * Execute transaction/batch bundle
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const bundle = req.body;
 
@@ -236,7 +243,7 @@ router.post('/', async (req: Request, res: Response) => {
  * POST /fhir/:resourceType/$validate
  * Validate a FHIR resource
  */
-router.post('/:resourceType/$validate', async (req: Request, res: Response) => {
+router.post("/:resourceType/$validate", async (req: Request, res: Response) => {
   try {
     const { resourceType } = req.params;
     const resource = req.body;
@@ -245,7 +252,7 @@ router.post('/:resourceType/$validate', async (req: Request, res: Response) => {
     const outcome = await defaultFHIRClient.validate(
       resourceType as FHIRResourceType,
       resource,
-      profile as string | undefined
+      profile as string | undefined,
     );
 
     res.json({
@@ -262,7 +269,7 @@ router.post('/:resourceType/$validate', async (req: Request, res: Response) => {
  * Execute a named operation on a resource
  */
 router.post(
-  '/:resourceType/:id/$:operation',
+  "/:resourceType/:id/$:operation",
   async (req: Request, res: Response) => {
     try {
       const { resourceType, id, operation } = req.params;
@@ -272,7 +279,7 @@ router.post(
         operation,
         resourceType as FHIRResourceType,
         id,
-        parameters
+        parameters,
       );
 
       res.json({
@@ -282,14 +289,14 @@ router.post(
     } catch (error) {
       handleFHIRError(error, res);
     }
-  }
+  },
 );
 
 /**
  * POST /fhir/$graphql
  * Execute GraphQL query
  */
-router.post('/$graphql', async (req: Request, res: Response) => {
+router.post("/$graphql", async (req: Request, res: Response) => {
   try {
     const { query, variables } = req.body;
 
@@ -308,14 +315,14 @@ router.post('/$graphql', async (req: Request, res: Response) => {
  * GET /fhir/patients/:id/everything
  * Get patient $everything operation
  */
-router.get('/patients/:id/everything', async (req: Request, res: Response) => {
+router.get("/patients/:id/everything", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
     const result = await defaultFHIRClient.operation(
-      'everything',
-      'Patient',
-      id
+      "everything",
+      "Patient",
+      id,
     );
 
     res.json({
@@ -331,16 +338,16 @@ router.get('/patients/:id/everything', async (req: Request, res: Response) => {
  * POST /fhir/patients/:id/match
  * Patient matching operation
  */
-router.post('/patients/:id/match', async (req: Request, res: Response) => {
+router.post("/patients/:id/match", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const parameters = req.body;
 
     const result = await defaultFHIRClient.operation(
-      'match',
-      'Patient',
+      "match",
+      "Patient",
       id,
-      parameters
+      parameters,
     );
 
     res.json({
@@ -356,7 +363,7 @@ router.post('/patients/:id/match', async (req: Request, res: Response) => {
  * GET /fhir/sync/patients
  * Sync patients from FHIR server
  */
-router.get('/sync/patients', async (req: Request, res: Response) => {
+router.get("/sync/patients", async (req: Request, res: Response) => {
   try {
     const { _count = 100, _since } = req.query;
 
@@ -368,10 +375,10 @@ router.get('/sync/patients', async (req: Request, res: Response) => {
       searchParams._lastUpdated = `gt${_since}`;
     }
 
-    const bundle = await defaultFHIRClient.search('Patient', searchParams);
+    const bundle = await defaultFHIRClient.search("Patient", searchParams);
 
     const internalPatients = bundle.entry?.map((entry) =>
-      PatientTransformer.fromFHIR(entry.resource)
+      PatientTransformer.fromFHIR(entry.resource),
     );
 
     res.json({
@@ -388,22 +395,22 @@ router.get('/sync/patients', async (req: Request, res: Response) => {
  * POST /fhir/sync/observations
  * Sync observations to FHIR server
  */
-router.post('/sync/observations', async (req: Request, res: Response) => {
+router.post("/sync/observations", async (req: Request, res: Response) => {
   try {
     const observations = req.body.observations;
 
     const fhirObservations = observations.map((obs: any) =>
-      ObservationTransformer.toFHIR(obs)
+      ObservationTransformer.toFHIR(obs),
     );
 
     // Create batch bundle
     const bundle = {
-      resourceType: 'Bundle',
-      type: 'batch',
+      resourceType: "Bundle",
+      type: "batch",
       entry: fhirObservations.map((obs: any) => ({
         request: {
-          method: 'POST',
-          url: 'Observation',
+          method: "POST",
+          url: "Observation",
         },
         resource: obs,
       })),

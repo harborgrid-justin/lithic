@@ -1,4 +1,4 @@
-import { ImagingService } from '../../services/ImagingService';
+import { ImagingService } from "../../services/ImagingService";
 
 export class ReportsPage {
   private container: HTMLElement;
@@ -11,10 +11,10 @@ export class ReportsPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'reports-page';
+    const wrapper = document.createElement("div");
+    wrapper.className = "reports-page";
     wrapper.innerHTML = `
       <div class="page-header">
         <h1>Radiology Reports</h1>
@@ -81,16 +81,22 @@ export class ReportsPage {
   }
 
   private attachEventListeners() {
-    const newReportBtn = this.container.querySelector('[data-action="new-report"]');
-    newReportBtn?.addEventListener('click', () => {
-      window.location.href = '#/imaging/reports/new';
+    const newReportBtn = this.container.querySelector(
+      '[data-action="new-report"]',
+    );
+    newReportBtn?.addEventListener("click", () => {
+      window.location.href = "#/imaging/reports/new";
     });
 
-    const applyFiltersBtn = this.container.querySelector('[data-action="apply-filters"]');
-    applyFiltersBtn?.addEventListener('click', () => this.applyFilters());
+    const applyFiltersBtn = this.container.querySelector(
+      '[data-action="apply-filters"]',
+    );
+    applyFiltersBtn?.addEventListener("click", () => this.applyFilters());
 
-    const clearFiltersBtn = this.container.querySelector('[data-action="clear-filters"]');
-    clearFiltersBtn?.addEventListener('click', () => this.clearFilters());
+    const clearFiltersBtn = this.container.querySelector(
+      '[data-action="clear-filters"]',
+    );
+    clearFiltersBtn?.addEventListener("click", () => this.clearFilters());
   }
 
   private async loadReports() {
@@ -98,13 +104,13 @@ export class ReportsPage {
       const reports = await this.imagingService.getReports(this.currentFilters);
       this.renderReports(reports);
     } catch (error) {
-      console.error('Error loading reports:', error);
-      this.showError('Failed to load reports');
+      console.error("Error loading reports:", error);
+      this.showError("Failed to load reports");
     }
   }
 
   private renderReports(reports: any) {
-    const container = document.getElementById('reports-container');
+    const container = document.getElementById("reports-container");
     if (!container) return;
 
     if (!reports.data || reports.data.length === 0) {
@@ -128,7 +134,7 @@ export class ReportsPage {
             </tr>
           </thead>
           <tbody>
-            ${reports.data.map((report: any) => this.createReportRow(report)).join('')}
+            ${reports.data.map((report: any) => this.createReportRow(report)).join("")}
           </tbody>
         </table>
       </div>
@@ -141,38 +147,46 @@ export class ReportsPage {
     return `
       <tr data-report-id="${report.id}">
         <td>${this.formatDate(report.createdAt)}</td>
-        <td>${report.patientName || 'N/A'}</td>
-        <td>${report.studyDescription || report.modality || 'N/A'}</td>
+        <td>${report.patientName || "N/A"}</td>
+        <td>${report.studyDescription || report.modality || "N/A"}</td>
         <td>${report.radiologistName}</td>
         <td><span class="badge badge-info">${report.reportType}</span></td>
         <td><span class="badge badge-${this.getStatusColor(report.status)}">${report.status}</span></td>
-        <td>${report.criticalResult ? '<span class="badge badge-danger">Yes</span>' : 'No'}</td>
+        <td>${report.criticalResult ? '<span class="badge badge-danger">Yes</span>' : "No"}</td>
         <td>
           <button class="btn btn-sm btn-primary" data-action="view" data-report-id="${report.id}">View</button>
-          ${report.status === 'DRAFT' ? `
+          ${
+            report.status === "DRAFT"
+              ? `
             <button class="btn btn-sm btn-secondary" data-action="edit" data-report-id="${report.id}">Edit</button>
-          ` : ''}
-          ${report.status === 'FINAL' ? `
+          `
+              : ""
+          }
+          ${
+            report.status === "FINAL"
+              ? `
             <button class="btn btn-sm btn-secondary" data-action="download" data-report-id="${report.id}">PDF</button>
-          ` : ''}
+          `
+              : ""
+          }
         </td>
       </tr>
     `;
   }
 
   private attachReportActions() {
-    this.container.addEventListener('click', async (e) => {
+    this.container.addEventListener("click", async (e) => {
       const target = e.target as HTMLElement;
       const action = target.dataset.action;
       const reportId = target.dataset.reportId;
 
       if (!reportId) return;
 
-      if (action === 'view') {
+      if (action === "view") {
         window.location.href = `#/imaging/reports/${reportId}`;
-      } else if (action === 'edit') {
+      } else if (action === "edit") {
         window.location.href = `#/imaging/reports/${reportId}/edit`;
-      } else if (action === 'download') {
+      } else if (action === "download") {
         await this.downloadReport(reportId);
       }
     });
@@ -182,30 +196,39 @@ export class ReportsPage {
     try {
       const pdf = await this.imagingService.downloadReportPDF(reportId);
       // Create download link
-      const blob = new Blob([pdf], { type: 'application/pdf' });
+      const blob = new Blob([pdf], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `report-${reportId}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading report:', error);
-      this.showError('Failed to download report');
+      console.error("Error downloading report:", error);
+      this.showError("Failed to download report");
     }
   }
 
   private applyFilters() {
-    const status = (document.getElementById('filter-status') as HTMLSelectElement)?.value;
-    const type = (document.getElementById('filter-type') as HTMLSelectElement)?.value;
-    const critical = (document.getElementById('filter-critical') as HTMLInputElement)?.checked;
-    const startDate = (document.getElementById('filter-start-date') as HTMLInputElement)?.value;
-    const endDate = (document.getElementById('filter-end-date') as HTMLInputElement)?.value;
+    const status = (
+      document.getElementById("filter-status") as HTMLSelectElement
+    )?.value;
+    const type = (document.getElementById("filter-type") as HTMLSelectElement)
+      ?.value;
+    const critical = (
+      document.getElementById("filter-critical") as HTMLInputElement
+    )?.checked;
+    const startDate = (
+      document.getElementById("filter-start-date") as HTMLInputElement
+    )?.value;
+    const endDate = (
+      document.getElementById("filter-end-date") as HTMLInputElement
+    )?.value;
 
     this.currentFilters = {
       ...(status && { status }),
       ...(type && { reportType: type }),
-      ...(critical && { criticalOnly: 'true' }),
+      ...(critical && { criticalOnly: "true" }),
       ...(startDate && { startDate }),
       ...(endDate && { endDate }),
     };
@@ -214,11 +237,13 @@ export class ReportsPage {
   }
 
   private clearFilters() {
-    (document.getElementById('filter-status') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-type') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-critical') as HTMLInputElement).checked = false;
-    (document.getElementById('filter-start-date') as HTMLInputElement).value = '';
-    (document.getElementById('filter-end-date') as HTMLInputElement).value = '';
+    (document.getElementById("filter-status") as HTMLSelectElement).value = "";
+    (document.getElementById("filter-type") as HTMLSelectElement).value = "";
+    (document.getElementById("filter-critical") as HTMLInputElement).checked =
+      false;
+    (document.getElementById("filter-start-date") as HTMLInputElement).value =
+      "";
+    (document.getElementById("filter-end-date") as HTMLInputElement).value = "";
 
     this.currentFilters = {};
     this.loadReports();
@@ -226,22 +251,22 @@ export class ReportsPage {
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   }
 
   private getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      'DRAFT': 'secondary',
-      'PRELIMINARY': 'info',
-      'FINAL': 'success',
-      'AMENDED': 'warning',
-      'CORRECTED': 'warning',
+      DRAFT: "secondary",
+      PRELIMINARY: "info",
+      FINAL: "success",
+      AMENDED: "warning",
+      CORRECTED: "warning",
     };
-    return colors[status] || 'secondary';
+    return colors[status] || "secondary";
   }
 
   private showError(message: string) {
@@ -249,6 +274,6 @@ export class ReportsPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

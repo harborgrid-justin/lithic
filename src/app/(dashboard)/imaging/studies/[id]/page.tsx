@@ -1,13 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { imagingService, ImagingStudy } from '@/services/imaging.service';
-import DicomViewer from '@/components/imaging/DicomViewer';
-import ImageThumbnails from '@/components/imaging/ImageThumbnails';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { imagingService, ImagingStudy } from "@/services/imaging.service";
+import DicomViewer from "@/components/imaging/DicomViewer";
+import ImageThumbnails from "@/components/imaging/ImageThumbnails";
 
-export default function StudyDetailPage({ params }: { params: { id: string } }) {
+export default function StudyDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
   const [study, setStudy] = useState<ImagingStudy | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,12 +27,15 @@ export default function StudyDetailPage({ params }: { params: { id: string } }) 
       const data = await imagingService.getStudy(params.id);
       setStudy(data);
       // Auto-select first instance if available
-      if (data.seriesList.length > 0 && data.seriesList[0].instances.length > 0) {
+      if (
+        data.seriesList.length > 0 &&
+        data.seriesList[0].instances.length > 0
+      ) {
         setSelectedSeries(data.seriesList[0]);
         setSelectedInstance(data.seriesList[0].instances[0]);
       }
     } catch (error) {
-      console.error('Failed to load study:', error);
+      console.error("Failed to load study:", error);
     } finally {
       setLoading(false);
     }
@@ -63,15 +70,21 @@ export default function StudyDetailPage({ params }: { params: { id: string } }) 
       <div className="bg-white border-b border-gray-200 p-4">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{study.studyDescription}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {study.studyDescription}
+            </h1>
             <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
-              <span>{study.patientName} ({study.patientMRN})</span>
+              <span>
+                {study.patientName} ({study.patientMRN})
+              </span>
               <span>•</span>
               <span>{new Date(study.studyDate).toLocaleDateString()}</span>
               <span>•</span>
               <span>{study.modality}</span>
               <span>•</span>
-              <span>{study.numberOfSeries} series, {study.numberOfInstances} images</span>
+              <span>
+                {study.numberOfSeries} series, {study.numberOfInstances} images
+              </span>
             </div>
           </div>
           <div className="flex space-x-2">

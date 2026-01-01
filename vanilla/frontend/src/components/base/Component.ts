@@ -3,7 +3,7 @@
  * Provides a component-based architecture similar to modern frameworks
  */
 
-import { createElement } from '../../utils/dom';
+import { createElement } from "../../utils/dom";
 
 export interface ComponentOptions {
   className?: string | string[];
@@ -30,7 +30,7 @@ export abstract class Component<P = any, S = any> {
    * Override in subclass to customize
    */
   protected createElement(): HTMLElement {
-    return createElement('div', {
+    return createElement("div", {
       className: this.getClassName(),
     });
   }
@@ -40,7 +40,7 @@ export abstract class Component<P = any, S = any> {
    * Override in subclass
    */
   protected getClassName(): string {
-    return 'component';
+    return "component";
   }
 
   /**
@@ -144,7 +144,7 @@ export abstract class Component<P = any, S = any> {
   protected addEventListener(
     event: string,
     handler: EventListener,
-    options?: AddEventListenerOptions
+    options?: AddEventListenerOptions,
   ): void {
     this.element.addEventListener(event, handler, options);
   }
@@ -155,7 +155,7 @@ export abstract class Component<P = any, S = any> {
   protected removeEventListener(
     event: string,
     handler: EventListener,
-    options?: EventListenerOptions
+    options?: EventListenerOptions,
   ): void {
     this.element.removeEventListener(event, handler, options);
   }
@@ -217,23 +217,23 @@ export abstract class Component<P = any, S = any> {
    * Show component
    */
   public show(): void {
-    this.element.style.display = '';
-    this.element.classList.remove('hidden');
+    this.element.style.display = "";
+    this.element.classList.remove("hidden");
   }
 
   /**
    * Hide component
    */
   public hide(): void {
-    this.element.style.display = 'none';
-    this.element.classList.add('hidden');
+    this.element.style.display = "none";
+    this.element.classList.add("hidden");
   }
 
   /**
    * Toggle visibility
    */
   public toggle(): void {
-    if (this.element.style.display === 'none') {
+    if (this.element.style.display === "none") {
       this.show();
     } else {
       this.hide();

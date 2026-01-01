@@ -3,9 +3,9 @@
  * Track and manage laboratory specimens
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { BarcodeScanner } from '../../components/laboratory/BarcodeScanner';
-import { SpecimenTracker } from '../../components/laboratory/SpecimenTracker';
+import { labService } from "../../services/LaboratoryService";
+import { BarcodeScanner } from "../../components/laboratory/BarcodeScanner";
+import { SpecimenTracker } from "../../components/laboratory/SpecimenTracker";
 
 export class SpecimensPage {
   private container: HTMLElement;
@@ -44,11 +44,14 @@ export class SpecimensPage {
   }
 
   private initializeScanner(): void {
-    const scannerContainer = this.container.querySelector('#scannerContainer');
+    const scannerContainer = this.container.querySelector("#scannerContainer");
     if (scannerContainer) {
-      this.barcodeScanner = new BarcodeScanner(scannerContainer as HTMLElement, {
-        onScan: (barcode) => this.handleScan(barcode)
-      });
+      this.barcodeScanner = new BarcodeScanner(
+        scannerContainer as HTMLElement,
+        {
+          onScan: (barcode) => this.handleScan(barcode),
+        },
+      );
       this.barcodeScanner.render();
     }
   }
@@ -58,14 +61,18 @@ export class SpecimensPage {
       const specimen = await labService.getSpecimenByBarcode(barcode);
       const trackingHistory = await labService.getTrackingHistory(specimen.id);
 
-      const detailContainer = this.container.querySelector('#specimenDetailContainer');
+      const detailContainer = this.container.querySelector(
+        "#specimenDetailContainer",
+      );
       if (detailContainer) {
-        this.specimenTracker = new SpecimenTracker(detailContainer as HTMLElement);
+        this.specimenTracker = new SpecimenTracker(
+          detailContainer as HTMLElement,
+        );
         this.specimenTracker.setSpecimen(specimen, trackingHistory);
       }
     } catch (error) {
-      console.error('Error loading specimen:', error);
-      alert('Specimen not found or error loading data');
+      console.error("Error loading specimen:", error);
+      alert("Specimen not found or error loading data");
     }
   }
 
@@ -76,6 +83,6 @@ export class SpecimensPage {
     if (this.specimenTracker) {
       this.specimenTracker.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

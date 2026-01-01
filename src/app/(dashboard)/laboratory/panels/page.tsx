@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Plus } from 'lucide-react';
-import { LabPanel } from '@/types/laboratory';
-import LaboratoryService from '@/services/laboratory.service';
-import LabPanelBuilder from '@/components/laboratory/LabPanelBuilder';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Plus } from "lucide-react";
+import { LabPanel } from "@/types/laboratory";
+import LaboratoryService from "@/services/laboratory.service";
+import LabPanelBuilder from "@/components/laboratory/LabPanelBuilder";
 
 export default function PanelsPage() {
   const [panels, setPanels] = useState<LabPanel[]>([]);
@@ -24,7 +24,7 @@ export default function PanelsPage() {
       const data = await LaboratoryService.getPanels();
       setPanels(data);
     } catch (error) {
-      console.error('Failed to load panels:', error);
+      console.error("Failed to load panels:", error);
     } finally {
       setLoading(false);
     }
@@ -41,7 +41,7 @@ export default function PanelsPage() {
         </div>
         <Button onClick={() => setShowBuilder(!showBuilder)}>
           <Plus className="h-4 w-4 mr-2" />
-          {showBuilder ? 'Hide' : 'Create'} Panel
+          {showBuilder ? "Hide" : "Create"} Panel
         </Button>
       </div>
 

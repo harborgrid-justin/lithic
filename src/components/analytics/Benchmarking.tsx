@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Target, TrendingUp, Award } from 'lucide-react';
-import { analyticsService } from '@/services/analytics.service';
-import { ChartWidget } from './ChartWidget';
+import { useEffect, useState } from "react";
+import { Target, TrendingUp, Award } from "lucide-react";
+import { analyticsService } from "@/services/analytics.service";
+import { ChartWidget } from "./ChartWidget";
 
 interface BenchmarkingProps {
   metric: string;
   metricName?: string;
-  compareBy?: 'national' | 'regional' | 'peer' | 'historical';
+  compareBy?: "national" | "regional" | "peer" | "historical";
   className?: string;
 }
 
@@ -26,10 +26,12 @@ interface BenchmarkData {
 export function Benchmarking({
   metric,
   metricName,
-  compareBy = 'national',
-  className = '',
+  compareBy = "national",
+  className = "",
 }: BenchmarkingProps) {
-  const [benchmarkData, setBenchmarkData] = useState<BenchmarkData | null>(null);
+  const [benchmarkData, setBenchmarkData] = useState<BenchmarkData | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [selectedCompareBy, setSelectedCompareBy] = useState(compareBy);
 
@@ -40,32 +42,43 @@ export function Benchmarking({
   const loadBenchmarkData = async () => {
     setLoading(true);
     try {
-      const data = await analyticsService.getBenchmarkData(metric, selectedCompareBy);
+      const data = await analyticsService.getBenchmarkData(
+        metric,
+        selectedCompareBy,
+      );
 
       // Simulate comparison data (in real app, would come from API)
       setBenchmarkData({
         ...data,
         comparison: [
-          { type: 'Top 10%', value: data.benchmark * 1.2, label: 'Excellence' },
-          { type: 'Top 25%', value: data.benchmark * 1.1, label: 'Above Average' },
-          { type: 'Median', value: data.benchmark, label: 'Average' },
-          { type: 'Bottom 25%', value: data.benchmark * 0.9, label: 'Below Average' },
-          { type: 'Your Organization', value: data.current, label: 'Current' },
+          { type: "Top 10%", value: data.benchmark * 1.2, label: "Excellence" },
+          {
+            type: "Top 25%",
+            value: data.benchmark * 1.1,
+            label: "Above Average",
+          },
+          { type: "Median", value: data.benchmark, label: "Average" },
+          {
+            type: "Bottom 25%",
+            value: data.benchmark * 0.9,
+            label: "Below Average",
+          },
+          { type: "Your Organization", value: data.current, label: "Current" },
         ],
       });
     } catch (error) {
-      console.error('Failed to load benchmark data:', error);
+      console.error("Failed to load benchmark data:", error);
       // Set mock data for demonstration
       setBenchmarkData({
         current: 85,
         benchmark: 80,
         percentile: 65,
         comparison: [
-          { type: 'Top 10%', value: 96, label: 'Excellence' },
-          { type: 'Top 25%', value: 88, label: 'Above Average' },
-          { type: 'Median', value: 80, label: 'Average' },
-          { type: 'Bottom 25%', value: 72, label: 'Below Average' },
-          { type: 'Your Organization', value: 85, label: 'Current' },
+          { type: "Top 10%", value: 96, label: "Excellence" },
+          { type: "Top 25%", value: 88, label: "Above Average" },
+          { type: "Median", value: 80, label: "Average" },
+          { type: "Bottom 25%", value: 72, label: "Below Average" },
+          { type: "Your Organization", value: 85, label: "Current" },
         ],
       });
     } finally {
@@ -74,23 +87,37 @@ export function Benchmarking({
   };
 
   const getPerformanceLevel = (percentile: number) => {
-    if (percentile >= 90) return { label: 'Excellent', color: 'text-green-600', bg: 'bg-green-50' };
-    if (percentile >= 75) return { label: 'Good', color: 'text-blue-600', bg: 'bg-blue-50' };
-    if (percentile >= 50) return { label: 'Average', color: 'text-yellow-600', bg: 'bg-yellow-50' };
-    if (percentile >= 25) return { label: 'Below Average', color: 'text-orange-600', bg: 'bg-orange-50' };
-    return { label: 'Needs Improvement', color: 'text-red-600', bg: 'bg-red-50' };
+    if (percentile >= 90)
+      return { label: "Excellent", color: "text-green-600", bg: "bg-green-50" };
+    if (percentile >= 75)
+      return { label: "Good", color: "text-blue-600", bg: "bg-blue-50" };
+    if (percentile >= 50)
+      return { label: "Average", color: "text-yellow-600", bg: "bg-yellow-50" };
+    if (percentile >= 25)
+      return {
+        label: "Below Average",
+        color: "text-orange-600",
+        bg: "bg-orange-50",
+      };
+    return {
+      label: "Needs Improvement",
+      color: "text-red-600",
+      bg: "bg-red-50",
+    };
   };
 
   const compareByOptions = [
-    { value: 'national', label: 'National' },
-    { value: 'regional', label: 'Regional' },
-    { value: 'peer', label: 'Peer Group' },
-    { value: 'historical', label: 'Historical' },
+    { value: "national", label: "National" },
+    { value: "regional", label: "Regional" },
+    { value: "peer", label: "Peer Group" },
+    { value: "historical", label: "Historical" },
   ];
 
   if (loading) {
     return (
-      <div className={`bg-white rounded-lg border border-gray-200 p-8 ${className}`}>
+      <div
+        className={`bg-white rounded-lg border border-gray-200 p-8 ${className}`}
+      >
         <div className="flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
@@ -100,7 +127,9 @@ export function Benchmarking({
 
   if (!benchmarkData) {
     return (
-      <div className={`bg-white rounded-lg border border-gray-200 p-8 ${className}`}>
+      <div
+        className={`bg-white rounded-lg border border-gray-200 p-8 ${className}`}
+      >
         <div className="text-center text-gray-500">
           No benchmark data available
         </div>
@@ -120,12 +149,14 @@ export function Benchmarking({
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-blue-600" />
             <h3 className="text-lg font-semibold text-gray-900">
-              {metricName || 'Benchmark Comparison'}
+              {metricName || "Benchmark Comparison"}
             </h3>
           </div>
           <select
             value={selectedCompareBy}
-            onChange={(e) => setSelectedCompareBy(e.target.value as typeof compareBy)}
+            onChange={(e) =>
+              setSelectedCompareBy(e.target.value as typeof compareBy)
+            }
             className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {compareByOptions.map((option) => (
@@ -156,10 +187,10 @@ export function Benchmarking({
             <div className="text-sm text-gray-500 mb-1">Difference</div>
             <div
               className={`text-3xl font-bold ${
-                difference >= 0 ? 'text-green-600' : 'text-red-600'
+                difference >= 0 ? "text-green-600" : "text-red-600"
               }`}
             >
-              {difference >= 0 ? '+' : ''}
+              {difference >= 0 ? "+" : ""}
               {difference.toFixed(1)}
             </div>
           </div>
@@ -174,7 +205,9 @@ export function Benchmarking({
 
         {/* Performance Badge */}
         <div className="mt-6 flex items-center justify-center">
-          <div className={`flex items-center gap-2 px-6 py-3 rounded-full ${performance.bg}`}>
+          <div
+            className={`flex items-center gap-2 px-6 py-3 rounded-full ${performance.bg}`}
+          >
             <Award className={`w-5 h-5 ${performance.color}`} />
             <span className={`font-semibold ${performance.color}`}>
               {performance.label} Performance
@@ -186,16 +219,19 @@ export function Benchmarking({
       {/* Comparison Chart */}
       <div className="p-6">
         <h4 className="text-sm font-semibold text-gray-900 mb-4">
-          Comparison to {selectedCompareBy.charAt(0).toUpperCase() + selectedCompareBy.slice(1)} Benchmarks
+          Comparison to{" "}
+          {selectedCompareBy.charAt(0).toUpperCase() +
+            selectedCompareBy.slice(1)}{" "}
+          Benchmarks
         </h4>
         <ChartWidget
           type="bar"
           data={benchmarkData.comparison}
           config={{
-            xAxis: 'type',
-            yAxis: 'value',
+            xAxis: "type",
+            yAxis: "value",
             colors: benchmarkData.comparison.map((item) =>
-              item.type === 'Your Organization' ? '#3b82f6' : '#e5e7eb'
+              item.type === "Your Organization" ? "#3b82f6" : "#e5e7eb",
             ),
             showLegend: false,
             showGrid: true,
@@ -206,7 +242,9 @@ export function Benchmarking({
 
       {/* Percentile Distribution */}
       <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-        <h4 className="text-sm font-semibold text-gray-900 mb-4">Percentile Distribution</h4>
+        <h4 className="text-sm font-semibold text-gray-900 mb-4">
+          Percentile Distribution
+        </h4>
         <div className="relative">
           {/* Distribution bar */}
           <div className="h-12 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-lg relative overflow-hidden">
@@ -245,26 +283,35 @@ export function Benchmarking({
 
       {/* Insights */}
       <div className="px-6 py-4 border-t border-gray-200">
-        <h4 className="text-sm font-semibold text-gray-900 mb-3">Performance Insights</h4>
+        <h4 className="text-sm font-semibold text-gray-900 mb-3">
+          Performance Insights
+        </h4>
         <div className="space-y-2 text-sm text-gray-600">
           <p>
-            Your organization performs{' '}
-            <span className={`font-semibold ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {Math.abs(differencePercent).toFixed(1)}% {difference >= 0 ? 'above' : 'below'}
-            </span>{' '}
+            Your organization performs{" "}
+            <span
+              className={`font-semibold ${difference >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {Math.abs(differencePercent).toFixed(1)}%{" "}
+              {difference >= 0 ? "above" : "below"}
+            </span>{" "}
             the {selectedCompareBy} benchmark.
           </p>
           <p>
-            You are in the{' '}
+            You are in the{" "}
             <span className={`font-semibold ${performance.color}`}>
               {benchmarkData.percentile}th percentile
             </span>
-            , performing better than {benchmarkData.percentile}% of comparable organizations.
+            , performing better than {benchmarkData.percentile}% of comparable
+            organizations.
           </p>
           {difference < 0 && (
             <p className="text-orange-600">
-              To reach the benchmark, you need to improve by{' '}
-              <span className="font-semibold">{Math.abs(difference).toFixed(1)} points</span>.
+              To reach the benchmark, you need to improve by{" "}
+              <span className="font-semibold">
+                {Math.abs(difference).toFixed(1)} points
+              </span>
+              .
             </p>
           )}
         </div>

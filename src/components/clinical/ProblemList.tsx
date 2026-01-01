@@ -1,38 +1,45 @@
-'use client'
+"use client";
 
-import { Problem } from '@/types/clinical'
-import { formatDate } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { AlertCircle } from 'lucide-react'
+import { Problem } from "@/types/clinical";
+import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { AlertCircle } from "lucide-react";
 
 interface ProblemListProps {
-  problems: Problem[]
-  onAdd?: () => void
-  onEdit?: (problem: Problem) => void
+  problems: Problem[];
+  onAdd?: () => void;
+  onEdit?: (problem: Problem) => void;
 }
 
 export function ProblemList({ problems, onAdd, onEdit }: ProblemListProps) {
-  const getStatusColor = (status: Problem['status']) => {
+  const getStatusColor = (status: Problem["status"]) => {
     const colors = {
-      active: 'danger',
-      resolved: 'success',
-      chronic: 'warning',
-      inactive: 'secondary',
-    }
-    return colors[status] as 'danger' | 'success' | 'warning' | 'secondary'
-  }
+      active: "danger",
+      resolved: "success",
+      chronic: "warning",
+      inactive: "secondary",
+    };
+    return colors[status] as "danger" | "success" | "warning" | "secondary";
+  };
 
-  const getSeverityColor = (severity: Problem['severity']) => {
+  const getSeverityColor = (severity: Problem["severity"]) => {
     const colors = {
-      mild: 'info',
-      moderate: 'warning',
-      severe: 'danger',
-    }
-    return colors[severity] as 'info' | 'warning' | 'danger'
-  }
+      mild: "info",
+      moderate: "warning",
+      severe: "danger",
+    };
+    return colors[severity] as "info" | "warning" | "danger";
+  };
 
   return (
     <Card>
@@ -69,7 +76,9 @@ export function ProblemList({ problems, onAdd, onEdit }: ProblemListProps) {
                     {problem.icd10Code}
                   </code>
                 </TableCell>
-                <TableCell className="font-medium">{problem.description}</TableCell>
+                <TableCell className="font-medium">
+                  {problem.description}
+                </TableCell>
                 <TableCell>
                   <Badge variant={getStatusColor(problem.status)}>
                     {problem.status}
@@ -103,5 +112,5 @@ export function ProblemList({ problems, onAdd, onEdit }: ProblemListProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

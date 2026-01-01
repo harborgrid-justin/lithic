@@ -7,13 +7,13 @@ import {
   DuplicatePatient,
   PatientMergeRequest,
   EmergencyContact,
-} from '@/types/patient';
-import { mrnGenerator } from '@/lib/mrn-generator';
-import { duplicateDetector } from '@/lib/duplicate-detection';
-import { auditLogger } from '@/lib/audit-logger';
+} from "@/types/patient";
+import { mrnGenerator } from "@/lib/mrn-generator";
+import { duplicateDetector } from "@/lib/duplicate-detection";
+import { auditLogger } from "@/lib/audit-logger";
 
 export class PatientService {
-  private baseUrl = '/api/patients';
+  private baseUrl = "/api/patients";
 
   /**
    * Get all patients with pagination and filtering
@@ -25,17 +25,17 @@ export class PatientService {
     limit: number;
   }> {
     const queryParams = new URLSearchParams();
-    
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         queryParams.append(key, String(value));
       }
     });
 
-    const response = await fetch(this.baseUrl + '?' + queryParams.toString());
-    
+    const response = await fetch(this.baseUrl + "?" + queryParams.toString());
+
     if (!response.ok) {
-      throw new Error('Failed to fetch patients');
+      throw new Error("Failed to fetch patients");
     }
 
     return response.json();
@@ -45,10 +45,10 @@ export class PatientService {
    * Get a single patient by ID
    */
   async getPatient(id: string): Promise<Patient> {
-    const response = await fetch(this.baseUrl + '/' + id);
-    
+    const response = await fetch(this.baseUrl + "/" + id);
+
     if (!response.ok) {
-      throw new Error('Failed to fetch patient');
+      throw new Error("Failed to fetch patient");
     }
 
     return response.json();
@@ -57,7 +57,9 @@ export class PatientService {
   /**
    * Create a new patient
    */
-  async createPatient(data: Omit<Patient, 'id' | 'mrn' | 'createdAt' | 'updatedAt'>): Promise<Patient> {
+  async createPatient(
+    data: Omit<Patient, "id" | "mrn" | "createdAt" | "updatedAt">,
+  ): Promise<Patient> {
     // Check for duplicates before creating
     const duplicates = await this.findDuplicates({
       firstName: data.firstName,
@@ -69,20 +71,22 @@ export class PatientService {
     });
 
     if (duplicates.length > 0) {
-      throw new Error('Potential duplicate patients found. Please review before creating.');
+      throw new Error(
+        "Potential duplicate patients found. Please review before creating.",
+      );
     }
 
     const response = await fetch(this.baseUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to create patient');
+      throw new Error(error.message || "Failed to create patient");
     }
 
     return response.json();
@@ -92,17 +96,17 @@ export class PatientService {
    * Update an existing patient
    */
   async updatePatient(id: string, data: Partial<Patient>): Promise<Patient> {
-    const response = await fetch(this.baseUrl + '/' + id, {
-      method: 'PUT',
+    const response = await fetch(this.baseUrl + "/" + id, {
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to update patient');
+      throw new Error(error.message || "Failed to update patient");
     }
 
     return response.json();
@@ -112,12 +116,12 @@ export class PatientService {
    * Delete a patient
    */
   async deletePatient(id: string): Promise<void> {
-    const response = await fetch(this.baseUrl + '/' + id, {
-      method: 'DELETE',
+    const response = await fetch(this.baseUrl + "/" + id, {
+      method: "DELETE",
     });
 
     if (!response.ok) {
-      throw new Error('Failed to delete patient');
+      throw new Error("Failed to delete patient");
     }
   }
 
@@ -125,10 +129,12 @@ export class PatientService {
    * Search patients with advanced criteria
    */
   async searchPatients(params: PatientSearchParams): Promise<Patient[]> {
-    const response = await fetch(this.baseUrl + '/search?' + new URLSearchParams(params as any).toString());
-    
+    const response = await fetch(
+      this.baseUrl + "/search?" + new URLSearchParams(params as any).toString(),
+    );
+
     if (!response.ok) {
-      throw new Error('Failed to search patients');
+      throw new Error("Failed to search patients");
     }
 
     return response.json();
@@ -148,17 +154,17 @@ export class PatientService {
    * Merge two patient records
    */
   async mergePatients(request: PatientMergeRequest): Promise<Patient> {
-    const response = await fetch(this.baseUrl + '/merge', {
-      method: 'POST',
+    const response = await fetch(this.baseUrl + "/merge", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(request),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to merge patients');
+      throw new Error(error.message || "Failed to merge patients");
     }
 
     return response.json();
@@ -168,10 +174,10 @@ export class PatientService {
    * Get patient insurance information
    */
   async getPatientInsurance(patientId: string): Promise<Insurance[]> {
-    const response = await fetch(this.baseUrl + '/' + patientId + '/insurance');
-    
+    const response = await fetch(this.baseUrl + "/" + patientId + "/insurance");
+
     if (!response.ok) {
-      throw new Error('Failed to fetch insurance information');
+      throw new Error("Failed to fetch insurance information");
     }
 
     return response.json();
@@ -180,17 +186,23 @@ export class PatientService {
   /**
    * Update patient insurance
    */
-  async updatePatientInsurance(patientId: string, insurance: Insurance): Promise<Insurance> {
-    const response = await fetch(this.baseUrl + '/' + patientId + '/insurance', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  async updatePatientInsurance(
+    patientId: string,
+    insurance: Insurance,
+  ): Promise<Insurance> {
+    const response = await fetch(
+      this.baseUrl + "/" + patientId + "/insurance",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(insurance),
       },
-      body: JSON.stringify(insurance),
-    });
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to update insurance');
+      throw new Error("Failed to update insurance");
     }
 
     return response.json();
@@ -201,14 +213,14 @@ export class PatientService {
    */
   async verifyInsurance(patientId: string, insuranceId: string): Promise<any> {
     const response = await fetch(
-      this.baseUrl + '/' + patientId + '/insurance/' + insuranceId + '/verify',
+      this.baseUrl + "/" + patientId + "/insurance/" + insuranceId + "/verify",
       {
-        method: 'POST',
-      }
+        method: "POST",
+      },
     );
 
     if (!response.ok) {
-      throw new Error('Failed to verify insurance');
+      throw new Error("Failed to verify insurance");
     }
 
     return response.json();
@@ -218,10 +230,10 @@ export class PatientService {
    * Get patient documents
    */
   async getPatientDocuments(patientId: string): Promise<PatientDocument[]> {
-    const response = await fetch(this.baseUrl + '/' + patientId + '/documents');
-    
+    const response = await fetch(this.baseUrl + "/" + patientId + "/documents");
+
     if (!response.ok) {
-      throw new Error('Failed to fetch documents');
+      throw new Error("Failed to fetch documents");
     }
 
     return response.json();
@@ -230,18 +242,25 @@ export class PatientService {
   /**
    * Upload patient document
    */
-  async uploadDocument(patientId: string, file: File, metadata: Partial<PatientDocument>): Promise<PatientDocument> {
+  async uploadDocument(
+    patientId: string,
+    file: File,
+    metadata: Partial<PatientDocument>,
+  ): Promise<PatientDocument> {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('metadata', JSON.stringify(metadata));
+    formData.append("file", file);
+    formData.append("metadata", JSON.stringify(metadata));
 
-    const response = await fetch(this.baseUrl + '/' + patientId + '/documents', {
-      method: 'POST',
-      body: formData,
-    });
+    const response = await fetch(
+      this.baseUrl + "/" + patientId + "/documents",
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to upload document');
+      throw new Error("Failed to upload document");
     }
 
     return response.json();
@@ -251,10 +270,10 @@ export class PatientService {
    * Get patient history/audit log
    */
   async getPatientHistory(patientId: string): Promise<PatientHistory[]> {
-    const response = await fetch(this.baseUrl + '/' + patientId + '/history');
-    
+    const response = await fetch(this.baseUrl + "/" + patientId + "/history");
+
     if (!response.ok) {
-      throw new Error('Failed to fetch patient history');
+      throw new Error("Failed to fetch patient history");
     }
 
     return response.json();

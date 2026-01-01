@@ -123,6 +123,7 @@ This module provides a comprehensive Electronic Health Record (EHR) and Clinical
 **Location**: `/src/types/clinical.ts`
 
 Key interfaces:
+
 - `Encounter` - Patient visits
 - `ClinicalNote` - All note types
 - `VitalSigns` - Comprehensive vitals
@@ -139,6 +140,7 @@ Key interfaces:
 ## Features
 
 ### Clinical Notes
+
 - **SOAP Notes** - Structured Subjective, Objective, Assessment, Plan
 - **Progress Notes** - Follow-up documentation
 - **Admission/Discharge Notes** - Hospital documentation
@@ -146,12 +148,14 @@ Key interfaces:
 - **Consultation Notes** - Specialist consultations
 
 ### Electronic Signatures
+
 - Type-to-sign functionality
 - Timestamp and provider tracking
 - Signature lock (notes cannot be edited after signing)
 - Audit trail
 
 ### Rich Text Editor
+
 - React Quill integration
 - Formatting: headers, bold, italic, underline
 - Lists: ordered and unordered
@@ -159,6 +163,7 @@ Key interfaces:
 - Clean, professional output
 
 ### Vital Signs Tracking
+
 - Temperature (F/C)
 - Blood Pressure (Systolic/Diastolic)
 - Heart Rate
@@ -170,6 +175,7 @@ Key interfaces:
 - Pain Level (0-10)
 
 ### Clinical Orders
+
 - **Lab Orders** - Laboratory tests
 - **Imaging Orders** - Radiology studies
 - **Procedure Orders** - Clinical procedures
@@ -179,12 +185,14 @@ Key interfaces:
 - Status tracking: Pending, In Progress, Completed, Cancelled
 
 ### ICD-10 & CPT Integration
+
 - ICD-10 code search for diagnoses
 - CPT code search for procedures
 - Code descriptions
 - Category organization
 
 ### Clinical Templates
+
 - Pre-built SOAP templates
 - Annual physical template
 - Progress note template
@@ -221,6 +229,7 @@ Visit: `http://localhost:3000/clinical`
 ## API Endpoints
 
 ### Encounters
+
 ```
 GET    /api/clinical/encounters
 POST   /api/clinical/encounters
@@ -231,6 +240,7 @@ DELETE /api/clinical/encounters/[id]
 ```
 
 ### Clinical Notes
+
 ```
 GET    /api/clinical/notes
 POST   /api/clinical/notes
@@ -240,6 +250,7 @@ PATCH  /api/clinical/notes/[id]  (for signing)
 ```
 
 ### Vitals, Problems, Allergies, Medications, Orders
+
 ```
 GET    /api/clinical/{resource}?patientId={id}
 POST   /api/clinical/{resource}
@@ -251,71 +262,68 @@ PUT    /api/clinical/{resource}  (with id in body)
 ### Creating an Encounter
 
 ```typescript
-import { createEncounter } from '@/services/encounter.service'
+import { createEncounter } from "@/services/encounter.service";
 
 const encounter = await createEncounter({
-  patientId: 'P001',
-  patientName: 'John Doe',
-  providerId: 'PR001',
-  providerName: 'Dr. Smith',
-  type: 'office-visit',
+  patientId: "P001",
+  patientName: "John Doe",
+  providerId: "PR001",
+  providerName: "Dr. Smith",
+  type: "office-visit",
   date: new Date().toISOString(),
-  chiefComplaint: 'Annual physical',
-  status: 'scheduled'
-})
+  chiefComplaint: "Annual physical",
+  status: "scheduled",
+});
 ```
 
 ### Creating a SOAP Note
 
 ```typescript
-import { createClinicalNote } from '@/services/clinical.service'
+import { createClinicalNote } from "@/services/clinical.service";
 
 const note = await createClinicalNote({
-  patientId: 'P001',
-  patientName: 'John Doe',
-  providerId: 'PR001',
-  providerName: 'Dr. Smith',
-  encounterId: 'E001',
-  type: 'soap',
-  title: 'Annual Physical - SOAP Note',
-  subjective: 'Patient reports feeling well...',
-  objective: 'Vital signs normal...',
-  assessment: 'Healthy adult...',
-  plan: 'Continue current lifestyle...'
-})
+  patientId: "P001",
+  patientName: "John Doe",
+  providerId: "PR001",
+  providerName: "Dr. Smith",
+  encounterId: "E001",
+  type: "soap",
+  title: "Annual Physical - SOAP Note",
+  subjective: "Patient reports feeling well...",
+  objective: "Vital signs normal...",
+  assessment: "Healthy adult...",
+  plan: "Continue current lifestyle...",
+});
 ```
 
 ### Signing a Note
 
 ```typescript
-import { signClinicalNote } from '@/services/clinical.service'
+import { signClinicalNote } from "@/services/clinical.service";
 
-const signedNote = await signClinicalNote(
-  'N001',
-  'Dr. Sarah Smith, MD'
-)
+const signedNote = await signClinicalNote("N001", "Dr. Sarah Smith, MD");
 ```
 
 ### Recording Vitals
 
 ```typescript
-import { createVitals } from '@/services/clinical.service'
+import { createVitals } from "@/services/clinical.service";
 
 const vitals = await createVitals({
-  patientId: 'P001',
-  recordedBy: 'Nurse Johnson',
+  patientId: "P001",
+  recordedBy: "Nurse Johnson",
   temperature: 98.6,
-  temperatureUnit: 'F',
+  temperatureUnit: "F",
   bloodPressureSystolic: 120,
   bloodPressureDiastolic: 80,
   heartRate: 72,
   respiratoryRate: 16,
   oxygenSaturation: 98,
   weight: 170,
-  weightUnit: 'lbs',
+  weightUnit: "lbs",
   height: 70,
-  heightUnit: 'in'
-})
+  heightUnit: "in",
+});
 ```
 
 ## File Structure

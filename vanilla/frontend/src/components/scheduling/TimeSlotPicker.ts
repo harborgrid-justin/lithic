@@ -8,9 +8,12 @@ export class TimeSlotPicker {
   private selectedSlot: Date | null = null;
   private onSlotSelect?: (slot: Date) => void;
 
-  constructor(container: HTMLElement, options?: {
-    onSlotSelect?: (slot: Date) => void;
-  }) {
+  constructor(
+    container: HTMLElement,
+    options?: {
+      onSlotSelect?: (slot: Date) => void;
+    },
+  ) {
     this.container = container;
     this.onSlotSelect = options?.onSlotSelect;
   }
@@ -23,13 +26,17 @@ export class TimeSlotPicker {
       <div class="time-slot-picker">
         <h4>Available Time Slots</h4>
         <div class="slots-grid">
-          ${slots.map(slot => `
-            <button class="time-slot ${this.isSlotSelected(slot) ? 'selected' : ''}"
+          ${slots
+            .map(
+              (slot) => `
+            <button class="time-slot ${this.isSlotSelected(slot) ? "selected" : ""}"
                     data-time="${slot.toISOString()}"
-                    ${!slot ? 'disabled' : ''}>
+                    ${!slot ? "disabled" : ""}>
               ${this.formatTime(slot)}
             </button>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       </div>
     `;
@@ -37,7 +44,10 @@ export class TimeSlotPicker {
     this.attachEventListeners();
   }
 
-  private async fetchAvailableSlots(providerId: string, date: Date): Promise<Date[]> {
+  private async fetchAvailableSlots(
+    providerId: string,
+    date: Date,
+  ): Promise<Date[]> {
     // Mock implementation - replace with actual API call
     const slots: Date[] = [];
     const startHour = 9;
@@ -55,8 +65,8 @@ export class TimeSlotPicker {
   }
 
   private attachEventListeners(): void {
-    this.container.querySelectorAll('.time-slot').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    this.container.querySelectorAll(".time-slot").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const timeStr = (e.currentTarget as HTMLElement).dataset.time;
         if (timeStr) {
           this.selectedSlot = new Date(timeStr);
@@ -70,11 +80,13 @@ export class TimeSlotPicker {
   }
 
   private highlightSelected(): void {
-    this.container.querySelectorAll('.time-slot').forEach(btn => {
-      btn.classList.remove('selected');
+    this.container.querySelectorAll(".time-slot").forEach((btn) => {
+      btn.classList.remove("selected");
     });
-    const selectedBtn = this.container.querySelector(`[data-time="${this.selectedSlot?.toISOString()}"]`);
-    selectedBtn?.classList.add('selected');
+    const selectedBtn = this.container.querySelector(
+      `[data-time="${this.selectedSlot?.toISOString()}"]`,
+    );
+    selectedBtn?.classList.add("selected");
   }
 
   private isSlotSelected(slot: Date): boolean {
@@ -82,7 +94,11 @@ export class TimeSlotPicker {
   }
 
   private formatTime(date: Date): string {
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
   }
 
   destroy(): void {}

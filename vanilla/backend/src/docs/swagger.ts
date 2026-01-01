@@ -4,226 +4,236 @@
  * API documentation using Swagger UI
  */
 
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
-import { Application } from 'express';
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { Application } from "express";
 
 /**
  * Swagger Options
  */
 const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Lithic Healthcare Platform API',
-      version: '1.0.0',
-      description: 'Enterprise healthcare platform API documentation',
+      title: "Lithic Healthcare Platform API",
+      version: "1.0.0",
+      description: "Enterprise healthcare platform API documentation",
       contact: {
-        name: 'Lithic Health',
-        email: 'api@lithichealth.com',
-        url: 'https://lithichealth.com',
+        name: "Lithic Health",
+        email: "api@lithichealth.com",
+        url: "https://lithichealth.com",
       },
       license: {
-        name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT',
+        name: "MIT",
+        url: "https://opensource.org/licenses/MIT",
       },
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server',
+        url: "http://localhost:3000",
+        description: "Development server",
       },
       {
-        url: 'https://staging-api.lithichealth.com',
-        description: 'Staging server',
+        url: "https://staging-api.lithichealth.com",
+        description: "Staging server",
       },
       {
-        url: 'https://api.lithichealth.com',
-        description: 'Production server',
+        url: "https://api.lithichealth.com",
+        description: "Production server",
       },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
         },
         apiKey: {
-          type: 'apiKey',
-          in: 'header',
-          name: 'X-API-Key',
+          type: "apiKey",
+          in: "header",
+          name: "X-API-Key",
         },
       },
       schemas: {
         Error: {
-          type: 'object',
+          type: "object",
           properties: {
             success: {
-              type: 'boolean',
+              type: "boolean",
               example: false,
             },
             error: {
-              type: 'string',
-              example: 'Error message',
+              type: "string",
+              example: "Error message",
             },
             details: {
-              type: 'object',
+              type: "object",
             },
           },
         },
         Patient: {
-          type: 'object',
+          type: "object",
           properties: {
             id: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             mrn: {
-              type: 'string',
-              description: 'Medical Record Number',
+              type: "string",
+              description: "Medical Record Number",
             },
             firstName: {
-              type: 'string',
+              type: "string",
             },
             lastName: {
-              type: 'string',
+              type: "string",
             },
             dateOfBirth: {
-              type: 'string',
-              format: 'date',
+              type: "string",
+              format: "date",
             },
             gender: {
-              type: 'string',
-              enum: ['male', 'female', 'other', 'unknown'],
+              type: "string",
+              enum: ["male", "female", "other", "unknown"],
             },
             email: {
-              type: 'string',
-              format: 'email',
+              type: "string",
+              format: "email",
             },
             phone: {
-              type: 'string',
+              type: "string",
             },
             address: {
-              type: 'object',
+              type: "object",
               properties: {
-                street: { type: 'string' },
-                city: { type: 'string' },
-                state: { type: 'string' },
-                zipCode: { type: 'string' },
+                street: { type: "string" },
+                city: { type: "string" },
+                state: { type: "string" },
+                zipCode: { type: "string" },
               },
             },
           },
-          required: ['mrn', 'firstName', 'lastName', 'dateOfBirth', 'gender'],
+          required: ["mrn", "firstName", "lastName", "dateOfBirth", "gender"],
         },
         Appointment: {
-          type: 'object',
+          type: "object",
           properties: {
             id: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             patientId: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             providerId: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             startTime: {
-              type: 'string',
-              format: 'date-time',
+              type: "string",
+              format: "date-time",
             },
             endTime: {
-              type: 'string',
-              format: 'date-time',
+              type: "string",
+              format: "date-time",
             },
             type: {
-              type: 'string',
-              enum: ['in-person', 'telemedicine', 'phone'],
+              type: "string",
+              enum: ["in-person", "telemedicine", "phone"],
             },
             status: {
-              type: 'string',
-              enum: ['scheduled', 'confirmed', 'cancelled', 'completed', 'no-show'],
+              type: "string",
+              enum: [
+                "scheduled",
+                "confirmed",
+                "cancelled",
+                "completed",
+                "no-show",
+              ],
             },
             reason: {
-              type: 'string',
+              type: "string",
             },
           },
-          required: ['patientId', 'providerId', 'startTime', 'endTime', 'type'],
+          required: ["patientId", "providerId", "startTime", "endTime", "type"],
         },
         Prescription: {
-          type: 'object',
+          type: "object",
           properties: {
             id: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             patientId: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             providerId: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             medicationName: {
-              type: 'string',
+              type: "string",
             },
             medicationCode: {
-              type: 'string',
-              description: 'NDC or RxNorm code',
+              type: "string",
+              description: "NDC or RxNorm code",
             },
             dosage: {
-              type: 'string',
+              type: "string",
             },
             quantity: {
-              type: 'number',
+              type: "number",
             },
             refills: {
-              type: 'number',
+              type: "number",
             },
             status: {
-              type: 'string',
-              enum: ['draft', 'active', 'cancelled', 'completed'],
+              type: "string",
+              enum: ["draft", "active", "cancelled", "completed"],
             },
           },
         },
         Observation: {
-          type: 'object',
+          type: "object",
           properties: {
             id: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             patientId: {
-              type: 'string',
-              format: 'uuid',
+              type: "string",
+              format: "uuid",
             },
             code: {
-              type: 'string',
-              description: 'LOINC code',
+              type: "string",
+              description: "LOINC code",
             },
             display: {
-              type: 'string',
+              type: "string",
             },
             value: {
-              oneOf: [
-                { type: 'number' },
-                { type: 'string' },
-              ],
+              oneOf: [{ type: "number" }, { type: "string" }],
             },
             unit: {
-              type: 'string',
+              type: "string",
             },
             status: {
-              type: 'string',
-              enum: ['registered', 'preliminary', 'final', 'amended', 'corrected', 'cancelled'],
+              type: "string",
+              enum: [
+                "registered",
+                "preliminary",
+                "final",
+                "amended",
+                "corrected",
+                "cancelled",
+              ],
             },
             effectiveDate: {
-              type: 'string',
-              format: 'date-time',
+              type: "string",
+              format: "date-time",
             },
           },
         },
@@ -236,59 +246,56 @@ const swaggerOptions: swaggerJsdoc.Options = {
     ],
     tags: [
       {
-        name: 'Authentication',
-        description: 'Authentication and authorization endpoints',
+        name: "Authentication",
+        description: "Authentication and authorization endpoints",
       },
       {
-        name: 'Patients',
-        description: 'Patient management endpoints',
+        name: "Patients",
+        description: "Patient management endpoints",
       },
       {
-        name: 'Appointments',
-        description: 'Appointment scheduling endpoints',
+        name: "Appointments",
+        description: "Appointment scheduling endpoints",
       },
       {
-        name: 'Prescriptions',
-        description: 'E-prescribing endpoints',
+        name: "Prescriptions",
+        description: "E-prescribing endpoints",
       },
       {
-        name: 'Clinical',
-        description: 'Clinical documentation endpoints',
+        name: "Clinical",
+        description: "Clinical documentation endpoints",
       },
       {
-        name: 'Laboratory',
-        description: 'Laboratory order and results endpoints',
+        name: "Laboratory",
+        description: "Laboratory order and results endpoints",
       },
       {
-        name: 'Imaging',
-        description: 'Imaging order and PACS endpoints',
+        name: "Imaging",
+        description: "Imaging order and PACS endpoints",
       },
       {
-        name: 'Billing',
-        description: 'Billing and claims endpoints',
+        name: "Billing",
+        description: "Billing and claims endpoints",
       },
       {
-        name: 'Analytics',
-        description: 'Analytics and reporting endpoints',
+        name: "Analytics",
+        description: "Analytics and reporting endpoints",
       },
       {
-        name: 'FHIR',
-        description: 'FHIR R4 interoperability endpoints',
+        name: "FHIR",
+        description: "FHIR R4 interoperability endpoints",
       },
       {
-        name: 'HL7',
-        description: 'HL7v2 integration endpoints',
+        name: "HL7",
+        description: "HL7v2 integration endpoints",
       },
       {
-        name: 'Webhooks',
-        description: 'Webhook management endpoints',
+        name: "Webhooks",
+        description: "Webhook management endpoints",
       },
     ],
   },
-  apis: [
-    './src/routes/**/*.ts',
-    './src/routes/**/*.js',
-  ],
+  apis: ["./src/routes/**/*.ts", "./src/routes/**/*.js"],
 };
 
 /**
@@ -302,22 +309,22 @@ export const swaggerSpec = swaggerJsdoc(swaggerOptions);
 export function setupSwagger(app: Application): void {
   // Serve Swagger UI
   app.use(
-    '/api/docs',
+    "/api/docs",
     swaggerUi.serve,
     swaggerUi.setup(swaggerSpec, {
-      customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: 'Lithic Healthcare API Documentation',
-      customfavIcon: '/favicon.ico',
-    })
+      customCss: ".swagger-ui .topbar { display: none }",
+      customSiteTitle: "Lithic Healthcare API Documentation",
+      customfavIcon: "/favicon.ico",
+    }),
   );
 
   // Serve OpenAPI spec as JSON
-  app.get('/api/docs/openapi.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
+  app.get("/api/docs/openapi.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
     res.send(swaggerSpec);
   });
 
-  console.log('Swagger documentation available at /api/docs');
+  console.log("Swagger documentation available at /api/docs");
 }
 
 /**

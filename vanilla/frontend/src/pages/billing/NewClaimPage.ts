@@ -2,7 +2,7 @@
  * NewClaimPage - Create new claim form
  */
 
-import { BillingService } from '../../services/BillingService';
+import { BillingService } from "../../services/BillingService";
 
 export class NewClaimPage {
   private container: HTMLElement;
@@ -110,28 +110,34 @@ export class NewClaimPage {
     const [patients, providers, payers] = await Promise.all([
       this.billingService.getPatients(),
       this.billingService.getProviders(),
-      this.billingService.getPayers()
+      this.billingService.getPayers(),
     ]);
 
-    const patientSelect = document.getElementById('patientSelect') as HTMLSelectElement;
+    const patientSelect = document.getElementById(
+      "patientSelect",
+    ) as HTMLSelectElement;
     patients.forEach((p: any) => {
-      const option = document.createElement('option');
+      const option = document.createElement("option");
       option.value = p.id;
       option.textContent = `${p.name} (${p.dob})`;
       patientSelect?.appendChild(option);
     });
 
-    const providerSelect = document.getElementById('providerSelect') as HTMLSelectElement;
+    const providerSelect = document.getElementById(
+      "providerSelect",
+    ) as HTMLSelectElement;
     providers.forEach((p: any) => {
-      const option = document.createElement('option');
+      const option = document.createElement("option");
       option.value = p.id;
       option.textContent = p.name;
       providerSelect?.appendChild(option);
     });
 
-    const payerSelect = document.getElementById('payerSelect') as HTMLSelectElement;
+    const payerSelect = document.getElementById(
+      "payerSelect",
+    ) as HTMLSelectElement;
     payers.forEach((p: any) => {
-      const option = document.createElement('option');
+      const option = document.createElement("option");
       option.value = p.id;
       option.textContent = p.name;
       payerSelect?.appendChild(option);
@@ -139,27 +145,29 @@ export class NewClaimPage {
   }
 
   private attachEventListeners(): void {
-    const form = document.getElementById('claimForm') as HTMLFormElement;
-    form?.addEventListener('submit', (e) => {
+    const form = document.getElementById("claimForm") as HTMLFormElement;
+    form?.addEventListener("submit", (e) => {
       e.preventDefault();
       this.handleSubmit(true);
     });
 
-    document.getElementById('saveDraftBtn')?.addEventListener('click', () => {
+    document.getElementById("saveDraftBtn")?.addEventListener("click", () => {
       this.handleSubmit(false);
     });
 
-    document.getElementById('addLineItemBtn')?.addEventListener('click', () => {
+    document.getElementById("addLineItemBtn")?.addEventListener("click", () => {
       this.addLineItem();
     });
 
-    document.getElementById('addDiagnosisBtn')?.addEventListener('click', () => {
-      this.addDiagnosis();
-    });
+    document
+      .getElementById("addDiagnosisBtn")
+      ?.addEventListener("click", () => {
+        this.addDiagnosis();
+      });
   }
 
   private addLineItem(): void {
-    const container = document.getElementById('lineItemsContainer');
+    const container = document.getElementById("lineItemsContainer");
     const index = this.lineItems.length;
 
     const lineItemHtml = `
@@ -191,12 +199,12 @@ export class NewClaimPage {
       </div>
     `;
 
-    container?.insertAdjacentHTML('beforeend', lineItemHtml);
+    container?.insertAdjacentHTML("beforeend", lineItemHtml);
     this.lineItems.push({});
   }
 
   private addDiagnosis(): void {
-    const container = document.getElementById('diagnosisContainer');
+    const container = document.getElementById("diagnosisContainer");
     const diagnosisHtml = `
       <div class="diagnosis-item">
         <input type="text" placeholder="ICD-10 Code (e.g., I10)" class="diagnosis-code" />
@@ -205,7 +213,7 @@ export class NewClaimPage {
         </button>
       </div>
     `;
-    container?.insertAdjacentHTML('afterbegin', diagnosisHtml);
+    container?.insertAdjacentHTML("afterbegin", diagnosisHtml);
   }
 
   private async handleSubmit(submit: boolean): Promise<void> {
@@ -216,46 +224,69 @@ export class NewClaimPage {
 
       if (submit) {
         await this.billingService.submitClaim(claim.id);
-        alert('Claim created and submitted successfully');
+        alert("Claim created and submitted successfully");
       } else {
-        alert('Claim saved as draft');
+        alert("Claim saved as draft");
       }
 
       window.location.hash = `#/billing/claims/${claim.id}`;
     } catch (error) {
-      console.error('Error creating claim:', error);
-      alert('Failed to create claim');
+      console.error("Error creating claim:", error);
+      alert("Failed to create claim");
     }
   }
 
   private getFormData(): any {
     return {
-      patientId: (document.getElementById('patientSelect') as HTMLSelectElement).value,
-      subscriberId: (document.getElementById('subscriberId') as HTMLInputElement).value,
-      providerId: (document.getElementById('providerSelect') as HTMLSelectElement).value,
-      payerId: (document.getElementById('payerSelect') as HTMLSelectElement).value,
-      serviceDate: (document.getElementById('serviceDate') as HTMLInputElement).value,
-      placeOfService: (document.getElementById('placeOfService') as HTMLSelectElement).value,
+      patientId: (document.getElementById("patientSelect") as HTMLSelectElement)
+        .value,
+      subscriberId: (
+        document.getElementById("subscriberId") as HTMLInputElement
+      ).value,
+      providerId: (
+        document.getElementById("providerSelect") as HTMLSelectElement
+      ).value,
+      payerId: (document.getElementById("payerSelect") as HTMLSelectElement)
+        .value,
+      serviceDate: (document.getElementById("serviceDate") as HTMLInputElement)
+        .value,
+      placeOfService: (
+        document.getElementById("placeOfService") as HTMLSelectElement
+      ).value,
       diagnosisCodes: this.getDiagnosisCodes(),
-      lineItems: this.getLineItems()
+      lineItems: this.getLineItems(),
     };
   }
 
   private getDiagnosisCodes(): string[] {
-    const inputs = document.querySelectorAll('.diagnosis-code') as NodeListOf<HTMLInputElement>;
-    return Array.from(inputs).map(input => input.value).filter(v => v);
+    const inputs = document.querySelectorAll(
+      ".diagnosis-code",
+    ) as NodeListOf<HTMLInputElement>;
+    return Array.from(inputs)
+      .map((input) => input.value)
+      .filter((v) => v);
   }
 
   private getLineItems(): any[] {
     const lineItems: any[] = [];
-    const containers = document.querySelectorAll('.line-item');
+    const containers = document.querySelectorAll(".line-item");
 
-    containers.forEach(container => {
+    containers.forEach((container) => {
       lineItems.push({
-        procedureCode: (container.querySelector('.cpt-code') as HTMLInputElement).value,
-        modifiers: (container.querySelector('.modifiers') as HTMLInputElement).value.split(',').map(m => m.trim()),
-        units: parseInt((container.querySelector('.units') as HTMLInputElement).value),
-        charge: parseFloat((container.querySelector('.charge') as HTMLInputElement).value)
+        procedureCode: (
+          container.querySelector(".cpt-code") as HTMLInputElement
+        ).value,
+        modifiers: (
+          container.querySelector(".modifiers") as HTMLInputElement
+        ).value
+          .split(",")
+          .map((m) => m.trim()),
+        units: parseInt(
+          (container.querySelector(".units") as HTMLInputElement).value,
+        ),
+        charge: parseFloat(
+          (container.querySelector(".charge") as HTMLInputElement).value,
+        ),
       });
     });
 

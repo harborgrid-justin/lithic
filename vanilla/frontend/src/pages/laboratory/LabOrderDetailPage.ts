@@ -3,9 +3,9 @@
  * View and manage individual laboratory order
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { ResultViewer } from '../../components/laboratory/ResultViewer';
-import { SpecimenTracker } from '../../components/laboratory/SpecimenTracker';
+import { labService } from "../../services/LaboratoryService";
+import { ResultViewer } from "../../components/laboratory/ResultViewer";
+import { SpecimenTracker } from "../../components/laboratory/SpecimenTracker";
 
 export class LabOrderDetailPage {
   private container: HTMLElement;
@@ -46,21 +46,30 @@ export class LabOrderDetailPage {
       const results = await labService.getResultsForOrder(this.orderId);
       const specimens = await labService.getSpecimensForOrder(this.orderId);
 
-      const orderContent = this.container.querySelector('#orderContent');
+      const orderContent = this.container.querySelector("#orderContent");
       if (orderContent) {
-        orderContent.innerHTML = this.renderOrderContent(this.order, results, specimens);
+        orderContent.innerHTML = this.renderOrderContent(
+          this.order,
+          results,
+          specimens,
+        );
         this.initializeComponents(results);
       }
     } catch (error) {
-      console.error('Error loading order:', error);
-      const orderContent = this.container.querySelector('#orderContent');
+      console.error("Error loading order:", error);
+      const orderContent = this.container.querySelector("#orderContent");
       if (orderContent) {
-        orderContent.innerHTML = '<p class="error">Error loading order details</p>';
+        orderContent.innerHTML =
+          '<p class="error">Error loading order details</p>';
       }
     }
   }
 
-  private renderOrderContent(order: any, results: any[], specimens: any[]): string {
+  private renderOrderContent(
+    order: any,
+    results: any[],
+    specimens: any[],
+  ): string {
     return `
       <div class="order-details">
         <div class="detail-section">
@@ -121,48 +130,68 @@ export class LabOrderDetailPage {
           </div>
         </div>
 
-        ${order.clinicalInfo ? `
+        ${
+          order.clinicalInfo
+            ? `
           <div class="detail-section">
             <h2>Clinical Information</h2>
             <p>${order.clinicalInfo}</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${order.diagnosis ? `
+        ${
+          order.diagnosis
+            ? `
           <div class="detail-section">
             <h2>Diagnosis</h2>
             <p>${order.diagnosis}</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div class="detail-section">
           <h2>Tests Ordered</h2>
           <div class="tests-list">
-            ${order.tests.map((test: any) => this.renderTest(test)).join('')}
+            ${order.tests.map((test: any) => this.renderTest(test)).join("")}
           </div>
         </div>
 
-        ${results.length > 0 ? `
+        ${
+          results.length > 0
+            ? `
           <div class="detail-section">
             <h2>Results</h2>
             <div id="resultsContainer"></div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${specimens.length > 0 ? `
+        ${
+          specimens.length > 0
+            ? `
           <div class="detail-section">
             <h2>Specimens</h2>
             <div class="specimens-list">
-              ${specimens.map((spec: any) => `
+              ${specimens
+                .map(
+                  (spec: any) => `
                 <div class="specimen-item">
                   <strong>${spec.specimenNumber}</strong>
                   <span>${this.formatSpecimenType(spec.specimenType)}</span>
                   <span class="status-badge status-${spec.status}">${this.formatStatus(spec.status)}</span>
                 </div>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
     `;
   }
@@ -182,7 +211,7 @@ export class LabOrderDetailPage {
   }
 
   private initializeComponents(results: any[]): void {
-    const resultsContainer = this.container.querySelector('#resultsContainer');
+    const resultsContainer = this.container.querySelector("#resultsContainer");
     if (resultsContainer && results.length > 0) {
       this.resultViewer = new ResultViewer(resultsContainer as HTMLElement);
       this.resultViewer.setResults(results);
@@ -190,46 +219,52 @@ export class LabOrderDetailPage {
   }
 
   private formatStatus(status: string): string {
-    return status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return status
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatSpecimenType(type: string): string {
-    return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return type
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatDateTime(date: Date | string): string {
     const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private attachEventListeners(): void {
-    const backBtn = this.container.querySelector('#backBtn');
-    const printBtn = this.container.querySelector('#printBtn');
-    const hl7Btn = this.container.querySelector('#hl7Btn');
-    const cancelBtn = this.container.querySelector('#cancelBtn');
+    const backBtn = this.container.querySelector("#backBtn");
+    const printBtn = this.container.querySelector("#printBtn");
+    const hl7Btn = this.container.querySelector("#hl7Btn");
+    const cancelBtn = this.container.querySelector("#cancelBtn");
 
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        window.location.href = '/laboratory/orders';
+      backBtn.addEventListener("click", () => {
+        window.location.href = "/laboratory/orders";
       });
     }
 
     if (printBtn) {
-      printBtn.addEventListener('click', () => this.handlePrint());
+      printBtn.addEventListener("click", () => this.handlePrint());
     }
 
     if (hl7Btn) {
-      hl7Btn.addEventListener('click', () => this.handleHL7());
+      hl7Btn.addEventListener("click", () => this.handleHL7());
     }
 
     if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => this.handleCancel());
+      cancelBtn.addEventListener("click", () => this.handleCancel());
     }
   }
 
@@ -240,24 +275,24 @@ export class LabOrderDetailPage {
   private async handleHL7(): Promise<void> {
     try {
       const hl7Data = await labService.generateHL7Order(this.orderId);
-      alert('HL7 Message:\n\n' + hl7Data.hl7Message);
+      alert("HL7 Message:\n\n" + hl7Data.hl7Message);
     } catch (error) {
-      console.error('Error generating HL7:', error);
-      alert('Error generating HL7 message');
+      console.error("Error generating HL7:", error);
+      alert("Error generating HL7 message");
     }
   }
 
   private async handleCancel(): Promise<void> {
-    const reason = prompt('Enter cancellation reason:');
+    const reason = prompt("Enter cancellation reason:");
     if (!reason) return;
 
     try {
       await labService.cancelOrder(this.orderId, reason);
-      alert('Order cancelled successfully');
+      alert("Order cancelled successfully");
       this.loadOrder();
     } catch (error) {
-      console.error('Error cancelling order:', error);
-      alert('Error cancelling order');
+      console.error("Error cancelling order:", error);
+      alert("Error cancelling order");
     }
   }
 
@@ -265,6 +300,6 @@ export class LabOrderDetailPage {
     if (this.resultViewer) {
       this.resultViewer.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -2,7 +2,7 @@
  * ClaimDetailPage - View and manage individual claim details
  */
 
-import { BillingService } from '../../services/BillingService';
+import { BillingService } from "../../services/BillingService";
 
 export class ClaimDetailPage {
   private container: HTMLElement;
@@ -30,16 +30,24 @@ export class ClaimDetailPage {
               <button class="btn btn-secondary" onclick="window.claimDetail.printClaim()">
                 <i class="icon-print"></i> Print
               </button>
-              ${claim.status === 'draft' ? `
+              ${
+                claim.status === "draft"
+                  ? `
                 <button class="btn btn-primary" onclick="window.claimDetail.submitClaim()">
                   <i class="icon-send"></i> Submit Claim
                 </button>
-              ` : ''}
-              ${claim.status === 'denied' ? `
+              `
+                  : ""
+              }
+              ${
+                claim.status === "denied"
+                  ? `
                 <button class="btn btn-primary" onclick="window.claimDetail.createAppeal()">
                   <i class="icon-appeal"></i> Create Appeal
                 </button>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </div>
 
@@ -71,8 +79,9 @@ export class ClaimDetailPage {
       this.attachEventListeners();
       this.loadHistory();
     } catch (error) {
-      console.error('Error loading claim:', error);
-      this.container.innerHTML = '<div class="alert alert-error">Failed to load claim</div>';
+      console.error("Error loading claim:", error);
+      this.container.innerHTML =
+        '<div class="alert alert-error">Failed to load claim</div>';
     }
   }
 
@@ -127,26 +136,34 @@ export class ClaimDetailPage {
           </div>
           <div class="detail-row">
             <label>Submission Date:</label>
-            <span>${claim.submissionDate || 'Not submitted'}</span>
+            <span>${claim.submissionDate || "Not submitted"}</span>
           </div>
-          ${claim.paymentDate ? `
+          ${
+            claim.paymentDate
+              ? `
             <div class="detail-row">
               <label>Payment Date:</label>
               <span>${claim.paymentDate}</span>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
 
         <div class="detail-section full-width">
           <h3>Diagnosis Codes</h3>
           <div class="diagnosis-list">
-            ${claim.diagnosisCodes.map((dx: any) => `
+            ${claim.diagnosisCodes
+              .map(
+                (dx: any) => `
               <div class="diagnosis-item">
                 <span class="dx-pointer">${dx.pointer}</span>
                 <span class="dx-code">${dx.code}</span>
                 <span class="dx-description">${dx.description}</span>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         </div>
 
@@ -198,13 +215,15 @@ export class ClaimDetailPage {
           </tr>
         </thead>
         <tbody>
-          ${claim.lineItems.map((line: any) => `
+          ${claim.lineItems
+            .map(
+              (line: any) => `
             <tr>
               <td>${line.lineNumber}</td>
               <td>${line.serviceDate}</td>
               <td>${line.procedureCode}</td>
-              <td>${line.modifiers.join(', ') || '-'}</td>
-              <td>${line.diagnosisPointers.join(', ')}</td>
+              <td>${line.modifiers.join(", ") || "-"}</td>
+              <td>${line.diagnosisPointers.join(", ")}</td>
               <td>${line.units}</td>
               <td class="currency">$${line.charge.toLocaleString()}</td>
               <td class="currency">$${line.allowedAmount.toLocaleString()}</td>
@@ -212,11 +231,15 @@ export class ClaimDetailPage {
               <td class="currency">$${line.adjustmentAmount.toLocaleString()}</td>
               <td class="currency">$${line.patientResponsibility.toLocaleString()}</td>
             </tr>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
 
-      ${claim.adjustments && claim.adjustments.length > 0 ? `
+      ${
+        claim.adjustments && claim.adjustments.length > 0
+          ? `
         <div class="adjustments-section">
           <h3>Adjustments</h3>
           <table class="adjustments-table">
@@ -229,18 +252,24 @@ export class ClaimDetailPage {
               </tr>
             </thead>
             <tbody>
-              ${claim.adjustments.map((adj: any) => `
+              ${claim.adjustments
+                .map(
+                  (adj: any) => `
                 <tr>
                   <td>${adj.code}</td>
                   <td>${adj.groupCode}</td>
                   <td>${adj.description}</td>
                   <td class="currency">$${adj.amount.toLocaleString()}</td>
                 </tr>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </tbody>
           </table>
         </div>
-      ` : ''}
+      `
+          : ""
+      }
     `;
   }
 
@@ -261,19 +290,23 @@ export class ClaimDetailPage {
           </tr>
         </thead>
         <tbody>
-          ${claim.payments.map((payment: any) => `
+          ${claim.payments
+            .map(
+              (payment: any) => `
             <tr>
               <td>${payment.paymentDate}</td>
               <td class="currency">$${payment.amount.toLocaleString()}</td>
               <td>${payment.method}</td>
-              <td>${payment.checkNumber || '-'}</td>
+              <td>${payment.checkNumber || "-"}</td>
               <td>
                 <button class="btn-icon" onclick="window.claimDetail.viewPayment('${payment.id}')">
                   <i class="icon-eye"></i>
                 </button>
               </td>
             </tr>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
     `;
@@ -282,11 +315,13 @@ export class ClaimDetailPage {
   private async loadHistory(): Promise<void> {
     try {
       const history = await this.billingService.getClaimHistory(this.claimId);
-      const container = document.getElementById('historyContent');
+      const container = document.getElementById("historyContent");
       if (container) {
         container.innerHTML = `
           <div class="history-timeline">
-            ${history.map((item: any) => `
+            ${history
+              .map(
+                (item: any) => `
               <div class="history-item">
                 <div class="history-icon ${item.action}"></div>
                 <div class="history-content">
@@ -297,20 +332,22 @@ export class ClaimDetailPage {
                   </div>
                 </div>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         `;
       }
     } catch (error) {
-      console.error('Error loading history:', error);
+      console.error("Error loading history:", error);
     }
   }
 
   private attachEventListeners(): void {
-    const tabButtons = this.container.querySelectorAll('.tab-btn');
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const tab = (e.target as HTMLElement).getAttribute('data-tab');
+    const tabButtons = this.container.querySelectorAll(".tab-btn");
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const tab = (e.target as HTMLElement).getAttribute("data-tab");
         this.switchTab(tab!);
       });
     });
@@ -318,15 +355,19 @@ export class ClaimDetailPage {
 
   private switchTab(tabName: string): void {
     // Remove active class from all tabs
-    this.container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    this.container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    this.container
+      .querySelectorAll(".tab-btn")
+      .forEach((btn) => btn.classList.remove("active"));
+    this.container
+      .querySelectorAll(".tab-content")
+      .forEach((content) => content.classList.remove("active"));
 
     // Add active class to selected tab
     const tabBtn = this.container.querySelector(`[data-tab="${tabName}"]`);
     const tabContent = this.container.querySelector(`#${tabName}-tab`);
 
-    if (tabBtn) tabBtn.classList.add('active');
-    if (tabContent) tabContent.classList.add('active');
+    if (tabBtn) tabBtn.classList.add("active");
+    if (tabContent) tabContent.classList.add("active");
   }
 
   // Public methods
@@ -335,13 +376,13 @@ export class ClaimDetailPage {
   }
 
   public async submitClaim(): Promise<void> {
-    if (confirm('Submit this claim?')) {
+    if (confirm("Submit this claim?")) {
       try {
         await this.billingService.submitClaim(this.claimId);
-        alert('Claim submitted successfully');
+        alert("Claim submitted successfully");
         window.location.reload();
       } catch (error) {
-        alert('Failed to submit claim');
+        alert("Failed to submit claim");
       }
     }
   }

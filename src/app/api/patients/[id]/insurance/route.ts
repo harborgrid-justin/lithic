@@ -1,34 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Insurance, EligibilityResponse } from '@/types/patient';
-import { auditLogger } from '@/lib/audit-logger';
+import { NextRequest, NextResponse } from "next/server";
+import { Insurance, EligibilityResponse } from "@/types/patient";
+import { auditLogger } from "@/lib/audit-logger";
 
 // Mock database
 const insuranceDb: Insurance[] = [];
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
-    const insurance = insuranceDb.filter(i => i.patientId === params.id);
-    
+    const insurance = insuranceDb.filter((i) => i.patientId === params.id);
+
     // Sort by type priority (primary, secondary, tertiary)
     const typePriority = { primary: 1, secondary: 2, tertiary: 3 };
     insurance.sort((a, b) => typePriority[a.type] - typePriority[b.type]);
-    
+
     return NextResponse.json(insurance);
   } catch (error) {
-    console.error('Error fetching insurance:', error);
+    console.error("Error fetching insurance:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch insurance' },
-      { status: 500 }
+      { error: "Failed to fetch insurance" },
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const data = await request.json();
@@ -46,13 +46,13 @@ export async function POST(
 
     // Audit log
     await auditLogger.log({
-      resourceType: 'insurance',
+      resourceType: "insurance",
       resourceId: newInsurance.id,
-      action: 'create',
+      action: "create",
       actor: {
-        userId: 'current-user-id',
-        username: 'current-user',
-        role: 'clinician',
+        userId: "current-user-id",
+        username: "current-user",
+        role: "clinician",
       },
       metadata: {
         patientId: params.id,
@@ -61,31 +61,31 @@ export async function POST(
       },
       timestamp: new Date().toISOString(),
       ipAddress: request.ip,
-      userAgent: request.headers.get('user-agent') || undefined,
+      userAgent: request.headers.get("user-agent") || undefined,
     });
 
     return NextResponse.json(newInsurance, { status: 201 });
   } catch (error) {
-    console.error('Error creating insurance:', error);
+    console.error("Error creating insurance:", error);
     return NextResponse.json(
-      { error: 'Failed to create insurance' },
-      { status: 500 }
+      { error: "Failed to create insurance" },
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const data = await request.json();
-    const insuranceIndex = insuranceDb.findIndex(i => i.id === data.id);
+    const insuranceIndex = insuranceDb.findIndex((i) => i.id === data.id);
 
     if (insuranceIndex === -1) {
       return NextResponse.json(
-        { error: 'Insurance not found' },
-        { status: 404 }
+        { error: "Insurance not found" },
+        { status: 404 },
       );
     }
 
@@ -99,26 +99,26 @@ export async function PUT(
 
     // Audit log
     await auditLogger.log({
-      resourceType: 'insurance',
+      resourceType: "insurance",
       resourceId: updatedInsurance.id,
-      action: 'update',
+      action: "update",
       actor: {
-        userId: 'current-user-id',
-        username: 'current-user',
-        role: 'clinician',
+        userId: "current-user-id",
+        username: "current-user",
+        role: "clinician",
       },
       changes: { before: insuranceDb[insuranceIndex], after: updatedInsurance },
       timestamp: new Date().toISOString(),
       ipAddress: request.ip,
-      userAgent: request.headers.get('user-agent') || undefined,
+      userAgent: request.headers.get("user-agent") || undefined,
     });
 
     return NextResponse.json(updatedInsurance);
   } catch (error) {
-    console.error('Error updating insurance:', error);
+    console.error("Error updating insurance:", error);
     return NextResponse.json(
-      { error: 'Failed to update insurance' },
-      { status: 500 }
+      { error: "Failed to update insurance" },
+      { status: 500 },
     );
   }
 }

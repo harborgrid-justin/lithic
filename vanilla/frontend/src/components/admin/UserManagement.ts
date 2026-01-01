@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * UserManagement Component
@@ -45,21 +45,23 @@ export class UserManagement {
   }
 
   private attachEventListeners(): void {
-    const searchInput = document.getElementById('user-search') as HTMLInputElement;
-    const createBtn = document.getElementById('create-user-btn');
+    const searchInput = document.getElementById(
+      "user-search",
+    ) as HTMLInputElement;
+    const createBtn = document.getElementById("create-user-btn");
 
     // Search debounce
     let searchTimeout: any;
-    searchInput?.addEventListener('input', (e) => {
+    searchInput?.addEventListener("input", (e) => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
         this.loadUsers((e.target as HTMLInputElement).value);
       }, 300);
     });
 
-    createBtn?.addEventListener('click', () => {
+    createBtn?.addEventListener("click", () => {
       if (this.onUserSelect) {
-        this.onUserSelect('new');
+        this.onUserSelect("new");
       }
     });
   }
@@ -78,11 +80,12 @@ export class UserManagement {
   }
 
   private renderTable(): void {
-    const tableContainer = document.getElementById('users-table');
+    const tableContainer = document.getElementById("users-table");
     if (!tableContainer) return;
 
     if (this.users.length === 0) {
-      tableContainer.innerHTML = '<div class="empty-state">No users found</div>';
+      tableContainer.innerHTML =
+        '<div class="empty-state">No users found</div>';
       return;
     }
 
@@ -100,7 +103,7 @@ export class UserManagement {
           </tr>
         </thead>
         <tbody>
-          ${this.users.map((user) => this.renderUserRow(user)).join('')}
+          ${this.users.map((user) => this.renderUserRow(user)).join("")}
         </tbody>
       </table>
     `;
@@ -112,7 +115,7 @@ export class UserManagement {
   private renderUserRow(user: any): string {
     const lastLogin = user.lastLogin
       ? new Date(user.lastLogin).toLocaleString()
-      : 'Never';
+      : "Never";
 
     return `
       <tr data-user-id="${user.id}">
@@ -120,13 +123,13 @@ export class UserManagement {
         <td>${user.email}</td>
         <td>${user.organizationId}</td>
         <td>
-          <span class="badge badge--${user.isActive ? 'success' : 'danger'}">
-            ${user.isActive ? 'Active' : 'Inactive'}
+          <span class="badge badge--${user.isActive ? "success" : "danger"}">
+            ${user.isActive ? "Active" : "Inactive"}
           </span>
         </td>
         <td>
-          <span class="badge badge--${user.isMFAEnabled ? 'success' : 'warning'}">
-            ${user.isMFAEnabled ? 'Enabled' : 'Disabled'}
+          <span class="badge badge--${user.isMFAEnabled ? "success" : "warning"}">
+            ${user.isMFAEnabled ? "Enabled" : "Disabled"}
           </span>
         </td>
         <td>${lastLogin}</td>
@@ -134,8 +137,8 @@ export class UserManagement {
           <button class="btn btn--sm btn--primary view-user" data-user-id="${user.id}">
             View
           </button>
-          <button class="btn btn--sm btn--${user.isActive ? 'warning' : 'success'} toggle-status" data-user-id="${user.id}">
-            ${user.isActive ? 'Deactivate' : 'Activate'}
+          <button class="btn btn--sm btn--${user.isActive ? "warning" : "success"} toggle-status" data-user-id="${user.id}">
+            ${user.isActive ? "Deactivate" : "Activate"}
           </button>
         </td>
       </tr>
@@ -144,9 +147,9 @@ export class UserManagement {
 
   private attachTableEventListeners(): void {
     // View user buttons
-    const viewButtons = document.querySelectorAll('.view-user');
+    const viewButtons = document.querySelectorAll(".view-user");
     viewButtons.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener("click", (e) => {
         const userId = (e.target as HTMLElement).dataset.userId;
         if (userId && this.onUserSelect) {
           this.onUserSelect(userId);
@@ -155,9 +158,9 @@ export class UserManagement {
     });
 
     // Toggle status buttons
-    const toggleButtons = document.querySelectorAll('.toggle-status');
+    const toggleButtons = document.querySelectorAll(".toggle-status");
     toggleButtons.forEach((btn) => {
-      btn.addEventListener('click', async (e) => {
+      btn.addEventListener("click", async (e) => {
         const userId = (e.target as HTMLElement).dataset.userId;
         if (userId) {
           await this.toggleUserStatus(userId);
@@ -184,7 +187,7 @@ export class UserManagement {
   }
 
   private showError(message: string): void {
-    const tableContainer = document.getElementById('users-table');
+    const tableContainer = document.getElementById("users-table");
     if (tableContainer) {
       tableContainer.innerHTML = `
         <div class="error-state">
@@ -193,12 +196,12 @@ export class UserManagement {
         </div>
       `;
 
-      const retryBtn = document.getElementById('retry-btn');
-      retryBtn?.addEventListener('click', () => this.loadUsers());
+      const retryBtn = document.getElementById("retry-btn");
+      retryBtn?.addEventListener("click", () => this.loadUsers());
     }
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

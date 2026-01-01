@@ -1,48 +1,55 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ClinicalNote } from '@/types/clinical'
-import { getClinicalNotes } from '@/services/clinical.service'
-import { formatDateTime } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Plus, FileCheck } from 'lucide-react'
-import Link from 'next/link'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ClinicalNote } from "@/types/clinical";
+import { getClinicalNotes } from "@/services/clinical.service";
+import { formatDateTime } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Plus, FileCheck } from "lucide-react";
+import Link from "next/link";
 
 export default function ClinicalNotesPage() {
-  const router = useRouter()
-  const [notes, setNotes] = useState<ClinicalNote[]>([])
-  const [loading, setLoading] = useState(true)
+  const router = useRouter();
+  const [notes, setNotes] = useState<ClinicalNote[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadNotes()
-  }, [])
+    loadNotes();
+  }, []);
 
   const loadNotes = async () => {
     try {
-      const data = await getClinicalNotes()
-      setNotes(data)
+      const data = await getClinicalNotes();
+      setNotes(data);
     } catch (error) {
-      console.error('Failed to load notes:', error)
+      console.error("Failed to load notes:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const getTypeLabel = (type: ClinicalNote['type']) => {
+  const getTypeLabel = (type: ClinicalNote["type"]) => {
     const labels = {
-      soap: 'SOAP',
-      progress: 'Progress',
-      admission: 'Admission',
-      discharge: 'Discharge',
-      procedure: 'Procedure',
-      consultation: 'Consultation',
-    }
-    return labels[type]
-  }
+      soap: "SOAP",
+      progress: "Progress",
+      admission: "Admission",
+      discharge: "Discharge",
+      procedure: "Procedure",
+      consultation: "Consultation",
+    };
+    return labels[type];
+  };
 
   if (loading) {
     return (
@@ -51,7 +58,7 @@ export default function ClinicalNotesPage() {
           <p>Loading notes...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -60,9 +67,11 @@ export default function ClinicalNotesPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Clinical Notes</h1>
-            <p className="text-gray-600 mt-1">SOAP notes, progress notes, and clinical documentation</p>
+            <p className="text-gray-600 mt-1">
+              SOAP notes, progress notes, and clinical documentation
+            </p>
           </div>
-          <Button onClick={() => router.push('/clinical/notes/new')}>
+          <Button onClick={() => router.push("/clinical/notes/new")}>
             <Plus className="h-4 w-4 mr-2" />
             New Note
           </Button>
@@ -90,7 +99,9 @@ export default function ClinicalNotesPage() {
                   <TableRow key={note.id}>
                     <TableCell>{formatDateTime(note.createdAt)}</TableCell>
                     <TableCell>
-                      <Badge variant="secondary">{getTypeLabel(note.type)}</Badge>
+                      <Badge variant="secondary">
+                        {getTypeLabel(note.type)}
+                      </Badge>
                     </TableCell>
                     <TableCell className="font-medium">{note.title}</TableCell>
                     <TableCell>{note.patientName}</TableCell>
@@ -125,5 +136,5 @@ export default function ClinicalNotesPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

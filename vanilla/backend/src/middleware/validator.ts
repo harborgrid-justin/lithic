@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import Joi, { ObjectSchema } from 'joi';
-import { sendValidationError } from '../utils/response';
+import { Request, Response, NextFunction } from "express";
+import Joi, { ObjectSchema } from "joi";
+import { sendValidationError } from "../utils/response";
 
 export interface ValidationSchema {
   body?: ObjectSchema;
@@ -21,10 +21,10 @@ export const validate = (schema: ValidationSchema) => {
       if (error) {
         errors.push(
           ...error.details.map((detail) => ({
-            field: detail.path.join('.'),
+            field: detail.path.join("."),
             message: detail.message,
-            type: 'body',
-          }))
+            type: "body",
+          })),
         );
       }
     }
@@ -35,24 +35,26 @@ export const validate = (schema: ValidationSchema) => {
       if (error) {
         errors.push(
           ...error.details.map((detail) => ({
-            field: detail.path.join('.'),
+            field: detail.path.join("."),
             message: detail.message,
-            type: 'query',
-          }))
+            type: "query",
+          })),
         );
       }
     }
 
     // Validate params
     if (schema.params) {
-      const { error } = schema.params.validate(req.params, { abortEarly: false });
+      const { error } = schema.params.validate(req.params, {
+        abortEarly: false,
+      });
       if (error) {
         errors.push(
           ...error.details.map((detail) => ({
-            field: detail.path.join('.'),
+            field: detail.path.join("."),
             message: detail.message,
-            type: 'params',
-          }))
+            type: "params",
+          })),
         );
       }
     }
@@ -78,7 +80,7 @@ export const commonSchemas = {
     page: Joi.number().integer().min(1).default(1),
     pageSize: Joi.number().integer().min(1).max(100).default(20),
     sortBy: Joi.string().optional(),
-    sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
+    sortOrder: Joi.string().valid("asc", "desc").default("asc"),
   }),
 
   // Email
@@ -87,12 +89,14 @@ export const commonSchemas = {
   // Password (HIPAA compliant)
   password: Joi.string()
     .min(12)
-    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/)
+    .pattern(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
+    )
     .required()
     .messages({
-      'string.min': 'Password must be at least 12 characters long',
-      'string.pattern.base':
-        'Password must contain uppercase, lowercase, number, and special character',
+      "string.min": "Password must be at least 12 characters long",
+      "string.pattern.base":
+        "Password must contain uppercase, lowercase, number, and special character",
     }),
 
   // Phone number
@@ -100,7 +104,7 @@ export const commonSchemas = {
     .pattern(/^\+?[1-9]\d{1,14}$/)
     .optional()
     .messages({
-      'string.pattern.base': 'Invalid phone number format',
+      "string.pattern.base": "Invalid phone number format",
     }),
 
   // Date
@@ -109,7 +113,7 @@ export const commonSchemas = {
   // Date range
   dateRange: Joi.object({
     startDate: Joi.date().iso().required(),
-    endDate: Joi.date().iso().min(Joi.ref('startDate')).required(),
+    endDate: Joi.date().iso().min(Joi.ref("startDate")).required(),
   }),
 };
 
@@ -122,7 +126,9 @@ export const userSchemas = {
       firstName: Joi.string().min(1).max(100).required(),
       lastName: Joi.string().min(1).max(100).required(),
       phone: commonSchemas.phone,
-      role: Joi.string().valid('admin', 'doctor', 'nurse', 'patient', 'staff').default('patient'),
+      role: Joi.string()
+        .valid("admin", "doctor", "nurse", "patient", "staff")
+        .default("patient"),
       organizationId: Joi.string().uuid().optional(),
     }),
   },
@@ -155,9 +161,12 @@ export const userSchemas = {
     body: Joi.object({
       currentPassword: Joi.string().required(),
       newPassword: commonSchemas.password,
-      confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required().messages({
-        'any.only': 'Passwords do not match',
-      }),
+      confirmPassword: Joi.string()
+        .valid(Joi.ref("newPassword"))
+        .required()
+        .messages({
+          "any.only": "Passwords do not match",
+        }),
     }),
   },
 };
@@ -171,14 +180,14 @@ export const patientSchemas = {
       email: commonSchemas.email,
       phone: commonSchemas.phone,
       dateOfBirth: Joi.date().iso().required(),
-      gender: Joi.string().valid('male', 'female', 'other').required(),
+      gender: Joi.string().valid("male", "female", "other").required(),
       ssn: Joi.string().optional(), // Encrypted
       address: Joi.object({
         street: Joi.string().max(200).required(),
         city: Joi.string().max(100).required(),
         state: Joi.string().max(100).required(),
         zipCode: Joi.string().max(20).required(),
-        country: Joi.string().max(100).default('USA'),
+        country: Joi.string().max(100).default("USA"),
       }).required(),
       emergencyContact: Joi.object({
         name: Joi.string().max(200).required(),
@@ -218,7 +227,12 @@ export const patientSchemas = {
     query: Joi.object({
       q: Joi.string().optional(),
       dateOfBirth: commonSchemas.date,
-      ...commonSchemas.pagination.extract(['page', 'pageSize', 'sortBy', 'sortOrder']),
+      ...commonSchemas.pagination.extract([
+        "page",
+        "pageSize",
+        "sortBy",
+        "sortOrder",
+      ]),
     }),
   },
 };
@@ -229,10 +243,10 @@ export const appointmentSchemas = {
     body: Joi.object({
       patientId: Joi.string().uuid().required(),
       doctorId: Joi.string().uuid().required(),
-      appointmentDate: Joi.date().iso().min('now').required(),
+      appointmentDate: Joi.date().iso().min("now").required(),
       duration: Joi.number().integer().min(15).max(240).default(30),
       type: Joi.string()
-        .valid('consultation', 'follow-up', 'procedure', 'emergency')
+        .valid("consultation", "follow-up", "procedure", "emergency")
         .required(),
       reason: Joi.string().min(1).max(500).required(),
       notes: Joi.string().max(2000).optional(),
@@ -242,10 +256,17 @@ export const appointmentSchemas = {
   update: {
     params: commonSchemas.id,
     body: Joi.object({
-      appointmentDate: Joi.date().iso().min('now').optional(),
+      appointmentDate: Joi.date().iso().min("now").optional(),
       duration: Joi.number().integer().min(15).max(240).optional(),
       status: Joi.string()
-        .valid('scheduled', 'confirmed', 'in-progress', 'completed', 'cancelled', 'no-show')
+        .valid(
+          "scheduled",
+          "confirmed",
+          "in-progress",
+          "completed",
+          "cancelled",
+          "no-show",
+        )
         .optional(),
       notes: Joi.string().max(2000).optional(),
     }),
@@ -256,9 +277,9 @@ export const appointmentSchemas = {
       patientId: Joi.string().uuid().optional(),
       doctorId: Joi.string().uuid().optional(),
       status: Joi.string().optional(),
-      ...commonSchemas.dateRange.extract(['startDate', 'endDate']),
-      ...commonSchemas.pagination.extract(['page', 'pageSize']),
-    }).or('patientId', 'doctorId', 'startDate'),
+      ...commonSchemas.dateRange.extract(["startDate", "endDate"]),
+      ...commonSchemas.pagination.extract(["page", "pageSize"]),
+    }).or("patientId", "doctorId", "startDate"),
   },
 };
 

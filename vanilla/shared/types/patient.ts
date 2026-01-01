@@ -1,37 +1,37 @@
 // Patient Management Types
 
 export enum Gender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  OTHER = 'OTHER',
-  UNKNOWN = 'UNKNOWN',
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  OTHER = "OTHER",
+  UNKNOWN = "UNKNOWN",
 }
 
 export enum MaritalStatus {
-  SINGLE = 'SINGLE',
-  MARRIED = 'MARRIED',
-  DIVORCED = 'DIVORCED',
-  WIDOWED = 'WIDOWED',
-  SEPARATED = 'SEPARATED',
+  SINGLE = "SINGLE",
+  MARRIED = "MARRIED",
+  DIVORCED = "DIVORCED",
+  WIDOWED = "WIDOWED",
+  SEPARATED = "SEPARATED",
 }
 
 export enum InsurancePlanType {
-  HMO = 'HMO',
-  PPO = 'PPO',
-  EPO = 'EPO',
-  POS = 'POS',
-  MEDICARE = 'MEDICARE',
-  MEDICAID = 'MEDICAID',
-  TRICARE = 'TRICARE',
-  COMMERCIAL = 'COMMERCIAL',
-  SELF_PAY = 'SELF_PAY',
+  HMO = "HMO",
+  PPO = "PPO",
+  EPO = "EPO",
+  POS = "POS",
+  MEDICARE = "MEDICARE",
+  MEDICAID = "MEDICAID",
+  TRICARE = "TRICARE",
+  COMMERCIAL = "COMMERCIAL",
+  SELF_PAY = "SELF_PAY",
 }
 
 export enum InsuranceStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  PENDING_VERIFICATION = 'PENDING_VERIFICATION',
-  EXPIRED = 'EXPIRED',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  PENDING_VERIFICATION = "PENDING_VERIFICATION",
+  EXPIRED = "EXPIRED",
 }
 
 export interface Patient {

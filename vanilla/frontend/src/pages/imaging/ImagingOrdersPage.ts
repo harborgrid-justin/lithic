@@ -1,5 +1,5 @@
-import { ImagingService } from '../../services/ImagingService';
-import { ImagingOrderList } from '../../components/imaging/ImagingOrderList';
+import { ImagingService } from "../../services/ImagingService";
+import { ImagingOrderList } from "../../components/imaging/ImagingOrderList";
 
 export class ImagingOrdersPage {
   private container: HTMLElement;
@@ -14,10 +14,10 @@ export class ImagingOrdersPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'imaging-orders-page';
+    const wrapper = document.createElement("div");
+    wrapper.className = "imaging-orders-page";
     wrapper.innerHTML = `
       <div class="page-header">
         <h1>Imaging Orders</h1>
@@ -91,41 +91,57 @@ export class ImagingOrdersPage {
   }
 
   private attachEventListeners() {
-    const newOrderBtn = this.container.querySelector('[data-action="new-order"]');
-    newOrderBtn?.addEventListener('click', () => {
-      window.location.href = '#/imaging/orders/new';
+    const newOrderBtn = this.container.querySelector(
+      '[data-action="new-order"]',
+    );
+    newOrderBtn?.addEventListener("click", () => {
+      window.location.href = "#/imaging/orders/new";
     });
 
-    const applyFiltersBtn = this.container.querySelector('[data-action="apply-filters"]');
-    applyFiltersBtn?.addEventListener('click', () => {
+    const applyFiltersBtn = this.container.querySelector(
+      '[data-action="apply-filters"]',
+    );
+    applyFiltersBtn?.addEventListener("click", () => {
       this.applyFilters();
     });
 
-    const clearFiltersBtn = this.container.querySelector('[data-action="clear-filters"]');
-    clearFiltersBtn?.addEventListener('click', () => {
+    const clearFiltersBtn = this.container.querySelector(
+      '[data-action="clear-filters"]',
+    );
+    clearFiltersBtn?.addEventListener("click", () => {
       this.clearFilters();
     });
   }
 
   private async loadOrders() {
     try {
-      const ordersContainer = document.getElementById('orders-container');
+      const ordersContainer = document.getElementById("orders-container");
       if (!ordersContainer) return;
 
       const orders = await this.imagingService.getOrders(this.currentFilters);
       this.orderList.render(ordersContainer, orders);
     } catch (error) {
-      console.error('Error loading orders:', error);
-      this.showError('Failed to load orders');
+      console.error("Error loading orders:", error);
+      this.showError("Failed to load orders");
     }
   }
 
   private applyFilters() {
-    const status = (document.getElementById('filter-status') as HTMLSelectElement)?.value;
-    const modality = (document.getElementById('filter-modality') as HTMLSelectElement)?.value;
-    const priority = (document.getElementById('filter-priority') as HTMLSelectElement)?.value;
-    const startDate = (document.getElementById('filter-start-date') as HTMLInputElement)?.value;
-    const endDate = (document.getElementById('filter-end-date') as HTMLInputElement)?.value;
+    const status = (
+      document.getElementById("filter-status") as HTMLSelectElement
+    )?.value;
+    const modality = (
+      document.getElementById("filter-modality") as HTMLSelectElement
+    )?.value;
+    const priority = (
+      document.getElementById("filter-priority") as HTMLSelectElement
+    )?.value;
+    const startDate = (
+      document.getElementById("filter-start-date") as HTMLInputElement
+    )?.value;
+    const endDate = (
+      document.getElementById("filter-end-date") as HTMLInputElement
+    )?.value;
 
     this.currentFilters = {
       ...(status && { status }),
@@ -139,11 +155,14 @@ export class ImagingOrdersPage {
   }
 
   private clearFilters() {
-    (document.getElementById('filter-status') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-modality') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-priority') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-start-date') as HTMLInputElement).value = '';
-    (document.getElementById('filter-end-date') as HTMLInputElement).value = '';
+    (document.getElementById("filter-status") as HTMLSelectElement).value = "";
+    (document.getElementById("filter-modality") as HTMLSelectElement).value =
+      "";
+    (document.getElementById("filter-priority") as HTMLSelectElement).value =
+      "";
+    (document.getElementById("filter-start-date") as HTMLInputElement).value =
+      "";
+    (document.getElementById("filter-end-date") as HTMLInputElement).value = "";
 
     this.currentFilters = {};
     this.loadOrders();
@@ -154,6 +173,6 @@ export class ImagingOrdersPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

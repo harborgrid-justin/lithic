@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Invoice, InvoiceItem } from '@/types/billing';
-import { Plus, Trash2, Save, FileText } from 'lucide-react';
-import { formatCurrency, generateInvoiceNumber } from '@/lib/billing-utils';
+import { useState } from "react";
+import { Invoice, InvoiceItem } from "@/types/billing";
+import { Plus, Trash2, Save, FileText } from "lucide-react";
+import { formatCurrency, generateInvoiceNumber } from "@/lib/billing-utils";
 
 interface InvoiceGeneratorProps {
   invoice?: Partial<Invoice>;
@@ -21,14 +21,14 @@ export default function InvoiceGenerator({
       invoiceNumber: generateInvoiceNumber(),
       items: [],
       tax: 0,
-    }
+    },
   );
 
   const addItem = () => {
     const newItem: InvoiceItem = {
       id: `temp-${Date.now()}`,
-      description: '',
-      code: '',
+      description: "",
+      code: "",
       quantity: 1,
       unitPrice: 0,
       total: 0,
@@ -50,7 +50,7 @@ export default function InvoiceGenerator({
     items[index] = { ...items[index], [field]: value };
 
     // Auto-calculate total
-    if (field === 'quantity' || field === 'unitPrice') {
+    if (field === "quantity" || field === "unitPrice") {
       items[index].total = items[index].quantity * items[index].unitPrice;
     }
 
@@ -63,7 +63,7 @@ export default function InvoiceGenerator({
     // Calculate totals
     const subtotal = (formData.items || []).reduce(
       (sum, item) => sum + item.total,
-      0
+      0,
     );
     const tax = formData.tax || 0;
     const total = subtotal + tax;
@@ -74,13 +74,16 @@ export default function InvoiceGenerator({
       total,
       balance: total,
       paidAmount: 0,
-      status: 'draft',
+      status: "draft",
     };
 
     onGenerate(invoiceData);
   };
 
-  const subtotal = (formData.items || []).reduce((sum, item) => sum + item.total, 0);
+  const subtotal = (formData.items || []).reduce(
+    (sum, item) => sum + item.total,
+    0,
+  );
   const total = subtotal + (formData.tax || 0);
 
   return (
@@ -99,7 +102,7 @@ export default function InvoiceGenerator({
             </label>
             <input
               type="text"
-              value={formData.invoiceNumber || ''}
+              value={formData.invoiceNumber || ""}
               readOnly
               className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
             />
@@ -110,7 +113,7 @@ export default function InvoiceGenerator({
             </label>
             <input
               type="text"
-              value={formData.patientId || ''}
+              value={formData.patientId || ""}
               onChange={(e) =>
                 setFormData({ ...formData, patientId: e.target.value })
               }
@@ -124,7 +127,7 @@ export default function InvoiceGenerator({
             </label>
             <input
               type="text"
-              value={formData.patientName || ''}
+              value={formData.patientName || ""}
               onChange={(e) =>
                 setFormData({ ...formData, patientName: e.target.value })
               }
@@ -138,7 +141,7 @@ export default function InvoiceGenerator({
             </label>
             <input
               type="date"
-              value={formData.dateOfService || ''}
+              value={formData.dateOfService || ""}
               onChange={(e) =>
                 setFormData({ ...formData, dateOfService: e.target.value })
               }
@@ -152,7 +155,7 @@ export default function InvoiceGenerator({
             </label>
             <input
               type="date"
-              value={formData.dueDate || ''}
+              value={formData.dueDate || ""}
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
               }
@@ -185,7 +188,7 @@ export default function InvoiceGenerator({
                 placeholder="Description"
                 value={item.description}
                 onChange={(e) =>
-                  updateItem(index, 'description', e.target.value)
+                  updateItem(index, "description", e.target.value)
                 }
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
@@ -193,8 +196,8 @@ export default function InvoiceGenerator({
               <input
                 type="text"
                 placeholder="Code"
-                value={item.code || ''}
-                onChange={(e) => updateItem(index, 'code', e.target.value)}
+                value={item.code || ""}
+                onChange={(e) => updateItem(index, "code", e.target.value)}
                 className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
               <input
@@ -202,7 +205,7 @@ export default function InvoiceGenerator({
                 placeholder="Qty"
                 value={item.quantity}
                 onChange={(e) =>
-                  updateItem(index, 'quantity', parseInt(e.target.value) || 0)
+                  updateItem(index, "quantity", parseInt(e.target.value) || 0)
                 }
                 className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 min="1"
@@ -213,7 +216,11 @@ export default function InvoiceGenerator({
                 placeholder="Unit Price"
                 value={item.unitPrice}
                 onChange={(e) =>
-                  updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)
+                  updateItem(
+                    index,
+                    "unitPrice",
+                    parseFloat(e.target.value) || 0,
+                  )
                 }
                 className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 step="0.01"
@@ -266,7 +273,9 @@ export default function InvoiceGenerator({
               </div>
             </div>
             <div className="flex justify-between pt-3 border-t border-gray-200">
-              <span className="text-lg font-semibold text-gray-900">Total:</span>
+              <span className="text-lg font-semibold text-gray-900">
+                Total:
+              </span>
               <span className="text-lg font-bold text-primary-600">
                 {formatCurrency(total)}
               </span>

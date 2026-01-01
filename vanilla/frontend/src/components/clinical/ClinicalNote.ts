@@ -16,7 +16,8 @@ export class ClinicalNote {
 
   private render(): void {
     if (!this.note) {
-      this.container.innerHTML = '<div class="empty-state">No note selected</div>';
+      this.container.innerHTML =
+        '<div class="empty-state">No note selected</div>';
       return;
     }
 
@@ -36,9 +37,11 @@ export class ClinicalNote {
           </div>
         </div>
 
-        ${this.note.noteType === 'soap' ? this.renderSOAPNote() : this.renderStandardNote()}
+        ${this.note.noteType === "soap" ? this.renderSOAPNote() : this.renderStandardNote()}
 
-        ${this.note.signedAt ? `
+        ${
+          this.note.signedAt
+            ? `
           <div class="note-signature">
             <div class="signature-line"></div>
             <div class="signature-details">
@@ -47,16 +50,26 @@ export class ClinicalNote {
               <div class="signature-code">${this.note.signature}</div>
             </div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${this.note.addendum && this.note.addendum.length > 0 ? `
+        ${
+          this.note.addendum && this.note.addendum.length > 0
+            ? `
           <div class="note-addendums">
             <h4>Addendums</h4>
-            ${this.note.addendum.map((add: string) => `
+            ${this.note.addendum
+              .map(
+                (add: string) => `
               <div class="addendum-item">${add}</div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
     `;
   }
@@ -64,33 +77,49 @@ export class ClinicalNote {
   private renderSOAPNote(): string {
     return `
       <div class="note-content soap-format">
-        ${this.note.subjective ? `
+        ${
+          this.note.subjective
+            ? `
           <div class="soap-section">
             <h4>Subjective</h4>
             <div class="soap-content">${this.formatContent(this.note.subjective)}</div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${this.note.objective ? `
+        ${
+          this.note.objective
+            ? `
           <div class="soap-section">
             <h4>Objective</h4>
             <div class="soap-content">${this.formatContent(this.note.objective)}</div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${this.note.assessment ? `
+        ${
+          this.note.assessment
+            ? `
           <div class="soap-section">
             <h4>Assessment</h4>
             <div class="soap-content">${this.formatContent(this.note.assessment)}</div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${this.note.plan ? `
+        ${
+          this.note.plan
+            ? `
           <div class="soap-section">
             <h4>Plan</h4>
             <div class="soap-content">${this.formatContent(this.note.plan)}</div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
     `;
   }
@@ -105,23 +134,23 @@ export class ClinicalNote {
 
   private formatContent(content: string): string {
     // Preserve line breaks and basic formatting
-    return content.replace(/\n/g, '<br>');
+    return content.replace(/\n/g, "<br>");
   }
 
   private getNoteTypeLabel(type: string): string {
     const labels: Record<string, string> = {
-      'progress': 'Progress Note',
-      'soap': 'SOAP Note',
-      'admission': 'Admission Note',
-      'discharge': 'Discharge Summary',
-      'consult': 'Consultation Note',
-      'procedure': 'Procedure Note',
+      progress: "Progress Note",
+      soap: "SOAP Note",
+      admission: "Admission Note",
+      discharge: "Discharge Summary",
+      consult: "Consultation Note",
+      procedure: "Procedure Note",
     };
     return labels[type] || type;
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

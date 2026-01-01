@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { Patient } from '@/types/patient';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from "react";
+import { Patient } from "@/types/patient";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PatientFormProps {
   patient?: Partial<Patient>;
@@ -13,24 +13,31 @@ interface PatientFormProps {
   isLoading?: boolean;
 }
 
-export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientFormProps) {
-  const [formData, setFormData] = useState<Partial<Patient>>(patient || {
-    firstName: '',
-    lastName: '',
-    middleName: '',
-    dateOfBirth: '',
-    gender: 'unknown',
-    email: '',
-    phone: '',
-    status: 'active',
-    address: {
-      street1: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      country: 'USA',
+export function PatientForm({
+  patient,
+  onSubmit,
+  onCancel,
+  isLoading,
+}: PatientFormProps) {
+  const [formData, setFormData] = useState<Partial<Patient>>(
+    patient || {
+      firstName: "",
+      lastName: "",
+      middleName: "",
+      dateOfBirth: "",
+      gender: "unknown",
+      email: "",
+      phone: "",
+      status: "active",
+      address: {
+        street1: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "USA",
+      },
     },
-  });
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,11 +45,11 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
   };
 
   const updateField = (field: keyof Patient, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const updateAddress = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       address: { ...(prev.address || {}), [field]: value } as any,
     }));
@@ -63,7 +70,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               <Input
                 required
                 value={formData.firstName}
-                onChange={(e) => updateField('firstName', e.target.value)}
+                onChange={(e) => updateField("firstName", e.target.value)}
                 placeholder="Enter first name"
               />
             </div>
@@ -72,8 +79,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
                 Middle Name
               </label>
               <Input
-                value={formData.middleName || ''}
-                onChange={(e) => updateField('middleName', e.target.value)}
+                value={formData.middleName || ""}
+                onChange={(e) => updateField("middleName", e.target.value)}
                 placeholder="Enter middle name"
               />
             </div>
@@ -84,7 +91,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               <Input
                 required
                 value={formData.lastName}
-                onChange={(e) => updateField('lastName', e.target.value)}
+                onChange={(e) => updateField("lastName", e.target.value)}
                 placeholder="Enter last name"
               />
             </div>
@@ -99,7 +106,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
                 required
                 type="date"
                 value={formData.dateOfBirth}
-                onChange={(e) => updateField('dateOfBirth', e.target.value)}
+                onChange={(e) => updateField("dateOfBirth", e.target.value)}
               />
             </div>
             <div>
@@ -109,7 +116,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               <select
                 required
                 value={formData.gender}
-                onChange={(e) => updateField('gender', e.target.value)}
+                onChange={(e) => updateField("gender", e.target.value)}
                 className="h-10 w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="male">Male</option>
@@ -127,8 +134,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               </label>
               <Input
                 type="email"
-                value={formData.email || ''}
-                onChange={(e) => updateField('email', e.target.value)}
+                value={formData.email || ""}
+                onChange={(e) => updateField("email", e.target.value)}
                 placeholder="email@example.com"
               />
             </div>
@@ -138,8 +145,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               </label>
               <Input
                 type="tel"
-                value={formData.phone || ''}
-                onChange={(e) => updateField('phone', e.target.value)}
+                value={formData.phone || ""}
+                onChange={(e) => updateField("phone", e.target.value)}
                 placeholder="(555) 123-4567"
               />
             </div>
@@ -157,8 +164,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               Street Address
             </label>
             <Input
-              value={formData.address?.street1 || ''}
-              onChange={(e) => updateAddress('street1', e.target.value)}
+              value={formData.address?.street1 || ""}
+              onChange={(e) => updateAddress("street1", e.target.value)}
               placeholder="123 Main St"
             />
           </div>
@@ -168,8 +175,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
                 City
               </label>
               <Input
-                value={formData.address?.city || ''}
-                onChange={(e) => updateAddress('city', e.target.value)}
+                value={formData.address?.city || ""}
+                onChange={(e) => updateAddress("city", e.target.value)}
                 placeholder="City"
               />
             </div>
@@ -178,8 +185,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
                 State
               </label>
               <Input
-                value={formData.address?.state || ''}
-                onChange={(e) => updateAddress('state', e.target.value)}
+                value={formData.address?.state || ""}
+                onChange={(e) => updateAddress("state", e.target.value)}
                 placeholder="State"
               />
             </div>
@@ -188,8 +195,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
                 ZIP Code
               </label>
               <Input
-                value={formData.address?.zipCode || ''}
-                onChange={(e) => updateAddress('zipCode', e.target.value)}
+                value={formData.address?.zipCode || ""}
+                onChange={(e) => updateAddress("zipCode", e.target.value)}
                 placeholder="12345"
               />
             </div>
@@ -204,7 +211,11 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
           </Button>
         )}
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Saving...' : patient?.id ? 'Update Patient' : 'Create Patient'}
+          {isLoading
+            ? "Saving..."
+            : patient?.id
+              ? "Update Patient"
+              : "Create Patient"}
         </Button>
       </div>
     </form>

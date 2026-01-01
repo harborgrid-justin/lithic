@@ -1,40 +1,40 @@
 // Billing & Claims Types
 
 export enum ClaimType {
-  CMS1500 = 'CMS1500',
-  UB04 = 'UB04',
-  DENTAL = 'DENTAL',
-  PHARMACY = 'PHARMACY',
+  CMS1500 = "CMS1500",
+  UB04 = "UB04",
+  DENTAL = "DENTAL",
+  PHARMACY = "PHARMACY",
 }
 
 export enum ClaimStatus {
-  DRAFT = 'DRAFT',
-  SUBMITTED = 'SUBMITTED',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  PARTIALLY_PAID = 'PARTIALLY_PAID',
-  PAID = 'PAID',
-  DENIED = 'DENIED',
-  REJECTED = 'REJECTED',
-  APPEALED = 'APPEALED',
+  DRAFT = "DRAFT",
+  SUBMITTED = "SUBMITTED",
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  PARTIALLY_PAID = "PARTIALLY_PAID",
+  PAID = "PAID",
+  DENIED = "DENIED",
+  REJECTED = "REJECTED",
+  APPEALED = "APPEALED",
 }
 
 export enum PaymentMethod {
-  CASH = 'CASH',
-  CHECK = 'CHECK',
-  CREDIT_CARD = 'CREDIT_CARD',
-  DEBIT_CARD = 'DEBIT_CARD',
-  INSURANCE = 'INSURANCE',
-  WIRE_TRANSFER = 'WIRE_TRANSFER',
-  ACH = 'ACH',
+  CASH = "CASH",
+  CHECK = "CHECK",
+  CREDIT_CARD = "CREDIT_CARD",
+  DEBIT_CARD = "DEBIT_CARD",
+  INSURANCE = "INSURANCE",
+  WIRE_TRANSFER = "WIRE_TRANSFER",
+  ACH = "ACH",
 }
 
 export enum PaymentStatus {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  REFUNDED = 'REFUNDED',
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
 }
 
 export interface Claim {
@@ -100,7 +100,7 @@ export interface Invoice {
   paidAmount: number;
   balanceDue: number;
   dueDate: string;
-  status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+  status: "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "CANCELLED";
   lineItems: InvoiceLineItem[];
   payments: Payment[];
   createdAt: string;
@@ -119,7 +119,7 @@ export interface InvoiceLineItem {
 export interface Transaction {
   id: string;
   patientId: string;
-  type: 'CHARGE' | 'PAYMENT' | 'ADJUSTMENT' | 'REFUND';
+  type: "CHARGE" | "PAYMENT" | "ADJUSTMENT" | "REFUND";
   amount: number;
   description: string;
   referenceId?: string;
@@ -233,7 +233,7 @@ export interface PaymentPlan {
   monthlyPayment: number;
   numberOfPayments: number;
   startDate: string;
-  status: 'ACTIVE' | 'COMPLETED' | 'DEFAULTED' | 'CANCELLED';
+  status: "ACTIVE" | "COMPLETED" | "DEFAULTED" | "CANCELLED";
   createdAt: string;
   updatedAt: string;
 }

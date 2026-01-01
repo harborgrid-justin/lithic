@@ -1,16 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-import { Calendar, Clock, Users } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import type { Provider, Appointment, ProviderAvailability } from '@/types/scheduling';
-import { schedulingService } from '@/services/scheduling.service';
-import { availabilityService } from '@/services/availability.service';
-import { formatTime, formatDuration } from '@/lib/utils';
-import AppointmentCard from './AppointmentCard';
+import React, { useState, useEffect } from "react";
+import { format } from "date-fns";
+import { Calendar, Clock, Users } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import type {
+  Provider,
+  Appointment,
+  ProviderAvailability,
+} from "@/types/scheduling";
+import { schedulingService } from "@/services/scheduling.service";
+import { availabilityService } from "@/services/availability.service";
+import { formatTime, formatDuration } from "@/lib/utils";
+import AppointmentCard from "./AppointmentCard";
 
 interface ProviderScheduleProps {
   provider: Provider;
@@ -40,13 +44,17 @@ export default function ProviderSchedule({
 
   const loadSchedule = async () => {
     try {
-      const startDate = format(date, 'yyyy-MM-dd');
-      const endDate = format(date, 'yyyy-MM-dd');
+      const startDate = format(date, "yyyy-MM-dd");
+      const endDate = format(date, "yyyy-MM-dd");
 
-      const data = await schedulingService.getProviderSchedule(provider.id, startDate, endDate);
+      const data = await schedulingService.getProviderSchedule(
+        provider.id,
+        startDate,
+        endDate,
+      );
       setAppointments(data);
     } catch (error) {
-      console.error('Failed to load provider schedule:', error);
+      console.error("Failed to load provider schedule:", error);
     } finally {
       setLoading(false);
     }
@@ -54,27 +62,33 @@ export default function ProviderSchedule({
 
   const loadAvailability = async () => {
     try {
-      const data = await availabilityService.getProviderAvailability(provider.id);
+      const data = await availabilityService.getProviderAvailability(
+        provider.id,
+      );
       setAvailability(data);
     } catch (error) {
-      console.error('Failed to load provider availability:', error);
+      console.error("Failed to load provider availability:", error);
     }
   };
 
   const loadStats = async () => {
     try {
-      const startDate = format(date, 'yyyy-MM-dd');
-      const endDate = format(date, 'yyyy-MM-dd');
+      const startDate = format(date, "yyyy-MM-dd");
+      const endDate = format(date, "yyyy-MM-dd");
 
-      const data = await schedulingService.getProviderStats(provider.id, startDate, endDate);
+      const data = await schedulingService.getProviderStats(
+        provider.id,
+        startDate,
+        endDate,
+      );
       setStats(data);
     } catch (error) {
-      console.error('Failed to load provider stats:', error);
+      console.error("Failed to load provider stats:", error);
     }
   };
 
   const dayAvailability = availability.find(
-    (a) => a.dayOfWeek === date.getDay() && a.isActive
+    (a) => a.dayOfWeek === date.getDay() && a.isActive,
   );
 
   return (
@@ -95,7 +109,9 @@ export default function ProviderSchedule({
               <Calendar className="h-5 w-5 text-gray-400" />
               <div>
                 <div className="text-sm text-gray-500">Date</div>
-                <div className="font-semibold">{format(date, 'MMM d, yyyy')}</div>
+                <div className="font-semibold">
+                  {format(date, "MMM d, yyyy")}
+                </div>
               </div>
             </div>
 
@@ -106,7 +122,7 @@ export default function ProviderSchedule({
                 <div className="font-semibold">
                   {dayAvailability
                     ? `${dayAvailability.startTime} - ${dayAvailability.endTime}`
-                    : 'Not available'}
+                    : "Not available"}
                 </div>
               </div>
             </div>
@@ -127,7 +143,9 @@ export default function ProviderSchedule({
                   <div className="text-2xl font-bold text-primary-600">
                     {stats.totalAppointments}
                   </div>
-                  <div className="text-xs text-gray-500">Total Appointments</div>
+                  <div className="text-xs text-gray-500">
+                    Total Appointments
+                  </div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-primary-600">
@@ -153,7 +171,9 @@ export default function ProviderSchedule({
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-gray-500">Loading appointments...</div>
+            <div className="text-center py-8 text-gray-500">
+              Loading appointments...
+            </div>
           ) : appointments.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No appointments scheduled for this day

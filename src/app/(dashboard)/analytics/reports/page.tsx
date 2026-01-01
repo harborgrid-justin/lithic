@@ -1,14 +1,29 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Plus, FileText, Edit, Trash2, Play, Calendar, ArrowLeft } from 'lucide-react';
-import { Report, reportingService } from '@/services/reporting.service';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  Plus,
+  FileText,
+  Edit,
+  Trash2,
+  Play,
+  Calendar,
+  ArrowLeft,
+} from "lucide-react";
+import { Report, reportingService } from "@/services/reporting.service";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'quality' | 'financial' | 'operational' | 'population' | 'regulatory'>('all');
+  const [filter, setFilter] = useState<
+    | "all"
+    | "quality"
+    | "financial"
+    | "operational"
+    | "population"
+    | "regulatory"
+  >("all");
 
   useEffect(() => {
     loadReports();
@@ -18,25 +33,25 @@ export default function ReportsPage() {
     setLoading(true);
     try {
       const data = await reportingService.getReports(
-        filter !== 'all' ? { type: filter } : undefined
+        filter !== "all" ? { type: filter } : undefined,
       );
       setReports(data);
     } catch (error) {
-      console.error('Failed to load reports:', error);
+      console.error("Failed to load reports:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this report?')) return;
+    if (!confirm("Are you sure you want to delete this report?")) return;
 
     try {
       await reportingService.deleteReport(id);
-      setReports(reports.filter(r => r.id !== id));
+      setReports(reports.filter((r) => r.id !== id));
     } catch (error) {
-      console.error('Failed to delete report:', error);
-      alert('Failed to delete report');
+      console.error("Failed to delete report:", error);
+      alert("Failed to delete report");
     }
   };
 
@@ -45,29 +60,31 @@ export default function ReportsPage() {
       const execution = await reportingService.executeReport(id);
       alert(`Report execution started. Execution ID: ${execution.id}`);
     } catch (error) {
-      console.error('Failed to run report:', error);
-      alert('Failed to run report');
+      console.error("Failed to run report:", error);
+      alert("Failed to run report");
     }
   };
 
   const filterOptions = [
-    { value: 'all', label: 'All Reports' },
-    { value: 'quality', label: 'Quality' },
-    { value: 'financial', label: 'Financial' },
-    { value: 'operational', label: 'Operational' },
-    { value: 'population', label: 'Population Health' },
-    { value: 'regulatory', label: 'Regulatory' },
+    { value: "all", label: "All Reports" },
+    { value: "quality", label: "Quality" },
+    { value: "financial", label: "Financial" },
+    { value: "operational", label: "Operational" },
+    { value: "population", label: "Population Health" },
+    { value: "regulatory", label: "Regulatory" },
   ];
 
-  const getStatusBadge = (status: Report['status']) => {
+  const getStatusBadge = (status: Report["status"]) => {
     const styles = {
-      active: 'bg-green-100 text-green-700',
-      draft: 'bg-gray-100 text-gray-700',
-      archived: 'bg-red-100 text-red-700',
+      active: "bg-green-100 text-green-700",
+      draft: "bg-gray-100 text-gray-700",
+      archived: "bg-red-100 text-red-700",
     };
 
     return (
-      <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status]}`}>
+      <span
+        className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status]}`}
+      >
         {status}
       </span>
     );
@@ -117,8 +134,8 @@ export default function ReportsPage() {
               onClick={() => setFilter(option.value as typeof filter)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === option.value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
               }`}
             >
               {option.label}
@@ -134,7 +151,9 @@ export default function ReportsPage() {
         ) : reports.length === 0 ? (
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
             <FileText className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No reports found</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No reports found
+            </h3>
             <p className="text-gray-500 mb-6">
               Get started by creating your first report
             </p>
@@ -183,12 +202,14 @@ export default function ReportsPage() {
                       )}
                       {report.lastRun && (
                         <span>
-                          Last run: {new Date(report.lastRun).toLocaleDateString()}
+                          Last run:{" "}
+                          {new Date(report.lastRun).toLocaleDateString()}
                         </span>
                       )}
                       {report.nextRun && (
                         <span>
-                          Next run: {new Date(report.nextRun).toLocaleDateString()}
+                          Next run:{" "}
+                          {new Date(report.nextRun).toLocaleDateString()}
                         </span>
                       )}
                     </div>

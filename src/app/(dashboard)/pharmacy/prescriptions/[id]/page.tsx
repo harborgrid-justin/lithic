@@ -3,16 +3,19 @@
  * View and manage individual prescription details
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { prescriptionService, type Prescription } from '@/services/prescription.service';
-import { pharmacyService } from '@/services/pharmacy.service';
-import { DrugInfo } from '@/components/pharmacy/DrugInfo';
-import { InteractionChecker } from '@/components/pharmacy/InteractionChecker';
-import { MedicationLabel } from '@/components/pharmacy/MedicationLabel';
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  prescriptionService,
+  type Prescription,
+} from "@/services/prescription.service";
+import { pharmacyService } from "@/services/pharmacy.service";
+import { DrugInfo } from "@/components/pharmacy/DrugInfo";
+import { InteractionChecker } from "@/components/pharmacy/InteractionChecker";
+import { MedicationLabel } from "@/components/pharmacy/MedicationLabel";
 
 export default function PrescriptionDetailPage() {
   const params = useParams();
@@ -35,38 +38,40 @@ export default function PrescriptionDetailPage() {
       const data = await prescriptionService.getPrescription(prescriptionId);
       setPrescription(data);
     } catch (error) {
-      console.error('Failed to load prescription:', error);
+      console.error("Failed to load prescription:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddToQueue = async (priority: 'routine' | 'priority' | 'urgent' | 'stat') => {
+  const handleAddToQueue = async (
+    priority: "routine" | "priority" | "urgent" | "stat",
+  ) => {
     if (!prescription) return;
 
     try {
       await prescriptionService.addToDispensingQueue(prescription.id, priority);
-      alert('Added to dispensing queue');
-      router.push('/pharmacy/dispensing');
+      alert("Added to dispensing queue");
+      router.push("/pharmacy/dispensing");
     } catch (error) {
-      console.error('Failed to add to queue:', error);
-      alert('Failed to add to dispensing queue');
+      console.error("Failed to add to queue:", error);
+      alert("Failed to add to dispensing queue");
     }
   };
 
   const handleCancel = async () => {
     if (!prescription) return;
 
-    const reason = prompt('Enter cancellation reason:');
+    const reason = prompt("Enter cancellation reason:");
     if (!reason) return;
 
     try {
       await prescriptionService.cancelPrescription(prescription.id, reason);
-      alert('Prescription cancelled');
+      alert("Prescription cancelled");
       loadPrescription();
     } catch (error) {
-      console.error('Failed to cancel prescription:', error);
-      alert('Failed to cancel prescription');
+      console.error("Failed to cancel prescription:", error);
+      alert("Failed to cancel prescription");
     }
   };
 
@@ -74,19 +79,24 @@ export default function PrescriptionDetailPage() {
     if (!prescription) return;
 
     try {
-      const eligibility = await prescriptionService.checkRefillEligibility(prescription.id);
+      const eligibility = await prescriptionService.checkRefillEligibility(
+        prescription.id,
+      );
 
       if (!eligibility.eligible) {
         alert(`Cannot refill: ${eligibility.reason}`);
         return;
       }
 
-      await prescriptionService.createRefillRequest(prescription.id, 'pharmacist');
-      alert('Refill request created');
-      router.push('/pharmacy/refills');
+      await prescriptionService.createRefillRequest(
+        prescription.id,
+        "pharmacist",
+      );
+      alert("Refill request created");
+      router.push("/pharmacy/refills");
     } catch (error) {
-      console.error('Failed to create refill:', error);
-      alert('Failed to create refill request');
+      console.error("Failed to create refill:", error);
+      alert("Failed to create refill request");
     }
   };
 
@@ -116,18 +126,20 @@ export default function PrescriptionDetailPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">Rx #{prescription.rxNumber}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Rx #{prescription.rxNumber}
+              </h1>
               <span
                 className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                  prescription.status === 'dispensed'
-                    ? 'bg-green-100 text-green-800'
-                    : prescription.status === 'pending'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : prescription.status === 'active'
-                    ? 'bg-blue-100 text-blue-800'
-                    : prescription.status === 'cancelled'
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800'
+                  prescription.status === "dispensed"
+                    ? "bg-green-100 text-green-800"
+                    : prescription.status === "pending"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : prescription.status === "active"
+                        ? "bg-blue-100 text-blue-800"
+                        : prescription.status === "cancelled"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-800"
                 }`}
               >
                 {prescription.status}
@@ -143,16 +155,19 @@ export default function PrescriptionDetailPage() {
                 </span>
               )}
             </div>
-            <Link href="/pharmacy/prescriptions" className="text-blue-600 hover:text-blue-700 text-sm">
+            <Link
+              href="/pharmacy/prescriptions"
+              className="text-blue-600 hover:text-blue-700 text-sm"
+            >
               Back to Prescriptions
             </Link>
           </div>
 
           <div className="flex gap-2">
-            {prescription.status === 'active' && (
+            {prescription.status === "active" && (
               <>
                 <button
-                  onClick={() => handleAddToQueue('routine')}
+                  onClick={() => handleAddToQueue("routine")}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
                   Add to Queue
@@ -165,7 +180,7 @@ export default function PrescriptionDetailPage() {
                 </button>
               </>
             )}
-            {prescription.status !== 'cancelled' && (
+            {prescription.status !== "cancelled" && (
               <button
                 onClick={handleCancel}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -188,71 +203,104 @@ export default function PrescriptionDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Patient Information */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Patient Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Patient Information
+            </h2>
             <dl className="grid grid-cols-2 gap-4">
               <div>
                 <dt className="text-sm font-medium text-gray-500">Name</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.patientName}</dd>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.patientName}
+                </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Date of Birth</dt>
+                <dt className="text-sm font-medium text-gray-500">
+                  Date of Birth
+                </dt>
                 <dd className="text-sm text-gray-900 mt-1">
                   {new Date(prescription.patientDOB).toLocaleDateString()}
                 </dd>
               </div>
-              {prescription.patientAllergies && prescription.patientAllergies.length > 0 && (
-                <div className="col-span-2">
-                  <dt className="text-sm font-medium text-gray-500">Allergies</dt>
-                  <dd className="text-sm text-red-600 mt-1 font-medium">
-                    {prescription.patientAllergies.join(', ')}
-                  </dd>
-                </div>
-              )}
+              {prescription.patientAllergies &&
+                prescription.patientAllergies.length > 0 && (
+                  <div className="col-span-2">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Allergies
+                    </dt>
+                    <dd className="text-sm text-red-600 mt-1 font-medium">
+                      {prescription.patientAllergies.join(", ")}
+                    </dd>
+                  </div>
+                )}
             </dl>
           </div>
 
           {/* Medication Information */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Medication Information</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Medication Information
+              </h2>
               <button
                 onClick={() => setShowDrugInfo(!showDrugInfo)}
                 className="text-sm text-blue-600 hover:text-blue-700"
               >
-                {showDrugInfo ? 'Hide' : 'Show'} Drug Info
+                {showDrugInfo ? "Hide" : "Show"} Drug Info
               </button>
             </div>
             <dl className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Medication</dt>
+                <dt className="text-sm font-medium text-gray-500">
+                  Medication
+                </dt>
                 <dd className="text-base text-gray-900 mt-1 font-medium">
                   {prescription.medicationName} {prescription.strength}
                 </dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">NDC</dt>
-                <dd className="text-sm text-gray-900 mt-1 font-mono">{prescription.ndc}</dd>
+                <dd className="text-sm text-gray-900 mt-1 font-mono">
+                  {prescription.ndc}
+                </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Dosage Form</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.dosageForm}</dd>
+                <dt className="text-sm font-medium text-gray-500">
+                  Dosage Form
+                </dt>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.dosageForm}
+                </dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">Quantity</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.quantity}</dd>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.quantity}
+                </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Days Supply</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.daysSupply} days</dd>
+                <dt className="text-sm font-medium text-gray-500">
+                  Days Supply
+                </dt>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.daysSupply} days
+                </dd>
               </div>
               <div className="col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Directions (SIG)</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.sig}</dd>
+                <dt className="text-sm font-medium text-gray-500">
+                  Directions (SIG)
+                </dt>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.sig}
+                </dd>
               </div>
               {prescription.indication && (
                 <div className="col-span-2">
-                  <dt className="text-sm font-medium text-gray-500">Indication</dt>
-                  <dd className="text-sm text-gray-900 mt-1">{prescription.indication}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Indication
+                  </dt>
+                  <dd className="text-sm text-gray-900 mt-1">
+                    {prescription.indication}
+                  </dd>
                 </div>
               )}
             </dl>
@@ -268,7 +316,7 @@ export default function PrescriptionDetailPage() {
                 onClick={() => setShowInteractions(!showInteractions)}
                 className="text-sm text-blue-600 hover:text-blue-700"
               >
-                {showInteractions ? 'Hide' : 'Check'} Drug Interactions
+                {showInteractions ? "Hide" : "Check"} Drug Interactions
               </button>
               {showInteractions && (
                 <div className="mt-4">
@@ -280,25 +328,35 @@ export default function PrescriptionDetailPage() {
 
           {/* Prescriber Information */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Prescriber Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Prescriber Information
+            </h2>
             <dl className="grid grid-cols-2 gap-4">
               <div>
                 <dt className="text-sm font-medium text-gray-500">Name</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.prescriberName}</dd>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.prescriberName}
+                </dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">NPI</dt>
-                <dd className="text-sm text-gray-900 mt-1 font-mono">{prescription.prescriberNPI}</dd>
+                <dd className="text-sm text-gray-900 mt-1 font-mono">
+                  {prescription.prescriberNPI}
+                </dd>
               </div>
               {prescription.prescriberDEA && (
                 <div>
                   <dt className="text-sm font-medium text-gray-500">DEA</dt>
-                  <dd className="text-sm text-gray-900 mt-1 font-mono">{prescription.prescriberDEA}</dd>
+                  <dd className="text-sm text-gray-900 mt-1 font-mono">
+                    {prescription.prescriberDEA}
+                  </dd>
                 </div>
               )}
               <div>
                 <dt className="text-sm font-medium text-gray-500">Phone</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.prescriberPhone}</dd>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.prescriberPhone}
+                </dd>
               </div>
             </dl>
           </div>
@@ -306,30 +364,50 @@ export default function PrescriptionDetailPage() {
           {/* Dispensing Information */}
           {prescription.dispensedDate && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Dispensing Information</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Dispensing Information
+              </h2>
               <dl className="grid grid-cols-2 gap-4">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Dispensed Date</dt>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Dispensed Date
+                  </dt>
                   <dd className="text-sm text-gray-900 mt-1">
                     {new Date(prescription.dispensedDate).toLocaleDateString()}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Quantity Dispensed</dt>
-                  <dd className="text-sm text-gray-900 mt-1">{prescription.dispensedQuantity}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Quantity Dispensed
+                  </dt>
+                  <dd className="text-sm text-gray-900 mt-1">
+                    {prescription.dispensedQuantity}
+                  </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Dispensed By</dt>
-                  <dd className="text-sm text-gray-900 mt-1">{prescription.dispensedBy}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Dispensed By
+                  </dt>
+                  <dd className="text-sm text-gray-900 mt-1">
+                    {prescription.dispensedBy}
+                  </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Verified By</dt>
-                  <dd className="text-sm text-gray-900 mt-1">{prescription.verifiedBy}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Verified By
+                  </dt>
+                  <dd className="text-sm text-gray-900 mt-1">
+                    {prescription.verifiedBy}
+                  </dd>
                 </div>
                 {prescription.lotNumber && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Lot Number</dt>
-                    <dd className="text-sm text-gray-900 mt-1 font-mono">{prescription.lotNumber}</dd>
+                    <dt className="text-sm font-medium text-gray-500">
+                      Lot Number
+                    </dt>
+                    <dd className="text-sm text-gray-900 mt-1 font-mono">
+                      {prescription.lotNumber}
+                    </dd>
                   </div>
                 )}
               </dl>
@@ -341,19 +419,29 @@ export default function PrescriptionDetailPage() {
         <div className="space-y-6">
           {/* Refill Information */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Refill Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Refill Information
+            </h2>
             <dl className="space-y-3">
               <div>
-                <dt className="text-sm font-medium text-gray-500">Authorized</dt>
-                <dd className="text-sm text-gray-900 mt-1">{prescription.refillsAuthorized}</dd>
+                <dt className="text-sm font-medium text-gray-500">
+                  Authorized
+                </dt>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {prescription.refillsAuthorized}
+                </dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">Remaining</dt>
-                <dd className="text-sm text-gray-900 mt-1 font-medium">{prescription.refillsRemaining}</dd>
+                <dd className="text-sm text-gray-900 mt-1 font-medium">
+                  {prescription.refillsRemaining}
+                </dd>
               </div>
               {prescription.nextRefillDate && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Next Refill Date</dt>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Next Refill Date
+                  </dt>
                   <dd className="text-sm text-gray-900 mt-1">
                     {new Date(prescription.nextRefillDate).toLocaleDateString()}
                   </dd>
@@ -364,23 +452,31 @@ export default function PrescriptionDetailPage() {
 
           {/* Dates */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Important Dates</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Important Dates
+            </h2>
             <dl className="space-y-3">
               <div>
-                <dt className="text-sm font-medium text-gray-500">Written Date</dt>
+                <dt className="text-sm font-medium text-gray-500">
+                  Written Date
+                </dt>
                 <dd className="text-sm text-gray-900 mt-1">
                   {new Date(prescription.writtenDate).toLocaleDateString()}
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Expiration Date</dt>
+                <dt className="text-sm font-medium text-gray-500">
+                  Expiration Date
+                </dt>
                 <dd className="text-sm text-gray-900 mt-1">
                   {new Date(prescription.expirationDate).toLocaleDateString()}
                 </dd>
               </div>
               {prescription.lastFilledDate && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Last Filled</dt>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Last Filled
+                  </dt>
                   <dd className="text-sm text-gray-900 mt-1">
                     {new Date(prescription.lastFilledDate).toLocaleDateString()}
                   </dd>
@@ -392,23 +488,29 @@ export default function PrescriptionDetailPage() {
           {/* Prior Authorization */}
           {prescription.priorAuthRequired && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Prior Authorization</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Prior Authorization
+              </h2>
               <dl className="space-y-3">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Required</dt>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Required
+                  </dt>
                   <dd className="text-sm text-gray-900 mt-1">Yes</dd>
                 </div>
                 {prescription.priorAuthStatus && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Status</dt>
+                    <dt className="text-sm font-medium text-gray-500">
+                      Status
+                    </dt>
                     <dd className="text-sm mt-1">
                       <span
                         className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          prescription.priorAuthStatus === 'approved'
-                            ? 'bg-green-100 text-green-800'
-                            : prescription.priorAuthStatus === 'denied'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
+                          prescription.priorAuthStatus === "approved"
+                            ? "bg-green-100 text-green-800"
+                            : prescription.priorAuthStatus === "denied"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-yellow-100 text-yellow-800"
                         }`}
                       >
                         {prescription.priorAuthStatus}
@@ -418,7 +520,9 @@ export default function PrescriptionDetailPage() {
                 )}
                 {prescription.priorAuthNumber && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Authorization #</dt>
+                    <dt className="text-sm font-medium text-gray-500">
+                      Authorization #
+                    </dt>
                     <dd className="text-sm text-gray-900 mt-1 font-mono">
                       {prescription.priorAuthNumber}
                     </dd>
@@ -431,7 +535,9 @@ export default function PrescriptionDetailPage() {
           {/* Notes */}
           {prescription.notes && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Notes</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Notes
+              </h2>
               <p className="text-sm text-gray-700">{prescription.notes}</p>
             </div>
           )}
@@ -443,7 +549,9 @@ export default function PrescriptionDetailPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Medication Label</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Medication Label
+              </h2>
               <button
                 onClick={() => setShowLabel(false)}
                 className="text-gray-500 hover:text-gray-700"

@@ -1,26 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 // Mock waitlist data
 const mockWaitlist = [
   {
-    id: 'w1',
-    patientId: 'p1',
-    providerId: 'pr1',
-    appointmentType: 'consultation',
-    priority: 'high',
+    id: "w1",
+    patientId: "p1",
+    providerId: "pr1",
+    appointmentType: "consultation",
+    priority: "high",
     preferredDates: [],
     preferredTimes: [],
-    notes: 'Urgent follow-up needed',
+    notes: "Urgent follow-up needed",
     createdAt: new Date().toISOString(),
-    status: 'active',
+    status: "active",
   },
 ];
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const providerId = searchParams.get('providerId');
-    const status = searchParams.get('status');
+    const providerId = searchParams.get("providerId");
+    const status = searchParams.get("status");
 
     let filtered = [...mockWaitlist];
 
@@ -33,8 +33,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(filtered);
   } catch (error) {
-    console.error('Error fetching waitlist:', error);
-    return NextResponse.json({ error: 'Failed to fetch waitlist' }, { status: 500 });
+    console.error("Error fetching waitlist:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch waitlist" },
+      { status: 500 },
+    );
   }
 }
 
@@ -46,14 +49,17 @@ export async function POST(request: NextRequest) {
       id: Math.random().toString(36).substr(2, 9),
       ...body,
       createdAt: new Date().toISOString(),
-      status: 'active',
+      status: "active",
     };
 
     mockWaitlist.push(newEntry);
 
     return NextResponse.json(newEntry, { status: 201 });
   } catch (error) {
-    console.error('Error creating waitlist entry:', error);
-    return NextResponse.json({ error: 'Failed to create waitlist entry' }, { status: 500 });
+    console.error("Error creating waitlist entry:", error);
+    return NextResponse.json(
+      { error: "Failed to create waitlist entry" },
+      { status: 500 },
+    );
   }
 }

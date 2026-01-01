@@ -14,12 +14,12 @@ export interface ChartSeries {
   name: string;
   data: ChartDataPoint[];
   color?: string;
-  type?: 'line' | 'bar' | 'area';
+  type?: "line" | "bar" | "area";
 }
 
 export interface ChartAxisConfig {
   label: string;
-  type: 'category' | 'number' | 'date';
+  type: "category" | "number" | "date";
   format?: string;
   min?: number;
   max?: number;
@@ -28,7 +28,7 @@ export interface ChartAxisConfig {
 
 export interface ChartLegendConfig {
   show: boolean;
-  position: 'top' | 'bottom' | 'left' | 'right';
+  position: "top" | "bottom" | "left" | "right";
 }
 
 export interface ChartTooltipConfig {
@@ -79,29 +79,30 @@ export abstract class ChartBase {
   protected config: ChartConfig;
   protected dimensions: ChartDimensions;
   protected colors: string[];
-  protected hoveredPoint: { seriesIndex: number; pointIndex: number } | null = null;
+  protected hoveredPoint: { seriesIndex: number; pointIndex: number } | null =
+    null;
   protected animationFrame: number | null = null;
   protected animationProgress: number = 0;
 
   // Default color palette
   protected static DEFAULT_COLORS = [
-    '#4a90e2', // Blue
-    '#50c878', // Emerald
-    '#f5a623', // Orange
-    '#bd10e0', // Purple
-    '#e74c3c', // Red
-    '#16a085', // Teal
-    '#f39c12', // Yellow
-    '#8e44ad', // Violet
-    '#27ae60', // Green
-    '#e67e22', // Carrot
+    "#4a90e2", // Blue
+    "#50c878", // Emerald
+    "#f5a623", // Orange
+    "#bd10e0", // Purple
+    "#e74c3c", // Red
+    "#16a085", // Teal
+    "#f39c12", // Yellow
+    "#8e44ad", // Violet
+    "#27ae60", // Green
+    "#e67e22", // Carrot
   ];
 
   constructor(canvas: HTMLCanvasElement, config: ChartConfig) {
     this.canvas = canvas;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     if (!context) {
-      throw new Error('Failed to get 2D context');
+      throw new Error("Failed to get 2D context");
     }
     this.ctx = context;
     this.config = this.mergeDefaultConfig(config);
@@ -119,13 +120,13 @@ export abstract class ChartBase {
       ...config,
       legend: {
         show: true,
-        position: 'top',
+        position: "top",
         ...config.legend,
       },
       tooltip: {
         enabled: true,
-        backgroundColor: '#333',
-        textColor: '#fff',
+        backgroundColor: "#333",
+        textColor: "#fff",
         ...config.tooltip,
       },
       padding: {
@@ -173,11 +174,14 @@ export abstract class ChartBase {
   }
 
   protected setupEventListeners(): void {
-    this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
-    this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+    this.canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
+    this.canvas.addEventListener(
+      "mouseleave",
+      this.handleMouseLeave.bind(this),
+    );
 
     if (this.config.responsive) {
-      window.addEventListener('resize', this.handleResize.bind(this));
+      window.addEventListener("resize", this.handleResize.bind(this));
     }
   }
 
@@ -190,11 +194,11 @@ export abstract class ChartBase {
 
     if (point) {
       this.hoveredPoint = point;
-      this.canvas.style.cursor = 'pointer';
+      this.canvas.style.cursor = "pointer";
       this.render();
     } else if (this.hoveredPoint) {
       this.hoveredPoint = null;
-      this.canvas.style.cursor = 'default';
+      this.canvas.style.cursor = "default";
       this.render();
     }
   }
@@ -202,7 +206,7 @@ export abstract class ChartBase {
   protected handleMouseLeave(): void {
     if (this.hoveredPoint) {
       this.hoveredPoint = null;
-      this.canvas.style.cursor = 'default';
+      this.canvas.style.cursor = "default";
       this.render();
     }
   }
@@ -213,7 +217,10 @@ export abstract class ChartBase {
     this.render();
   }
 
-  protected abstract getPointAtPosition(x: number, y: number): { seriesIndex: number; pointIndex: number } | null;
+  protected abstract getPointAtPosition(
+    x: number,
+    y: number,
+  ): { seriesIndex: number; pointIndex: number } | null;
 
   public render(): void {
     if (this.config.animation?.enabled && this.animationProgress < 1) {
@@ -262,14 +269,14 @@ export abstract class ChartBase {
     if (!this.config.title) return;
 
     this.ctx.save();
-    this.ctx.font = 'bold 16px Arial, sans-serif';
-    this.ctx.fillStyle = '#333';
-    this.ctx.textAlign = 'center';
+    this.ctx.font = "bold 16px Arial, sans-serif";
+    this.ctx.fillStyle = "#333";
+    this.ctx.textAlign = "center";
     this.ctx.fillText(this.config.title, this.dimensions.width / 2, 20);
 
     if (this.config.subtitle) {
-      this.ctx.font = '12px Arial, sans-serif';
-      this.ctx.fillStyle = '#666';
+      this.ctx.font = "12px Arial, sans-serif";
+      this.ctx.fillStyle = "#666";
       this.ctx.fillText(this.config.subtitle, this.dimensions.width / 2, 38);
     }
 
@@ -287,13 +294,14 @@ export abstract class ChartBase {
     let x = 0;
     let y = 0;
 
-    if (legend.position === 'top') {
-      x = this.dimensions.width / 2 - (this.config.series.length * itemWidth) / 2;
+    if (legend.position === "top") {
+      x =
+        this.dimensions.width / 2 - (this.config.series.length * itemWidth) / 2;
       y = this.config.subtitle ? 50 : 32;
     }
 
     this.ctx.save();
-    this.ctx.font = '12px Arial, sans-serif';
+    this.ctx.font = "12px Arial, sans-serif";
 
     this.config.series.forEach((series, i) => {
       const color = series.color || this.colors[i % this.colors.length];
@@ -304,8 +312,8 @@ export abstract class ChartBase {
       this.ctx.fillRect(currentX, y, iconSize, iconSize);
 
       // Draw label
-      this.ctx.fillStyle = '#333';
-      this.ctx.textAlign = 'left';
+      this.ctx.fillStyle = "#333";
+      this.ctx.textAlign = "left";
       this.ctx.fillText(series.name, currentX + iconSize + 5, y + iconSize);
     });
 
@@ -313,10 +321,11 @@ export abstract class ChartBase {
   }
 
   protected drawAxes(): void {
-    const { paddingLeft, paddingTop, chartWidth, chartHeight } = this.dimensions;
+    const { paddingLeft, paddingTop, chartWidth, chartHeight } =
+      this.dimensions;
 
     this.ctx.save();
-    this.ctx.strokeStyle = '#ddd';
+    this.ctx.strokeStyle = "#ddd";
     this.ctx.lineWidth = 1;
 
     // Y-axis
@@ -332,23 +341,23 @@ export abstract class ChartBase {
     this.ctx.stroke();
 
     // Axis labels
-    this.ctx.fillStyle = '#666';
-    this.ctx.font = '12px Arial, sans-serif';
+    this.ctx.fillStyle = "#666";
+    this.ctx.font = "12px Arial, sans-serif";
 
     // Y-axis label
     this.ctx.save();
     this.ctx.translate(15, paddingTop + chartHeight / 2);
     this.ctx.rotate(-Math.PI / 2);
-    this.ctx.textAlign = 'center';
+    this.ctx.textAlign = "center";
     this.ctx.fillText(this.config.axes.y.label, 0, 0);
     this.ctx.restore();
 
     // X-axis label
-    this.ctx.textAlign = 'center';
+    this.ctx.textAlign = "center";
     this.ctx.fillText(
       this.config.axes.x.label,
       paddingLeft + chartWidth / 2,
-      paddingTop + chartHeight + 45
+      paddingTop + chartHeight + 45,
     );
 
     this.ctx.restore();
@@ -366,7 +375,7 @@ export abstract class ChartBase {
     const padding = 8;
 
     this.ctx.save();
-    this.ctx.font = '12px Arial, sans-serif';
+    this.ctx.font = "12px Arial, sans-serif";
 
     const metrics = this.ctx.measureText(text);
     const width = metrics.width + padding * 2;
@@ -377,13 +386,13 @@ export abstract class ChartBase {
     const y = 20;
 
     // Draw background
-    this.ctx.fillStyle = this.config.tooltip!.backgroundColor || '#333';
+    this.ctx.fillStyle = this.config.tooltip!.backgroundColor || "#333";
     this.ctx.fillRect(x, y, width, height);
 
     // Draw text
-    this.ctx.fillStyle = this.config.tooltip!.textColor || '#fff';
-    this.ctx.textAlign = 'left';
-    this.ctx.textBaseline = 'middle';
+    this.ctx.fillStyle = this.config.tooltip!.textColor || "#fff";
+    this.ctx.textAlign = "left";
+    this.ctx.textBaseline = "middle";
     this.ctx.fillText(text, x + padding, y + height / 2);
 
     this.ctx.restore();
@@ -428,9 +437,9 @@ export abstract class ChartBase {
       cancelAnimationFrame(this.animationFrame);
     }
 
-    this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-    this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
-    window.removeEventListener('resize', this.handleResize);
+    this.canvas.removeEventListener("mousemove", this.handleMouseMove);
+    this.canvas.removeEventListener("mouseleave", this.handleMouseLeave);
+    window.removeEventListener("resize", this.handleResize);
   }
 
   public updateConfig(config: Partial<ChartConfig>): void {

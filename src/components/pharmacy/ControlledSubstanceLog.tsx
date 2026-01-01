@@ -3,30 +3,33 @@
  * Display controlled substance transaction log
  */
 
-'use client';
+"use client";
 
-import { type ControlledSubstanceLog as CSLog } from '@/services/pharmacy.service';
+import { type ControlledSubstanceLog as CSLog } from "@/services/pharmacy.service";
 
 interface ControlledSubstanceLogProps {
   logs: CSLog[];
   onRefresh: () => void;
 }
 
-export function ControlledSubstanceLog({ logs, onRefresh }: ControlledSubstanceLogProps) {
+export function ControlledSubstanceLog({
+  logs,
+  onRefresh,
+}: ControlledSubstanceLogProps) {
   const getTransactionColor = (type: string) => {
     switch (type) {
-      case 'receive':
-        return 'bg-green-100 text-green-800';
-      case 'dispense':
-        return 'bg-blue-100 text-blue-800';
-      case 'waste':
-        return 'bg-orange-100 text-orange-800';
-      case 'transfer':
-        return 'bg-purple-100 text-purple-800';
-      case 'inventory-count':
-        return 'bg-yellow-100 text-yellow-800';
+      case "receive":
+        return "bg-green-100 text-green-800";
+      case "dispense":
+        return "bg-blue-100 text-blue-800";
+      case "waste":
+        return "bg-orange-100 text-orange-800";
+      case "transfer":
+        return "bg-purple-100 text-purple-800";
+      case "inventory-count":
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -82,13 +85,15 @@ export function ControlledSubstanceLog({ logs, onRefresh }: ControlledSubstanceL
                 {new Date(log.timestamp).toLocaleString()}
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded ${getTransactionColor(log.transactionType)}`}>
+                <span
+                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded ${getTransactionColor(log.transactionType)}`}
+                >
                   {log.transactionType}
                 </span>
               </td>
               <td className="px-4 py-3">
                 <div className="text-sm font-medium text-gray-900">
-                  {log.drug?.name || 'N/A'}
+                  {log.drug?.name || "N/A"}
                 </div>
                 <div className="text-xs text-gray-500">
                   {log.drug?.strength} - {log.drug?.dosageForm}
@@ -99,7 +104,7 @@ export function ControlledSubstanceLog({ logs, onRefresh }: ControlledSubstanceL
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <span className="inline-flex px-2 py-1 text-xs font-semibold rounded bg-orange-100 text-orange-800">
-                  C-{log.drug?.deaSchedule || 'N/A'}
+                  C-{log.drug?.deaSchedule || "N/A"}
                 </span>
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -109,15 +114,17 @@ export function ControlledSubstanceLog({ logs, onRefresh }: ControlledSubstanceL
                 {log.lotNumber}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                {log.dispensedBy || 'N/A'}
+                {log.dispensedBy || "N/A"}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                {log.verifiedBy || 'N/A'}
+                {log.verifiedBy || "N/A"}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                 {log.patientId && <div>Patient: {log.patientId}</div>}
-                {log.prescriptionId && <div className="text-xs">Rx: {log.prescriptionId}</div>}
-                {!log.patientId && !log.prescriptionId && 'N/A'}
+                {log.prescriptionId && (
+                  <div className="text-xs">Rx: {log.prescriptionId}</div>
+                )}
+                {!log.patientId && !log.prescriptionId && "N/A"}
               </td>
             </tr>
           ))}

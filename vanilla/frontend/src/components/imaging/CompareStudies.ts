@@ -1,15 +1,19 @@
-import { ImagingService } from '../../services/ImagingService';
+import { ImagingService } from "../../services/ImagingService";
 
 export class CompareStudies {
   private imagingService: ImagingService;
-  private currentStudyUID: string = '';
-  private compareStudyUID: string = '';
+  private currentStudyUID: string = "";
+  private compareStudyUID: string = "";
 
   constructor() {
     this.imagingService = new ImagingService();
   }
 
-  async render(container: HTMLElement, currentStudyUID: string, compareStudyUID: string) {
+  async render(
+    container: HTMLElement,
+    currentStudyUID: string,
+    compareStudyUID: string,
+  ) {
     this.currentStudyUID = currentStudyUID;
     this.compareStudyUID = compareStudyUID;
 
@@ -95,42 +99,43 @@ export class CompareStudies {
     try {
       const comparison = await this.imagingService.compareStudies(
         this.currentStudyUID,
-        [this.compareStudyUID]
+        [this.compareStudyUID],
       );
 
-      const container = document.getElementById('differences-container');
+      const container = document.getElementById("differences-container");
       if (!container) return;
 
       if (comparison.differences && comparison.differences.length > 0) {
         container.innerHTML = `
           <ul class="differences-list">
-            ${comparison.differences.map((diff: any) => this.createDifferenceItem(diff)).join('')}
+            ${comparison.differences.map((diff: any) => this.createDifferenceItem(diff)).join("")}
           </ul>
         `;
       } else {
-        container.innerHTML = '<div class="empty-state">No significant differences detected</div>';
+        container.innerHTML =
+          '<div class="empty-state">No significant differences detected</div>';
       }
     } catch (error) {
-      console.error('Error loading differences:', error);
+      console.error("Error loading differences:", error);
     }
   }
 
   private createDifferenceItem(diff: any): string {
     const iconMap: Record<string, string> = {
-      'INCREASED': '📈',
-      'DECREASED': '📉',
-      'NEW': '🆕',
-      'RESOLVED': '✅',
-      'STABLE': '➖',
-      'MODERATE': '⚠️',
+      INCREASED: "📈",
+      DECREASED: "📉",
+      NEW: "🆕",
+      RESOLVED: "✅",
+      STABLE: "➖",
+      MODERATE: "⚠️",
     };
 
     return `
       <li class="difference-item ${this.getSeverityClass(diff.significance)}">
-        <div class="difference-icon">${iconMap[diff.significance] || '•'}</div>
+        <div class="difference-icon">${iconMap[diff.significance] || "•"}</div>
         <div class="difference-content">
           <div class="difference-finding">${diff.finding}</div>
-          ${diff.location ? `<div class="difference-location">Location: ${diff.location}</div>` : ''}
+          ${diff.location ? `<div class="difference-location">Location: ${diff.location}</div>` : ""}
           <div class="difference-significance">
             <span class="badge badge-${this.getSeverityColor(diff.significance)}">${diff.significance}</span>
           </div>
@@ -141,38 +146,48 @@ export class CompareStudies {
 
   private attachEventListeners(container: HTMLElement) {
     const closeBtn = container.querySelector('[data-action="close-compare"]');
-    closeBtn?.addEventListener('click', () => {
+    closeBtn?.addEventListener("click", () => {
       // TODO: Exit comparison mode
-      console.log('Close comparison');
+      console.log("Close comparison");
     });
 
     const syncNowBtn = container.querySelector('[data-action="sync-now"]');
-    syncNowBtn?.addEventListener('click', () => {
+    syncNowBtn?.addEventListener("click", () => {
       this.syncViewports();
     });
 
     const swapBtn = container.querySelector('[data-action="swap-views"]');
-    swapBtn?.addEventListener('click', () => {
+    swapBtn?.addEventListener("click", () => {
       this.swapViews();
     });
 
     // Sync checkboxes
-    const syncScroll = container.querySelector('#sync-scroll') as HTMLInputElement;
-    const syncWindow = container.querySelector('#sync-window') as HTMLInputElement;
-    const syncZoom = container.querySelector('#sync-zoom') as HTMLInputElement;
+    const syncScroll = container.querySelector(
+      "#sync-scroll",
+    ) as HTMLInputElement;
+    const syncWindow = container.querySelector(
+      "#sync-window",
+    ) as HTMLInputElement;
+    const syncZoom = container.querySelector("#sync-zoom") as HTMLInputElement;
 
-    syncScroll?.addEventListener('change', () => this.toggleSync('scroll', syncScroll.checked));
-    syncWindow?.addEventListener('change', () => this.toggleSync('window', syncWindow.checked));
-    syncZoom?.addEventListener('change', () => this.toggleSync('zoom', syncZoom.checked));
+    syncScroll?.addEventListener("change", () =>
+      this.toggleSync("scroll", syncScroll.checked),
+    );
+    syncWindow?.addEventListener("change", () =>
+      this.toggleSync("window", syncWindow.checked),
+    );
+    syncZoom?.addEventListener("change", () =>
+      this.toggleSync("zoom", syncZoom.checked),
+    );
   }
 
   private syncViewports() {
-    console.log('Syncing viewports');
+    console.log("Syncing viewports");
     // TODO: Synchronize viewport state
   }
 
   private swapViews() {
-    console.log('Swapping views');
+    console.log("Swapping views");
     // TODO: Swap left and right viewports
   }
 
@@ -183,30 +198,30 @@ export class CompareStudies {
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   }
 
   private getSeverityClass(significance: string): string {
     const classes: Record<string, string> = {
-      'CRITICAL': 'severity-critical',
-      'SIGNIFICANT': 'severity-significant',
-      'MODERATE': 'severity-moderate',
-      'MINOR': 'severity-minor',
+      CRITICAL: "severity-critical",
+      SIGNIFICANT: "severity-significant",
+      MODERATE: "severity-moderate",
+      MINOR: "severity-minor",
     };
-    return classes[significance] || '';
+    return classes[significance] || "";
   }
 
   private getSeverityColor(significance: string): string {
     const colors: Record<string, string> = {
-      'CRITICAL': 'danger',
-      'SIGNIFICANT': 'warning',
-      'MODERATE': 'info',
-      'MINOR': 'secondary',
+      CRITICAL: "danger",
+      SIGNIFICANT: "warning",
+      MODERATE: "info",
+      MINOR: "secondary",
     };
-    return colors[significance] || 'secondary';
+    return colors[significance] || "secondary";
   }
 }

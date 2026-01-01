@@ -2,12 +2,12 @@
  * Modal Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface ModalProps {
   title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: "sm" | "md" | "lg" | "xl" | "full";
   closeOnOverlay?: boolean;
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
@@ -35,23 +35,23 @@ export class Modal extends Component<ModalProps, ModalState> {
   }
 
   protected createElement(): HTMLElement {
-    return createElement('div', {
-      className: 'modal-container',
+    return createElement("div", {
+      className: "modal-container",
     });
   }
 
   protected getClassName(): string {
-    const classes = ['modal-container'];
+    const classes = ["modal-container"];
 
     if (this.state.isOpen) {
-      classes.push('modal-open');
+      classes.push("modal-open");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
     if (!this.state.isOpen) {
@@ -59,8 +59,8 @@ export class Modal extends Component<ModalProps, ModalState> {
     }
 
     // Create overlay
-    this.overlay = createElement('div', {
-      className: 'modal-overlay',
+    this.overlay = createElement("div", {
+      className: "modal-overlay",
       events: {
         click: this.handleOverlayClick,
       },
@@ -69,8 +69,8 @@ export class Modal extends Component<ModalProps, ModalState> {
     this.element.appendChild(this.overlay);
 
     // Create modal
-    const size = this.props.size || 'md';
-    const modal = createElement('div', {
+    const size = this.props.size || "md";
+    const modal = createElement("div", {
       className: `modal modal-${size}`,
       events: {
         click: (e) => e.stopPropagation(),
@@ -84,8 +84,8 @@ export class Modal extends Component<ModalProps, ModalState> {
     }
 
     // Body
-    const body = createElement('div', {
-      className: 'modal-body',
+    const body = createElement("div", {
+      className: "modal-body",
     });
 
     if (this.props.children) {
@@ -98,8 +98,8 @@ export class Modal extends Component<ModalProps, ModalState> {
 
     // Footer
     if (this.props.footer && this.props.footer.length > 0) {
-      const footer = createElement('div', {
-        className: 'modal-footer',
+      const footer = createElement("div", {
+        className: "modal-footer",
       });
 
       this.props.footer.forEach((child) => {
@@ -114,24 +114,24 @@ export class Modal extends Component<ModalProps, ModalState> {
   }
 
   private createHeader(): HTMLElement {
-    const header = createElement('div', {
-      className: 'modal-header',
+    const header = createElement("div", {
+      className: "modal-header",
     });
 
     if (this.props.title) {
-      const title = createElement('h2', {
-        className: 'modal-title',
+      const title = createElement("h2", {
+        className: "modal-title",
         textContent: this.props.title,
       });
       header.appendChild(title);
     }
 
     if (this.props.showCloseButton !== false) {
-      const closeButton = createElement('button', {
-        className: 'modal-close',
-        innerHTML: '&times;',
+      const closeButton = createElement("button", {
+        className: "modal-close",
+        innerHTML: "&times;",
         attributes: {
-          'aria-label': 'Close',
+          "aria-label": "Close",
         },
         events: {
           click: this.close,
@@ -150,19 +150,19 @@ export class Modal extends Component<ModalProps, ModalState> {
   }
 
   private handleKeyDown(e: KeyboardEvent): void {
-    if (e.key === 'Escape' && this.props.closeOnEscape !== false) {
+    if (e.key === "Escape" && this.props.closeOnEscape !== false) {
       this.close();
     }
   }
 
   protected onMount(): void {
     if (this.props.closeOnEscape !== false) {
-      document.addEventListener('keydown', this.handleKeyDown);
+      document.addEventListener("keydown", this.handleKeyDown);
     }
   }
 
   protected onUnmount(): void {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener("keydown", this.handleKeyDown);
     this.disableBodyScroll(false);
   }
 
@@ -194,9 +194,9 @@ export class Modal extends Component<ModalProps, ModalState> {
 
   private disableBodyScroll(disable: boolean): void {
     if (disable) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
   }
 

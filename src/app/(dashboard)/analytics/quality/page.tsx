@@ -1,18 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Activity, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { FilterConfig } from '@/services/analytics.service';
-import { QualityMetrics } from '@/components/analytics/QualityMetrics';
-import { FilterPanel } from '@/components/analytics/FilterPanel';
+import { useState } from "react";
+import { Activity, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { FilterConfig } from "@/services/analytics.service";
+import { QualityMetrics } from "@/components/analytics/QualityMetrics";
+import { FilterPanel } from "@/components/analytics/FilterPanel";
 
 export default function QualityMetricsPage() {
   const [filters, setFilters] = useState<FilterConfig>({
     dateRange: {
-      start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0],
-      preset: 'quarter',
+      start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      end: new Date().toISOString().split("T")[0],
+      preset: "quarter",
     },
   });
 
@@ -33,7 +35,9 @@ export default function QualityMetricsPage() {
               <Activity className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Quality Metrics</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Quality Metrics
+              </h1>
               <p className="text-gray-500 mt-1">
                 Patient outcomes, satisfaction, and CMS quality measures
               </p>
@@ -50,9 +54,15 @@ export default function QualityMetricsPage() {
               filters={filters}
               onChange={setFilters}
               availableFilters={{
-                departments: ['Cardiology', 'Oncology', 'Emergency', 'Surgery', 'ICU'],
-                providers: ['Dr. Smith', 'Dr. Johnson', 'Dr. Williams'],
-                locations: ['Main Campus', 'North Clinic', 'South Clinic'],
+                departments: [
+                  "Cardiology",
+                  "Oncology",
+                  "Emergency",
+                  "Surgery",
+                  "ICU",
+                ],
+                providers: ["Dr. Smith", "Dr. Johnson", "Dr. Williams"],
+                locations: ["Main Campus", "North Clinic", "South Clinic"],
               }}
             />
           </div>

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import ResultEntry from '@/components/laboratory/ResultEntry';
-import TrendChart from '@/components/laboratory/TrendChart';
+import React from "react";
+import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import ResultEntry from "@/components/laboratory/ResultEntry";
+import TrendChart from "@/components/laboratory/TrendChart";
 
 export default function ResultDetailPage() {
   const params = useParams();

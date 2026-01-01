@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ImageAnnotation } from '@/services/imaging.service';
+import { useState } from "react";
+import { ImageAnnotation } from "@/services/imaging.service";
 
 interface ImageAnnotationsProps {
   studyId: string;
@@ -18,31 +18,31 @@ export default function ImageAnnotations({
 }: ImageAnnotationsProps) {
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [annotations, setAnnotations] = useState<ImageAnnotation[]>([]);
-  const [selectedColor, setSelectedColor] = useState('#FF0000');
+  const [selectedColor, setSelectedColor] = useState("#FF0000");
 
   const tools = [
-    { id: 'ARROW', name: 'Arrow', icon: '➜' },
-    { id: 'RECTANGLE', name: 'Rectangle', icon: '▭' },
-    { id: 'CIRCLE', name: 'Circle', icon: '○' },
-    { id: 'POLYGON', name: 'Polygon', icon: '⬠' },
-    { id: 'TEXT', name: 'Text', icon: 'T' },
+    { id: "ARROW", name: "Arrow", icon: "➜" },
+    { id: "RECTANGLE", name: "Rectangle", icon: "▭" },
+    { id: "CIRCLE", name: "Circle", icon: "○" },
+    { id: "POLYGON", name: "Polygon", icon: "⬠" },
+    { id: "TEXT", name: "Text", icon: "T" },
   ];
 
   const colors = [
-    { name: 'Red', value: '#FF0000' },
-    { name: 'Yellow', value: '#FFFF00' },
-    { name: 'Green', value: '#00FF00' },
-    { name: 'Blue', value: '#0000FF' },
-    { name: 'White', value: '#FFFFFF' },
-    { name: 'Orange', value: '#FFA500' },
+    { name: "Red", value: "#FF0000" },
+    { name: "Yellow", value: "#FFFF00" },
+    { name: "Green", value: "#00FF00" },
+    { name: "Blue", value: "#0000FF" },
+    { name: "White", value: "#FFFFFF" },
+    { name: "Orange", value: "#FFA500" },
   ];
 
   const handleDeleteAnnotation = (id: string) => {
-    setAnnotations(annotations.filter(a => a.id !== id));
+    setAnnotations(annotations.filter((a) => a.id !== id));
   };
 
   const handleClearAll = () => {
-    if (confirm('Clear all annotations?')) {
+    if (confirm("Clear all annotations?")) {
       setAnnotations([]);
     }
   };
@@ -53,14 +53,16 @@ export default function ImageAnnotations({
 
       {/* Tool Selection */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
-        {tools.map(tool => (
+        {tools.map((tool) => (
           <button
             key={tool.id}
-            onClick={() => setActiveTool(activeTool === tool.id ? null : tool.id)}
+            onClick={() =>
+              setActiveTool(activeTool === tool.id ? null : tool.id)
+            }
             className={`p-3 rounded-lg border-2 transition-all ${
               activeTool === tool.id
-                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                : 'border-gray-200 hover:border-gray-300'
+                ? "border-blue-500 bg-blue-50 text-blue-700"
+                : "border-gray-200 hover:border-gray-300"
             }`}
           >
             <div className="text-2xl mb-1">{tool.icon}</div>
@@ -71,14 +73,18 @@ export default function ImageAnnotations({
 
       {/* Color Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Color
+        </label>
         <div className="flex space-x-2">
-          {colors.map(color => (
+          {colors.map((color) => (
             <button
               key={color.value}
               onClick={() => setSelectedColor(color.value)}
               className={`w-8 h-8 rounded-full border-2 ${
-                selectedColor === color.value ? 'border-gray-800 scale-110' : 'border-gray-300'
+                selectedColor === color.value
+                  ? "border-gray-800 scale-110"
+                  : "border-gray-300"
               }`}
               style={{ backgroundColor: color.value }}
               title={color.name}
@@ -91,8 +97,10 @@ export default function ImageAnnotations({
       {activeTool && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
-            <span className="font-semibold">{tools.find(t => t.id === activeTool)?.name}</span> tool
-            active. Click on the image to annotate.
+            <span className="font-semibold">
+              {tools.find((t) => t.id === activeTool)?.name}
+            </span>{" "}
+            tool active. Click on the image to annotate.
           </p>
         </div>
       )}
@@ -100,7 +108,9 @@ export default function ImageAnnotations({
       {/* Annotations List */}
       <div className="space-y-2">
         <div className="flex justify-between items-center mb-2">
-          <h4 className="font-medium text-sm">Annotations ({annotations.length})</h4>
+          <h4 className="font-medium text-sm">
+            Annotations ({annotations.length})
+          </h4>
           {annotations.length > 0 && (
             <button
               onClick={handleClearAll}

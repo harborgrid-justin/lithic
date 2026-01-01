@@ -3,14 +3,14 @@
  * WebSocket connections for real-time updates
  */
 
-import { Server as HTTPServer } from 'http';
-import { Server as SocketIOServer, Socket } from 'socket.io';
-import { z } from 'zod';
+import { Server as HTTPServer } from "http";
+import { Server as SocketIOServer, Socket } from "socket.io";
+import { z } from "zod";
 
 const SocketConfigSchema = z.object({
   cors: z.object({
-    origin: z.union([z.string(), z.array(z.string())]).default('*'),
-    methods: z.array(z.string()).default(['GET', 'POST']),
+    origin: z.union([z.string(), z.array(z.string())]).default("*"),
+    methods: z.array(z.string()).default(["GET", "POST"]),
     credentials: z.boolean().default(true),
   }),
   pingTimeout: z.number().default(60000),
@@ -35,11 +35,14 @@ export class RealtimeSocketServer {
   /**
    * Initialize Socket.IO server
    */
-  initialize(httpServer: HTTPServer, config: Partial<SocketConfig> = {}): SocketIOServer {
+  initialize(
+    httpServer: HTTPServer,
+    config: Partial<SocketConfig> = {},
+  ): SocketIOServer {
     const socketConfig = SocketConfigSchema.parse({
       cors: {
-        origin: process.env.CORS_ORIGIN || '*',
-        methods: ['GET', 'POST'],
+        origin: process.env.CORS_ORIGIN || "*",
+        methods: ["GET", "POST"],
         credentials: true,
       },
       ...config,
@@ -66,10 +69,12 @@ export class RealtimeSocketServer {
     this.io.use(async (socket, next) => {
       try {
         // Extract token from handshake
-        const token = socket.handshake.auth.token || socket.handshake.headers.authorization?.replace('Bearer ', '');
+        const token =
+          socket.handshake.auth.token ||
+          socket.handshake.headers.authorization?.replace("Bearer ", "");
 
         if (!token) {
-          return next(new Error('Authentication token required'));
+          return next(new Error("Authentication token required"));
         }
 
         // Verify token (implement your JWT verification here)
@@ -78,12 +83,12 @@ export class RealtimeSocketServer {
         // socket.data.roles = decoded.roles;
 
         // For now, just accept the connection
-        socket.data.userId = socket.handshake.auth.userId || 'anonymous';
-        socket.data.roles = socket.handshake.auth.roles || ['user'];
+        socket.data.userId = socket.handshake.auth.userId || "anonymous";
+        socket.data.roles = socket.handshake.auth.roles || ["user"];
 
         next();
       } catch (error) {
-        next(new Error('Authentication failed'));
+        next(new Error("Authentication failed"));
       }
     });
   }
@@ -94,67 +99,67 @@ export class RealtimeSocketServer {
   private setupEventHandlers(): void {
     if (!this.io) return;
 
-    this.io.on('connection', (socket: Socket) => {
+    this.io.on("connection", (socket: Socket) => {
       console.log(`Socket connected: ${socket.id}`);
 
       // Register user
       this.registerUser(socket);
 
       // Handle disconnect
-      socket.on('disconnect', () => {
+      socket.on("disconnect", () => {
         console.log(`Socket disconnected: ${socket.id}`);
         this.unregisterUser(socket);
       });
 
       // Handle room subscriptions
-      socket.on('subscribe', (rooms: string | string[]) => {
+      socket.on("subscribe", (rooms: string | string[]) => {
         const roomList = Array.isArray(rooms) ? rooms : [rooms];
-        roomList.forEach(room => {
+        roomList.forEach((room) => {
           socket.join(room);
           console.log(`Socket ${socket.id} joined room: ${room}`);
         });
       });
 
-      socket.on('unsubscribe', (rooms: string | string[]) => {
+      socket.on("unsubscribe", (rooms: string | string[]) => {
         const roomList = Array.isArray(rooms) ? rooms : [rooms];
-        roomList.forEach(room => {
+        roomList.forEach((room) => {
           socket.leave(room);
           console.log(`Socket ${socket.id} left room: ${room}`);
         });
       });
 
       // Handle presence
-      socket.on('presence:online', () => {
-        socket.broadcast.emit('user:online', {
+      socket.on("presence:online", () => {
+        socket.broadcast.emit("user:online", {
           userId: socket.data.userId,
           socketId: socket.id,
         });
       });
 
-      socket.on('presence:away', () => {
-        socket.broadcast.emit('user:away', {
+      socket.on("presence:away", () => {
+        socket.broadcast.emit("user:away", {
           userId: socket.data.userId,
           socketId: socket.id,
         });
       });
 
       // Handle typing indicators
-      socket.on('typing:start', (data: { conversationId: string }) => {
-        socket.to(`conversation:${data.conversationId}`).emit('typing:start', {
+      socket.on("typing:start", (data: { conversationId: string }) => {
+        socket.to(`conversation:${data.conversationId}`).emit("typing:start", {
           userId: socket.data.userId,
           conversationId: data.conversationId,
         });
       });
 
-      socket.on('typing:stop', (data: { conversationId: string }) => {
-        socket.to(`conversation:${data.conversationId}`).emit('typing:stop', {
+      socket.on("typing:stop", (data: { conversationId: string }) => {
+        socket.to(`conversation:${data.conversationId}`).emit("typing:stop", {
           userId: socket.data.userId,
           conversationId: data.conversationId,
         });
       });
 
       // Send connection acknowledgment
-      socket.emit('connected', {
+      socket.emit("connected", {
         socketId: socket.id,
         userId: socket.data.userId,
         timestamp: new Date().toISOString(),
@@ -191,7 +196,7 @@ export class RealtimeSocketServer {
     }
 
     // Auto-subscribe to role-based rooms
-    user.roles.forEach(role => {
+    user.roles.forEach((role) => {
       socket.join(`role:${role}`);
     });
   }
@@ -291,7 +296,7 @@ export class RealtimeSocketServer {
    */
   disconnectUser(userId: string): void {
     const socketIds = this.getUserSockets(userId);
-    socketIds.forEach(socketId => this.disconnectSocket(socketId));
+    socketIds.forEach((socketId) => this.disconnectSocket(socketId));
   }
 }
 
@@ -303,7 +308,10 @@ export const realtimeServer = new RealtimeSocketServer();
 /**
  * Initialize real-time server
  */
-export function initializeRealtimeServer(httpServer: HTTPServer, config?: Partial<SocketConfig>): SocketIOServer {
+export function initializeRealtimeServer(
+  httpServer: HTTPServer,
+  config?: Partial<SocketConfig>,
+): SocketIOServer {
   return realtimeServer.initialize(httpServer, config);
 }
 
@@ -324,7 +332,11 @@ export function emitToRoom(room: string, event: string, data: any): void {
 /**
  * Emit event to organization
  */
-export function emitToOrganization(organizationId: string, event: string, data: any): void {
+export function emitToOrganization(
+  organizationId: string,
+  event: string,
+  data: any,
+): void {
   realtimeServer.toOrganization(organizationId, event, data);
 }
 

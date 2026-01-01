@@ -3,17 +3,20 @@
  * Display list of prescriptions with actions
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { type Prescription } from '@/services/prescription.service';
+import Link from "next/link";
+import { type Prescription } from "@/services/prescription.service";
 
 interface PrescriptionListProps {
   prescriptions: Prescription[];
   onRefresh?: () => void;
 }
 
-export function PrescriptionList({ prescriptions, onRefresh }: PrescriptionListProps) {
+export function PrescriptionList({
+  prescriptions,
+  onRefresh,
+}: PrescriptionListProps) {
   if (prescriptions.length === 0) {
     return (
       <div className="p-8 text-center text-gray-500">
@@ -94,23 +97,27 @@ export function PrescriptionList({ prescriptions, onRefresh }: PrescriptionListP
                 {prescription.quantity} / {prescription.daysSupply}d
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                <div className="text-sm text-gray-900">{prescription.prescriberName}</div>
-                <div className="text-xs text-gray-500">NPI: {prescription.prescriberNPI}</div>
+                <div className="text-sm text-gray-900">
+                  {prescription.prescriberName}
+                </div>
+                <div className="text-xs text-gray-500">
+                  NPI: {prescription.prescriberNPI}
+                </div>
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <span
                   className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    prescription.status === 'dispensed'
-                      ? 'bg-green-100 text-green-800'
-                      : prescription.status === 'pending'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : prescription.status === 'active'
-                      ? 'bg-blue-100 text-blue-800'
-                      : prescription.status === 'cancelled'
-                      ? 'bg-red-100 text-red-800'
-                      : prescription.status === 'expired'
-                      ? 'bg-gray-100 text-gray-800'
-                      : 'bg-purple-100 text-purple-800'
+                    prescription.status === "dispensed"
+                      ? "bg-green-100 text-green-800"
+                      : prescription.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : prescription.status === "active"
+                          ? "bg-blue-100 text-blue-800"
+                          : prescription.status === "cancelled"
+                            ? "bg-red-100 text-red-800"
+                            : prescription.status === "expired"
+                              ? "bg-gray-100 text-gray-800"
+                              : "bg-purple-100 text-purple-800"
                   }`}
                 >
                   {prescription.status}
@@ -120,7 +127,8 @@ export function PrescriptionList({ prescriptions, onRefresh }: PrescriptionListP
                 {new Date(prescription.writtenDate).toLocaleDateString()}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                {prescription.refillsRemaining} / {prescription.refillsAuthorized}
+                {prescription.refillsRemaining} /{" "}
+                {prescription.refillsAuthorized}
               </td>
             </tr>
           ))}

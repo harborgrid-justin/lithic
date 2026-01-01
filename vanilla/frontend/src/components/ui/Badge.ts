@@ -3,13 +3,13 @@
  * Badge Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface BadgeProps {
   label: string;
-  variant?: 'default' | 'primary' | 'success' | 'danger' | 'warning' | 'info';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "primary" | "success" | "danger" | "warning" | "info";
+  size?: "sm" | "md" | "lg";
   rounded?: boolean;
   outlined?: boolean;
 }
@@ -20,29 +20,29 @@ export class Badge extends Component<BadgeProps, {}> {
   }
 
   protected createElement(): HTMLElement {
-    return createElement('span', {
+    return createElement("span", {
       className: this.getClassName(),
     });
   }
 
   protected getClassName(): string {
-    const classes = ['badge'];
+    const classes = ["badge"];
 
-    const variant = this.props.variant || 'default';
+    const variant = this.props.variant || "default";
     classes.push(`badge-${variant}`);
 
-    const size = this.props.size || 'md';
+    const size = this.props.size || "md";
     classes.push(`badge-${size}`);
 
     if (this.props.rounded) {
-      classes.push('badge-rounded');
+      classes.push("badge-rounded");
     }
 
     if (this.props.outlined) {
-      classes.push('badge-outlined');
+      classes.push("badge-outlined");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {

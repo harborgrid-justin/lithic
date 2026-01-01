@@ -1,27 +1,27 @@
-'use client'
+"use client";
 
-import { ClinicalNote as ClinicalNoteType } from '@/types/clinical'
-import { formatDateTime } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FileCheck, User, Calendar } from 'lucide-react'
+import { ClinicalNote as ClinicalNoteType } from "@/types/clinical";
+import { formatDateTime } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileCheck, User, Calendar } from "lucide-react";
 
 interface ClinicalNoteProps {
-  note: ClinicalNoteType
+  note: ClinicalNoteType;
 }
 
 export function ClinicalNote({ note }: ClinicalNoteProps) {
-  const getTypeLabel = (type: ClinicalNoteType['type']) => {
+  const getTypeLabel = (type: ClinicalNoteType["type"]) => {
     const labels = {
-      soap: 'SOAP Note',
-      progress: 'Progress Note',
-      admission: 'Admission Note',
-      discharge: 'Discharge Summary',
-      procedure: 'Procedure Note',
-      consultation: 'Consultation Note',
-    }
-    return labels[type]
-  }
+      soap: "SOAP Note",
+      progress: "Progress Note",
+      admission: "Admission Note",
+      discharge: "Discharge Summary",
+      procedure: "Procedure Note",
+      consultation: "Consultation Note",
+    };
+    return labels[type];
+  };
 
   return (
     <Card>
@@ -52,24 +52,30 @@ export function ClinicalNote({ note }: ClinicalNoteProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {note.type === 'soap' && (
+        {note.type === "soap" && (
           <>
             {note.subjective && (
               <div>
                 <h4 className="font-semibold mb-1">Subjective</h4>
-                <p className="text-gray-700 whitespace-pre-wrap">{note.subjective}</p>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {note.subjective}
+                </p>
               </div>
             )}
             {note.objective && (
               <div>
                 <h4 className="font-semibold mb-1">Objective</h4>
-                <p className="text-gray-700 whitespace-pre-wrap">{note.objective}</p>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {note.objective}
+                </p>
               </div>
             )}
             {note.assessment && (
               <div>
                 <h4 className="font-semibold mb-1">Assessment</h4>
-                <p className="text-gray-700 whitespace-pre-wrap">{note.assessment}</p>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {note.assessment}
+                </p>
               </div>
             )}
             {note.plan && (
@@ -80,7 +86,7 @@ export function ClinicalNote({ note }: ClinicalNoteProps) {
             )}
           </>
         )}
-        {note.type !== 'soap' && note.content && (
+        {note.type !== "soap" && note.content && (
           <div>
             <div
               className="text-gray-700 prose max-w-none"
@@ -95,12 +101,12 @@ export function ClinicalNote({ note }: ClinicalNoteProps) {
               <p className="font-semibold">Electronically signed by:</p>
               <p className="mt-1">{note.signature}</p>
               <p className="text-xs text-gray-500 mt-1">
-                Signed on {formatDateTime(note.signedAt || '')}
+                Signed on {formatDateTime(note.signedAt || "")}
               </p>
             </div>
           </div>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

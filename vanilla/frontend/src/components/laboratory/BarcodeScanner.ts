@@ -10,7 +10,10 @@ export class BarcodeScanner {
   private video: HTMLVideoElement | null = null;
   private stream: MediaStream | null = null;
 
-  constructor(container: HTMLElement, options: { onScan?: (barcode: string) => void } = {}) {
+  constructor(
+    container: HTMLElement,
+    options: { onScan?: (barcode: string) => void } = {},
+  ) {
     this.container = container;
     this.onScan = options.onScan;
   }
@@ -64,100 +67,105 @@ export class BarcodeScanner {
 
   private attachEventListeners(): void {
     // Mode switching
-    const modeBtns = this.container.querySelectorAll('.mode-btn');
-    modeBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const mode = btn.getAttribute('data-mode');
-        this.switchMode(mode || 'manual');
+    const modeBtns = this.container.querySelectorAll(".mode-btn");
+    modeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mode = btn.getAttribute("data-mode");
+        this.switchMode(mode || "manual");
 
-        modeBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        modeBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
       });
     });
 
     // Manual entry
-    const barcodeInput = this.container.querySelector('#barcodeInput') as HTMLInputElement;
-    const submitBtn = this.container.querySelector('#submitBarcode');
+    const barcodeInput = this.container.querySelector(
+      "#barcodeInput",
+    ) as HTMLInputElement;
+    const submitBtn = this.container.querySelector("#submitBarcode");
 
     if (barcodeInput) {
-      barcodeInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+      barcodeInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
           this.handleManualScan(barcodeInput.value);
-          barcodeInput.value = '';
+          barcodeInput.value = "";
         }
       });
     }
 
     if (submitBtn) {
-      submitBtn.addEventListener('click', () => {
+      submitBtn.addEventListener("click", () => {
         if (barcodeInput) {
           this.handleManualScan(barcodeInput.value);
-          barcodeInput.value = '';
+          barcodeInput.value = "";
         }
       });
     }
 
     // Camera controls
-    const startCameraBtn = this.container.querySelector('#startCamera');
-    const stopCameraBtn = this.container.querySelector('#stopCamera');
+    const startCameraBtn = this.container.querySelector("#startCamera");
+    const stopCameraBtn = this.container.querySelector("#stopCamera");
 
     if (startCameraBtn) {
-      startCameraBtn.addEventListener('click', () => this.startCamera());
+      startCameraBtn.addEventListener("click", () => this.startCamera());
     }
 
     if (stopCameraBtn) {
-      stopCameraBtn.addEventListener('click', () => this.stopCamera());
+      stopCameraBtn.addEventListener("click", () => this.stopCamera());
     }
   }
 
   private switchMode(mode: string): void {
-    const manualMode = this.container.querySelector('#manualMode');
-    const cameraMode = this.container.querySelector('#cameraMode');
+    const manualMode = this.container.querySelector("#manualMode");
+    const cameraMode = this.container.querySelector("#cameraMode");
 
-    if (mode === 'manual') {
-      manualMode?.classList.add('active');
-      cameraMode?.classList.remove('active');
+    if (mode === "manual") {
+      manualMode?.classList.add("active");
+      cameraMode?.classList.remove("active");
       this.stopCamera();
     } else {
-      manualMode?.classList.remove('active');
-      cameraMode?.classList.add('active');
+      manualMode?.classList.remove("active");
+      cameraMode?.classList.add("active");
     }
   }
 
   private async startCamera(): Promise<void> {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
+        video: { facingMode: "environment" },
       });
 
-      this.video = this.container.querySelector('#scannerVideo');
+      this.video = this.container.querySelector("#scannerVideo");
       if (this.video) {
         this.video.srcObject = this.stream;
         this.isScanning = true;
       }
 
       // Show/hide buttons
-      const startBtn = this.container.querySelector('#startCamera') as HTMLElement;
-      const stopBtn = this.container.querySelector('#stopCamera') as HTMLElement;
+      const startBtn = this.container.querySelector(
+        "#startCamera",
+      ) as HTMLElement;
+      const stopBtn = this.container.querySelector(
+        "#stopCamera",
+      ) as HTMLElement;
 
-      if (startBtn) startBtn.style.display = 'none';
-      if (stopBtn) stopBtn.style.display = 'inline-block';
+      if (startBtn) startBtn.style.display = "none";
+      if (stopBtn) stopBtn.style.display = "inline-block";
 
-      this.updateStatus('Camera started. Position barcode in frame.');
+      this.updateStatus("Camera started. Position barcode in frame.");
 
       // In a real implementation, we would use a barcode detection library here
       // For now, we'll simulate barcode detection
       this.simulateBarcodeDetection();
-
     } catch (error) {
-      console.error('Camera error:', error);
-      this.updateStatus('Error accessing camera. Please check permissions.');
+      console.error("Camera error:", error);
+      this.updateStatus("Error accessing camera. Please check permissions.");
     }
   }
 
   private stopCamera(): void {
     if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
+      this.stream.getTracks().forEach((track) => track.stop());
       this.stream = null;
     }
 
@@ -168,13 +176,15 @@ export class BarcodeScanner {
     this.isScanning = false;
 
     // Show/hide buttons
-    const startBtn = this.container.querySelector('#startCamera') as HTMLElement;
-    const stopBtn = this.container.querySelector('#stopCamera') as HTMLElement;
+    const startBtn = this.container.querySelector(
+      "#startCamera",
+    ) as HTMLElement;
+    const stopBtn = this.container.querySelector("#stopCamera") as HTMLElement;
 
-    if (startBtn) startBtn.style.display = 'inline-block';
-    if (stopBtn) stopBtn.style.display = 'none';
+    if (startBtn) startBtn.style.display = "inline-block";
+    if (stopBtn) stopBtn.style.display = "none";
 
-    this.updateStatus('');
+    this.updateStatus("");
   }
 
   private simulateBarcodeDetection(): void {
@@ -182,7 +192,9 @@ export class BarcodeScanner {
     // like ZXing or QuaggaJS to detect barcodes from the video stream
     // For demonstration, we'll show a message
 
-    this.updateStatus('Barcode scanning would be implemented using a library like ZXing or QuaggaJS');
+    this.updateStatus(
+      "Barcode scanning would be implemented using a library like ZXing or QuaggaJS",
+    );
   }
 
   private handleManualScan(barcode: string): void {
@@ -210,17 +222,17 @@ export class BarcodeScanner {
   }
 
   private addToHistory(barcode: string): void {
-    const historyContainer = this.container.querySelector('#scanHistory');
+    const historyContainer = this.container.querySelector("#scanHistory");
     if (!historyContainer) return;
 
-    const timestamp = new Date().toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+    const timestamp = new Date().toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
 
-    const historyItem = document.createElement('div');
-    historyItem.className = 'scan-item';
+    const historyItem = document.createElement("div");
+    historyItem.className = "scan-item";
     historyItem.innerHTML = `
       <span class="scan-barcode">${barcode}</span>
       <span class="scan-time">${timestamp}</span>
@@ -235,7 +247,7 @@ export class BarcodeScanner {
   }
 
   private updateStatus(message: string): void {
-    const statusElement = this.container.querySelector('#scannerStatus');
+    const statusElement = this.container.querySelector("#scannerStatus");
     if (statusElement) {
       statusElement.textContent = message;
     }
@@ -243,6 +255,6 @@ export class BarcodeScanner {
 
   destroy(): void {
     this.stopCamera();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

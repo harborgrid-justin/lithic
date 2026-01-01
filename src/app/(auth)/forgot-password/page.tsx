@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { toast } from "sonner"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -23,37 +23,37 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
-})
+});
 
-type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const form = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
-  })
+  });
 
   async function onSubmit(_data: ForgotPasswordFormValues) {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       // In production, this would send a password reset email
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setEmailSent(true)
-      toast.success("Password reset email sent!")
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setEmailSent(true);
+      toast.success("Password reset email sent!");
     } catch (error) {
-      toast.error("Failed to send reset email. Please try again.")
+      toast.error("Failed to send reset email. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -68,7 +68,8 @@ export default function ForgotPasswordPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            If you don&apos;t see the email in your inbox, please check your spam folder.
+            If you don&apos;t see the email in your inbox, please check your
+            spam folder.
           </p>
         </CardContent>
         <CardFooter>
@@ -80,7 +81,7 @@ export default function ForgotPasswordPage() {
           </Button>
         </CardFooter>
       </Card>
-    )
+    );
   }
 
   return (
@@ -126,5 +127,5 @@ export default function ForgotPasswordPage() {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

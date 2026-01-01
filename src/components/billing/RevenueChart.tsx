@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { RevenueMetrics } from '@/types/billing';
-import { formatCurrency } from '@/lib/utils';
+import { useMemo } from "react";
+import { RevenueMetrics } from "@/types/billing";
+import { formatCurrency } from "@/lib/utils";
 import {
   BarChart,
   Bar,
@@ -17,14 +17,17 @@ import {
   PieChart,
   Pie,
   Cell,
-} from 'recharts';
+} from "recharts";
 
 interface RevenueChartProps {
   metrics: RevenueMetrics[];
-  chartType?: 'bar' | 'line' | 'pie';
+  chartType?: "bar" | "line" | "pie";
 }
 
-export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChartProps) {
+export default function RevenueChart({
+  metrics,
+  chartType = "bar",
+}: RevenueChartProps) {
   const chartData = useMemo(() => {
     return metrics.map((metric) => ({
       period: metric.period,
@@ -42,16 +45,19 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
 
     const latestMetric = metrics[metrics.length - 1];
     return [
-      { name: 'Payments', value: latestMetric.totalPayments, color: '#10b981' },
+      { name: "Payments", value: latestMetric.totalPayments, color: "#10b981" },
       {
-        name: 'Adjustments',
+        name: "Adjustments",
         value: latestMetric.totalAdjustments,
-        color: '#f59e0b',
+        color: "#f59e0b",
       },
       {
-        name: 'Outstanding',
-        value: latestMetric.totalCharges - latestMetric.totalPayments - latestMetric.totalAdjustments,
-        color: '#ef4444',
+        name: "Outstanding",
+        value:
+          latestMetric.totalCharges -
+          latestMetric.totalPayments -
+          latestMetric.totalAdjustments,
+        color: "#ef4444",
       },
     ];
   }, [metrics]);
@@ -64,7 +70,7 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
         adjustments: acc.adjustments + metric.totalAdjustments,
         netRevenue: acc.netRevenue + metric.netRevenue,
       }),
-      { charges: 0, payments: 0, adjustments: 0, netRevenue: 0 }
+      { charges: 0, payments: 0, adjustments: 0, netRevenue: 0 },
     );
   }, [metrics]);
 
@@ -102,7 +108,7 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <h3 className="text-lg font-semibold mb-4">Revenue Trends</h3>
 
-        {chartType === 'bar' && (
+        {chartType === "bar" && (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -110,7 +116,7 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
               <YAxis />
               <Tooltip
                 formatter={(value: number) => formatCurrency(value)}
-                labelStyle={{ color: '#374151' }}
+                labelStyle={{ color: "#374151" }}
               />
               <Legend />
               <Bar dataKey="charges" fill="#3b82f6" name="Charges" />
@@ -120,7 +126,7 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
           </ResponsiveContainer>
         )}
 
-        {chartType === 'line' && (
+        {chartType === "line" && (
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -128,7 +134,7 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
               <YAxis />
               <Tooltip
                 formatter={(value: number) => formatCurrency(value)}
-                labelStyle={{ color: '#374151' }}
+                labelStyle={{ color: "#374151" }}
               />
               <Legend />
               <Line
@@ -156,7 +162,7 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
           </ResponsiveContainer>
         )}
 
-        {chartType === 'pie' && (
+        {chartType === "pie" && (
           <ResponsiveContainer width="100%" height={400}>
             <PieChart>
               <Pie
@@ -196,7 +202,9 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
                 <div className="mt-2 bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-green-500 rounded-full h-2"
-                    style={{ width: `${metrics[metrics.length - 1].collectionRate}%` }}
+                    style={{
+                      width: `${metrics[metrics.length - 1].collectionRate}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -218,7 +226,9 @@ export default function RevenueChart({ metrics, chartType = 'bar' }: RevenueChar
                 <div className="mt-2 bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-red-500 rounded-full h-2"
-                    style={{ width: `${metrics[metrics.length - 1].denialRate}%` }}
+                    style={{
+                      width: `${metrics[metrics.length - 1].denialRate}%`,
+                    }}
                   />
                 </div>
               </div>

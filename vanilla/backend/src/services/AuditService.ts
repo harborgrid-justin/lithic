@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
-import encryptionService from './EncryptionService';
+import { Pool } from "pg";
+import encryptionService from "./EncryptionService";
 
 /**
  * AuditService - HIPAA-compliant audit logging service
@@ -15,78 +15,78 @@ export interface AuditLogEntry {
   action: AuditAction;
   resourceType: ResourceType;
   resourceId?: string;
-  status: 'success' | 'failure';
+  status: "success" | "failure";
   ipAddress?: string;
   userAgent?: string;
   details?: Record<string, any>;
   phiAccessed?: boolean;
   sessionId?: string;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
+  severity?: "low" | "medium" | "high" | "critical";
 }
 
 export enum AuditAction {
   // Authentication
-  LOGIN = 'LOGIN',
-  LOGOUT = 'LOGOUT',
-  LOGIN_FAILED = 'LOGIN_FAILED',
-  MFA_ENABLED = 'MFA_ENABLED',
-  MFA_DISABLED = 'MFA_DISABLED',
-  MFA_VERIFIED = 'MFA_VERIFIED',
-  PASSWORD_CHANGED = 'PASSWORD_CHANGED',
-  PASSWORD_RESET = 'PASSWORD_RESET',
+  LOGIN = "LOGIN",
+  LOGOUT = "LOGOUT",
+  LOGIN_FAILED = "LOGIN_FAILED",
+  MFA_ENABLED = "MFA_ENABLED",
+  MFA_DISABLED = "MFA_DISABLED",
+  MFA_VERIFIED = "MFA_VERIFIED",
+  PASSWORD_CHANGED = "PASSWORD_CHANGED",
+  PASSWORD_RESET = "PASSWORD_RESET",
 
   // User Management
-  USER_CREATED = 'USER_CREATED',
-  USER_UPDATED = 'USER_UPDATED',
-  USER_DELETED = 'USER_DELETED',
-  USER_ACTIVATED = 'USER_ACTIVATED',
-  USER_DEACTIVATED = 'USER_DEACTIVATED',
+  USER_CREATED = "USER_CREATED",
+  USER_UPDATED = "USER_UPDATED",
+  USER_DELETED = "USER_DELETED",
+  USER_ACTIVATED = "USER_ACTIVATED",
+  USER_DEACTIVATED = "USER_DEACTIVATED",
 
   // Role & Permission
-  ROLE_ASSIGNED = 'ROLE_ASSIGNED',
-  ROLE_REVOKED = 'ROLE_REVOKED',
-  PERMISSION_GRANTED = 'PERMISSION_GRANTED',
-  PERMISSION_REVOKED = 'PERMISSION_REVOKED',
+  ROLE_ASSIGNED = "ROLE_ASSIGNED",
+  ROLE_REVOKED = "ROLE_REVOKED",
+  PERMISSION_GRANTED = "PERMISSION_GRANTED",
+  PERMISSION_REVOKED = "PERMISSION_REVOKED",
 
   // PHI Access
-  PHI_ACCESSED = 'PHI_ACCESSED',
-  PHI_CREATED = 'PHI_CREATED',
-  PHI_UPDATED = 'PHI_UPDATED',
-  PHI_DELETED = 'PHI_DELETED',
-  PHI_EXPORTED = 'PHI_EXPORTED',
-  PHI_PRINTED = 'PHI_PRINTED',
+  PHI_ACCESSED = "PHI_ACCESSED",
+  PHI_CREATED = "PHI_CREATED",
+  PHI_UPDATED = "PHI_UPDATED",
+  PHI_DELETED = "PHI_DELETED",
+  PHI_EXPORTED = "PHI_EXPORTED",
+  PHI_PRINTED = "PHI_PRINTED",
 
   // Patient Data
-  PATIENT_VIEWED = 'PATIENT_VIEWED',
-  PATIENT_CREATED = 'PATIENT_CREATED',
-  PATIENT_UPDATED = 'PATIENT_UPDATED',
-  PATIENT_DELETED = 'PATIENT_DELETED',
+  PATIENT_VIEWED = "PATIENT_VIEWED",
+  PATIENT_CREATED = "PATIENT_CREATED",
+  PATIENT_UPDATED = "PATIENT_UPDATED",
+  PATIENT_DELETED = "PATIENT_DELETED",
 
   // System
-  SYSTEM_CONFIG_CHANGED = 'SYSTEM_CONFIG_CHANGED',
-  BACKUP_CREATED = 'BACKUP_CREATED',
-  BACKUP_RESTORED = 'BACKUP_RESTORED',
-  ENCRYPTION_KEY_ROTATED = 'ENCRYPTION_KEY_ROTATED',
+  SYSTEM_CONFIG_CHANGED = "SYSTEM_CONFIG_CHANGED",
+  BACKUP_CREATED = "BACKUP_CREATED",
+  BACKUP_RESTORED = "BACKUP_RESTORED",
+  ENCRYPTION_KEY_ROTATED = "ENCRYPTION_KEY_ROTATED",
 
   // Security
-  UNAUTHORIZED_ACCESS_ATTEMPT = 'UNAUTHORIZED_ACCESS_ATTEMPT',
-  SUSPICIOUS_ACTIVITY = 'SUSPICIOUS_ACTIVITY',
-  SECURITY_BREACH = 'SECURITY_BREACH',
+  UNAUTHORIZED_ACCESS_ATTEMPT = "UNAUTHORIZED_ACCESS_ATTEMPT",
+  SUSPICIOUS_ACTIVITY = "SUSPICIOUS_ACTIVITY",
+  SECURITY_BREACH = "SECURITY_BREACH",
 }
 
 export enum ResourceType {
-  USER = 'USER',
-  ROLE = 'ROLE',
-  PERMISSION = 'PERMISSION',
-  PATIENT = 'PATIENT',
-  APPOINTMENT = 'APPOINTMENT',
-  MEDICAL_RECORD = 'MEDICAL_RECORD',
-  BILLING = 'BILLING',
-  PRESCRIPTION = 'PRESCRIPTION',
-  LAB_RESULT = 'LAB_RESULT',
-  ORGANIZATION = 'ORGANIZATION',
-  SYSTEM = 'SYSTEM',
-  SESSION = 'SESSION',
+  USER = "USER",
+  ROLE = "ROLE",
+  PERMISSION = "PERMISSION",
+  PATIENT = "PATIENT",
+  APPOINTMENT = "APPOINTMENT",
+  MEDICAL_RECORD = "MEDICAL_RECORD",
+  BILLING = "BILLING",
+  PRESCRIPTION = "PRESCRIPTION",
+  LAB_RESULT = "LAB_RESULT",
+  ORGANIZATION = "ORGANIZATION",
+  SYSTEM = "SYSTEM",
+  SESSION = "SESSION",
 }
 
 export class AuditService {
@@ -132,7 +132,7 @@ export class AuditService {
     try {
       await this.pool.query(createTableQuery);
     } catch (error) {
-      console.error('Failed to initialize audit table:', error);
+      console.error("Failed to initialize audit table:", error);
     }
   }
 
@@ -161,20 +161,20 @@ export class AuditService {
       entry.details ? JSON.stringify(entry.details) : null,
       entry.phiAccessed || false,
       entry.sessionId,
-      entry.severity || 'low',
+      entry.severity || "low",
     ];
 
     try {
       await this.pool.query(query, values);
 
       // Alert on critical events
-      if (entry.severity === 'critical' || entry.status === 'failure') {
+      if (entry.severity === "critical" || entry.status === "failure") {
         this.alertOnCriticalEvent(entry);
       }
     } catch (error) {
       // Audit logging failures should not break application flow
       // Log to console or external monitoring system
-      console.error('Audit log failed:', error);
+      console.error("Audit log failed:", error);
     }
   }
 
@@ -192,7 +192,7 @@ export class AuditService {
     limit?: number;
     offset?: number;
   }): Promise<AuditLogEntry[]> {
-    let query = 'SELECT * FROM audit_logs WHERE 1=1';
+    let query = "SELECT * FROM audit_logs WHERE 1=1";
     const values: any[] = [];
     let paramCount = 1;
 
@@ -231,7 +231,7 @@ export class AuditService {
       values.push(filters.endDate);
     }
 
-    query += ' ORDER BY timestamp DESC';
+    query += " ORDER BY timestamp DESC";
 
     if (filters.limit) {
       query += ` LIMIT $${paramCount++}`;
@@ -264,7 +264,7 @@ export class AuditService {
 
     const values: any[] = [];
     if (organizationId) {
-      query += ' WHERE organization_id = $1';
+      query += " WHERE organization_id = $1";
       values.push(organizationId);
     }
 
@@ -275,7 +275,10 @@ export class AuditService {
   /**
    * Get recent PHI access by user
    */
-  async getPHIAccessByUser(userId: string, limit: number = 50): Promise<AuditLogEntry[]> {
+  async getPHIAccessByUser(
+    userId: string,
+    limit: number = 50,
+  ): Promise<AuditLogEntry[]> {
     const query = `
       SELECT * FROM audit_logs
       WHERE user_id = $1 AND phi_accessed = true
@@ -292,7 +295,7 @@ export class AuditService {
    */
   async getFailedLoginAttempts(
     ipAddress?: string,
-    timeWindow: number = 3600000 // 1 hour in milliseconds
+    timeWindow: number = 3600000, // 1 hour in milliseconds
   ): Promise<number> {
     const since = new Date(Date.now() - timeWindow);
     let query = `
@@ -303,7 +306,7 @@ export class AuditService {
     const values: any[] = [AuditAction.LOGIN_FAILED, since];
 
     if (ipAddress) {
-      query += ' AND ip_address = $3';
+      query += " AND ip_address = $3";
       values.push(ipAddress);
     }
 
@@ -318,7 +321,7 @@ export class AuditService {
     startDate: Date;
     endDate: Date;
     organizationId?: string;
-    format?: 'json' | 'csv';
+    format?: "json" | "csv";
   }): Promise<string> {
     const logs = await this.getLogs({
       startDate: filters.startDate,
@@ -327,7 +330,7 @@ export class AuditService {
       limit: 100000, // Max export limit
     });
 
-    if (filters.format === 'csv') {
+    if (filters.format === "csv") {
       return this.convertToCSV(logs);
     }
 
@@ -339,7 +342,7 @@ export class AuditService {
    */
   private alertOnCriticalEvent(entry: AuditLogEntry): void {
     // Implement alerting mechanism (email, Slack, PagerDuty, etc.)
-    console.error('CRITICAL AUDIT EVENT:', {
+    console.error("CRITICAL AUDIT EVENT:", {
       action: entry.action,
       userId: entry.userId,
       resourceType: entry.resourceType,
@@ -359,18 +362,18 @@ export class AuditService {
    */
   private convertToCSV(logs: AuditLogEntry[]): string {
     const headers = [
-      'ID',
-      'Timestamp',
-      'User ID',
-      'User Email',
-      'Organization ID',
-      'Action',
-      'Resource Type',
-      'Resource ID',
-      'Status',
-      'IP Address',
-      'PHI Accessed',
-      'Severity',
+      "ID",
+      "Timestamp",
+      "User ID",
+      "User Email",
+      "Organization ID",
+      "Action",
+      "Resource Type",
+      "Resource ID",
+      "Status",
+      "IP Address",
+      "PHI Accessed",
+      "Severity",
     ];
 
     const rows = logs.map((log) => [
@@ -389,9 +392,9 @@ export class AuditService {
     ]);
 
     return [
-      headers.join(','),
-      ...rows.map((row) => row.map((cell) => `"${cell || ''}"`).join(',')),
-    ].join('\n');
+      headers.join(","),
+      ...rows.map((row) => row.map((cell) => `"${cell || ""}"`).join(",")),
+    ].join("\n");
   }
 
   /**

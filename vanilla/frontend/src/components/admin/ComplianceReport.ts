@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * ComplianceReport Component
@@ -43,8 +43,8 @@ export class ComplianceReport {
   }
 
   private attachEventListeners(): void {
-    const generateBtn = document.getElementById('generate-report-btn');
-    generateBtn?.addEventListener('click', () => this.generateReport());
+    const generateBtn = document.getElementById("generate-report-btn");
+    generateBtn?.addEventListener("click", () => this.generateReport());
   }
 
   private async loadReportData(): Promise<void> {
@@ -53,28 +53,37 @@ export class ComplianceReport {
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    const startInput = document.getElementById('report-start-date') as HTMLInputElement;
-    const endInput = document.getElementById('report-end-date') as HTMLInputElement;
+    const startInput = document.getElementById(
+      "report-start-date",
+    ) as HTMLInputElement;
+    const endInput = document.getElementById(
+      "report-end-date",
+    ) as HTMLInputElement;
 
     if (startInput && endInput) {
-      startInput.value = firstDay.toISOString().split('T')[0];
-      endInput.value = lastDay.toISOString().split('T')[0];
+      startInput.value = firstDay.toISOString().split("T")[0];
+      endInput.value = lastDay.toISOString().split("T")[0];
     }
   }
 
   private async generateReport(): Promise<void> {
-    const startDate = (document.getElementById('report-start-date') as HTMLInputElement)?.value;
-    const endDate = (document.getElementById('report-end-date') as HTMLInputElement)?.value;
+    const startDate = (
+      document.getElementById("report-start-date") as HTMLInputElement
+    )?.value;
+    const endDate = (
+      document.getElementById("report-end-date") as HTMLInputElement
+    )?.value;
 
     if (!startDate || !endDate) {
-      alert('Please select both start and end dates');
+      alert("Please select both start and end dates");
       return;
     }
 
-    const reportContent = document.getElementById('report-content');
+    const reportContent = document.getElementById("report-content");
     if (!reportContent) return;
 
-    reportContent.innerHTML = '<div class="loading">Generating compliance report...</div>';
+    reportContent.innerHTML =
+      '<div class="loading">Generating compliance report...</div>';
 
     try {
       const [auditStats, mfaStats, sessionStats] = await Promise.all([
@@ -129,8 +138,8 @@ export class ComplianceReport {
             <tr>
               <td>Access Control</td>
               <td>
-                <span class="badge badge--${data.mfaStats.enabledPercentage > 80 ? 'success' : 'warning'}">
-                  ${data.mfaStats.enabledPercentage > 80 ? 'Compliant' : 'Needs Improvement'}
+                <span class="badge badge--${data.mfaStats.enabledPercentage > 80 ? "success" : "warning"}">
+                  ${data.mfaStats.enabledPercentage > 80 ? "Compliant" : "Needs Improvement"}
                 </span>
               </td>
               <td>MFA Adoption: ${Math.round(data.mfaStats.enabledPercentage)}%</td>
@@ -252,7 +261,8 @@ export class ComplianceReport {
     }
 
     // Deduct points for high failure rate
-    const failureRate = (data.auditStats.failed_events / data.auditStats.total_events) * 100;
+    const failureRate =
+      (data.auditStats.failed_events / data.auditStats.total_events) * 100;
     if (failureRate > 5) {
       score -= (failureRate - 5) * 2;
     }
@@ -261,32 +271,39 @@ export class ComplianceReport {
   }
 
   private getScoreClass(score: number): string {
-    if (score >= 90) return 'score-excellent';
-    if (score >= 75) return 'score-good';
-    if (score >= 60) return 'score-fair';
-    return 'score-poor';
+    if (score >= 90) return "score-excellent";
+    if (score >= 75) return "score-good";
+    if (score >= 60) return "score-fair";
+    return "score-poor";
   }
 
   private getScoreDescription(score: number): string {
-    if (score >= 90) return 'Excellent - Organization demonstrates strong HIPAA compliance';
-    if (score >= 75) return 'Good - Organization meets HIPAA requirements with minor improvements needed';
-    if (score >= 60) return 'Fair - Organization requires improvement in several areas';
-    return 'Poor - Immediate action required to achieve HIPAA compliance';
+    if (score >= 90)
+      return "Excellent - Organization demonstrates strong HIPAA compliance";
+    if (score >= 75)
+      return "Good - Organization meets HIPAA requirements with minor improvements needed";
+    if (score >= 60)
+      return "Fair - Organization requires improvement in several areas";
+    return "Poor - Immediate action required to achieve HIPAA compliance";
   }
 
   private renderRecommendations(data: any): string {
     const recommendations: string[] = [];
 
     if (data.mfaStats.enabledPercentage < 80) {
-      recommendations.push('Increase MFA adoption to at least 80% of users');
+      recommendations.push("Increase MFA adoption to at least 80% of users");
     }
 
     if (data.auditStats.critical_events > 0) {
-      recommendations.push(`Investigate and resolve ${data.auditStats.critical_events} critical security events`);
+      recommendations.push(
+        `Investigate and resolve ${data.auditStats.critical_events} critical security events`,
+      );
     }
 
     if (data.auditStats.failed_events > 10) {
-      recommendations.push('Review failed login attempts and implement additional security measures');
+      recommendations.push(
+        "Review failed login attempts and implement additional security measures",
+      );
     }
 
     if (recommendations.length === 0) {
@@ -295,12 +312,12 @@ export class ComplianceReport {
 
     return `
       <ul class="recommendations-list">
-        ${recommendations.map((rec) => `<li>${rec}</li>`).join('')}
+        ${recommendations.map((rec) => `<li>${rec}</li>`).join("")}
       </ul>
     `;
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

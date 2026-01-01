@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Clock, Calendar, MapPin, Edit, Trash2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import type { ScheduleTemplate, Provider } from '@/types/scheduling';
-import { formatDuration } from '@/lib/utils';
+import React from "react";
+import { Clock, Calendar, MapPin, Edit, Trash2 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import type { ScheduleTemplate, Provider } from "@/types/scheduling";
+import { formatDuration } from "@/lib/utils";
 
 interface ScheduleTemplateProps {
   template: ScheduleTemplate;
@@ -24,12 +24,20 @@ export default function ScheduleTemplateComponent({
   onApply,
 }: ScheduleTemplateProps) {
   const getDayName = (dayOfWeek: number): string => {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
     return days[dayOfWeek];
   };
 
   return (
-    <Card className={!template.isActive ? 'opacity-60' : ''}>
+    <Card className={!template.isActive ? "opacity-60" : ""}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -37,8 +45,8 @@ export default function ScheduleTemplateComponent({
             <CardTitle>{template.name}</CardTitle>
           </div>
           <div className="flex items-center space-x-2">
-            <Badge variant={template.isActive ? 'default' : 'secondary'}>
-              {template.isActive ? 'Active' : 'Inactive'}
+            <Badge variant={template.isActive ? "default" : "secondary"}>
+              {template.isActive ? "Active" : "Inactive"}
             </Badge>
             {provider && <Badge variant="outline">{provider.name}</Badge>}
           </div>
@@ -57,7 +65,9 @@ export default function ScheduleTemplateComponent({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-24">
-                    <span className="font-medium text-sm">{getDayName(slot.dayOfWeek)}</span>
+                    <span className="font-medium text-sm">
+                      {getDayName(slot.dayOfWeek)}
+                    </span>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
                     <Clock className="h-4 w-4 mr-1" />
@@ -92,13 +102,21 @@ export default function ScheduleTemplateComponent({
             </Button>
           )}
           {onEdit && (
-            <Button size="sm" variant="outline" onClick={() => onEdit(template)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onEdit(template)}
+            >
               <Edit className="h-4 w-4 mr-1" />
               Edit
             </Button>
           )}
           {onDelete && (
-            <Button size="sm" variant="destructive" onClick={() => onDelete(template)}>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => onDelete(template)}
+            >
               <Trash2 className="h-4 w-4 mr-1" />
               Delete
             </Button>

@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Plus, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Select } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
-import WaitlistManager from '@/components/scheduling/WaitlistManager';
-import { schedulingService } from '@/services/scheduling.service';
-import type { WaitlistEntry, Provider } from '@/types/scheduling';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Plus, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import WaitlistManager from "@/components/scheduling/WaitlistManager";
+import { schedulingService } from "@/services/scheduling.service";
+import type { WaitlistEntry, Provider } from "@/types/scheduling";
+import { toast } from "sonner";
 
 export default function WaitlistPage() {
   const router = useRouter();
   const [entries, setEntries] = useState<WaitlistEntry[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterProvider, setFilterProvider] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterProvider, setFilterProvider] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,10 +27,10 @@ export default function WaitlistPage() {
     setLoading(true);
     try {
       const filters: any = {};
-      if (filterStatus !== 'all') {
+      if (filterStatus !== "all") {
         filters.status = filterStatus;
       }
-      if (filterProvider !== 'all') {
+      if (filterProvider !== "all") {
         filters.providerId = filterProvider;
       }
 
@@ -42,7 +42,7 @@ export default function WaitlistPage() {
       setEntries(entriesData);
       setProviders(providersData);
     } catch (error) {
-      toast.error('Failed to load waitlist');
+      toast.error("Failed to load waitlist");
       console.error(error);
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ export default function WaitlistPage() {
     // Navigate to new appointment page with pre-filled data
     const params = new URLSearchParams({
       patientId: entry.patientId,
-      providerId: entry.providerId || '',
+      providerId: entry.providerId || "",
       type: entry.appointmentType,
       waitlistId: entry.id,
     });
@@ -66,7 +66,9 @@ export default function WaitlistPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Waitlist</h1>
-          <p className="text-gray-600 mt-1">Manage patients waiting for appointments</p>
+          <p className="text-gray-600 mt-1">
+            Manage patients waiting for appointments
+          </p>
         </div>
         <div className="flex space-x-3">
           <Button variant="outline">
@@ -83,14 +85,20 @@ export default function WaitlistPage() {
       {/* Filters */}
       <Card className="p-4">
         <div className="grid grid-cols-3 gap-4">
-          <Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+          <Select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="contacted">Contacted</option>
             <option value="scheduled">Scheduled</option>
             <option value="cancelled">Cancelled</option>
           </Select>
-          <Select value={filterProvider} onChange={(e) => setFilterProvider(e.target.value)}>
+          <Select
+            value={filterProvider}
+            onChange={(e) => setFilterProvider(e.target.value)}
+          >
             <option value="all">All Providers</option>
             {providers.map((provider) => (
               <option key={provider.id} value={provider.id}>
@@ -110,7 +118,9 @@ export default function WaitlistPage() {
 
       {/* Waitlist */}
       {loading ? (
-        <div className="text-center py-12 text-gray-500">Loading waitlist...</div>
+        <div className="text-center py-12 text-gray-500">
+          Loading waitlist...
+        </div>
       ) : (
         <WaitlistManager
           entries={entries}

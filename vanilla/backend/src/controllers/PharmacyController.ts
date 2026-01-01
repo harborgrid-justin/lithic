@@ -3,19 +3,25 @@
  * Controller for pharmacy management endpoints
  */
 
-import { Request, Response } from 'express';
-import pharmacyService from '../services/PharmacyService';
-import prescriptionService from '../services/PrescriptionService';
-import drugInteractionService from '../services/DrugInteractionService';
+import { Request, Response } from "express";
+import pharmacyService from "../services/PharmacyService";
+import prescriptionService from "../services/PrescriptionService";
+import drugInteractionService from "../services/DrugInteractionService";
 
 export class PharmacyController {
   // Medications
   async getMedications(req: Request, res: Response): Promise<void> {
     try {
-      const { isControlled, deaSchedule, formularyStatus, therapeuticClass } = req.query;
+      const { isControlled, deaSchedule, formularyStatus, therapeuticClass } =
+        req.query;
 
       const medications = await pharmacyService.getAllMedications({
-        isControlled: isControlled === 'true' ? true : isControlled === 'false' ? false : undefined,
+        isControlled:
+          isControlled === "true"
+            ? true
+            : isControlled === "false"
+              ? false
+              : undefined,
         deaSchedule: deaSchedule as string,
         formularyStatus: formularyStatus as string,
         therapeuticClass: therapeuticClass as string,
@@ -29,8 +35,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch medications',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch medications",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -43,7 +49,7 @@ export class PharmacyController {
       if (!medication) {
         res.status(404).json({
           success: false,
-          error: 'Medication not found',
+          error: "Medication not found",
         });
         return;
       }
@@ -55,8 +61,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch medication',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch medication",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -65,10 +71,10 @@ export class PharmacyController {
     try {
       const { q } = req.query;
 
-      if (!q || typeof q !== 'string') {
+      if (!q || typeof q !== "string") {
         res.status(400).json({
           success: false,
-          error: 'Search query required',
+          error: "Search query required",
         });
         return;
       }
@@ -83,8 +89,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to search medications',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to search medications",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -96,13 +102,13 @@ export class PharmacyController {
       res.status(201).json({
         success: true,
         data: medication,
-        message: 'Medication created successfully',
+        message: "Medication created successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to create medication',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to create medication",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -114,8 +120,8 @@ export class PharmacyController {
 
       const inventory = await pharmacyService.getAllInventory({
         status: status as string,
-        lowStock: lowStock === 'true',
-        expiringSoon: expiringSoon === 'true',
+        lowStock: lowStock === "true",
+        expiringSoon: expiringSoon === "true",
       });
 
       res.json({
@@ -126,8 +132,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch inventory',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch inventory",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -140,7 +146,7 @@ export class PharmacyController {
       if (!item) {
         res.status(404).json({
           success: false,
-          error: 'Inventory item not found',
+          error: "Inventory item not found",
         });
         return;
       }
@@ -152,8 +158,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch inventory item',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch inventory item",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -165,13 +171,13 @@ export class PharmacyController {
       res.status(201).json({
         success: true,
         data: item,
-        message: 'Inventory item created successfully',
+        message: "Inventory item created successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to create inventory item',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to create inventory item",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -181,20 +187,24 @@ export class PharmacyController {
       const { id } = req.params;
       const { quantityChange, reason } = req.body;
 
-      if (typeof quantityChange !== 'number' || !reason) {
+      if (typeof quantityChange !== "number" || !reason) {
         res.status(400).json({
           success: false,
-          error: 'Quantity change and reason required',
+          error: "Quantity change and reason required",
         });
         return;
       }
 
-      const item = await pharmacyService.updateInventoryQuantity(id, quantityChange, reason);
+      const item = await pharmacyService.updateInventoryQuantity(
+        id,
+        quantityChange,
+        reason,
+      );
 
       if (!item) {
         res.status(404).json({
           success: false,
-          error: 'Inventory item not found',
+          error: "Inventory item not found",
         });
         return;
       }
@@ -202,13 +212,13 @@ export class PharmacyController {
       res.json({
         success: true,
         data: item,
-        message: 'Inventory updated successfully',
+        message: "Inventory updated successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to update inventory',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to update inventory",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -221,14 +231,22 @@ export class PharmacyController {
       let prescriptions;
 
       if (patientId) {
-        prescriptions = await pharmacyService.getPrescriptionsByPatient(patientId as string, {
-          status: status as string,
-        });
+        prescriptions = await pharmacyService.getPrescriptionsByPatient(
+          patientId as string,
+          {
+            status: status as string,
+          },
+        );
       } else {
         prescriptions = await pharmacyService.getAllPrescriptions({
           status: status as string,
           priority: priority as string,
-          isControlled: isControlled === 'true' ? true : isControlled === 'false' ? false : undefined,
+          isControlled:
+            isControlled === "true"
+              ? true
+              : isControlled === "false"
+                ? false
+                : undefined,
         });
       }
 
@@ -240,8 +258,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch prescriptions',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch prescriptions",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -254,7 +272,7 @@ export class PharmacyController {
       if (!prescription) {
         res.status(404).json({
           success: false,
-          error: 'Prescription not found',
+          error: "Prescription not found",
         });
         return;
       }
@@ -266,8 +284,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch prescription',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch prescription",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -275,12 +293,14 @@ export class PharmacyController {
   async createPrescription(req: Request, res: Response): Promise<void> {
     try {
       // Validate prescription
-      const validation = await prescriptionService.validatePrescription(req.body);
+      const validation = await prescriptionService.validatePrescription(
+        req.body,
+      );
 
       if (!validation.isValid) {
         res.status(400).json({
           success: false,
-          error: 'Prescription validation failed',
+          error: "Prescription validation failed",
           errors: validation.errors,
           warnings: validation.warnings,
         });
@@ -293,13 +313,13 @@ export class PharmacyController {
         success: true,
         data: prescription,
         warnings: validation.warnings,
-        message: 'Prescription created successfully',
+        message: "Prescription created successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to create prescription',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to create prescription",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -312,17 +332,21 @@ export class PharmacyController {
       if (!status) {
         res.status(400).json({
           success: false,
-          error: 'Status required',
+          error: "Status required",
         });
         return;
       }
 
-      const prescription = await pharmacyService.updatePrescriptionStatus(id, status, notes);
+      const prescription = await pharmacyService.updatePrescriptionStatus(
+        id,
+        status,
+        notes,
+      );
 
       if (!prescription) {
         res.status(404).json({
           success: false,
-          error: 'Prescription not found',
+          error: "Prescription not found",
         });
         return;
       }
@@ -330,13 +354,13 @@ export class PharmacyController {
       res.json({
         success: true,
         data: prescription,
-        message: 'Prescription status updated successfully',
+        message: "Prescription status updated successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to update prescription',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to update prescription",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -355,7 +379,7 @@ export class PharmacyController {
       if (!record) {
         res.status(404).json({
           success: false,
-          error: 'Prescription not found or cannot be dispensed',
+          error: "Prescription not found or cannot be dispensed",
         });
         return;
       }
@@ -363,13 +387,13 @@ export class PharmacyController {
       res.status(201).json({
         success: true,
         data: record,
-        message: 'Prescription dispensed successfully',
+        message: "Prescription dispensed successfully",
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        error: 'Failed to dispense prescription',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to dispense prescription",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -394,8 +418,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch controlled substance logs',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch controlled substance logs",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -407,13 +431,13 @@ export class PharmacyController {
       res.status(201).json({
         success: true,
         data: log,
-        message: 'Controlled substance action logged successfully',
+        message: "Controlled substance action logged successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to log controlled substance action',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to log controlled substance action",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -436,8 +460,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch formulary',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch formulary",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -450,7 +474,7 @@ export class PharmacyController {
       if (!entry) {
         res.status(404).json({
           success: false,
-          error: 'Formulary entry not found',
+          error: "Formulary entry not found",
         });
         return;
       }
@@ -462,8 +486,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch formulary entry',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch formulary entry",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -475,13 +499,13 @@ export class PharmacyController {
       res.status(201).json({
         success: true,
         data: entry,
-        message: 'Formulary entry created successfully',
+        message: "Formulary entry created successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to create formulary entry',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to create formulary entry",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -489,12 +513,13 @@ export class PharmacyController {
   // Drug Interactions
   async checkDrugInteractions(req: Request, res: Response): Promise<void> {
     try {
-      const { medicationId, patientId, currentMedications, patientData } = req.body;
+      const { medicationId, patientId, currentMedications, patientData } =
+        req.body;
 
       if (!medicationId) {
         res.status(400).json({
           success: false,
-          error: 'Medication ID required',
+          error: "Medication ID required",
         });
         return;
       }
@@ -503,7 +528,7 @@ export class PharmacyController {
       if (!medication) {
         res.status(404).json({
           success: false,
-          error: 'Medication not found',
+          error: "Medication not found",
         });
         return;
       }
@@ -511,7 +536,7 @@ export class PharmacyController {
       const result = await drugInteractionService.checkInteractions(
         medication,
         currentMedications || [],
-        patientData
+        patientData,
       );
 
       res.json({
@@ -521,8 +546,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to check drug interactions',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to check drug interactions",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -545,8 +570,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch e-prescriptions',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch e-prescriptions",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -558,13 +583,13 @@ export class PharmacyController {
       res.status(201).json({
         success: true,
         data: erx,
-        message: 'E-prescription processed successfully',
+        message: "E-prescription processed successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to process e-prescription',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to process e-prescription",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -574,12 +599,15 @@ export class PharmacyController {
       const { id } = req.params;
       const { processedBy } = req.body;
 
-      const erx = await prescriptionService.acceptEPrescription(id, processedBy);
+      const erx = await prescriptionService.acceptEPrescription(
+        id,
+        processedBy,
+      );
 
       if (!erx) {
         res.status(404).json({
           success: false,
-          error: 'E-prescription not found',
+          error: "E-prescription not found",
         });
         return;
       }
@@ -587,13 +615,13 @@ export class PharmacyController {
       res.json({
         success: true,
         data: erx,
-        message: 'E-prescription accepted successfully',
+        message: "E-prescription accepted successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to accept e-prescription',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to accept e-prescription",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -606,7 +634,7 @@ export class PharmacyController {
       if (!reason) {
         res.status(400).json({
           success: false,
-          error: 'Rejection reason required',
+          error: "Rejection reason required",
         });
         return;
       }
@@ -616,7 +644,7 @@ export class PharmacyController {
       if (!erx) {
         res.status(404).json({
           success: false,
-          error: 'E-prescription not found',
+          error: "E-prescription not found",
         });
         return;
       }
@@ -624,13 +652,13 @@ export class PharmacyController {
       res.json({
         success: true,
         data: erx,
-        message: 'E-prescription rejected successfully',
+        message: "E-prescription rejected successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to reject e-prescription',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to reject e-prescription",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -653,8 +681,8 @@ export class PharmacyController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch refill requests',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch refill requests",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -666,23 +694,26 @@ export class PharmacyController {
       if (!prescriptionId || !requestedBy) {
         res.status(400).json({
           success: false,
-          error: 'Prescription ID and requestedBy required',
+          error: "Prescription ID and requestedBy required",
         });
         return;
       }
 
-      const request = await prescriptionService.sendRefillRequest(prescriptionId, requestedBy);
+      const request = await prescriptionService.sendRefillRequest(
+        prescriptionId,
+        requestedBy,
+      );
 
       res.status(201).json({
         success: true,
         data: request,
-        message: 'Refill request created successfully',
+        message: "Refill request created successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to create refill request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to create refill request",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -695,17 +726,20 @@ export class PharmacyController {
       if (!processedBy) {
         res.status(400).json({
           success: false,
-          error: 'ProcessedBy required',
+          error: "ProcessedBy required",
         });
         return;
       }
 
-      const request = await prescriptionService.approveRefillRequest(id, processedBy);
+      const request = await prescriptionService.approveRefillRequest(
+        id,
+        processedBy,
+      );
 
       if (!request) {
         res.status(404).json({
           success: false,
-          error: 'Refill request not found',
+          error: "Refill request not found",
         });
         return;
       }
@@ -713,13 +747,13 @@ export class PharmacyController {
       res.json({
         success: true,
         data: request,
-        message: 'Refill request approved successfully',
+        message: "Refill request approved successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to approve refill request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to approve refill request",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -732,17 +766,21 @@ export class PharmacyController {
       if (!reason || !processedBy) {
         res.status(400).json({
           success: false,
-          error: 'Reason and processedBy required',
+          error: "Reason and processedBy required",
         });
         return;
       }
 
-      const request = await prescriptionService.denyRefillRequest(id, reason, processedBy);
+      const request = await prescriptionService.denyRefillRequest(
+        id,
+        reason,
+        processedBy,
+      );
 
       if (!request) {
         res.status(404).json({
           success: false,
-          error: 'Refill request not found',
+          error: "Refill request not found",
         });
         return;
       }
@@ -750,13 +788,13 @@ export class PharmacyController {
       res.json({
         success: true,
         data: request,
-        message: 'Refill request denied successfully',
+        message: "Refill request denied successfully",
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to deny refill request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to deny refill request",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

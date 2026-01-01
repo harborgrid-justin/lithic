@@ -20,8 +20,8 @@ export class ImagingService {
       startDate,
       endDate,
       orderingProviderId,
-      page = '1',
-      limit = '50',
+      page = "1",
+      limit = "50",
     } = filters;
 
     // Mock implementation - replace with actual database query
@@ -39,7 +39,9 @@ export class ImagingService {
       filtered = filtered.filter((o: any) => o.modality === modality);
     }
     if (orderingProviderId) {
-      filtered = filtered.filter((o: any) => o.orderingProviderId === orderingProviderId);
+      filtered = filtered.filter(
+        (o: any) => o.orderingProviderId === orderingProviderId,
+      );
     }
 
     const pageNum = parseInt(page);
@@ -72,14 +74,14 @@ export class ImagingService {
     };
 
     // TODO: Save to database
-    console.log('Creating order:', order);
+    console.log("Creating order:", order);
 
     return order;
   }
 
   async updateOrder(orderId: string, updates: any) {
     // TODO: Update in database
-    console.log('Updating order:', orderId, updates);
+    console.log("Updating order:", orderId, updates);
 
     return {
       id: orderId,
@@ -96,10 +98,10 @@ export class ImagingService {
     // Mock audit trail
     return [
       {
-        id: '1',
+        id: "1",
         orderId,
-        action: 'CREATED',
-        performedBy: 'Dr. Smith',
+        action: "CREATED",
+        performedBy: "Dr. Smith",
         performedAt: new Date().toISOString(),
         changes: {},
       },
@@ -119,8 +121,8 @@ export class ImagingService {
       accessionNumber,
       startDate,
       endDate,
-      page = '1',
-      limit = '50',
+      page = "1",
+      limit = "50",
     } = filters;
 
     const mockStudies = this.getMockStudies();
@@ -133,7 +135,9 @@ export class ImagingService {
       filtered = filtered.filter((s: any) => s.modality === modality);
     }
     if (accessionNumber) {
-      filtered = filtered.filter((s: any) => s.accessionNumber === accessionNumber);
+      filtered = filtered.filter(
+        (s: any) => s.accessionNumber === accessionNumber,
+      );
     }
 
     const pageNum = parseInt(page);
@@ -154,7 +158,9 @@ export class ImagingService {
 
   async findStudyByUID(studyInstanceUID: string) {
     const studies = this.getMockStudies();
-    return studies.find((s: any) => s.studyInstanceUID === studyInstanceUID) || null;
+    return (
+      studies.find((s: any) => s.studyInstanceUID === studyInstanceUID) || null
+    );
   }
 
   async createStudy(studyData: any) {
@@ -164,14 +170,14 @@ export class ImagingService {
     };
 
     // TODO: Save to database
-    console.log('Creating study:', study);
+    console.log("Creating study:", study);
 
     return study;
   }
 
   async updateStudy(studyInstanceUID: string, updates: any) {
     // TODO: Update in database
-    console.log('Updating study:', studyInstanceUID, updates);
+    console.log("Updating study:", studyInstanceUID, updates);
 
     return {
       studyInstanceUID,
@@ -183,18 +189,21 @@ export class ImagingService {
     // Mock series data
     return [
       {
-        seriesInstanceUID: '1.2.840.113619.2.55.3.2831164482.456.1234567890.2',
+        seriesInstanceUID: "1.2.840.113619.2.55.3.2831164482.456.1234567890.2",
         seriesNumber: 1,
-        modality: 'CT',
-        seriesDescription: 'Chest CT Axial',
+        modality: "CT",
+        seriesDescription: "Chest CT Axial",
         numberOfInstances: 150,
-        seriesDate: '20240101',
-        seriesTime: '143022',
+        seriesDate: "20240101",
+        seriesTime: "143022",
       },
     ];
   }
 
-  async getSeriesInstances(studyInstanceUID: string, seriesInstanceUID: string) {
+  async getSeriesInstances(
+    studyInstanceUID: string,
+    seriesInstanceUID: string,
+  ) {
     // Mock instance data
     const instances = [];
     for (let i = 1; i <= 10; i++) {
@@ -217,13 +226,13 @@ export class ImagingService {
     return {
       currentStudy: await this.findStudyByUID(currentStudyUID),
       compareStudies: await Promise.all(
-        compareStudyUIDs.map(uid => this.findStudyByUID(uid))
+        compareStudyUIDs.map((uid) => this.findStudyByUID(uid)),
       ),
       differences: [
         {
-          finding: 'Lung nodule size increased from 5mm to 7mm',
-          location: 'Right upper lobe',
-          significance: 'MODERATE',
+          finding: "Lung nodule size increased from 5mm to 7mm",
+          location: "Right upper lobe",
+          significance: "MODERATE",
         },
       ],
     };
@@ -235,24 +244,30 @@ export class ImagingService {
 
     const allStudies = this.getMockStudies();
     return allStudies
-      .filter((s: any) =>
-        s.patientId === currentStudy.patientId &&
-        s.studyInstanceUID !== studyInstanceUID &&
-        new Date(s.studyDate) < new Date(currentStudy.studyDate)
+      .filter(
+        (s: any) =>
+          s.patientId === currentStudy.patientId &&
+          s.studyInstanceUID !== studyInstanceUID &&
+          new Date(s.studyDate) < new Date(currentStudy.studyDate),
       )
-      .sort((a: any, b: any) =>
-        new Date(b.studyDate).getTime() - new Date(a.studyDate).getTime()
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.studyDate).getTime() - new Date(a.studyDate).getTime(),
       )
       .slice(0, limit);
   }
 
   async archiveStudy(studyInstanceUID: string, userId: string) {
     // TODO: Soft delete in database
-    console.log('Archiving study:', studyInstanceUID, 'by user:', userId);
+    console.log("Archiving study:", studyInstanceUID, "by user:", userId);
     return { success: true };
   }
 
-  async generateShareLink(studyInstanceUID: string, expiresIn: number, userId: string) {
+  async generateShareLink(
+    studyInstanceUID: string,
+    expiresIn: number,
+    userId: string,
+  ) {
     const token = this.generateToken();
     const expiresAt = new Date(Date.now() + expiresIn * 1000);
 
@@ -277,15 +292,17 @@ export class ImagingService {
       status,
       reportType,
       criticalOnly,
-      page = '1',
-      limit = '50',
+      page = "1",
+      limit = "50",
     } = filters;
 
     const mockReports = this.getMockReports();
     let filtered = mockReports;
 
     if (studyInstanceUID) {
-      filtered = filtered.filter((r: any) => r.studyInstanceUID === studyInstanceUID);
+      filtered = filtered.filter(
+        (r: any) => r.studyInstanceUID === studyInstanceUID,
+      );
     }
     if (patientId) {
       filtered = filtered.filter((r: any) => r.patientId === patientId);
@@ -296,7 +313,7 @@ export class ImagingService {
     if (status) {
       filtered = filtered.filter((r: any) => r.status === status);
     }
-    if (criticalOnly === 'true') {
+    if (criticalOnly === "true") {
       filtered = filtered.filter((r: any) => r.criticalResult === true);
     }
 
@@ -323,7 +340,9 @@ export class ImagingService {
 
   async findReportByStudyUID(studyInstanceUID: string) {
     const reports = this.getMockReports();
-    return reports.find((r: any) => r.studyInstanceUID === studyInstanceUID) || null;
+    return (
+      reports.find((r: any) => r.studyInstanceUID === studyInstanceUID) || null
+    );
   }
 
   async createReport(reportData: any) {
@@ -333,14 +352,14 @@ export class ImagingService {
     };
 
     // TODO: Save to database
-    console.log('Creating report:', report);
+    console.log("Creating report:", report);
 
     return report;
   }
 
   async updateReport(reportId: string, updates: any) {
     // TODO: Update in database
-    console.log('Updating report:', reportId, updates);
+    console.log("Updating report:", reportId, updates);
 
     return {
       id: reportId,
@@ -354,7 +373,7 @@ export class ImagingService {
 
   async addAddendum(reportId: string, addendumData: any) {
     const report = await this.findReportById(reportId);
-    if (!report) throw new Error('Report not found');
+    if (!report) throw new Error("Report not found");
 
     const addendum = {
       id: this.generateUUID(),
@@ -363,7 +382,7 @@ export class ImagingService {
     };
 
     // TODO: Save addendum to database
-    console.log('Adding addendum:', addendum);
+    console.log("Adding addendum:", addendum);
 
     return {
       ...report,
@@ -373,7 +392,7 @@ export class ImagingService {
 
   async correctReport(reportId: string, correctionData: any) {
     const report = await this.findReportById(reportId);
-    if (!report) throw new Error('Report not found');
+    if (!report) throw new Error("Report not found");
 
     // Create version history entry
     const previousVersion = {
@@ -395,9 +414,9 @@ export class ImagingService {
     return [
       {
         version: 1,
-        status: 'FINAL',
-        updatedAt: '2024-01-01T10:00:00Z',
-        updatedBy: 'Dr. Johnson',
+        status: "FINAL",
+        updatedAt: "2024-01-01T10:00:00Z",
+        updatedBy: "Dr. Johnson",
       },
     ];
   }
@@ -405,15 +424,18 @@ export class ImagingService {
   async generateReportPDF(reportId: string) {
     // Mock PDF generation
     const report = await this.findReportById(reportId);
-    if (!report) throw new Error('Report not found');
+    if (!report) throw new Error("Report not found");
 
     // TODO: Implement actual PDF generation
-    return Buffer.from('Mock PDF content');
+    return Buffer.from("Mock PDF content");
   }
 
-  async sendCriticalResultNotification(reportId: string, notificationData: any) {
+  async sendCriticalResultNotification(
+    reportId: string,
+    notificationData: any,
+  ) {
     // TODO: Implement actual notification (email, SMS, etc.)
-    console.log('Sending critical result notification:', notificationData);
+    console.log("Sending critical result notification:", notificationData);
 
     return await this.updateReport(reportId, {
       criticalResultNotifiedTo: notificationData.notifyTo,
@@ -424,23 +446,23 @@ export class ImagingService {
   async getReportTemplates(modality?: string) {
     const templates = [
       {
-        id: '1',
-        name: 'Chest CT Template',
-        modality: 'CT',
-        bodyPart: 'CHEST',
+        id: "1",
+        name: "Chest CT Template",
+        modality: "CT",
+        bodyPart: "CHEST",
         template: `TECHNIQUE:\n[Technique description]\n\nFINDINGS:\n[Findings]\n\nIMPRESSION:\n[Impression]`,
       },
       {
-        id: '2',
-        name: 'Brain MRI Template',
-        modality: 'MRI',
-        bodyPart: 'BRAIN',
+        id: "2",
+        name: "Brain MRI Template",
+        modality: "MRI",
+        bodyPart: "BRAIN",
         template: `CLINICAL INDICATION:\n[Indication]\n\nTECHNIQUE:\n[Technique]\n\nFINDINGS:\n[Findings]\n\nIMPRESSION:\n[Impression]`,
       },
     ];
 
     if (modality) {
-      return templates.filter(t => t.modality === modality);
+      return templates.filter((t) => t.modality === modality);
     }
     return templates;
   }
@@ -499,14 +521,14 @@ export class ImagingService {
     };
 
     // TODO: Save to database
-    console.log('Creating worklist item:', item);
+    console.log("Creating worklist item:", item);
 
     return item;
   }
 
   async updateWorklistItem(itemId: string, updates: any) {
     // TODO: Update in database
-    console.log('Updating worklist item:', itemId, updates);
+    console.log("Updating worklist item:", itemId, updates);
 
     return {
       id: itemId,
@@ -517,8 +539,9 @@ export class ImagingService {
   async getRadiologistReadingList(radiologistId: string) {
     // Get studies that need to be read
     const studies = this.getMockStudies();
-    return studies.filter((s: any) =>
-      s.readingStatus === 'UNREAD' || s.readingStatus === 'PRELIMINARY'
+    return studies.filter(
+      (s: any) =>
+        s.readingStatus === "UNREAD" || s.readingStatus === "PRELIMINARY",
     );
   }
 
@@ -528,16 +551,20 @@ export class ImagingService {
 
     return {
       total: data.length,
-      scheduled: data.filter((w: any) => w.status === 'SCHEDULED').length,
-      inProgress: data.filter((w: any) => w.status === 'IN_PROGRESS').length,
-      completed: data.filter((w: any) => w.status === 'COMPLETED').length,
-      cancelled: data.filter((w: any) => w.status === 'CANCELLED').length,
+      scheduled: data.filter((w: any) => w.status === "SCHEDULED").length,
+      inProgress: data.filter((w: any) => w.status === "IN_PROGRESS").length,
+      completed: data.filter((w: any) => w.status === "COMPLETED").length,
+      cancelled: data.filter((w: any) => w.status === "CANCELLED").length,
       byModality: this.groupByModality(data),
       byPriority: this.groupByPriority(data),
     };
   }
 
-  async bulkScheduleOrders(orderIds: string[], schedulingRules: any, userId: string) {
+  async bulkScheduleOrders(
+    orderIds: string[],
+    schedulingRules: any,
+    userId: string,
+  ) {
     const results = [];
 
     for (const orderId of orderIds) {
@@ -551,15 +578,15 @@ export class ImagingService {
         results.push({
           orderId,
           success: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
 
     return {
       total: orderIds.length,
-      successful: results.filter(r => r.success).length,
-      failed: results.filter(r => !r.success).length,
+      successful: results.filter((r) => r.success).length,
+      failed: results.filter((r) => !r.success).length,
       results,
     };
   }
@@ -569,9 +596,9 @@ export class ImagingService {
   // ============================================
 
   private generateUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }
@@ -579,9 +606,11 @@ export class ImagingService {
   private generateAccessionNumber(): string {
     const date = new Date();
     const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const random = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, "0");
     return `ACC${year}${month}${day}${random}`;
   }
 
@@ -591,8 +620,8 @@ export class ImagingService {
 
   private generateToken(): string {
     return Array.from({ length: 32 }, () =>
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('');
+      Math.floor(Math.random() * 16).toString(16),
+    ).join("");
   }
 
   private groupByModality(data: any[]) {
@@ -616,18 +645,18 @@ export class ImagingService {
   private getMockOrders() {
     return [
       {
-        id: '1',
-        patientId: 'patient-1',
-        patientName: 'John Doe',
-        orderingProviderId: 'provider-1',
-        orderingProviderName: 'Dr. Smith',
-        procedureCode: '71020',
-        modality: 'XRAY',
-        priority: 'ROUTINE',
-        status: 'PENDING',
-        clinicalIndication: 'Chest pain, rule out pneumonia',
-        bodyPart: 'CHEST',
-        createdAt: '2024-01-01T10:00:00Z',
+        id: "1",
+        patientId: "patient-1",
+        patientName: "John Doe",
+        orderingProviderId: "provider-1",
+        orderingProviderName: "Dr. Smith",
+        procedureCode: "71020",
+        modality: "XRAY",
+        priority: "ROUTINE",
+        status: "PENDING",
+        clinicalIndication: "Chest pain, rule out pneumonia",
+        bodyPart: "CHEST",
+        createdAt: "2024-01-01T10:00:00Z",
       },
     ];
   }
@@ -635,19 +664,19 @@ export class ImagingService {
   private getMockStudies() {
     return [
       {
-        id: '1',
-        studyInstanceUID: '1.2.840.113619.2.55.3.2831164482.456.1234567890.1',
-        patientId: 'patient-1',
-        patientName: 'John Doe',
-        accessionNumber: 'ACC24010100001',
-        studyDate: '2024-01-01',
-        studyTime: '143022',
-        modality: 'CT',
-        studyDescription: 'CT Chest with Contrast',
+        id: "1",
+        studyInstanceUID: "1.2.840.113619.2.55.3.2831164482.456.1234567890.1",
+        patientId: "patient-1",
+        patientName: "John Doe",
+        accessionNumber: "ACC24010100001",
+        studyDate: "2024-01-01",
+        studyTime: "143022",
+        modality: "CT",
+        studyDescription: "CT Chest with Contrast",
         numberOfSeries: 3,
         numberOfInstances: 450,
-        readingStatus: 'UNREAD',
-        institutionName: 'Lithic Medical Center',
+        readingStatus: "UNREAD",
+        institutionName: "Lithic Medical Center",
       },
     ];
   }
@@ -655,19 +684,19 @@ export class ImagingService {
   private getMockReports() {
     return [
       {
-        id: '1',
-        studyInstanceUID: '1.2.840.113619.2.55.3.2831164482.456.1234567890.1',
-        patientId: 'patient-1',
-        radiologistId: 'radiologist-1',
-        radiologistName: 'Dr. Johnson',
-        reportType: 'FINAL',
-        status: 'FINAL',
-        findings: 'No acute cardiopulmonary abnormality identified.',
-        impression: 'Normal chest CT.',
-        technique: 'CT chest with IV contrast',
+        id: "1",
+        studyInstanceUID: "1.2.840.113619.2.55.3.2831164482.456.1234567890.1",
+        patientId: "patient-1",
+        radiologistId: "radiologist-1",
+        radiologistName: "Dr. Johnson",
+        reportType: "FINAL",
+        status: "FINAL",
+        findings: "No acute cardiopulmonary abnormality identified.",
+        impression: "Normal chest CT.",
+        technique: "CT chest with IV contrast",
         criticalResult: false,
         version: 1,
-        createdAt: '2024-01-01T15:00:00Z',
+        createdAt: "2024-01-01T15:00:00Z",
       },
     ];
   }
@@ -675,16 +704,16 @@ export class ImagingService {
   private getMockWorklist() {
     return [
       {
-        id: '1',
-        orderId: 'order-1',
-        patientId: 'patient-1',
-        patientName: 'John Doe',
-        modality: 'CT',
-        scheduledDateTime: '2024-01-01T14:00:00Z',
-        status: 'SCHEDULED',
-        priority: 'ROUTINE',
-        requestedProcedureDescription: 'CT Chest with Contrast',
-        scheduledStationName: 'CT-01',
+        id: "1",
+        orderId: "order-1",
+        patientId: "patient-1",
+        patientName: "John Doe",
+        modality: "CT",
+        scheduledDateTime: "2024-01-01T14:00:00Z",
+        status: "SCHEDULED",
+        priority: "ROUTINE",
+        requestedProcedureDescription: "CT Chest with Contrast",
+        scheduledStationName: "CT-01",
       },
     ];
   }

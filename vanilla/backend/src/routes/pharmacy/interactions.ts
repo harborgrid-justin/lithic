@@ -3,8 +3,8 @@
  * Routes for drug interaction checking
  */
 
-import { Router } from 'express';
-import pharmacyController from '../../controllers/PharmacyController';
+import { Router } from "express";
+import pharmacyController from "../../controllers/PharmacyController";
 
 const router = Router();
 
@@ -14,21 +14,24 @@ const router = Router();
  * @access  Private
  * @body    { medicationId, currentMedications, patientData }
  */
-router.post('/check', pharmacyController.checkDrugInteractions.bind(pharmacyController));
+router.post(
+  "/check",
+  pharmacyController.checkDrugInteractions.bind(pharmacyController),
+);
 
 /**
  * @route   POST /api/pharmacy/interactions/bulk-check
  * @desc    Check interactions for multiple medications
  * @access  Private
  */
-router.post('/bulk-check', async (req, res) => {
+router.post("/bulk-check", async (req, res) => {
   try {
     const { medications, patientData } = req.body;
 
     if (!medications || !Array.isArray(medications)) {
       res.status(400).json({
         success: false,
-        error: 'Medications array required',
+        error: "Medications array required",
       });
       return;
     }
@@ -48,12 +51,16 @@ router.post('/bulk-check', async (req, res) => {
       // Capture response
       const originalJson = res.json;
       let responseData: any;
-      res.json = function(data: any) {
+      res.json = function (data: any) {
         responseData = data;
         return res;
       };
 
-      await pharmacyController.checkDrugInteractions.call(pharmacyController, req, res);
+      await pharmacyController.checkDrugInteractions.call(
+        pharmacyController,
+        req,
+        res,
+      );
 
       res.json = originalJson;
 
@@ -72,8 +79,8 @@ router.post('/bulk-check', async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to perform bulk interaction check',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      error: "Failed to perform bulk interaction check",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });

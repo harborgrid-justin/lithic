@@ -1,9 +1,9 @@
-import { Pool } from 'pg';
-import crypto from 'crypto';
-import { authenticator } from 'otplib';
-import QRCode from 'qrcode';
-import { AuditService, AuditAction, ResourceType } from './AuditService';
-import encryptionService from './EncryptionService';
+import { Pool } from "pg";
+import crypto from "crypto";
+import { authenticator } from "otplib";
+import QRCode from "qrcode";
+import { AuditService, AuditAction, ResourceType } from "./AuditService";
+import encryptionService from "./EncryptionService";
 
 /**
  * MFAService - Multi-Factor Authentication using TOTP (Time-based One-Time Password)
@@ -22,7 +22,7 @@ export interface MFAConfig {
 export class MFAService {
   private pool: Pool;
   private auditService: AuditService;
-  private readonly appName = 'Lithic Healthcare';
+  private readonly appName = "Lithic Healthcare";
   private readonly backupCodeCount = 10;
 
   constructor(pool: Pool, auditService: AuditService) {
@@ -59,14 +59,17 @@ export class MFAService {
     try {
       await this.pool.query(createTableQuery);
     } catch (error) {
-      console.error('Failed to initialize MFA table:', error);
+      console.error("Failed to initialize MFA table:", error);
     }
   }
 
   /**
    * Setup MFA for a user (generate secret and QR code)
    */
-  async setupMFA(userId: string, userEmail: string): Promise<{
+  async setupMFA(
+    userId: string,
+    userEmail: string,
+  ): Promise<{
     secret: string;
     qrCodeUrl: string;
     backupCodes: string[];
@@ -79,7 +82,9 @@ export class MFAService {
 
     // Encrypt sensitive data
     const encryptedSecret = encryptionService.encrypt(secret);
-    const encryptedBackupCodes = encryptionService.encrypt(JSON.stringify(backupCodes));
+    const encryptedBackupCodes = encryptionService.encrypt(
+      JSON.stringify(backupCodes),
+    );
 
     // Store in database (but don't enable yet)
     const query = `
@@ -93,7 +98,11 @@ export class MFAService {
         updated_at = CURRENT_TIMESTAMP
     `;
 
-    await this.pool.query(query, [userId, encryptedSecret, encryptedBackupCodes]);
+    await this.pool.query(query, [
+      userId,
+      encryptedSecret,
+      encryptedBackupCodes,
+    ]);
 
     // Generate QR code
     const otpauth = authenticator.keyuri(userEmail, this.appName, secret);
@@ -113,12 +122,12 @@ export class MFAService {
     userId: string,
     userEmail: string,
     organizationId: string,
-    token: string
+    token: string,
   ): Promise<boolean> {
     // Get MFA config
     const config = await this.getMFAConfig(userId);
     if (!config) {
-      throw new Error('MFA not configured. Please setup MFA first.');
+      throw new Error("MFA not configured. Please setup MFA first.");
     }
 
     // Verify token
@@ -131,9 +140,9 @@ export class MFAService {
         action: AuditAction.MFA_ENABLED,
         resourceType: ResourceType.USER,
         resourceId: userId,
-        status: 'failure',
-        details: { reason: 'Invalid token' },
-        severity: 'medium',
+        status: "failure",
+        details: { reason: "Invalid token" },
+        severity: "medium",
       });
 
       return false;
@@ -156,8 +165,8 @@ export class MFAService {
       action: AuditAction.MFA_ENABLED,
       resourceType: ResourceType.USER,
       resourceId: userId,
-      status: 'success',
-      severity: 'medium',
+      status: "success",
+      severity: "medium",
     });
 
     return true;
@@ -170,7 +179,7 @@ export class MFAService {
     userId: string,
     userEmail: string,
     organizationId: string,
-    token: string
+    token: string,
   ): Promise<boolean> {
     // Get MFA config
     const config = await this.getMFAConfig(userId);
@@ -180,7 +189,8 @@ export class MFAService {
 
     // Verify token before disabling
     const isValid =
-      this.verifyToken(config.secret, token) || this.verifyBackupCode(userId, token);
+      this.verifyToken(config.secret, token) ||
+      this.verifyBackupCode(userId, token);
 
     if (!isValid) {
       await this.auditService.log({
@@ -190,9 +200,9 @@ export class MFAService {
         action: AuditAction.MFA_DISABLED,
         resourceType: ResourceType.USER,
         resourceId: userId,
-        status: 'failure',
-        details: { reason: 'Invalid token' },
-        severity: 'high',
+        status: "failure",
+        details: { reason: "Invalid token" },
+        severity: "high",
       });
 
       return false;
@@ -215,8 +225,8 @@ export class MFAService {
       action: AuditAction.MFA_DISABLED,
       resourceType: ResourceType.USER,
       resourceId: userId,
-      status: 'success',
-      severity: 'high',
+      status: "success",
+      severity: "high",
     });
 
     return true;
@@ -305,7 +315,9 @@ export class MFAService {
    */
   async regenerateBackupCodes(userId: string): Promise<string[]> {
     const backupCodes = this.generateBackupCodes();
-    const encryptedBackupCodes = encryptionService.encrypt(JSON.stringify(backupCodes));
+    const encryptedBackupCodes = encryptionService.encrypt(
+      JSON.stringify(backupCodes),
+    );
 
     const query = `
       UPDATE mfa_configs
@@ -332,7 +344,10 @@ export class MFAService {
   /**
    * Verify backup code (one-time use)
    */
-  private async verifyBackupCode(userId: string, code: string): Promise<boolean> {
+  private async verifyBackupCode(
+    userId: string,
+    code: string,
+  ): Promise<boolean> {
     const config = await this.getMFAConfig(userId);
     if (!config || !config.backupCodes) {
       return false;
@@ -346,7 +361,7 @@ export class MFAService {
     // Remove used backup code
     config.backupCodes.splice(codeIndex, 1);
     const encryptedBackupCodes = encryptionService.encrypt(
-      JSON.stringify(config.backupCodes)
+      JSON.stringify(config.backupCodes),
     );
 
     const query = `
@@ -383,10 +398,10 @@ export class MFAService {
       // Generate 8-character alphanumeric code
       const code = crypto
         .randomBytes(4)
-        .toString('hex')
+        .toString("hex")
         .toUpperCase()
         .match(/.{1,4}/g)!
-        .join('-');
+        .join("-");
       codes.push(code);
     }
 

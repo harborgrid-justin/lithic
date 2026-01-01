@@ -1,4 +1,4 @@
-import { ImagingService } from '../../services/ImagingService';
+import { ImagingService } from "../../services/ImagingService";
 
 export class ModalityStatus {
   private imagingService: ImagingService;
@@ -12,28 +12,29 @@ export class ModalityStatus {
     this.modalities = await this.imagingService.getModalities();
 
     if (this.modalities.length === 0) {
-      container.innerHTML = '<div class="empty-state">No modalities configured</div>';
+      container.innerHTML =
+        '<div class="empty-state">No modalities configured</div>';
       return;
     }
 
     container.innerHTML = `
       <div class="modality-status-grid">
-        ${this.modalities.map(modality => this.createModalityCard(modality)).join('')}
+        ${this.modalities.map((modality) => this.createModalityCard(modality)).join("")}
       </div>
     `;
   }
 
   private createModalityCard(modality: any): string {
     const statusIcons: Record<string, string> = {
-      'ONLINE': '✅',
-      'BUSY': '🟡',
-      'OFFLINE': '🔴',
-      'MAINTENANCE': '🔧',
+      ONLINE: "✅",
+      BUSY: "🟡",
+      OFFLINE: "🔴",
+      MAINTENANCE: "🔧",
     };
 
     return `
       <div class="modality-card ${this.getStatusClass(modality.status)}">
-        <div class="modality-status-icon">${statusIcons[modality.status] || '❓'}</div>
+        <div class="modality-status-icon">${statusIcons[modality.status] || "❓"}</div>
         <div class="modality-name">${modality.name}</div>
         <div class="modality-type">${modality.type}</div>
         <div class="modality-stats">
@@ -52,11 +53,11 @@ export class ModalityStatus {
 
   private getStatusClass(status: string): string {
     const classes: Record<string, string> = {
-      'ONLINE': 'status-online',
-      'BUSY': 'status-busy',
-      'OFFLINE': 'status-offline',
-      'MAINTENANCE': 'status-maintenance',
+      ONLINE: "status-online",
+      BUSY: "status-busy",
+      OFFLINE: "status-offline",
+      MAINTENANCE: "status-maintenance",
     };
-    return classes[status] || '';
+    return classes[status] || "";
   }
 }

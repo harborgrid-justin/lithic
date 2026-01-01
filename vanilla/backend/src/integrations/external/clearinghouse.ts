@@ -4,19 +4,19 @@
  * EDI 837/835 transaction processing for claims and remittance
  */
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
-import { logger } from '../../utils/logger';
+import axios, { AxiosInstance, AxiosError } from "axios";
+import { logger } from "../../utils/logger";
 
 // Claim Status
 export type ClaimStatus =
-  | 'draft'
-  | 'submitted'
-  | 'accepted'
-  | 'rejected'
-  | 'pending'
-  | 'paid'
-  | 'denied'
-  | 'appealed';
+  | "draft"
+  | "submitted"
+  | "accepted"
+  | "rejected"
+  | "pending"
+  | "paid"
+  | "denied"
+  | "appealed";
 
 // Claim Data
 export interface Claim {
@@ -93,7 +93,7 @@ export interface EligibilityRequest {
 export interface EligibilityResponse {
   requestId: string;
   eligible: boolean;
-  coverageStatus: 'active' | 'inactive' | 'unknown';
+  coverageStatus: "active" | "inactive" | "unknown";
   planName?: string;
   groupNumber?: string;
   effectiveDate?: string;
@@ -135,12 +135,15 @@ export class ClearinghouseClient {
     this.apiKey = config.apiKey;
 
     this.client = axios.create({
-      baseURL: config.baseUrl || process.env.CLEARINGHOUSE_BASE_URL || 'https://api.clearinghouse.com/v1',
+      baseURL:
+        config.baseUrl ||
+        process.env.CLEARINGHOUSE_BASE_URL ||
+        "https://api.clearinghouse.com/v1",
       timeout: config.timeout || 30000,
       headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': this.apiKey,
-        'X-Submitter-ID': this.submitterId,
+        "Content-Type": "application/json",
+        "X-API-Key": this.apiKey,
+        "X-Submitter-ID": this.submitterId,
       },
     });
 
@@ -153,33 +156,33 @@ export class ClearinghouseClient {
   private setupInterceptors(): void {
     this.client.interceptors.request.use(
       (config) => {
-        logger.debug('Clearinghouse Request', {
+        logger.debug("Clearinghouse Request", {
           method: config.method?.toUpperCase(),
           url: config.url,
         });
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     this.client.interceptors.response.use(
       (response) => {
-        logger.debug('Clearinghouse Response', {
+        logger.debug("Clearinghouse Response", {
           status: response.status,
         });
         return response;
       },
       async (error: AxiosError) => {
-        logger.error('Clearinghouse Error', {
+        logger.error("Clearinghouse Error", {
           status: error.response?.status,
           message: error.message,
         });
         throw new ClearinghouseError(
           error.message,
           error.response?.status,
-          error.response?.data
+          error.response?.data,
         );
-      }
+      },
     );
   }
 
@@ -191,12 +194,12 @@ export class ClearinghouseClient {
       // Convert to EDI 837 format
       const edi837 = this.buildEDI837(claim);
 
-      const response = await this.client.post('/claims/submit', {
+      const response = await this.client.post("/claims/submit", {
         claim,
         edi: edi837,
       });
 
-      logger.info('Claim submitted to clearinghouse', {
+      logger.info("Claim submitted to clearinghouse", {
         claimId: claim.claimId,
         submissionId: response.data.submissionId,
       });
@@ -204,13 +207,13 @@ export class ClearinghouseClient {
       return {
         claimId: claim.claimId,
         submissionId: response.data.submissionId,
-        status: 'submitted',
+        status: "submitted",
         clearinghouseId: response.data.clearinghouseId,
         submittedAt: new Date().toISOString(),
         acknowledgmentCode: response.data.acknowledgmentCode,
       };
     } catch (error) {
-      logger.error('Failed to submit claim', { claimId: claim.claimId, error });
+      logger.error("Failed to submit claim", { claimId: claim.claimId, error });
       throw error;
     }
   }
@@ -221,17 +224,17 @@ export class ClearinghouseClient {
   async submitBatchClaims(claims: Claim[]): Promise<ClaimResponse[]> {
     try {
       const responses = await Promise.all(
-        claims.map((claim) => this.submitClaim(claim))
+        claims.map((claim) => this.submitClaim(claim)),
       );
 
-      logger.info('Batch claims submitted', {
+      logger.info("Batch claims submitted", {
         count: claims.length,
-        successful: responses.filter((r) => r.status === 'submitted').length,
+        successful: responses.filter((r) => r.status === "submitted").length,
       });
 
       return responses;
     } catch (error) {
-      logger.error('Failed to submit batch claims', { error });
+      logger.error("Failed to submit batch claims", { error });
       throw error;
     }
   }
@@ -245,7 +248,7 @@ export class ClearinghouseClient {
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get claim status', { claimId, error });
+      logger.error("Failed to get claim status", { claimId, error });
       throw error;
     }
   }
@@ -257,11 +260,11 @@ export class ClearinghouseClient {
     try {
       const response = await this.client.get(`/remittance/${remittanceId}`);
 
-      logger.info('Remittance advice retrieved', { remittanceId });
+      logger.info("Remittance advice retrieved", { remittanceId });
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get remittance advice', { remittanceId, error });
+      logger.error("Failed to get remittance advice", { remittanceId, error });
       throw error;
     }
   }
@@ -276,15 +279,15 @@ export class ClearinghouseClient {
     status?: string;
   }): Promise<RemittanceAdvice[]> {
     try {
-      const response = await this.client.get('/remittance', { params });
+      const response = await this.client.get("/remittance", { params });
 
-      logger.info('Remittance advices listed', {
+      logger.info("Remittance advices listed", {
         count: response.data.length,
       });
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to list remittance advices', { error });
+      logger.error("Failed to list remittance advices", { error });
       throw error;
     }
   }
@@ -292,11 +295,13 @@ export class ClearinghouseClient {
   /**
    * Check eligibility (270/271)
    */
-  async checkEligibility(request: EligibilityRequest): Promise<EligibilityResponse> {
+  async checkEligibility(
+    request: EligibilityRequest,
+  ): Promise<EligibilityResponse> {
     try {
-      const response = await this.client.post('/eligibility/check', request);
+      const response = await this.client.post("/eligibility/check", request);
 
-      logger.info('Eligibility checked', {
+      logger.info("Eligibility checked", {
         patientId: request.patientId,
         eligible: response.data.eligible,
       });
@@ -304,11 +309,14 @@ export class ClearinghouseClient {
       return {
         requestId: response.data.requestId || crypto.randomUUID(),
         eligible: response.data.eligible,
-        coverageStatus: response.data.coverageStatus || 'unknown',
+        coverageStatus: response.data.coverageStatus || "unknown",
         ...response.data,
       };
     } catch (error) {
-      logger.error('Failed to check eligibility', { patientId: request.patientId, error });
+      logger.error("Failed to check eligibility", {
+        patientId: request.patientId,
+        error,
+      });
       throw error;
     }
   }
@@ -316,27 +324,31 @@ export class ClearinghouseClient {
   /**
    * Verify insurance coverage
    */
-  async verifyInsurance(patientId: string, payerId: string, memberId: string): Promise<{
+  async verifyInsurance(
+    patientId: string,
+    payerId: string,
+    memberId: string,
+  ): Promise<{
     verified: boolean;
     active: boolean;
     planName?: string;
     groupNumber?: string;
   }> {
     try {
-      const response = await this.client.post('/insurance/verify', {
+      const response = await this.client.post("/insurance/verify", {
         patientId,
         payerId,
         memberId,
       });
 
-      logger.info('Insurance verified', {
+      logger.info("Insurance verified", {
         patientId,
         verified: response.data.verified,
       });
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to verify insurance', { patientId, error });
+      logger.error("Failed to verify insurance", { patientId, error });
       throw error;
     }
   }
@@ -344,18 +356,20 @@ export class ClearinghouseClient {
   /**
    * Get payer list
    */
-  async getPayers(): Promise<Array<{
-    payerId: string;
-    payerName: string;
-    type: string;
-    active: boolean;
-  }>> {
+  async getPayers(): Promise<
+    Array<{
+      payerId: string;
+      payerName: string;
+      type: string;
+      active: boolean;
+    }>
+  > {
     try {
-      const response = await this.client.get('/payers');
+      const response = await this.client.get("/payers");
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get payers', { error });
+      logger.error("Failed to get payers", { error });
       throw error;
     }
   }
@@ -363,19 +377,21 @@ export class ClearinghouseClient {
   /**
    * Search payer by name or ID
    */
-  async searchPayers(query: string): Promise<Array<{
-    payerId: string;
-    payerName: string;
-    type: string;
-  }>> {
+  async searchPayers(query: string): Promise<
+    Array<{
+      payerId: string;
+      payerName: string;
+      type: string;
+    }>
+  > {
     try {
-      const response = await this.client.get('/payers/search', {
+      const response = await this.client.get("/payers/search", {
         params: { q: query },
       });
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to search payers', { error });
+      logger.error("Failed to search payers", { error });
       throw error;
     }
   }
@@ -394,11 +410,11 @@ export class ClearinghouseClient {
     totalAmount: number;
   }> {
     try {
-      const response = await this.client.get('/claims/summary', { params });
+      const response = await this.client.get("/claims/summary", { params });
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get submission summary', { error });
+      logger.error("Failed to get submission summary", { error });
       throw error;
     }
   }
@@ -420,7 +436,7 @@ export class ClearinghouseClient {
       `IEA*1*${this.generateControlNumber()}~`,
     ];
 
-    return segments.join('\n');
+    return segments.join("\n");
   }
 
   /**
@@ -428,8 +444,8 @@ export class ClearinghouseClient {
    */
   private formatEDIDate(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}${month}${day}`;
   }
 
@@ -437,8 +453,8 @@ export class ClearinghouseClient {
    * Format time for EDI (HHmm)
    */
   private formatEDITime(date: Date): string {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${hours}${minutes}`;
   }
 
@@ -446,7 +462,7 @@ export class ClearinghouseClient {
    * Generate EDI control number
    */
   private generateControlNumber(): string {
-    return String(Math.floor(Math.random() * 1000000000)).padStart(9, '0');
+    return String(Math.floor(Math.random() * 1000000000)).padStart(9, "0");
   }
 }
 
@@ -457,10 +473,10 @@ export class ClearinghouseError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
-    this.name = 'ClearinghouseError';
+    this.name = "ClearinghouseError";
   }
 }
 
@@ -469,7 +485,7 @@ export class ClearinghouseError extends Error {
  */
 export const clearinghouseClient = new ClearinghouseClient({
   baseUrl: process.env.CLEARINGHOUSE_BASE_URL,
-  submitterId: process.env.CLEARINGHOUSE_SUBMITTER_ID || '',
-  apiKey: process.env.CLEARINGHOUSE_API_KEY || '',
-  timeout: parseInt(process.env.CLEARINGHOUSE_TIMEOUT || '30000', 10),
+  submitterId: process.env.CLEARINGHOUSE_SUBMITTER_ID || "",
+  apiKey: process.env.CLEARINGHOUSE_API_KEY || "",
+  timeout: parseInt(process.env.CLEARINGHOUSE_TIMEOUT || "30000", 10),
 });

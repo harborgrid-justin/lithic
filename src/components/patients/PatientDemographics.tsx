@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Patient, Demographics } from '@/types/patient';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { calculateAge, formatDate, formatPhone, maskSSN } from '@/lib/utils';
-import { User, Calendar, Mail, Phone, MapPin, Heart } from 'lucide-react';
+import { Patient, Demographics } from "@/types/patient";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { calculateAge, formatDate, formatPhone, maskSSN } from "@/lib/utils";
+import { User, Calendar, Mail, Phone, MapPin, Heart } from "lucide-react";
 
 interface PatientDemographicsProps {
   patient: Patient;
@@ -44,13 +44,19 @@ export function PatientDemographics({ patient }: PatientDemographicsProps) {
             {patient.ssn && (
               <div>
                 <label className="text-sm text-gray-500">SSN</label>
-                <div className="font-medium font-mono">{maskSSN(patient.ssn)}</div>
+                <div className="font-medium font-mono">
+                  {maskSSN(patient.ssn)}
+                </div>
               </div>
             )}
             <div>
               <label className="text-sm text-gray-500">Status</label>
               <div>
-                <Badge variant={patient.status === 'active' ? 'success' : 'secondary'}>
+                <Badge
+                  variant={
+                    patient.status === "active" ? "success" : "secondary"
+                  }
+                >
                   {patient.status}
                 </Badge>
               </div>
@@ -70,7 +76,9 @@ export function PatientDemographics({ patient }: PatientDemographicsProps) {
                 <Phone className="h-4 w-4 text-gray-400 mt-1" />
                 <div>
                   <label className="text-sm text-gray-500">Phone</label>
-                  <div className="font-medium">{formatPhone(patient.phone)}</div>
+                  <div className="font-medium">
+                    {formatPhone(patient.phone)}
+                  </div>
                 </div>
               </div>
             )}
@@ -93,7 +101,8 @@ export function PatientDemographics({ patient }: PatientDemographicsProps) {
                   {patient.address.street1}
                   {patient.address.street2 && <>, {patient.address.street2}</>}
                   <br />
-                  {patient.address.city}, {patient.address.state} {patient.address.zipCode}
+                  {patient.address.city}, {patient.address.state}{" "}
+                  {patient.address.zipCode}
                 </div>
               </div>
             </div>
@@ -117,31 +126,43 @@ export function PatientDemographics({ patient }: PatientDemographicsProps) {
               {patient.demographics.ethnicity && (
                 <div>
                   <label className="text-sm text-gray-500">Ethnicity</label>
-                  <div className="font-medium">{patient.demographics.ethnicity}</div>
+                  <div className="font-medium">
+                    {patient.demographics.ethnicity}
+                  </div>
                 </div>
               )}
               {patient.preferredLanguage && (
                 <div>
-                  <label className="text-sm text-gray-500">Preferred Language</label>
+                  <label className="text-sm text-gray-500">
+                    Preferred Language
+                  </label>
                   <div className="font-medium">{patient.preferredLanguage}</div>
                 </div>
               )}
               {patient.maritalStatus && (
                 <div>
-                  <label className="text-sm text-gray-500">Marital Status</label>
-                  <div className="font-medium capitalize">{patient.maritalStatus.replace('-', ' ')}</div>
+                  <label className="text-sm text-gray-500">
+                    Marital Status
+                  </label>
+                  <div className="font-medium capitalize">
+                    {patient.maritalStatus.replace("-", " ")}
+                  </div>
                 </div>
               )}
               {patient.demographics.occupation && (
                 <div>
                   <label className="text-sm text-gray-500">Occupation</label>
-                  <div className="font-medium">{patient.demographics.occupation}</div>
+                  <div className="font-medium">
+                    {patient.demographics.occupation}
+                  </div>
                 </div>
               )}
               {patient.demographics.employer && (
                 <div>
                   <label className="text-sm text-gray-500">Employer</label>
-                  <div className="font-medium">{patient.demographics.employer}</div>
+                  <div className="font-medium">
+                    {patient.demographics.employer}
+                  </div>
                 </div>
               )}
             </div>
@@ -157,14 +178,19 @@ export function PatientDemographics({ patient }: PatientDemographicsProps) {
           <CardContent>
             <div className="space-y-4">
               {patient.emergencyContacts.map((contact) => (
-                <div key={contact.id} className="border-b pb-4 last:border-b-0 last:pb-0">
+                <div
+                  key={contact.id}
+                  className="border-b pb-4 last:border-b-0 last:pb-0"
+                >
                   <div className="flex items-start gap-2">
                     <Heart className="h-4 w-4 text-red-400 mt-1" />
                     <div className="flex-1">
                       <div className="font-medium">
                         {contact.name}
                         {contact.isPrimary && (
-                          <Badge variant="default" className="ml-2">Primary</Badge>
+                          <Badge variant="default" className="ml-2">
+                            Primary
+                          </Badge>
                         )}
                       </div>
                       <div className="text-sm text-gray-500">

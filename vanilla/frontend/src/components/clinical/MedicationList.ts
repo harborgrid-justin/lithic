@@ -4,7 +4,10 @@ export class MedicationList {
   private medications: any[] = [];
   private onUpdate?: (medicationId: string, status: string) => void;
 
-  constructor(containerId: string, onUpdate?: (medicationId: string, status: string) => void) {
+  constructor(
+    containerId: string,
+    onUpdate?: (medicationId: string, status: string) => void,
+  ) {
     const element = document.getElementById(containerId);
     if (!element) throw new Error(`Element with id ${containerId} not found`);
     this.container = element;
@@ -18,11 +21,14 @@ export class MedicationList {
 
   private render(): void {
     if (this.medications.length === 0) {
-      this.container.innerHTML = '<div class="empty-state">No medications</div>';
+      this.container.innerHTML =
+        '<div class="empty-state">No medications</div>';
       return;
     }
 
-    const medicationsHTML = this.medications.map(med => this.renderMedication(med)).join('');
+    const medicationsHTML = this.medications
+      .map((med) => this.renderMedication(med))
+      .join("");
 
     this.container.innerHTML = `
       <div class="medication-list">
@@ -42,7 +48,7 @@ export class MedicationList {
         <div class="medication-header">
           <div class="medication-name">
             <strong>${med.medicationName}</strong>
-            ${med.genericName ? `<span class="generic-name">(${med.genericName})</span>` : ''}
+            ${med.genericName ? `<span class="generic-name">(${med.genericName})</span>` : ""}
           </div>
           <span class="medication-status ${statusClass}">${med.status}</span>
         </div>
@@ -59,55 +65,78 @@ export class MedicationList {
           </div>
           <div class="medication-dates">
             <strong>Start:</strong> ${startDate}
-            ${med.endDate ? ` | <strong>End:</strong> ${new Date(med.endDate).toLocaleDateString()}` : ''}
+            ${med.endDate ? ` | <strong>End:</strong> ${new Date(med.endDate).toLocaleDateString()}` : ""}
           </div>
-          ${med.indication ? `
+          ${
+            med.indication
+              ? `
             <div class="medication-indication">
               <strong>Indication:</strong> ${med.indication}
             </div>
-          ` : ''}
-          ${med.instructions ? `
+          `
+              : ""
+          }
+          ${
+            med.instructions
+              ? `
             <div class="medication-instructions">
               <strong>Instructions:</strong> ${med.instructions}
             </div>
-          ` : ''}
-          ${med.refills !== undefined ? `
+          `
+              : ""
+          }
+          ${
+            med.refills !== undefined
+              ? `
             <div class="medication-refills">
               <strong>Refills:</strong> ${med.refills}
             </div>
-          ` : ''}
-          ${med.prescribedBy ? `
+          `
+              : ""
+          }
+          ${
+            med.prescribedBy
+              ? `
             <div class="medication-provider">
               <strong>Prescribed by:</strong> ${med.prescribedBy}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
 
-        ${med.status === 'active' ? `
+        ${
+          med.status === "active"
+            ? `
           <div class="medication-actions">
             <button class="btn btn-sm discontinue-btn" data-medication-id="${med.id}">
               Discontinue
             </button>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
     `;
   }
 
   private attachEventListeners(): void {
-    const discontinueButtons = this.container.querySelectorAll('.discontinue-btn');
-    discontinueButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        const medicationId = (e.target as HTMLElement).getAttribute('data-medication-id');
+    const discontinueButtons =
+      this.container.querySelectorAll(".discontinue-btn");
+    discontinueButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const medicationId = (e.target as HTMLElement).getAttribute(
+          "data-medication-id",
+        );
         if (medicationId && this.onUpdate) {
-          this.onUpdate(medicationId, 'discontinued');
+          this.onUpdate(medicationId, "discontinued");
         }
       });
     });
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 
