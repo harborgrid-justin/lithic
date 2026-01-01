@@ -113,26 +113,36 @@ export class VitalsPanel {
   }
 
   private attachEventListeners(): void {
-    const form = this.container.querySelector('#vitals-form') as HTMLFormElement;
-    form?.addEventListener('submit', (e) => {
+    const form = this.container.querySelector(
+      "#vitals-form",
+    ) as HTMLFormElement;
+    form?.addEventListener("submit", (e) => {
       e.preventDefault();
       this.handleSubmit(form);
     });
 
-    const clearBtn = this.container.querySelector('#clear-btn');
-    clearBtn?.addEventListener('click', () => {
+    const clearBtn = this.container.querySelector("#clear-btn");
+    clearBtn?.addEventListener("click", () => {
       form?.reset();
       this.hideBMI();
     });
 
     // Calculate BMI on weight/height change
-    const weightInput = this.container.querySelector('#weight') as HTMLInputElement;
-    const heightInput = this.container.querySelector('#height') as HTMLInputElement;
-    const weightUnit = this.container.querySelector('#weightUnit') as HTMLSelectElement;
-    const heightUnit = this.container.querySelector('#heightUnit') as HTMLSelectElement;
+    const weightInput = this.container.querySelector(
+      "#weight",
+    ) as HTMLInputElement;
+    const heightInput = this.container.querySelector(
+      "#height",
+    ) as HTMLInputElement;
+    const weightUnit = this.container.querySelector(
+      "#weightUnit",
+    ) as HTMLSelectElement;
+    const heightUnit = this.container.querySelector(
+      "#heightUnit",
+    ) as HTMLSelectElement;
 
-    [weightInput, heightInput, weightUnit, heightUnit].forEach(element => {
-      element?.addEventListener('change', () => this.calculateBMI());
+    [weightInput, heightInput, weightUnit, heightUnit].forEach((element) => {
+      element?.addEventListener("change", () => this.calculateBMI());
     });
   }
 
@@ -142,7 +152,7 @@ export class VitalsPanel {
 
     formData.forEach((value, key) => {
       if (value) {
-        data[key] = key.includes('Unit') ? value : parseFloat(value as string);
+        data[key] = key.includes("Unit") ? value : parseFloat(value as string);
       }
     });
 
@@ -152,15 +162,25 @@ export class VitalsPanel {
   }
 
   private calculateBMI(): void {
-    const weight = parseFloat((this.container.querySelector('#weight') as HTMLInputElement)?.value || '0');
-    const height = parseFloat((this.container.querySelector('#height') as HTMLInputElement)?.value || '0');
-    const weightUnit = (this.container.querySelector('#weightUnit') as HTMLSelectElement)?.value;
-    const heightUnit = (this.container.querySelector('#heightUnit') as HTMLSelectElement)?.value;
+    const weight = parseFloat(
+      (this.container.querySelector("#weight") as HTMLInputElement)?.value ||
+        "0",
+    );
+    const height = parseFloat(
+      (this.container.querySelector("#height") as HTMLInputElement)?.value ||
+        "0",
+    );
+    const weightUnit = (
+      this.container.querySelector("#weightUnit") as HTMLSelectElement
+    )?.value;
+    const heightUnit = (
+      this.container.querySelector("#heightUnit") as HTMLSelectElement
+    )?.value;
 
     if (weight > 0 && height > 0) {
       // Convert to kg and meters
-      const weightKg = weightUnit === 'lbs' ? weight * 0.453592 : weight;
-      const heightM = heightUnit === 'in' ? height * 0.0254 : height / 100;
+      const weightKg = weightUnit === "lbs" ? weight * 0.453592 : weight;
+      const heightM = heightUnit === "in" ? height * 0.0254 : height / 100;
 
       const bmi = weightKg / (heightM * heightM);
       this.showBMI(bmi);
@@ -170,41 +190,47 @@ export class VitalsPanel {
   }
 
   private showBMI(bmi: number): void {
-    const bmiDisplay = this.container.querySelector('#bmi-display') as HTMLElement;
-    const bmiValue = this.container.querySelector('#bmi-value') as HTMLElement;
+    const bmiDisplay = this.container.querySelector(
+      "#bmi-display",
+    ) as HTMLElement;
+    const bmiValue = this.container.querySelector("#bmi-value") as HTMLElement;
 
     if (bmiDisplay && bmiValue) {
       bmiValue.textContent = bmi.toFixed(1);
-      bmiDisplay.style.display = 'block';
+      bmiDisplay.style.display = "block";
 
       // Color code based on BMI ranges
       if (bmi < 18.5) {
-        bmiValue.className = 'bmi-underweight';
+        bmiValue.className = "bmi-underweight";
       } else if (bmi < 25) {
-        bmiValue.className = 'bmi-normal';
+        bmiValue.className = "bmi-normal";
       } else if (bmi < 30) {
-        bmiValue.className = 'bmi-overweight';
+        bmiValue.className = "bmi-overweight";
       } else {
-        bmiValue.className = 'bmi-obese';
+        bmiValue.className = "bmi-obese";
       }
     }
   }
 
   private hideBMI(): void {
-    const bmiDisplay = this.container.querySelector('#bmi-display') as HTMLElement;
+    const bmiDisplay = this.container.querySelector(
+      "#bmi-display",
+    ) as HTMLElement;
     if (bmiDisplay) {
-      bmiDisplay.style.display = 'none';
+      bmiDisplay.style.display = "none";
     }
   }
 
   reset(): void {
-    const form = this.container.querySelector('#vitals-form') as HTMLFormElement;
+    const form = this.container.querySelector(
+      "#vitals-form",
+    ) as HTMLFormElement;
     form?.reset();
     this.hideBMI();
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

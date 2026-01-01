@@ -12,43 +12,43 @@ export class ClaimsService {
     // Mock implementation - replace with actual database queries
     const claims = [
       {
-        id: 'CLM001',
-        claimNumber: 'CLM-2025-001',
-        patientId: 'PAT001',
-        patientName: 'John Doe',
-        providerId: 'PROV001',
-        providerName: 'Dr. Sarah Smith',
-        payerId: 'PAY001',
-        payerName: 'Blue Cross Blue Shield',
-        serviceDate: '2025-12-01',
-        submissionDate: '2025-12-05',
-        totalCharge: 500.00,
-        allowedAmount: 400.00,
-        paidAmount: 320.00,
-        patientResponsibility: 80.00,
-        status: 'paid',
-        claimType: 'professional',
-        placeOfService: 'office'
+        id: "CLM001",
+        claimNumber: "CLM-2025-001",
+        patientId: "PAT001",
+        patientName: "John Doe",
+        providerId: "PROV001",
+        providerName: "Dr. Sarah Smith",
+        payerId: "PAY001",
+        payerName: "Blue Cross Blue Shield",
+        serviceDate: "2025-12-01",
+        submissionDate: "2025-12-05",
+        totalCharge: 500.0,
+        allowedAmount: 400.0,
+        paidAmount: 320.0,
+        patientResponsibility: 80.0,
+        status: "paid",
+        claimType: "professional",
+        placeOfService: "office",
       },
       {
-        id: 'CLM002',
-        claimNumber: 'CLM-2025-002',
-        patientId: 'PAT002',
-        patientName: 'Jane Smith',
-        providerId: 'PROV001',
-        providerName: 'Dr. Sarah Smith',
-        payerId: 'PAY002',
-        payerName: 'Aetna',
-        serviceDate: '2025-12-10',
-        submissionDate: '2025-12-12',
-        totalCharge: 350.00,
+        id: "CLM002",
+        claimNumber: "CLM-2025-002",
+        patientId: "PAT002",
+        patientName: "Jane Smith",
+        providerId: "PROV001",
+        providerName: "Dr. Sarah Smith",
+        payerId: "PAY002",
+        payerName: "Aetna",
+        serviceDate: "2025-12-10",
+        submissionDate: "2025-12-12",
+        totalCharge: 350.0,
         allowedAmount: 0,
         paidAmount: 0,
         patientResponsibility: 0,
-        status: 'submitted',
-        claimType: 'professional',
-        placeOfService: 'office'
-      }
+        status: "submitted",
+        claimType: "professional",
+        placeOfService: "office",
+      },
     ];
 
     const summary = {
@@ -60,11 +60,11 @@ export class ClaimsService {
         accepted: 15,
         paid: 40,
         denied: 8,
-        appealed: 2
+        appealed: 2,
       },
-      totalCharges: 25000.00,
-      totalPaid: 18000.00,
-      totalOutstanding: 7000.00
+      totalCharges: 25000.0,
+      totalPaid: 18000.0,
+      totalOutstanding: 7000.0,
     };
 
     return {
@@ -73,113 +73,113 @@ export class ClaimsService {
         page,
         limit,
         total: claims.length,
-        totalPages: Math.ceil(claims.length / limit)
+        totalPages: Math.ceil(claims.length / limit),
       },
-      summary
+      summary,
     };
   }
 
   async getClaimById(id: string) {
     return {
       id,
-      claimNumber: 'CLM-2025-001',
-      patientId: 'PAT001',
-      patientName: 'John Doe',
-      patientDOB: '1980-05-15',
-      patientGender: 'M',
-      patientAddress: '123 Main St, City, ST 12345',
-      subscriberId: 'SUB123456',
-      providerId: 'PROV001',
-      providerName: 'Dr. Sarah Smith',
-      providerNPI: '1234567890',
-      billingProviderId: 'BP001',
-      billingProviderName: 'City Medical Center',
-      billingProviderNPI: '0987654321',
-      billingProviderTaxId: '12-3456789',
-      payerId: 'PAY001',
-      payerName: 'Blue Cross Blue Shield',
-      payerAddress: '456 Insurance Ave, City, ST 12345',
-      serviceDate: '2025-12-01',
-      serviceFromDate: '2025-12-01',
-      serviceToDate: '2025-12-01',
+      claimNumber: "CLM-2025-001",
+      patientId: "PAT001",
+      patientName: "John Doe",
+      patientDOB: "1980-05-15",
+      patientGender: "M",
+      patientAddress: "123 Main St, City, ST 12345",
+      subscriberId: "SUB123456",
+      providerId: "PROV001",
+      providerName: "Dr. Sarah Smith",
+      providerNPI: "1234567890",
+      billingProviderId: "BP001",
+      billingProviderName: "City Medical Center",
+      billingProviderNPI: "0987654321",
+      billingProviderTaxId: "12-3456789",
+      payerId: "PAY001",
+      payerName: "Blue Cross Blue Shield",
+      payerAddress: "456 Insurance Ave, City, ST 12345",
+      serviceDate: "2025-12-01",
+      serviceFromDate: "2025-12-01",
+      serviceToDate: "2025-12-01",
       admissionDate: null,
       dischargeDate: null,
-      placeOfService: 'office',
-      claimType: 'professional',
-      billingType: 'CMS-1500',
-      status: 'paid',
-      submissionDate: '2025-12-05',
-      submissionMethod: 'electronic',
-      acceptanceDate: '2025-12-06',
-      paymentDate: '2025-12-15',
+      placeOfService: "office",
+      claimType: "professional",
+      billingType: "CMS-1500",
+      status: "paid",
+      submissionDate: "2025-12-05",
+      submissionMethod: "electronic",
+      acceptanceDate: "2025-12-06",
+      paymentDate: "2025-12-15",
       lineItems: [
         {
           lineNumber: 1,
-          serviceDate: '2025-12-01',
-          placeOfService: '11',
-          procedureCode: '99213',
+          serviceDate: "2025-12-01",
+          placeOfService: "11",
+          procedureCode: "99213",
           modifiers: [],
-          diagnosisPointers: ['A'],
-          charge: 150.00,
+          diagnosisPointers: ["A"],
+          charge: 150.0,
           units: 1,
-          allowedAmount: 120.00,
-          paidAmount: 96.00,
-          adjustmentAmount: 30.00,
-          adjustmentReason: 'CO-45',
-          patientResponsibility: 24.00
+          allowedAmount: 120.0,
+          paidAmount: 96.0,
+          adjustmentAmount: 30.0,
+          adjustmentReason: "CO-45",
+          patientResponsibility: 24.0,
         },
         {
           lineNumber: 2,
-          serviceDate: '2025-12-01',
-          placeOfService: '11',
-          procedureCode: '85025',
+          serviceDate: "2025-12-01",
+          placeOfService: "11",
+          procedureCode: "85025",
           modifiers: [],
-          diagnosisPointers: ['A'],
-          charge: 50.00,
+          diagnosisPointers: ["A"],
+          charge: 50.0,
           units: 1,
-          allowedAmount: 40.00,
-          paidAmount: 32.00,
-          adjustmentAmount: 10.00,
-          adjustmentReason: 'CO-45',
-          patientResponsibility: 8.00
-        }
+          allowedAmount: 40.0,
+          paidAmount: 32.0,
+          adjustmentAmount: 10.0,
+          adjustmentReason: "CO-45",
+          patientResponsibility: 8.0,
+        },
       ],
       diagnosisCodes: [
         {
-          pointer: 'A',
-          code: 'I10',
-          description: 'Essential (primary) hypertension'
-        }
+          pointer: "A",
+          code: "I10",
+          description: "Essential (primary) hypertension",
+        },
       ],
-      totalCharge: 200.00,
-      totalAllowedAmount: 160.00,
-      totalPaidAmount: 128.00,
-      totalAdjustmentAmount: 40.00,
-      totalPatientResponsibility: 32.00,
+      totalCharge: 200.0,
+      totalAllowedAmount: 160.0,
+      totalPaidAmount: 128.0,
+      totalAdjustmentAmount: 40.0,
+      totalPatientResponsibility: 32.0,
       adjustments: [
         {
-          code: 'CO-45',
-          groupCode: 'CO',
-          reasonCode: '45',
-          description: 'Charge exceeds fee schedule',
-          amount: 40.00
-        }
+          code: "CO-45",
+          groupCode: "CO",
+          reasonCode: "45",
+          description: "Charge exceeds fee schedule",
+          amount: 40.0,
+        },
       ],
       payments: [
         {
-          id: 'PMT001',
-          paymentDate: '2025-12-15',
-          amount: 128.00,
-          checkNumber: '1234567',
-          method: 'ERA'
-        }
+          id: "PMT001",
+          paymentDate: "2025-12-15",
+          amount: 128.0,
+          checkNumber: "1234567",
+          method: "ERA",
+        },
       ],
       notes: [],
       attachments: [],
-      createdAt: '2025-12-05T10:00:00Z',
-      createdBy: 'billing_user',
-      updatedAt: '2025-12-15T14:30:00Z',
-      updatedBy: 'billing_user'
+      createdAt: "2025-12-05T10:00:00Z",
+      createdBy: "billing_user",
+      updatedAt: "2025-12-15T14:30:00Z",
+      updatedBy: "billing_user",
     };
   }
 
@@ -188,13 +188,13 @@ export class ClaimsService {
       id: `CLM${Date.now()}`,
       claimNumber: `CLM-${new Date().getFullYear()}-${Math.floor(Math.random() * 100000)}`,
       ...claimData,
-      status: 'draft',
+      status: "draft",
       createdAt: new Date().toISOString(),
       createdBy: userId,
-      totalCharge: this.calculateTotalCharge(claimData.lineItems || [])
+      totalCharge: this.calculateTotalCharge(claimData.lineItems || []),
     };
 
-    console.log('Creating claim:', claim);
+    console.log("Creating claim:", claim);
 
     return claim;
   }
@@ -206,14 +206,14 @@ export class ClaimsService {
       ...claim,
       ...updates,
       updatedAt: new Date().toISOString(),
-      updatedBy: userId
+      updatedBy: userId,
     };
 
     if (updates.lineItems) {
       updatedClaim.totalCharge = this.calculateTotalCharge(updates.lineItems);
     }
 
-    console.log('Updating claim:', updatedClaim);
+    console.log("Updating claim:", updatedClaim);
 
     return updatedClaim;
   }
@@ -233,17 +233,17 @@ export class ClaimsService {
     const warnings: string[] = [];
 
     // Required fields validation
-    if (!claimData.patientId) errors.push('Patient ID is required');
-    if (!claimData.providerId) errors.push('Provider ID is required');
-    if (!claimData.payerId) errors.push('Payer ID is required');
-    if (!claimData.serviceDate) errors.push('Service date is required');
+    if (!claimData.patientId) errors.push("Patient ID is required");
+    if (!claimData.providerId) errors.push("Provider ID is required");
+    if (!claimData.payerId) errors.push("Payer ID is required");
+    if (!claimData.serviceDate) errors.push("Service date is required");
     if (!claimData.lineItems || claimData.lineItems.length === 0) {
-      errors.push('At least one line item is required');
+      errors.push("At least one line item is required");
     }
 
     // Diagnosis codes validation
     if (!claimData.diagnosisCodes || claimData.diagnosisCodes.length === 0) {
-      errors.push('At least one diagnosis code is required');
+      errors.push("At least one diagnosis code is required");
     }
 
     // Line items validation
@@ -266,70 +266,82 @@ export class ClaimsService {
       const serviceDate = new Date(claimData.serviceDate);
       const today = new Date();
       if (serviceDate > today) {
-        errors.push('Service date cannot be in the future');
+        errors.push("Service date cannot be in the future");
       }
 
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
       if (serviceDate < oneYearAgo) {
-        warnings.push('Service date is more than one year old - may be past timely filing');
+        warnings.push(
+          "Service date is more than one year old - may be past timely filing",
+        );
       }
     }
 
     // NPI validation (basic format check)
     if (claimData.providerNPI && !this.isValidNPI(claimData.providerNPI)) {
-      errors.push('Invalid provider NPI format');
+      errors.push("Invalid provider NPI format");
     }
 
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
-  async submitClaim(id: string, submissionMethod: string, edi837Data: any, userId: string) {
+  async submitClaim(
+    id: string,
+    submissionMethod: string,
+    edi837Data: any,
+    userId: string,
+  ) {
     const claim = await this.getClaimById(id);
 
     // Update claim status
     const updatedClaim = {
       ...claim,
-      status: 'submitted',
+      status: "submitted",
       submissionDate: new Date().toISOString(),
       submissionMethod,
-      submittedBy: userId
+      submittedBy: userId,
     };
 
-    if (submissionMethod === 'electronic' && edi837Data) {
+    if (submissionMethod === "electronic" && edi837Data) {
       // Store EDI data
       updatedClaim.edi837 = edi837Data;
     }
 
-    console.log('Submitting claim:', updatedClaim);
+    console.log("Submitting claim:", updatedClaim);
 
     return {
       claim: updatedClaim,
       submissionId: `SUB${Date.now()}`,
-      batchId: submissionMethod === 'electronic' ? `BATCH${Date.now()}` : null,
-      edi837: submissionMethod === 'electronic' ? edi837Data : null
+      batchId: submissionMethod === "electronic" ? `BATCH${Date.now()}` : null,
+      edi837: submissionMethod === "electronic" ? edi837Data : null,
     };
   }
 
-  async resubmitClaim(id: string, correctionCode: string, notes: string, userId: string) {
+  async resubmitClaim(
+    id: string,
+    correctionCode: string,
+    notes: string,
+    userId: string,
+  ) {
     const claim = await this.getClaimById(id);
 
     const resubmission = {
       ...claim,
-      status: 'resubmitted',
+      status: "resubmitted",
       originalClaimId: id,
       correctionCode,
       resubmissionNotes: notes,
       resubmittedAt: new Date().toISOString(),
       resubmittedBy: userId,
-      submissionCount: (claim.submissionCount || 1) + 1
+      submissionCount: (claim.submissionCount || 1) + 1,
     };
 
-    console.log('Resubmitting claim:', resubmission);
+    console.log("Resubmitting claim:", resubmission);
 
     return resubmission;
   }
@@ -338,31 +350,31 @@ export class ClaimsService {
     // In real implementation, this would query payer's API
     const status = {
       claimId: id,
-      claimNumber: 'CLM-2025-001',
-      currentStatus: 'processing',
-      payerStatus: 'in_process',
+      claimNumber: "CLM-2025-001",
+      currentStatus: "processing",
+      payerStatus: "in_process",
       lastUpdated: new Date().toISOString(),
-      processingStage: 'adjudication',
-      estimatedCompletionDate: '2025-12-30',
+      processingStage: "adjudication",
+      estimatedCompletionDate: "2025-12-30",
       statusHistory: [
         {
-          status: 'submitted',
-          date: '2025-12-05',
-          notes: 'Claim received by payer'
+          status: "submitted",
+          date: "2025-12-05",
+          notes: "Claim received by payer",
         },
         {
-          status: 'accepted',
-          date: '2025-12-06',
-          notes: 'Passed initial validation'
+          status: "accepted",
+          date: "2025-12-06",
+          notes: "Passed initial validation",
         },
         {
-          status: 'processing',
-          date: '2025-12-10',
-          notes: 'Under adjudication review'
-        }
+          status: "processing",
+          date: "2025-12-10",
+          notes: "Under adjudication review",
+        },
       ],
       checkedAt: new Date().toISOString(),
-      checkedBy: userId
+      checkedBy: userId,
     };
 
     return status;
@@ -371,50 +383,50 @@ export class ClaimsService {
   async getClaimHistory(id: string) {
     return [
       {
-        id: 'HIST001',
+        id: "HIST001",
         claimId: id,
-        action: 'created',
-        status: 'draft',
-        performedBy: 'billing_user',
-        performedAt: '2025-12-05T09:00:00Z',
-        notes: 'Claim created from encounter'
+        action: "created",
+        status: "draft",
+        performedBy: "billing_user",
+        performedAt: "2025-12-05T09:00:00Z",
+        notes: "Claim created from encounter",
       },
       {
-        id: 'HIST002',
+        id: "HIST002",
         claimId: id,
-        action: 'validated',
-        status: 'ready',
-        performedBy: 'billing_user',
-        performedAt: '2025-12-05T09:30:00Z',
-        notes: 'Claim passed validation'
+        action: "validated",
+        status: "ready",
+        performedBy: "billing_user",
+        performedAt: "2025-12-05T09:30:00Z",
+        notes: "Claim passed validation",
       },
       {
-        id: 'HIST003',
+        id: "HIST003",
         claimId: id,
-        action: 'submitted',
-        status: 'submitted',
-        performedBy: 'billing_user',
-        performedAt: '2025-12-05T10:00:00Z',
-        notes: 'Submitted electronically via EDI 837'
+        action: "submitted",
+        status: "submitted",
+        performedBy: "billing_user",
+        performedAt: "2025-12-05T10:00:00Z",
+        notes: "Submitted electronically via EDI 837",
       },
       {
-        id: 'HIST004',
+        id: "HIST004",
         claimId: id,
-        action: 'accepted',
-        status: 'accepted',
-        performedBy: 'system',
-        performedAt: '2025-12-06T14:00:00Z',
-        notes: 'Accepted by payer'
+        action: "accepted",
+        status: "accepted",
+        performedBy: "system",
+        performedAt: "2025-12-06T14:00:00Z",
+        notes: "Accepted by payer",
       },
       {
-        id: 'HIST005',
+        id: "HIST005",
         claimId: id,
-        action: 'payment_received',
-        status: 'paid',
-        performedBy: 'system',
-        performedAt: '2025-12-15T10:00:00Z',
-        notes: 'Payment received via ERA'
-      }
+        action: "payment_received",
+        status: "paid",
+        performedBy: "system",
+        performedAt: "2025-12-15T10:00:00Z",
+        notes: "Payment received via ERA",
+      },
     ];
   }
 
@@ -431,12 +443,12 @@ export class ClaimsService {
       supportingDocuments: appealData.documents || [],
       letterContent: appealData.letterContent,
       dueDate: this.calculateAppealDueDate(appealData.appealLevel),
-      status: 'pending',
+      status: "pending",
       createdAt: new Date().toISOString(),
-      createdBy: userId
+      createdBy: userId,
     };
 
-    console.log('Creating appeal:', appeal);
+    console.log("Creating appeal:", appeal);
 
     return appeal;
   }
@@ -444,32 +456,36 @@ export class ClaimsService {
   async getClaimsByBatch(batchId: string) {
     return [
       {
-        id: 'CLM001',
-        claimNumber: 'CLM-2025-001',
+        id: "CLM001",
+        claimNumber: "CLM-2025-001",
         batchId,
-        patientName: 'John Doe',
-        status: 'submitted',
-        totalCharge: 200.00
+        patientName: "John Doe",
+        status: "submitted",
+        totalCharge: 200.0,
       },
       {
-        id: 'CLM002',
-        claimNumber: 'CLM-2025-002',
+        id: "CLM002",
+        claimNumber: "CLM-2025-002",
         batchId,
-        patientName: 'Jane Smith',
-        status: 'submitted',
-        totalCharge: 350.00
-      }
+        patientName: "Jane Smith",
+        status: "submitted",
+        totalCharge: 350.0,
+      },
     ];
   }
 
-  async submitBatchClaims(claimIds: string[], submissionMethod: string, userId: string) {
+  async submitBatchClaims(
+    claimIds: string[],
+    submissionMethod: string,
+    userId: string,
+  ) {
     const batchId = `BATCH${Date.now()}`;
     const results = {
       batchId,
       successful: [] as any[],
       failed: [] as any[],
       totalSubmitted: 0,
-      totalCharge: 0
+      totalCharge: 0,
     };
 
     for (const claimId of claimIds) {
@@ -481,20 +497,25 @@ export class ClaimsService {
         if (!validation.isValid) {
           results.failed.push({
             claimId,
-            errors: validation.errors
+            errors: validation.errors,
           });
           continue;
         }
 
         // Submit claim
-        const result = await this.submitClaim(claimId, submissionMethod, null, userId);
+        const result = await this.submitClaim(
+          claimId,
+          submissionMethod,
+          null,
+          userId,
+        );
         results.successful.push(result);
         results.totalSubmitted++;
         results.totalCharge += claim.totalCharge;
       } catch (error) {
         results.failed.push({
           claimId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
@@ -505,51 +526,51 @@ export class ClaimsService {
   async getClaimsStats(startDate: string, endDate: string, groupBy: string) {
     return {
       totalClaims: 250,
-      totalCharge: 75000.00,
-      totalPaid: 55000.00,
-      totalDenied: 5000.00,
-      totalPending: 15000.00,
-      averageClaimAmount: 300.00,
+      totalCharge: 75000.0,
+      totalPaid: 55000.0,
+      totalDenied: 5000.0,
+      totalPending: 15000.0,
+      averageClaimAmount: 300.0,
       averageDaysToPayment: 18,
       acceptanceRate: 92,
       denialRate: 8,
       byStatus: {
-        draft: { count: 10, amount: 3000.00 },
-        ready: { count: 15, amount: 4500.00 },
-        submitted: { count: 50, amount: 15000.00 },
-        accepted: { count: 30, amount: 9000.00 },
-        paid: { count: 120, amount: 36000.00 },
-        denied: { count: 20, amount: 6000.00 },
-        appealed: { count: 5, amount: 1500.00 }
+        draft: { count: 10, amount: 3000.0 },
+        ready: { count: 15, amount: 4500.0 },
+        submitted: { count: 50, amount: 15000.0 },
+        accepted: { count: 30, amount: 9000.0 },
+        paid: { count: 120, amount: 36000.0 },
+        denied: { count: 20, amount: 6000.0 },
+        appealed: { count: 5, amount: 1500.0 },
       },
       byPayer: [
         {
-          payerId: 'PAY001',
-          payerName: 'Blue Cross Blue Shield',
+          payerId: "PAY001",
+          payerName: "Blue Cross Blue Shield",
           claimCount: 100,
-          totalCharge: 30000.00,
-          totalPaid: 24000.00,
-          denialRate: 5
+          totalCharge: 30000.0,
+          totalPaid: 24000.0,
+          denialRate: 5,
         },
         {
-          payerId: 'PAY002',
-          payerName: 'Aetna',
+          payerId: "PAY002",
+          payerName: "Aetna",
           claimCount: 80,
-          totalCharge: 24000.00,
-          totalPaid: 19200.00,
-          denialRate: 8
-        }
+          totalCharge: 24000.0,
+          totalPaid: 19200.0,
+          denialRate: 8,
+        },
       ],
       trend: [
-        { date: '2025-12-01', submitted: 20, paid: 15, denied: 2 },
-        { date: '2025-12-08', submitted: 25, paid: 18, denied: 3 },
-        { date: '2025-12-15', submitted: 30, paid: 22, denied: 1 }
+        { date: "2025-12-01", submitted: 20, paid: 15, denied: 2 },
+        { date: "2025-12-08", submitted: 25, paid: 18, denied: 3 },
+        { date: "2025-12-15", submitted: 30, paid: 22, denied: 1 },
       ],
       topDenialReasons: [
-        { code: 'CO-16', description: 'Claim lacks information', count: 8 },
-        { code: 'CO-18', description: 'Duplicate claim', count: 5 },
-        { code: 'CO-45', description: 'Charge exceeds fee schedule', count: 4 }
-      ]
+        { code: "CO-16", description: "Claim lacks information", count: 8 },
+        { code: "CO-18", description: "Duplicate claim", count: 5 },
+        { code: "CO-45", description: "Charge exceeds fee schedule", count: 4 },
+      ],
     };
   }
 
@@ -557,7 +578,7 @@ export class ClaimsService {
 
   private calculateTotalCharge(lineItems: any[]): number {
     return lineItems.reduce((total, item) => {
-      return total + (item.charge * (item.units || 1));
+      return total + item.charge * (item.units || 1);
     }, 0);
   }
 
@@ -570,6 +591,6 @@ export class ClaimsService {
     const daysToAdd = level === 1 ? 120 : level === 2 ? 180 : 60;
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + daysToAdd);
-    return dueDate.toISOString().split('T')[0];
+    return dueDate.toISOString().split("T")[0];
   }
 }

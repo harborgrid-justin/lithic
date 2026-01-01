@@ -3,46 +3,46 @@
  * Handle NCPDP e-prescribing messages
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 // Mock e-prescribe messages database
 const ePrescribeMessages: any[] = [
   {
-    id: 'eprx_001',
-    messageType: 'NEWRX',
-    direction: 'inbound',
-    ncpdpMessageId: 'NCPDP-' + Date.now(),
+    id: "eprx_001",
+    messageType: "NEWRX",
+    direction: "inbound",
+    ncpdpMessageId: "NCPDP-" + Date.now(),
     prescriptionId: null,
-    prescriberId: 'prov_001',
-    pharmacyNCPDP: '1234567',
-    patientId: 'pat_001',
+    prescriberId: "prov_001",
+    pharmacyNCPDP: "1234567",
+    patientId: "pat_001",
     messageData: {
       medication: {
-        drugName: 'Lisinopril 10mg Tablet',
-        ndc: '00378-1805-10',
+        drugName: "Lisinopril 10mg Tablet",
+        ndc: "00378-1805-10",
         quantity: 30,
         daysSupply: 30,
         refills: 5,
-        sig: 'Take 1 tablet by mouth once daily',
+        sig: "Take 1 tablet by mouth once daily",
       },
       patient: {
-        firstName: 'John',
-        lastName: 'Doe',
-        dateOfBirth: '1970-01-01',
-        address: '123 Main St',
-        city: 'Anytown',
-        state: 'CA',
-        zipCode: '12345',
+        firstName: "John",
+        lastName: "Doe",
+        dateOfBirth: "1970-01-01",
+        address: "123 Main St",
+        city: "Anytown",
+        state: "CA",
+        zipCode: "12345",
       },
       prescriber: {
-        firstName: 'Jane',
-        lastName: 'Smith',
-        npi: '1234567890',
-        dea: 'BS1234563',
-        phone: '555-123-4567',
+        firstName: "Jane",
+        lastName: "Smith",
+        npi: "1234567890",
+        dea: "BS1234563",
+        phone: "555-123-4567",
       },
     },
-    status: 'received',
+    status: "received",
     receivedAt: new Date().toISOString(),
   },
 ];
@@ -50,30 +50,30 @@ const ePrescribeMessages: any[] = [
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const messageType = searchParams.get('messageType');
-    const status = searchParams.get('status');
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
+    const messageType = searchParams.get("messageType");
+    const status = searchParams.get("status");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
 
     let filtered = [...ePrescribeMessages];
 
     if (messageType) {
-      filtered = filtered.filter(msg => msg.messageType === messageType);
+      filtered = filtered.filter((msg) => msg.messageType === messageType);
     }
 
     if (status) {
-      filtered = filtered.filter(msg => msg.status === status);
+      filtered = filtered.filter((msg) => msg.status === status);
     }
 
     if (startDate) {
-      filtered = filtered.filter(msg =>
-        new Date(msg.receivedAt || msg.sentAt) >= new Date(startDate)
+      filtered = filtered.filter(
+        (msg) => new Date(msg.receivedAt || msg.sentAt) >= new Date(startDate),
       );
     }
 
     if (endDate) {
-      filtered = filtered.filter(msg =>
-        new Date(msg.receivedAt || msg.sentAt) <= new Date(endDate)
+      filtered = filtered.filter(
+        (msg) => new Date(msg.receivedAt || msg.sentAt) <= new Date(endDate),
       );
     }
 
@@ -86,10 +86,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(filtered);
   } catch (error) {
-    console.error('Error fetching e-prescribe messages:', error);
+    console.error("Error fetching e-prescribe messages:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch e-prescribe messages' },
-      { status: 500 }
+      { error: "Failed to fetch e-prescribe messages" },
+      { status: 500 },
     );
   }
 }
@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
     const message = {
       id: `eprx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       ncpdpMessageId: `NCPDP-${Date.now()}`,
-      direction: 'outbound',
-      status: 'sent',
+      direction: "outbound",
+      status: "sent",
       sentAt: new Date().toISOString(),
       ...data,
     };
@@ -111,10 +111,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
-    console.error('Error creating e-prescribe message:', error);
+    console.error("Error creating e-prescribe message:", error);
     return NextResponse.json(
-      { error: 'Failed to create e-prescribe message' },
-      { status: 500 }
+      { error: "Failed to create e-prescribe message" },
+      { status: 500 },
     );
   }
 }

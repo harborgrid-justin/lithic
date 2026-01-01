@@ -1,21 +1,37 @@
-import api from '@/lib/api';
-import type { TimeSlot, ProviderAvailability, ResourceAvailability } from '@/types/scheduling';
-import { generateTimeSlots, timeStringToDate, addMinutes, getDayOfWeek } from '@/lib/utils';
+import api from "@/lib/api";
+import type {
+  TimeSlot,
+  ProviderAvailability,
+  ResourceAvailability,
+} from "@/types/scheduling";
+import {
+  generateTimeSlots,
+  timeStringToDate,
+  addMinutes,
+  getDayOfWeek,
+} from "@/lib/utils";
 
 class AvailabilityService {
   // Provider Availability
-  async getProviderAvailability(providerId: string): Promise<ProviderAvailability[]> {
-    const { data } = await api.get(`/scheduling/availability/provider/${providerId}`);
+  async getProviderAvailability(
+    providerId: string,
+  ): Promise<ProviderAvailability[]> {
+    const { data } = await api.get(
+      `/scheduling/availability/provider/${providerId}`,
+    );
     return data;
   }
 
   async updateProviderAvailability(
     providerId: string,
-    availability: Omit<ProviderAvailability, 'id' | 'providerId'>[]
+    availability: Omit<ProviderAvailability, "id" | "providerId">[],
   ): Promise<ProviderAvailability[]> {
-    const { data } = await api.post(`/scheduling/availability/provider/${providerId}`, {
-      availability,
-    });
+    const { data } = await api.post(
+      `/scheduling/availability/provider/${providerId}`,
+      {
+        availability,
+      },
+    );
     return data;
   }
 
@@ -24,18 +40,25 @@ class AvailabilityService {
   }
 
   // Resource Availability
-  async getResourceAvailability(resourceId: string): Promise<ResourceAvailability[]> {
-    const { data } = await api.get(`/scheduling/availability/resource/${resourceId}`);
+  async getResourceAvailability(
+    resourceId: string,
+  ): Promise<ResourceAvailability[]> {
+    const { data } = await api.get(
+      `/scheduling/availability/resource/${resourceId}`,
+    );
     return data;
   }
 
   async updateResourceAvailability(
     resourceId: string,
-    availability: Omit<ResourceAvailability, 'id' | 'resourceId'>[]
+    availability: Omit<ResourceAvailability, "id" | "resourceId">[],
   ): Promise<ResourceAvailability[]> {
-    const { data } = await api.post(`/scheduling/availability/resource/${resourceId}`, {
-      availability,
-    });
+    const { data } = await api.post(
+      `/scheduling/availability/resource/${resourceId}`,
+      {
+        availability,
+      },
+    );
     return data;
   }
 
@@ -47,7 +70,9 @@ class AvailabilityService {
     duration: number;
     appointmentType?: string;
   }): Promise<TimeSlot[]> {
-    const { data } = await api.get('/scheduling/availability/slots', { params });
+    const { data } = await api.get("/scheduling/availability/slots", {
+      params,
+    });
     return data;
   }
 
@@ -59,7 +84,9 @@ class AvailabilityService {
     duration: number;
     appointmentType?: string;
   }): Promise<Record<string, TimeSlot[]>> {
-    const { data } = await api.get('/scheduling/availability/slots/range', { params });
+    const { data } = await api.get("/scheduling/availability/slots/range", {
+      params,
+    });
     return data;
   }
 
@@ -68,7 +95,7 @@ class AvailabilityService {
     availability: ProviderAvailability | ResourceAvailability,
     date: Date,
     slotDuration: number,
-    existingAppointments: { startTime: string; endTime: string }[] = []
+    existingAppointments: { startTime: string; endTime: string }[] = [],
   ): TimeSlot[] {
     const dayOfWeek = getDayOfWeek(date);
 
@@ -79,7 +106,7 @@ class AvailabilityService {
     const timeStrings = generateTimeSlots(
       availability.startTime,
       availability.endTime,
-      slotDuration
+      slotDuration,
     );
 
     const slots: TimeSlot[] = timeStrings.map((timeStr) => {
@@ -112,7 +139,7 @@ class AvailabilityService {
     fromDate: Date,
     duration: number,
     existingAppointments: { startTime: string; endTime: string }[] = [],
-    daysToSearch: number = 30
+    daysToSearch: number = 30,
   ): TimeSlot | null {
     const currentDate = new Date(fromDate);
     const endDate = new Date(fromDate);
@@ -121,7 +148,7 @@ class AvailabilityService {
     while (currentDate <= endDate) {
       const dayOfWeek = getDayOfWeek(currentDate);
       const dayAvailability = availabilities.find(
-        (a) => a.dayOfWeek === dayOfWeek && a.isActive
+        (a) => a.dayOfWeek === dayOfWeek && a.isActive,
       );
 
       if (dayAvailability) {
@@ -129,7 +156,7 @@ class AvailabilityService {
           dayAvailability,
           currentDate,
           duration,
-          existingAppointments
+          existingAppointments,
         );
 
         const availableSlot = slots.find((slot) => slot.isAvailable);
@@ -149,39 +176,48 @@ class AvailabilityService {
     startTime: string;
     endTime: string;
   }): Promise<Record<string, boolean>> {
-    const { data } = await api.post('/scheduling/availability/check-resources', params);
+    const { data } = await api.post(
+      "/scheduling/availability/check-resources",
+      params,
+    );
     return data;
   }
 
   async getProviderWorkload(
     providerId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<{
     totalAppointments: number;
     totalHours: number;
     utilizationRate: number;
     appointmentsByDay: Record<string, number>;
   }> {
-    const { data } = await api.get(`/scheduling/availability/provider/${providerId}/workload`, {
-      params: { startDate, endDate },
-    });
+    const { data } = await api.get(
+      `/scheduling/availability/provider/${providerId}/workload`,
+      {
+        params: { startDate, endDate },
+      },
+    );
     return data;
   }
 
   async getResourceUtilization(
     resourceId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<{
     totalBookings: number;
     totalHours: number;
     utilizationRate: number;
     bookingsByDay: Record<string, number>;
   }> {
-    const { data } = await api.get(`/scheduling/availability/resource/${resourceId}/utilization`, {
-      params: { startDate, endDate },
-    });
+    const { data } = await api.get(
+      `/scheduling/availability/resource/${resourceId}/utilization`,
+      {
+        params: { startDate, endDate },
+      },
+    );
     return data;
   }
 
@@ -191,10 +227,13 @@ class AvailabilityService {
     duration: number;
     maxAlternatives?: number;
   }): Promise<TimeSlot[]> {
-    const { data } = await api.post('/scheduling/availability/suggest-alternatives', {
-      ...params,
-      maxAlternatives: params.maxAlternatives || 5,
-    });
+    const { data } = await api.post(
+      "/scheduling/availability/suggest-alternatives",
+      {
+        ...params,
+        maxAlternatives: params.maxAlternatives || 5,
+      },
+    );
     return data;
   }
 
@@ -205,7 +244,7 @@ class AvailabilityService {
     endTime: string;
     reason: string;
   }): Promise<void> {
-    await api.post('/scheduling/availability/block', params);
+    await api.post("/scheduling/availability/block", params);
   }
 
   async unblockTimeSlot(blockId: string): Promise<void> {
@@ -217,15 +256,19 @@ class AvailabilityService {
     resourceId?: string;
     startDate: string;
     endDate: string;
-  }): Promise<Array<{
-    id: string;
-    providerId?: string;
-    resourceId?: string;
-    startTime: string;
-    endTime: string;
-    reason: string;
-  }>> {
-    const { data } = await api.get('/scheduling/availability/blocked', { params });
+  }): Promise<
+    Array<{
+      id: string;
+      providerId?: string;
+      resourceId?: string;
+      startTime: string;
+      endTime: string;
+      reason: string;
+    }>
+  > {
+    const { data } = await api.get("/scheduling/availability/blocked", {
+      params,
+    });
     return data;
   }
 }

@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { LabPanel } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Layers, Plus, X } from 'lucide-react';
-import { COMMON_LOINC_CODES } from '@/lib/loinc-codes';
-import LaboratoryService from '@/services/laboratory.service';
+import React, { useState } from "react";
+import { LabPanel } from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Layers, Plus, X } from "lucide-react";
+import { COMMON_LOINC_CODES } from "@/lib/loinc-codes";
+import LaboratoryService from "@/services/laboratory.service";
 
 interface LabPanelBuilderProps {
   panel?: LabPanel;
@@ -17,21 +17,27 @@ interface LabPanelBuilderProps {
   onCancel?: () => void;
 }
 
-export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanelBuilderProps) {
+export default function LabPanelBuilder({
+  panel,
+  onSuccess,
+  onCancel,
+}: LabPanelBuilderProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    code: panel?.code || '',
-    name: panel?.name || '',
-    description: panel?.description || '',
-    category: panel?.category || '',
+    code: panel?.code || "",
+    name: panel?.name || "",
+    description: panel?.description || "",
+    category: panel?.category || "",
     tests: panel?.tests || [],
   });
 
-  const availableTests = Object.entries(COMMON_LOINC_CODES).map(([key, test]) => ({
-    code: test.code,
-    name: test.display,
-    key,
-  }));
+  const availableTests = Object.entries(COMMON_LOINC_CODES).map(
+    ([key, test]) => ({
+      code: test.code,
+      name: test.display,
+      key,
+    }),
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,8 +55,8 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
 
       onSuccess?.(newPanel);
     } catch (error) {
-      console.error('Failed to create panel:', error);
-      alert('Failed to create panel');
+      console.error("Failed to create panel:", error);
+      alert("Failed to create panel");
     } finally {
       setLoading(false);
     }
@@ -63,18 +69,25 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
   };
 
   const removeTest = (testCode: string) => {
-    setFormData({ ...formData, tests: formData.tests.filter(t => t !== testCode) });
+    setFormData({
+      ...formData,
+      tests: formData.tests.filter((t) => t !== testCode),
+    });
   };
 
-  const selectedTests = availableTests.filter(t => formData.tests.includes(t.code));
-  const unselectedTests = availableTests.filter(t => !formData.tests.includes(t.code));
+  const selectedTests = availableTests.filter((t) =>
+    formData.tests.includes(t.code),
+  );
+  const unselectedTests = availableTests.filter(
+    (t) => !formData.tests.includes(t.code),
+  );
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Layers className="h-5 w-5" />
-          {panel ? 'Edit Panel' : 'Create New Panel'}
+          {panel ? "Edit Panel" : "Create New Panel"}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -85,7 +98,12 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
               <Input
                 id="code"
                 value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    code: e.target.value.toUpperCase(),
+                  })
+                }
                 placeholder="e.g., CBC, BMP"
                 required
               />
@@ -95,7 +113,9 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
               <Input
                 id="category"
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
                 placeholder="e.g., Hematology, Chemistry"
                 required
               />
@@ -107,7 +127,9 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               placeholder="e.g., Complete Blood Count"
               required
             />
@@ -119,7 +141,9 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
               id="description"
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               placeholder="Enter panel description"
             />
           </div>
@@ -162,7 +186,9 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
                   >
                     <div className="flex-1">
                       <div className="text-sm font-medium">{test.name}</div>
-                      <div className="text-xs text-muted-foreground">LOINC: {test.code}</div>
+                      <div className="text-xs text-muted-foreground">
+                        LOINC: {test.code}
+                      </div>
                     </div>
                     <Button type="button" size="sm" variant="ghost">
                       <Plus className="h-4 w-4" />
@@ -179,8 +205,11 @@ export default function LabPanelBuilder({ panel, onSuccess, onCancel }: LabPanel
                 Cancel
               </Button>
             )}
-            <Button type="submit" disabled={loading || formData.tests.length === 0}>
-              {loading ? 'Saving...' : panel ? 'Update Panel' : 'Create Panel'}
+            <Button
+              type="submit"
+              disabled={loading || formData.tests.length === 0}
+            >
+              {loading ? "Saving..." : panel ? "Update Panel" : "Create Panel"}
             </Button>
           </div>
         </form>

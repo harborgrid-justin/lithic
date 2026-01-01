@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { imagingService, RadiologyReport } from '@/services/imaging.service';
+import { useState, useEffect } from "react";
+import { imagingService, RadiologyReport } from "@/services/imaging.service";
 
 interface ReportEditorProps {
   studyId?: string;
@@ -10,15 +10,20 @@ interface ReportEditorProps {
   onSign?: (report: RadiologyReport) => void;
 }
 
-export default function ReportEditor({ studyId, reportId, onSave, onSign }: ReportEditorProps) {
+export default function ReportEditor({
+  studyId,
+  reportId,
+  onSave,
+  onSign,
+}: ReportEditorProps) {
   const [report, setReport] = useState<Partial<RadiologyReport>>({
-    studyId: studyId || '',
-    technique: '',
-    comparison: '',
-    findings: '',
-    impression: '',
-    recommendations: '',
-    criticalFindings: '',
+    studyId: studyId || "",
+    technique: "",
+    comparison: "",
+    findings: "",
+    impression: "",
+    recommendations: "",
+    criticalFindings: "",
   });
   const [loading, setLoading] = useState(false);
   const [templates, setTemplates] = useState<any[]>([]);
@@ -36,7 +41,7 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
       const data = await imagingService.getReport(reportId);
       setReport(data);
     } catch (error) {
-      console.error('Failed to load report:', error);
+      console.error("Failed to load report:", error);
     }
   };
 
@@ -45,7 +50,7 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
       const data = await imagingService.getReportTemplates();
       setTemplates(data);
     } catch (error) {
-      console.error('Failed to load templates:', error);
+      console.error("Failed to load templates:", error);
     }
   };
 
@@ -60,7 +65,7 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
       }
       onSave?.(savedReport);
     } catch (error) {
-      console.error('Failed to save report:', error);
+      console.error("Failed to save report:", error);
     } finally {
       setLoading(false);
     }
@@ -68,7 +73,7 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
 
   const handleSign = async () => {
     if (!reportId) {
-      alert('Please save the report first');
+      alert("Please save the report first");
       return;
     }
     setLoading(true);
@@ -76,20 +81,20 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
       const signedReport = await imagingService.signReport(reportId);
       onSign?.(signedReport);
     } catch (error) {
-      console.error('Failed to sign report:', error);
+      console.error("Failed to sign report:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const applyTemplate = (templateId: string) => {
-    const template = templates.find(t => t.id === templateId);
+    const template = templates.find((t) => t.id === templateId);
     if (template) {
-      setReport(prev => ({
+      setReport((prev) => ({
         ...prev,
-        technique: template.technique || '',
-        findings: template.findings || '',
-        impression: template.impression || '',
+        technique: template.technique || "",
+        findings: template.findings || "",
+        impression: template.impression || "",
       }));
     }
   };
@@ -99,17 +104,17 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
       {/* Header */}
       <div className="bg-white p-4 rounded-lg shadow flex justify-between items-center">
         <h2 className="text-xl font-semibold">
-          {reportId ? 'Edit Report' : 'New Radiology Report'}
+          {reportId ? "Edit Report" : "New Radiology Report"}
         </h2>
         <div className="flex space-x-2">
           {templates.length > 0 && (
             <select
-              onChange={e => applyTemplate(e.target.value)}
+              onChange={(e) => applyTemplate(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md"
               defaultValue=""
             >
               <option value="">Load Template...</option>
-              {templates.map(t => (
+              {templates.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.name}
                 </option>
@@ -123,10 +128,14 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
         {/* Technique */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Technique</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Technique
+          </label>
           <textarea
-            value={report.technique || ''}
-            onChange={e => setReport({ ...report, technique: e.target.value })}
+            value={report.technique || ""}
+            onChange={(e) =>
+              setReport({ ...report, technique: e.target.value })
+            }
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Describe the imaging technique used..."
@@ -135,10 +144,14 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
 
         {/* Comparison */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Comparison</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Comparison
+          </label>
           <textarea
-            value={report.comparison || ''}
-            onChange={e => setReport({ ...report, comparison: e.target.value })}
+            value={report.comparison || ""}
+            onChange={(e) =>
+              setReport({ ...report, comparison: e.target.value })
+            }
             rows={2}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Previous studies for comparison..."
@@ -151,8 +164,8 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
             Findings <span className="text-red-500">*</span>
           </label>
           <textarea
-            value={report.findings || ''}
-            onChange={e => setReport({ ...report, findings: e.target.value })}
+            value={report.findings || ""}
+            onChange={(e) => setReport({ ...report, findings: e.target.value })}
             rows={10}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -166,8 +179,10 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
             Impression <span className="text-red-500">*</span>
           </label>
           <textarea
-            value={report.impression || ''}
-            onChange={e => setReport({ ...report, impression: e.target.value })}
+            value={report.impression || ""}
+            onChange={(e) =>
+              setReport({ ...report, impression: e.target.value })
+            }
             rows={5}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -177,10 +192,14 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
 
         {/* Recommendations */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Recommendations</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Recommendations
+          </label>
           <textarea
-            value={report.recommendations || ''}
-            onChange={e => setReport({ ...report, recommendations: e.target.value })}
+            value={report.recommendations || ""}
+            onChange={(e) =>
+              setReport({ ...report, recommendations: e.target.value })
+            }
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Clinical recommendations..."
@@ -193,8 +212,10 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
             Critical Findings
           </label>
           <textarea
-            value={report.criticalFindings || ''}
-            onChange={e => setReport({ ...report, criticalFindings: e.target.value })}
+            value={report.criticalFindings || ""}
+            onChange={(e) =>
+              setReport({ ...report, criticalFindings: e.target.value })
+            }
             rows={2}
             className="w-full px-3 py-2 border border-red-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 bg-red-50"
             placeholder="Any critical or urgent findings requiring immediate attention..."
@@ -210,7 +231,7 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
           )}
           {report.signedBy && report.signedDate && (
             <span className="ml-4">
-              Signed by {report.signedBy} on{' '}
+              Signed by {report.signedBy} on{" "}
               {new Date(report.signedDate).toLocaleString()}
             </span>
           )}
@@ -221,11 +242,11 @@ export default function ReportEditor({ studyId, reportId, onSave, onSign }: Repo
             disabled={loading || !report.findings || !report.impression}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? 'Saving...' : 'Save Draft'}
+            {loading ? "Saving..." : "Save Draft"}
           </button>
           <button
             onClick={handleSign}
-            disabled={loading || !reportId || report.status === 'FINAL'}
+            disabled={loading || !reportId || report.status === "FINAL"}
             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
           >
             Sign Report

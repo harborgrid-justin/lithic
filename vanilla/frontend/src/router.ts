@@ -4,7 +4,7 @@ export class Router {
 
   constructor() {
     // Listen to browser navigation
-    window.addEventListener('popstate', () => this.resolve());
+    window.addEventListener("popstate", () => this.resolve());
   }
 
   public init() {
@@ -12,7 +12,7 @@ export class Router {
   }
 
   public register(path: string, handler: (params?: any) => void) {
-    if (path === '*') {
+    if (path === "*") {
       this.notFoundHandler = handler;
     } else {
       this.routes.set(path, handler);
@@ -20,13 +20,13 @@ export class Router {
   }
 
   public navigate(path: string, state?: any) {
-    window.history.pushState(state, '', path);
+    window.history.pushState(state, "", path);
     this.resolve();
   }
 
   private resolve() {
     const path = window.location.pathname;
-    
+
     // Try exact match first
     const exactHandler = this.routes.get(path);
     if (exactHandler) {
@@ -49,9 +49,12 @@ export class Router {
     }
   }
 
-  private matchRoute(route: string, path: string): Record<string, string> | null {
-    const routeParts = route.split('/').filter(Boolean);
-    const pathParts = path.split('/').filter(Boolean);
+  private matchRoute(
+    route: string,
+    path: string,
+  ): Record<string, string> | null {
+    const routeParts = route.split("/").filter(Boolean);
+    const pathParts = path.split("/").filter(Boolean);
 
     if (routeParts.length !== pathParts.length) {
       return null;
@@ -63,7 +66,7 @@ export class Router {
       const routePart = routeParts[i];
       const pathPart = pathParts[i];
 
-      if (routePart.startsWith(':')) {
+      if (routePart.startsWith(":")) {
         // This is a parameter
         const paramName = routePart.slice(1);
         params[paramName] = pathPart;

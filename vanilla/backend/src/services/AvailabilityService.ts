@@ -5,9 +5,14 @@
  * Handles provider availability calculations, slot generation, and scheduling optimization.
  */
 
-import type { Provider } from '../routes/scheduling/providers';
-import type { Appointment } from '../routes/scheduling/appointments';
-import type { TimeSlot, DaySchedule, ProviderAvailability, BlockedTime } from '../routes/scheduling/availability';
+import type { Provider } from "../routes/scheduling/providers";
+import type { Appointment } from "../routes/scheduling/appointments";
+import type {
+  TimeSlot,
+  DaySchedule,
+  ProviderAvailability,
+  BlockedTime,
+} from "../routes/scheduling/availability";
 
 export class AvailabilityService {
   /**
@@ -17,15 +22,17 @@ export class AvailabilityService {
     date: Date,
     workingHours: { startTime: string; endTime: string },
     slotDuration: number = 30,
-    breaks?: { startTime: string; endTime: string }[]
+    breaks?: { startTime: string; endTime: string }[],
   ): TimeSlot[] {
     const slots: TimeSlot[] = [];
     const dayDate = new Date(date);
     dayDate.setHours(0, 0, 0, 0);
 
     // Parse working hours
-    const [startHour, startMinute] = workingHours.startTime.split(':').map(Number);
-    const [endHour, endMinute] = workingHours.endTime.split(':').map(Number);
+    const [startHour, startMinute] = workingHours.startTime
+      .split(":")
+      .map(Number);
+    const [endHour, endMinute] = workingHours.endTime.split(":").map(Number);
 
     const currentSlot = new Date(dayDate);
     currentSlot.setHours(startHour, startMinute, 0, 0);
@@ -38,9 +45,13 @@ export class AvailabilityService {
       slotEnd.setMinutes(slotEnd.getMinutes() + slotDuration);
 
       // Check if slot overlaps with break times
-      const isDuringBreak = breaks?.some(breakPeriod => {
-        const [breakStartHour, breakStartMinute] = breakPeriod.startTime.split(':').map(Number);
-        const [breakEndHour, breakEndMinute] = breakPeriod.endTime.split(':').map(Number);
+      const isDuringBreak = breaks?.some((breakPeriod) => {
+        const [breakStartHour, breakStartMinute] = breakPeriod.startTime
+          .split(":")
+          .map(Number);
+        const [breakEndHour, breakEndMinute] = breakPeriod.endTime
+          .split(":")
+          .map(Number);
 
         const breakStart = new Date(dayDate);
         breakStart.setHours(breakStartHour, breakStartMinute, 0, 0);
@@ -55,7 +66,7 @@ export class AvailabilityService {
         startTime: new Date(currentSlot),
         endTime: slotEnd,
         available: !isDuringBreak,
-        reason: isDuringBreak ? 'Break time' : undefined
+        reason: isDuringBreak ? "Break time" : undefined,
       });
 
       currentSlot.setMinutes(currentSlot.getMinutes() + slotDuration);
@@ -71,7 +82,7 @@ export class AvailabilityService {
     provider: Provider,
     startDate: Date,
     endDate: Date,
-    slotDuration: number = 30
+    slotDuration: number = 30,
   ): Promise<ProviderAvailability> {
     const schedule: DaySchedule[] = [];
     const currentDate = new Date(startDate);
@@ -86,7 +97,7 @@ export class AvailabilityService {
         provider,
         new Date(currentDate),
         dayOfWeek,
-        slotDuration
+        slotDuration,
       );
 
       schedule.push(daySchedule);
@@ -102,7 +113,7 @@ export class AvailabilityService {
       specialty: provider.specialty,
       schedule,
       workingHours: provider.schedulingPreferences ? [] : [], // TODO: Get from provider profile
-      exceptions: []
+      exceptions: [],
     };
   }
 
@@ -113,13 +124,13 @@ export class AvailabilityService {
     provider: Provider,
     date: Date,
     dayOfWeek: number,
-    slotDuration: number
+    slotDuration: number,
   ): DaySchedule {
     // Find working hours for this day
     // TODO: Get from provider's working hours configuration
     const workingHours = {
-      startTime: '09:00',
-      endTime: '17:00'
+      startTime: "09:00",
+      endTime: "17:00",
     };
 
     const isWorkingDay = dayOfWeek >= 1 && dayOfWeek <= 5; // Monday to Friday
@@ -129,8 +140,8 @@ export class AvailabilityService {
       slots = this.generateTimeSlots(date, workingHours, slotDuration);
     }
 
-    const availableSlots = slots.filter(s => s.available).length;
-    const bookedSlots = slots.filter(s => !s.available).length;
+    const availableSlots = slots.filter((s) => s.available).length;
+    const bookedSlots = slots.filter((s) => !s.available).length;
 
     return {
       date: new Date(date),
@@ -139,7 +150,7 @@ export class AvailabilityService {
       slots,
       totalSlots: slots.length,
       availableSlots,
-      bookedSlots
+      bookedSlots,
     };
   }
 
@@ -148,28 +159,33 @@ export class AvailabilityService {
    */
   static markSlotsUnavailable(
     slots: TimeSlot[],
-    appointments: Appointment[]
+    appointments: Appointment[],
   ): TimeSlot[] {
-    return slots.map(slot => {
-      const hasConflict = appointments.some(apt => {
-        if (apt.status === 'cancelled') return false;
+    return slots.map((slot) => {
+      const hasConflict = appointments.some((apt) => {
+        if (apt.status === "cancelled") return false;
         return this.hasTimeOverlap(
           slot.startTime,
           slot.endTime,
           apt.startTime,
-          apt.endTime
+          apt.endTime,
         );
       });
 
       if (hasConflict) {
-        const conflictingApt = appointments.find(apt =>
-          this.hasTimeOverlap(slot.startTime, slot.endTime, apt.startTime, apt.endTime)
+        const conflictingApt = appointments.find((apt) =>
+          this.hasTimeOverlap(
+            slot.startTime,
+            slot.endTime,
+            apt.startTime,
+            apt.endTime,
+          ),
         );
         return {
           ...slot,
           available: false,
-          reason: 'Already booked',
-          appointmentId: conflictingApt?.id
+          reason: "Already booked",
+          appointmentId: conflictingApt?.id,
         };
       }
 
@@ -184,7 +200,7 @@ export class AvailabilityService {
     start1: Date,
     end1: Date,
     start2: Date,
-    end2: Date
+    end2: Date,
   ): boolean {
     return start1 < end2 && end1 > start2;
   }
@@ -196,7 +212,7 @@ export class AvailabilityService {
     providerId: string,
     duration: number,
     startDate?: Date,
-    maxDaysAhead: number = 30
+    maxDaysAhead: number = 30,
   ): Promise<TimeSlot | null> {
     const searchStart = startDate || new Date();
     const searchEnd = new Date(searchStart);
@@ -219,8 +235,8 @@ export class AvailabilityService {
     endDate: Date,
     preferences?: {
       daysOfWeek?: number[];
-      timeOfDay?: 'morning' | 'afternoon' | 'evening';
-    }
+      timeOfDay?: "morning" | "afternoon" | "evening";
+    },
   ): Promise<TimeSlot[]> {
     const availableSlots: TimeSlot[] = [];
 
@@ -254,16 +270,16 @@ export class AvailabilityService {
   static findOptimalSlot(
     availableSlots: TimeSlot[],
     criteria: {
-      preferredTime?: 'morning' | 'afternoon' | 'evening';
+      preferredTime?: "morning" | "afternoon" | "evening";
       minimizeWaitTime?: boolean;
       balanceLoad?: boolean;
-    }
+    },
   ): TimeSlot | null {
     if (availableSlots.length === 0) return null;
 
-    let scoredSlots = availableSlots.map(slot => ({
+    let scoredSlots = availableSlots.map((slot) => ({
       slot,
-      score: 0
+      score: 0,
     }));
 
     // Score based on preferred time
@@ -272,11 +288,19 @@ export class AvailabilityService {
         const hour = slot.startTime.getHours();
         let timeScore = 0;
 
-        if (criteria.preferredTime === 'morning' && hour >= 8 && hour < 12) {
+        if (criteria.preferredTime === "morning" && hour >= 8 && hour < 12) {
           timeScore = 10;
-        } else if (criteria.preferredTime === 'afternoon' && hour >= 12 && hour < 17) {
+        } else if (
+          criteria.preferredTime === "afternoon" &&
+          hour >= 12 &&
+          hour < 17
+        ) {
           timeScore = 10;
-        } else if (criteria.preferredTime === 'evening' && hour >= 17 && hour < 20) {
+        } else if (
+          criteria.preferredTime === "evening" &&
+          hour >= 17 &&
+          hour < 20
+        ) {
           timeScore = 10;
         }
 
@@ -288,7 +312,7 @@ export class AvailabilityService {
     if (criteria.minimizeWaitTime) {
       scoredSlots = scoredSlots.map(({ slot, score }, index) => ({
         slot,
-        score: score + (availableSlots.length - index)
+        score: score + (availableSlots.length - index),
       }));
     }
 
@@ -304,7 +328,7 @@ export class AvailabilityService {
     providerId: string,
     startTime: Date,
     endTime: Date,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<boolean> {
     // TODO: Check against existing appointments
     // TODO: Check against blocked times
@@ -317,7 +341,15 @@ export class AvailabilityService {
    * Get day name from day number
    */
   static getDayName(dayOfWeek: number): string {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
     return days[dayOfWeek];
   }
 
@@ -325,7 +357,7 @@ export class AvailabilityService {
    * Parse time string to minutes since midnight
    */
   static timeToMinutes(timeStr: string): number {
-    const [hours, minutes] = timeStr.split(':').map(Number);
+    const [hours, minutes] = timeStr.split(":").map(Number);
     return hours * 60 + minutes;
   }
 
@@ -335,7 +367,7 @@ export class AvailabilityService {
   static minutesToTime(minutes: number): string {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
   }
 
   /**
@@ -352,13 +384,14 @@ export class AvailabilityService {
         totalGaps: 0,
         averageGap: 0,
         largestGap: 0,
-        gaps: []
+        gaps: [],
       };
     }
 
     // Sort appointments by start time
     const sorted = [...appointments].sort(
-      (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      (a, b) =>
+        new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
     );
 
     const gaps: { start: Date; end: Date; duration: number }[] = [];
@@ -366,26 +399,28 @@ export class AvailabilityService {
     for (let i = 0; i < sorted.length - 1; i++) {
       const currentEnd = new Date(sorted[i].endTime);
       const nextStart = new Date(sorted[i + 1].startTime);
-      const gapDuration = (nextStart.getTime() - currentEnd.getTime()) / (1000 * 60); // minutes
+      const gapDuration =
+        (nextStart.getTime() - currentEnd.getTime()) / (1000 * 60); // minutes
 
       if (gapDuration > 0) {
         gaps.push({
           start: currentEnd,
           end: nextStart,
-          duration: gapDuration
+          duration: gapDuration,
         });
       }
     }
 
     const totalGaps = gaps.reduce((sum, gap) => sum + gap.duration, 0);
     const averageGap = gaps.length > 0 ? totalGaps / gaps.length : 0;
-    const largestGap = gaps.length > 0 ? Math.max(...gaps.map(g => g.duration)) : 0;
+    const largestGap =
+      gaps.length > 0 ? Math.max(...gaps.map((g) => g.duration)) : 0;
 
     return {
       totalGaps,
       averageGap,
       largestGap,
-      gaps
+      gaps,
     };
   }
 
@@ -394,7 +429,7 @@ export class AvailabilityService {
    */
   static suggestOptimizations(
     schedule: DaySchedule[],
-    appointments: Appointment[]
+    appointments: Appointment[],
   ): {
     suggestions: string[];
     potentialTimeSaved: number;
@@ -407,14 +442,15 @@ export class AvailabilityService {
 
     if (gapAnalysis.averageGap > 15) {
       suggestions.push(
-        `Average gap between appointments is ${Math.round(gapAnalysis.averageGap)} minutes. Consider reducing buffer times.`
+        `Average gap between appointments is ${Math.round(gapAnalysis.averageGap)} minutes. Consider reducing buffer times.`,
       );
-      potentialTimeSaved += (gapAnalysis.averageGap - 10) * gapAnalysis.gaps.length;
+      potentialTimeSaved +=
+        (gapAnalysis.averageGap - 10) * gapAnalysis.gaps.length;
     }
 
     if (gapAnalysis.largestGap > 60) {
       suggestions.push(
-        `Largest gap is ${Math.round(gapAnalysis.largestGap)} minutes. This slot could accommodate another appointment.`
+        `Largest gap is ${Math.round(gapAnalysis.largestGap)} minutes. This slot could accommodate another appointment.`,
       );
     }
 
@@ -423,19 +459,19 @@ export class AvailabilityService {
 
     if (utilization < 50) {
       suggestions.push(
-        `Utilization rate is ${Math.round(utilization)}%. Consider adjusting working hours or increasing appointment capacity.`
+        `Utilization rate is ${Math.round(utilization)}%. Consider adjusting working hours or increasing appointment capacity.`,
       );
     }
 
     if (utilization > 90) {
       suggestions.push(
-        `Utilization rate is ${Math.round(utilization)}%. Consider adding more availability or another provider.`
+        `Utilization rate is ${Math.round(utilization)}%. Consider adding more availability or another provider.`,
       );
     }
 
     return {
       suggestions,
-      potentialTimeSaved
+      potentialTimeSaved,
     };
   }
 
@@ -444,10 +480,19 @@ export class AvailabilityService {
    */
   static generateSummary(availability: ProviderAvailability): string {
     const totalDays = availability.schedule.length;
-    const workingDays = availability.schedule.filter(d => d.isWorkingDay).length;
-    const totalSlots = availability.schedule.reduce((sum, d) => sum + d.totalSlots, 0);
-    const availableSlots = availability.schedule.reduce((sum, d) => sum + d.availableSlots, 0);
-    const utilization = totalSlots > 0 ? ((totalSlots - availableSlots) / totalSlots * 100) : 0;
+    const workingDays = availability.schedule.filter(
+      (d) => d.isWorkingDay,
+    ).length;
+    const totalSlots = availability.schedule.reduce(
+      (sum, d) => sum + d.totalSlots,
+      0,
+    );
+    const availableSlots = availability.schedule.reduce(
+      (sum, d) => sum + d.availableSlots,
+      0,
+    );
+    const utilization =
+      totalSlots > 0 ? ((totalSlots - availableSlots) / totalSlots) * 100 : 0;
 
     return `${availability.providerName} has ${availableSlots} available slots out of ${totalSlots} total slots across ${workingDays} working days (${Math.round(utilization)}% utilized).`;
   }

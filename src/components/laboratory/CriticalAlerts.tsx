@@ -1,30 +1,37 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { CriticalAlert } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertTriangle, Bell, Check } from 'lucide-react';
-import { formatDateTime } from '@/lib/utils';
+import React, { useState } from "react";
+import { CriticalAlert } from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { AlertTriangle, Bell, Check } from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
 
 export default function CriticalAlerts() {
   const [alerts, setAlerts] = useState<CriticalAlert[]>([
     {
-      id: '1',
-      resultId: 'R001',
-      orderId: '1',
-      patientId: 'PT001',
-      patientName: 'John Doe',
-      patientMRN: 'MRN001234',
-      testName: 'Potassium',
-      loincCode: '2823-3',
+      id: "1",
+      resultId: "R001",
+      orderId: "1",
+      patientId: "PT001",
+      patientName: "John Doe",
+      patientMRN: "MRN001234",
+      testName: "Potassium",
+      loincCode: "2823-3",
       criticalValue: 6.8,
-      unit: 'mmol/L',
-      referenceRange: '3.5-5.1 mmol/L',
-      severity: 'CRITICAL_HIGH',
-      status: 'NEW',
+      unit: "mmol/L",
+      referenceRange: "3.5-5.1 mmol/L",
+      severity: "CRITICAL_HIGH",
+      status: "NEW",
       detectedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -32,29 +39,36 @@ export default function CriticalAlerts() {
   ]);
 
   const acknowledgeAlert = (alertId: string) => {
-    setAlerts(alerts.map(alert =>
-      alert.id === alertId
-        ? { ...alert, status: 'ACKNOWLEDGED' as any, acknowledgedBy: 'Current User', acknowledgedAt: new Date() }
-        : alert
-    ));
+    setAlerts(
+      alerts.map((alert) =>
+        alert.id === alertId
+          ? {
+              ...alert,
+              status: "ACKNOWLEDGED" as any,
+              acknowledgedBy: "Current User",
+              acknowledgedAt: new Date(),
+            }
+          : alert,
+      ),
+    );
   };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, any> = {
-      NEW: 'destructive',
-      ACKNOWLEDGED: 'warning',
-      NOTIFIED: 'default',
-      RESOLVED: 'success',
+      NEW: "destructive",
+      ACKNOWLEDGED: "warning",
+      NOTIFIED: "default",
+      RESOLVED: "success",
     };
 
-    return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
+    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
   };
 
   const getSeverityBadge = (severity: string) => {
     return (
       <Badge variant="destructive" className="gap-1">
         <AlertTriangle className="h-3 w-3" />
-        {severity === 'CRITICAL_HIGH' ? 'CRIT HIGH' : 'CRIT LOW'}
+        {severity === "CRITICAL_HIGH" ? "CRIT HIGH" : "CRIT LOW"}
       </Badge>
     );
   };
@@ -64,7 +78,10 @@ export default function CriticalAlerts() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-destructive" />
-          Critical Alerts ({alerts.filter(a => a.status === 'NEW').length} New)
+          Critical Alerts ({
+            alerts.filter((a) => a.status === "NEW").length
+          }{" "}
+          New)
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -85,30 +102,37 @@ export default function CriticalAlerts() {
           <TableBody>
             {alerts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={9}
+                  className="text-center text-muted-foreground"
+                >
                   No critical alerts
                 </TableCell>
               </TableRow>
             ) : (
               alerts.map((alert) => (
-                <TableRow 
+                <TableRow
                   key={alert.id}
-                  className={alert.status === 'NEW' ? 'bg-destructive/5' : ''}
+                  className={alert.status === "NEW" ? "bg-destructive/5" : ""}
                 >
-                  <TableCell className="font-medium">{alert.patientName}</TableCell>
+                  <TableCell className="font-medium">
+                    {alert.patientName}
+                  </TableCell>
                   <TableCell>{alert.patientMRN}</TableCell>
                   <TableCell>{alert.testName}</TableCell>
                   <TableCell className="font-bold text-destructive text-lg">
                     {alert.criticalValue} {alert.unit}
                   </TableCell>
-                  <TableCell className="text-sm">{alert.referenceRange}</TableCell>
+                  <TableCell className="text-sm">
+                    {alert.referenceRange}
+                  </TableCell>
                   <TableCell>{getSeverityBadge(alert.severity)}</TableCell>
                   <TableCell>{getStatusBadge(alert.status)}</TableCell>
                   <TableCell className="text-sm">
                     {formatDateTime(alert.detectedAt)}
                   </TableCell>
                   <TableCell>
-                    {alert.status === 'NEW' && (
+                    {alert.status === "NEW" && (
                       <Button
                         size="sm"
                         variant="outline"
@@ -118,7 +142,7 @@ export default function CriticalAlerts() {
                         Acknowledge
                       </Button>
                     )}
-                    {alert.status === 'ACKNOWLEDGED' && (
+                    {alert.status === "ACKNOWLEDGED" && (
                       <span className="text-sm text-muted-foreground">
                         By {alert.acknowledgedBy}
                       </span>

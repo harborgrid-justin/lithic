@@ -1,762 +1,579 @@
-# LITHIC - Enterprise Healthcare SaaS Platform
+# LITHIC v0.2 - Enterprise Healthcare SaaS Platform
+
 ## Coordination Scratchpad for Multi-Agent Development
 
+**Version:** 0.2.0
 **Last Updated:** 2026-01-01
-**Status:** Initial Foundation Setup Complete
+**Status:** ACTIVE DEVELOPMENT - 14 AGENTS DEPLOYED
 **Target:** Enterprise EHR/EMR Platform (Epic Competitor)
 
 ---
 
-## PROJECT OVERVIEW
+## v0.2 ENTERPRISE FEATURE GOALS
 
-Lithic is an enterprise-grade healthcare SaaS platform built to compete with Epic Systems. The platform provides comprehensive hospital and clinic management including EHR, patient management, clinical workflows, billing, laboratory, pharmacy, imaging, and analytics.
+Building upon v0.1 foundation, v0.2 focuses on enterprise-grade features:
 
-### Technology Stack
-- **Frontend:** Next.js 14 (App Router), React 18, TypeScript 5.3+
-- **Styling:** Tailwind CSS 3.4+, shadcn/ui components
-- **Backend:** Next.js API Routes, tRPC
-- **Database:** PostgreSQL 15+ with Prisma ORM
-- **Authentication:** NextAuth.js v5 with RBAC
-- **Real-time:** Pusher/Socket.io for live updates
-- **Storage:** AWS S3 for medical imaging/documents
-- **Compliance:** HIPAA-compliant architecture, audit logging, encryption at rest/in transit
+### Enterprise GUI Enhancements
 
-### Architecture Principles
-1. **Multi-tenancy:** Organization-based data isolation
-2. **HIPAA Compliance:** Full audit trails, encryption, access controls
-3. **HL7 FHIR Compatible:** Standardized healthcare data formats
-4. **Role-Based Access Control (RBAC):** Granular permissions
-5. **Microservices-Ready:** Modular design for future scaling
-6. **Zero-Trust Security:** All operations authenticated and authorized
+- Advanced dashboard layouts with customizable widgets
+- Dark/light theme support with organization branding
+- Responsive design for tablets and mobile
+- Accessibility (WCAG 2.1 AA compliance)
+- Enterprise navigation with role-based menus
+- Command palette (Cmd+K) for power users
+- Real-time notifications with action center
+- Multi-window/multi-tab patient context
 
----
+### Enterprise Features
 
-## MODULE ASSIGNMENTS
-
-### Agent 1: Core Infrastructure
-**Responsibility:** Foundation, shared utilities, database setup, build configuration
-
-**Deliverables:**
-- Project configuration (Next.js, TypeScript, Tailwind)
-- Database migrations and seed data
-- Shared UI components library (shadcn/ui setup)
-- Authentication middleware
-- API middleware (rate limiting, validation)
-- Error handling utilities
-- Logging and monitoring setup
-- Development tooling (ESLint, Prettier, Husky)
-
-**Key Files:**
-- `/src/app/layout.tsx` - Root layout with providers
-- `/src/app/page.tsx` - Landing/dashboard router
-- `/src/components/ui/*` - shadcn/ui components
-- `/src/middleware.ts` - Next.js middleware for auth/routing
-- `/src/lib/auth.ts` - NextAuth configuration
-- `/src/lib/api.ts` - API utilities
-- `/prisma/migrations/*` - Database migrations
+- Multi-organization management (health systems)
+- Enterprise SSO (SAML 2.0, OIDC)
+- Advanced RBAC with department/location permissions
+- Telehealth integration
+- Interoperability hub (HL7 FHIR R4, HIE)
+- Clinical decision support engine
+- Population health management
+- Quality measure dashboards (HEDIS, MIPS)
+- Advanced analytics with predictive models
 
 ---
 
-### Agent 2: Patient Management Module
-**Responsibility:** Patient demographics, registration, medical records management
+## AGENT ASSIGNMENTS - v0.2
 
-**Deliverables:**
-- Patient registration and onboarding flows
-- Patient search and demographics management
-- Medical history and allergies tracking
-- Emergency contacts and insurance information
-- Patient portal access management
-- Document upload and management
-- Family/dependent relationships
+### CODING AGENTS (10)
 
-**Key Files:**
-- `/src/app/(dashboard)/patients/*` - Patient management UI
-- `/src/app/api/patients/*` - Patient API routes
-- `/src/components/patients/*` - Patient-specific components
-- `/src/lib/services/patient-service.ts` - Business logic
-- `/prisma/schema.prisma` - Patient, Insurance, Contact models
+#### Agent 1: Enterprise Dashboard & Command Center
 
-**API Endpoints:**
-- `POST /api/patients` - Create patient
-- `GET /api/patients/:id` - Get patient details
-- `PUT /api/patients/:id` - Update patient
-- `GET /api/patients/search` - Search patients
-- `GET /api/patients/:id/history` - Medical history
+**Files to Create/Modify:**
 
-**Database Tables:**
-- `Patient`, `PatientInsurance`, `EmergencyContact`, `PatientDocument`, `Allergy`, `Immunization`
+- `/src/components/dashboard/EnterpriseDashboard.tsx`
+- `/src/components/dashboard/WidgetGrid.tsx`
+- `/src/components/dashboard/DraggableWidget.tsx`
+- `/src/components/dashboard/widgets/*`
+- `/src/components/command-palette/CommandPalette.tsx`
+- `/src/components/notifications/NotificationCenter.tsx`
+- `/src/stores/dashboard-store.ts`
+- `/src/app/(dashboard)/dashboard/customize/page.tsx`
+
+**Features:**
+
+- Customizable widget grid with drag-and-drop
+- Real-time metrics widgets
+- Command palette (Cmd+K)
+- Notification action center
+- Role-based dashboard presets
+- Quick actions and shortcuts
 
 ---
 
-### Agent 3: Clinical Documentation/EHR Module
-**Responsibility:** Electronic health records, clinical notes, SOAP notes, care plans
+#### Agent 2: Enterprise SSO & Advanced Authentication
 
-**Deliverables:**
-- Clinical note templates (SOAP, H&P, Progress Notes)
-- ICD-10 and CPT code integration
-- Problem list management
-- Care plan creation and tracking
-- Clinical decision support system (CDSS) hooks
-- Medical history documentation
-- Vital signs tracking and trending
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/app/(dashboard)/clinical/*` - Clinical UI
-- `/src/app/api/clinical/*` - Clinical API routes
-- `/src/components/clinical/*` - Clinical components (note editor, templates)
-- `/src/lib/services/clinical-service.ts` - Clinical business logic
-- `/src/lib/fhir/*` - FHIR resource mappers
+- `/src/lib/auth/sso/saml.ts`
+- `/src/lib/auth/sso/oidc.ts`
+- `/src/lib/auth/mfa/totp.ts`
+- `/src/lib/auth/mfa/sms.ts`
+- `/src/lib/auth/session-manager.ts`
+- `/src/app/(auth)/sso/[provider]/page.tsx`
+- `/src/app/api/auth/sso/[...saml]/route.ts`
+- `/src/components/auth/SSOLoginButtons.tsx`
+- `/src/components/auth/MFASetup.tsx`
+- `/src/app/(dashboard)/admin/sso/page.tsx`
 
-**API Endpoints:**
-- `POST /api/clinical/notes` - Create clinical note
-- `GET /api/clinical/notes/:id` - Get note
-- `PUT /api/clinical/notes/:id` - Update note
-- `POST /api/clinical/problems` - Add to problem list
-- `GET /api/clinical/vitals/:patientId` - Get vital signs
+**Features:**
 
-**Database Tables:**
-- `ClinicalNote`, `VitalSigns`, `ProblemList`, `CarePlan`, `Diagnosis`, `Procedure`
+- SAML 2.0 integration
+- OIDC/OAuth 2.0 support
+- Enhanced MFA (TOTP, SMS, Email)
+- Session management across devices
+- SSO configuration admin panel
+- Emergency access procedures
 
 ---
 
-### Agent 4: Scheduling & Appointments Module
-**Responsibility:** Appointment scheduling, calendar management, waitlists, reminders
+#### Agent 3: Advanced RBAC & Permission System
 
-**Deliverables:**
-- Multi-provider calendar views
-- Appointment booking and rescheduling
-- Waitlist management
-- Automated appointment reminders (SMS/Email)
-- Resource scheduling (rooms, equipment)
-- Recurring appointment support
-- No-show tracking and management
-- Check-in/check-out workflows
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/app/(dashboard)/scheduling/*` - Scheduling UI
-- `/src/app/api/scheduling/*` - Scheduling API
-- `/src/components/scheduling/*` - Calendar components
-- `/src/lib/services/scheduling-service.ts` - Scheduling logic
-- `/src/lib/notifications/appointment-reminders.ts` - Reminder system
+- `/src/lib/rbac/permission-engine.ts`
+- `/src/lib/rbac/role-hierarchy.ts`
+- `/src/lib/rbac/department-access.ts`
+- `/src/lib/rbac/location-access.ts`
+- `/src/components/admin/PermissionMatrix.tsx`
+- `/src/components/admin/RoleBuilder.tsx`
+- `/src/components/admin/AccessPolicyEditor.tsx`
+- `/src/app/(dashboard)/admin/access-policies/page.tsx`
+- `/src/hooks/usePermissions.ts`
 
-**API Endpoints:**
-- `POST /api/scheduling/appointments` - Book appointment
-- `GET /api/scheduling/appointments` - List appointments
-- `PUT /api/scheduling/appointments/:id` - Update appointment
-- `GET /api/scheduling/availability` - Check provider availability
-- `POST /api/scheduling/check-in/:id` - Patient check-in
+**Features:**
 
-**Database Tables:**
-- `Appointment`, `Schedule`, `TimeSlot`, `Waitlist`, `Room`, `AppointmentReminder`
+- Hierarchical role system
+- Department-level permissions
+- Location-based access control
+- Time-based access restrictions
+- Permission inheritance
+- Policy-based access management
+- Break-the-glass audit trails
 
 ---
 
-### Agent 5: Billing & Revenue Cycle Module
-**Responsibility:** Claims, billing, payments, insurance verification, revenue cycle management
+#### Agent 4: Telehealth Module
 
-**Deliverables:**
-- Charge capture and coding
-- Insurance eligibility verification
-- Claims generation (CMS-1500, UB-04)
-- Claims submission and tracking
-- Payment processing and posting
-- Denial management and appeals
-- Patient statements and invoicing
-- Revenue cycle analytics
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/app/(dashboard)/billing/*` - Billing UI
-- `/src/app/api/billing/*` - Billing API
-- `/src/components/billing/*` - Billing components
-- `/src/lib/services/billing-service.ts` - Billing logic
-- `/src/lib/integrations/clearinghouse.ts` - Claims clearinghouse integration
-- `/src/lib/payments/*` - Payment processing (Stripe integration)
+- `/src/app/(dashboard)/telehealth/page.tsx`
+- `/src/app/(dashboard)/telehealth/room/[id]/page.tsx`
+- `/src/app/(dashboard)/telehealth/waiting-room/page.tsx`
+- `/src/components/telehealth/VideoCall.tsx`
+- `/src/components/telehealth/WaitingRoom.tsx`
+- `/src/components/telehealth/VirtualExamRoom.tsx`
+- `/src/components/telehealth/ScreenShare.tsx`
+- `/src/lib/services/telehealth-service.ts`
+- `/src/app/api/telehealth/sessions/route.ts`
+- `/src/types/telehealth.ts`
 
-**API Endpoints:**
-- `POST /api/billing/charges` - Create charge
-- `POST /api/billing/claims` - Submit claim
-- `GET /api/billing/claims/:id/status` - Check claim status
-- `POST /api/billing/payments` - Process payment
-- `GET /api/billing/statements/:patientId` - Patient statement
+**Features:**
 
-**Database Tables:**
-- `Claim`, `Charge`, `Payment`, `Invoice`, `Adjustment`, `Denial`, `InsuranceVerification`
+- WebRTC video consultations
+- Virtual waiting room
+- Screen sharing for results review
+- In-call clinical documentation
+- E-signature capture
+- Session recording (with consent)
+- Patient check-in for virtual visits
 
 ---
 
-### Agent 6: Laboratory Information System Module
-**Responsibility:** Lab orders, results, specimen tracking, interfaces to lab equipment
+#### Agent 5: Interoperability Hub (HL7 FHIR)
 
-**Deliverables:**
-- Lab order creation and management
-- Test catalogs and panels
-- Specimen collection and tracking
-- Results entry and validation
-- Critical value alerts
-- Reference ranges and interpretation
-- Lab interfaces (HL7 integration)
-- Quality control tracking
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/app/(dashboard)/laboratory/*` - Lab UI
-- `/src/app/api/laboratory/*` - Lab API
-- `/src/components/laboratory/*` - Lab components
-- `/src/lib/services/lab-service.ts` - Lab logic
-- `/src/lib/integrations/hl7.ts` - HL7 message handlers
-- `/src/lib/alerts/critical-values.ts` - Critical value alerting
+- `/src/lib/fhir/client.ts`
+- `/src/lib/fhir/resources/*`
+- `/src/lib/fhir/transformers/*`
+- `/src/lib/hl7/parser.ts`
+- `/src/lib/hl7/generator.ts`
+- `/src/app/(dashboard)/admin/integrations/fhir/page.tsx`
+- `/src/app/api/fhir/[resource]/route.ts`
+- `/src/components/integrations/FHIRResourceViewer.tsx`
+- `/src/components/integrations/HL7MessageViewer.tsx`
 
-**API Endpoints:**
-- `POST /api/laboratory/orders` - Create lab order
-- `GET /api/laboratory/orders/:id` - Get order details
-- `POST /api/laboratory/results` - Submit results
-- `GET /api/laboratory/results/:orderId` - Get results
-- `POST /api/laboratory/specimens` - Register specimen
+**Features:**
 
-**Database Tables:**
-- `LabOrder`, `LabResult`, `LabTest`, `LabPanel`, `Specimen`, `ReferenceRange`, `LabInterface`
+- FHIR R4 server implementation
+- FHIR resource mapping
+- HL7 v2.x message parsing
+- HIE connectivity
+- CCD/C-CDA document generation
+- Bulk data export (FHIR $export)
+- SMART on FHIR app launcher
 
 ---
 
-### Agent 7: Pharmacy Management Module
-**Responsibility:** ePrescribing, medication management, formulary, drug interactions
+#### Agent 6: Clinical Decision Support Engine
 
-**Deliverables:**
-- Electronic prescribing (eRx)
-- Medication order entry (CPOE)
-- Drug interaction checking
-- Allergy checking
-- Formulary management
-- Medication administration records (MAR)
-- Controlled substance tracking
-- Pharmacy inventory management
-- NCPDP SCRIPT integration
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/app/(dashboard)/pharmacy/*` - Pharmacy UI
-- `/src/app/api/pharmacy/*` - Pharmacy API
-- `/src/components/pharmacy/*` - Pharmacy components
-- `/src/lib/services/pharmacy-service.ts` - Pharmacy logic
-- `/src/lib/drug-database/*` - Drug interaction engine
-- `/src/lib/integrations/surescripts.ts` - eRx integration
+- `/src/lib/cds/engine.ts`
+- `/src/lib/cds/rules/*`
+- `/src/lib/cds/alerts.ts`
+- `/src/components/clinical/CDSAlerts.tsx`
+- `/src/components/clinical/DrugAlerts.tsx`
+- `/src/components/clinical/DiagnosisAssist.tsx`
+- `/src/app/(dashboard)/clinical/cds-rules/page.tsx`
+- `/src/app/api/cds/evaluate/route.ts`
+- `/src/types/cds.ts`
 
-**API Endpoints:**
-- `POST /api/pharmacy/prescriptions` - Create prescription
-- `GET /api/pharmacy/prescriptions/:patientId` - Patient medications
-- `POST /api/pharmacy/interactions/check` - Check drug interactions
-- `POST /api/pharmacy/dispense` - Dispense medication
-- `GET /api/pharmacy/formulary` - Get formulary
+**Features:**
 
-**Database Tables:**
-- `Prescription`, `Medication`, `MedicationAdministration`, `Formulary`, `DrugInteraction`, `PharmacyInventory`
+- Rule-based CDS engine
+- Drug-drug interaction alerts
+- Drug-allergy checking
+- Diagnosis-based alerts
+- Order set recommendations
+- Evidence-based guidelines
+- Alert fatigue management
+- CDS rule editor
 
 ---
 
-### Agent 8: Imaging/PACS Integration Module
-**Responsibility:** Radiology orders, DICOM integration, image viewing, reports
+#### Agent 7: Population Health & Care Management
 
-**Deliverables:**
-- Radiology order management
-- DICOM integration and image storage
-- Image viewer integration (OHIF Viewer)
-- Radiology reports and templates
-- Critical findings alerts
-- Image sharing and CD burning
-- Modality worklist
-- RIS (Radiology Information System) functionality
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/app/(dashboard)/imaging/*` - Imaging UI
-- `/src/app/api/imaging/*` - Imaging API
-- `/src/components/imaging/*` - Imaging components
-- `/src/lib/services/imaging-service.ts` - Imaging logic
-- `/src/lib/integrations/dicom.ts` - DICOM handlers
-- `/src/lib/integrations/pacs.ts` - PACS integration
+- `/src/app/(dashboard)/population-health/page.tsx`
+- `/src/app/(dashboard)/population-health/registries/page.tsx`
+- `/src/app/(dashboard)/population-health/care-gaps/page.tsx`
+- `/src/app/(dashboard)/population-health/risk-stratification/page.tsx`
+- `/src/components/population-health/PatientRegistry.tsx`
+- `/src/components/population-health/CareGapsDashboard.tsx`
+- `/src/components/population-health/RiskScoreCard.tsx`
+- `/src/lib/services/population-health-service.ts`
+- `/src/lib/algorithms/risk-stratification.ts`
 
-**API Endpoints:**
-- `POST /api/imaging/orders` - Create imaging order
-- `GET /api/imaging/studies/:id` - Get study details
-- `POST /api/imaging/reports` - Submit radiology report
-- `GET /api/imaging/viewer/:studyId` - Launch viewer
-- `GET /api/imaging/images/:studyId` - Get DICOM images
+**Features:**
 
-**Database Tables:**
-- `ImagingOrder`, `ImagingStudy`, `ImagingReport`, `DicomSeries`, `Modality`, `RadiologyTemplate`
+- Patient registries (diabetes, CHF, etc.)
+- Care gaps identification
+- Risk stratification algorithms
+- Care management workflows
+- Patient outreach tracking
+- Quality measure tracking
+- Social determinants of health
 
 ---
 
-### Agent 9: Analytics & Reporting Module
-**Responsibility:** Business intelligence, clinical analytics, dashboards, compliance reporting
+#### Agent 8: Advanced Enterprise Analytics
 
-**Deliverables:**
-- Executive dashboards
-- Clinical quality measures (CQM)
-- Financial analytics and KPIs
-- Patient population health analytics
-- Utilization reports
-- Compliance reporting (HEDIS, MIPS, PQRS)
-- Custom report builder
-- Data export capabilities
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/app/(dashboard)/analytics/*` - Analytics UI
-- `/src/app/api/analytics/*` - Analytics API
-- `/src/components/analytics/*` - Charts and dashboards
-- `/src/lib/services/analytics-service.ts` - Analytics logic
-- `/src/lib/reporting/*` - Report generators
-- `/src/lib/queries/analytics-queries.ts` - Complex analytics queries
+- `/src/app/(dashboard)/analytics/executive/page.tsx`
+- `/src/app/(dashboard)/analytics/predictive/page.tsx`
+- `/src/app/(dashboard)/analytics/benchmarking/page.tsx`
+- `/src/components/analytics/ExecutiveDashboard.tsx`
+- `/src/components/analytics/PredictiveCharts.tsx`
+- `/src/components/analytics/KPICards.tsx`
+- `/src/components/analytics/DrilldownTable.tsx`
+- `/src/lib/analytics/aggregations.ts`
+- `/src/lib/analytics/predictions.ts`
 
-**API Endpoints:**
-- `GET /api/analytics/dashboard/:type` - Get dashboard data
-- `POST /api/analytics/reports/generate` - Generate report
-- `GET /api/analytics/metrics/:metric` - Get specific metric
-- `GET /api/analytics/population-health` - Population health data
-- `POST /api/analytics/custom-query` - Run custom query
+**Features:**
 
-**Database Tables:**
-- `Report`, `Dashboard`, `Metric`, `AnalyticsCache`, `QualityMeasure`, `ReportSchedule`
+- Executive C-suite dashboards
+- Predictive analytics models
+- Industry benchmarking
+- Custom KPI tracking
+- Drill-down reporting
+- Data visualization library
+- Export to Excel/PDF/BI tools
 
 ---
 
-### Agent 10: Security, Auth & HIPAA Compliance Module
-**Responsibility:** Authentication, authorization, audit logging, HIPAA compliance, security
+#### Agent 9: Enterprise UI Components & Theming
 
-**Deliverables:**
-- User authentication and session management
-- Role-based access control (RBAC)
-- Permission management system
-- Audit logging for all PHI access
-- Encryption at rest and in transit
-- Security incident detection
-- HIPAA compliance monitoring
-- User activity tracking
-- Automatic session timeout
-- MFA (Multi-Factor Authentication)
-- Break-the-glass emergency access
+**Files to Create/Modify:**
 
-**Key Files:**
-- `/src/lib/auth/*` - Authentication system
-- `/src/lib/rbac/*` - RBAC implementation
-- `/src/lib/audit/*` - Audit logging
-- `/src/lib/encryption/*` - Encryption utilities
-- `/src/lib/compliance/*` - HIPAA compliance checks
-- `/src/middleware.ts` - Auth middleware
-- `/src/app/api/auth/*` - Auth API routes
-- `/src/app/(auth)/*` - Login/logout pages
+- `/src/components/ui/enterprise/*`
+- `/src/lib/themes/theme-provider.tsx`
+- `/src/lib/themes/presets/*`
+- `/src/components/layout/EnterpriseHeader.tsx`
+- `/src/components/layout/EnterpriseSidebar.tsx`
+- `/src/components/layout/MegaMenu.tsx`
+- `/src/components/accessibility/a11y-provider.tsx`
+- `/src/app/(dashboard)/settings/appearance/page.tsx`
 
-**API Endpoints:**
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `POST /api/auth/mfa/verify` - MFA verification
-- `GET /api/auth/session` - Get current session
-- `POST /api/auth/emergency-access` - Break-the-glass access
-- `GET /api/audit/logs` - Query audit logs
+**Features:**
 
-**Database Tables:**
-- `User`, `Role`, `Permission`, `AuditLog`, `Session`, `SecurityIncident`, `BreakGlassAccess`
+- Organization branding system
+- Dark/light/high-contrast themes
+- Responsive layouts (tablet, mobile)
+- Advanced data tables with filters
+- WCAG 2.1 AA accessibility
+- Keyboard navigation
+- Enterprise navigation patterns
+- Breadcrumb system
 
 ---
 
-## SHARED INTERFACES AND TYPES
+#### Agent 10: Multi-Organization Management
 
-All agents MUST use the shared TypeScript types defined in `/src/types/*.ts`. DO NOT create duplicate type definitions.
+**Files to Create/Modify:**
 
-### Core Entity Types (src/types/index.ts)
-- `Organization` - Multi-tenant organization
-- `User` - System user with RBAC
-- `Role` - User role definition
-- `Permission` - Granular permissions
-- `AuditLog` - Audit trail entry
-- `Address` - Standard address format
-- `ContactInfo` - Contact information
-- `Timestamps` - createdAt, updatedAt, deletedAt
+- `/src/app/(dashboard)/enterprise/organizations/page.tsx`
+- `/src/app/(dashboard)/enterprise/facilities/page.tsx`
+- `/src/app/(dashboard)/enterprise/departments/page.tsx`
+- `/src/components/enterprise/OrganizationTree.tsx`
+- `/src/components/enterprise/FacilityManager.tsx`
+- `/src/components/enterprise/DepartmentConfig.tsx`
+- `/src/lib/services/organization-service.ts`
+- `/src/lib/multi-tenant/tenant-resolver.ts`
+- `/src/types/enterprise.ts`
 
-### Patient Types (src/types/patient.ts)
-- `Patient` - Patient demographics
-- `PatientInsurance` - Insurance information
-- `EmergencyContact` - Emergency contacts
-- `Allergy` - Patient allergies
-- `Immunization` - Vaccination records
+**Features:**
 
-### Clinical Types (src/types/clinical.ts)
-- `ClinicalNote` - Clinical documentation
-- `VitalSigns` - Vital measurements
-- `ProblemList` - Active problems
-- `Diagnosis` - ICD-10 coded diagnoses
-- `Procedure` - CPT coded procedures
-- `CarePlan` - Treatment plans
-
-### Scheduling Types (src/types/scheduling.ts)
-- `Appointment` - Appointment entity
-- `Schedule` - Provider schedules
-- `TimeSlot` - Available time slots
-- `Waitlist` - Waitlist entries
-
-### Billing Types (src/types/billing.ts)
-- `Claim` - Insurance claim
-- `Charge` - Individual charge
-- `Payment` - Payment transaction
-- `Invoice` - Patient invoice
-
-### Laboratory Types (src/types/laboratory.ts)
-- `LabOrder` - Laboratory order
-- `LabResult` - Test result
-- `LabTest` - Test definition
-- `Specimen` - Specimen tracking
-
-### Pharmacy Types (src/types/pharmacy.ts)
-- `Prescription` - Medication prescription
-- `Medication` - Medication details
-- `MedicationAdministration` - MAR entry
-- `DrugInteraction` - Interaction data
-
-### Imaging Types (src/types/imaging.ts)
-- `ImagingOrder` - Imaging order
-- `ImagingStudy` - DICOM study
-- `ImagingReport` - Radiology report
-
-### Analytics Types (src/types/analytics.ts)
-- `Report` - Report definition
-- `Dashboard` - Dashboard configuration
-- `Metric` - Performance metric
-
-### Auth Types (src/types/auth.ts)
-- `AuthUser` - Authenticated user
-- `Session` - User session
-- `MFAChallenge` - MFA data
+- Health system hierarchy
+- Multi-facility management
+- Department configuration
+- Cross-organization reporting
+- Data sharing agreements
+- Facility-specific settings
+- License management
 
 ---
 
-## DATABASE SCHEMA CONVENTIONS
+### SUPPORT AGENTS (4)
 
-### Naming Conventions
-- **Tables:** PascalCase singular (e.g., `Patient`, `Appointment`)
-- **Columns:** camelCase (e.g., `firstName`, `dateOfBirth`)
-- **Relations:** Descriptive names (e.g., `patient`, `assignedProvider`)
-- **Enums:** PascalCase (e.g., `AppointmentStatus`, `ClaimStatus`)
+#### Agent 11: BUILD ERRORS AGENT
 
-### Standard Fields
-Every table MUST include:
-```prisma
-id            String   @id @default(cuid())
-organizationId String
-createdAt     DateTime @default(now())
-updatedAt     DateTime @updatedAt
-deletedAt     DateTime? // Soft delete
-createdBy     String
-updatedBy     String
-```
+**Responsibility:** Monitor and fix TypeScript compilation errors
 
-### Multi-Tenancy
-- All tables include `organizationId` for data isolation
-- Queries MUST filter by `organizationId`
-- Row-level security enforced at application layer
+**Process:**
 
-### Audit Trail
-- Use `createdBy`, `updatedBy` for user tracking
-- Soft delete with `deletedAt` (never hard delete PHI)
-- Critical operations logged to `AuditLog` table
-
-### Encryption
-- PHI fields encrypted at rest (use Prisma middleware)
-- Fields requiring encryption: SSN, MRN, notes, diagnoses
-- Encryption key rotation support
+1. Run `npm run type-check`
+2. Identify all type errors
+3. Fix type definitions, imports, and type mismatches
+4. Document fixes in BUILD_ERRORS.md
+5. Coordinate with coding agents on interface changes
 
 ---
 
-## API ROUTE CONVENTIONS
+#### Agent 12: BUILD WARNINGS AGENT
 
-### Route Structure
-```
-/api/{module}/{resource}
-/api/{module}/{resource}/{id}
-/api/{module}/{resource}/{id}/{action}
-```
+**Responsibility:** Monitor and fix build warnings, linting issues
 
-### HTTP Methods
-- `GET` - Retrieve resources
-- `POST` - Create new resource
-- `PUT` - Update entire resource
-- `PATCH` - Partial update
-- `DELETE` - Soft delete resource
+**Process:**
 
-### Response Format
-All API responses use consistent format:
+1. Run `npm run lint`
+2. Identify all warnings (unused vars, any types, etc.)
+3. Fix ESLint warnings
+4. Run `npm run format:check`
+5. Document in BUILD_WARNINGS.md
+
+---
+
+#### Agent 13: BUILDER AGENT
+
+**Responsibility:** Continuous build validation
+
+**Process:**
+
+1. Run `npm run build`
+2. Monitor for successful builds
+3. Report build status to coordinator
+4. Track build times and bundle sizes
+5. Update BUILD_STATUS.md
+
+---
+
+#### Agent 14: COORDINATOR AGENT
+
+**Responsibility:** Orchestrate all agents, manage integration
+
+**Process:**
+
+1. Monitor all agent progress
+2. Resolve merge conflicts
+3. Ensure type consistency across modules
+4. Update SCRATCHPAD.md
+5. Final integration verification
+6. Prepare for commit and push
+
+---
+
+## BUILD STATUS TRACKING
+
+| Agent                  | Status    | Files Created | Last Update |
+| ---------------------- | --------- | ------------- | ----------- |
+| Agent 1 - Dashboard    | PENDING   | 0             | -           |
+| Agent 2 - SSO/Auth     | PENDING   | 0             | -           |
+| Agent 3 - RBAC         | PENDING   | 0             | -           |
+| Agent 4 - Telehealth   | PENDING   | 0             | -           |
+| Agent 5 - FHIR         | PENDING   | 0             | -           |
+| Agent 6 - CDS          | PENDING   | 0             | -           |
+| Agent 7 - Population   | PENDING   | 0             | -           |
+| Agent 8 - Analytics    | PENDING   | 0             | -           |
+| Agent 9 - UI/Theme     | PENDING   | 0             | -           |
+| Agent 10 - Multi-Org   | PENDING   | 0             | -           |
+| Agent 11 - Errors      | PENDING   | 0             | -           |
+| Agent 12 - Warnings    | PENDING   | 0             | -           |
+| Agent 13 - Builder     | PENDING   | 0             | -           |
+| Agent 14 - Coordinator | COMPLETED | 7             | 2026-01-01  |
+
+---
+
+## SHARED TYPE DEFINITIONS FOR v0.2
+
+### New Types Required
+
 ```typescript
-{
-  success: boolean;
-  data?: any;
-  error?: {
-    code: string;
-    message: string;
-    details?: any;
-  };
-  meta?: {
-    page?: number;
-    limit?: number;
-    total?: number;
-  };
+// src/types/enterprise.ts
+interface Organization {
+  id: string;
+  name: string;
+  parentId?: string;
+  type: "HEALTH_SYSTEM" | "HOSPITAL" | "CLINIC" | "PRACTICE";
+  facilities: Facility[];
+  departments: Department[];
+  settings: OrganizationSettings;
+}
+
+// src/types/telehealth.ts
+interface TelehealthSession {
+  id: string;
+  appointmentId: string;
+  providerId: string;
+  patientId: string;
+  status: "WAITING" | "IN_PROGRESS" | "COMPLETED";
+  startTime?: Date;
+  endTime?: Date;
+  recordingUrl?: string;
+}
+
+// src/types/cds.ts
+interface CDSAlert {
+  id: string;
+  type: "DRUG_INTERACTION" | "ALLERGY" | "DUPLICATE_ORDER" | "GUIDELINE";
+  severity: "INFO" | "WARNING" | "CRITICAL";
+  message: string;
+  evidence?: string;
+  overrideReason?: string;
+}
+
+// src/types/population-health.ts
+interface PatientRegistry {
+  id: string;
+  name: string;
+  condition: string;
+  patients: string[];
+  careGaps: CareGap[];
 }
 ```
-
-### Error Codes
-- `AUTH_REQUIRED` - Authentication required
-- `FORBIDDEN` - Insufficient permissions
-- `NOT_FOUND` - Resource not found
-- `VALIDATION_ERROR` - Input validation failed
-- `CONFLICT` - Resource conflict (duplicate)
-- `INTERNAL_ERROR` - Server error
-
-### Authentication
-- All API routes require authentication (except `/api/auth/*`)
-- JWT token in `Authorization: Bearer {token}` header
-- Session validation on every request
-- Rate limiting: 100 req/min per user
-
-### Authorization
-- Permission checks before data access
-- RBAC enforced via middleware
-- Organization-level data isolation
-- Audit logging for PHI access
-
----
-
-## COMPONENT LIBRARY STANDARDS
-
-### UI Components (shadcn/ui)
-Use shadcn/ui components for consistency:
-- `Button`, `Input`, `Select`, `Checkbox`, `RadioGroup`
-- `Dialog`, `Sheet`, `Popover`, `Tooltip`
-- `Table`, `DataTable`, `Pagination`
-- `Card`, `Tabs`, `Accordion`
-- `Form`, `Label`, `Alert`
-
-### Custom Components
-Location: `/src/components/{module}/`
-
-Naming: PascalCase, descriptive (e.g., `PatientSearchDialog`, `AppointmentCalendar`)
-
-### Component Structure
-```typescript
-// Props interface
-interface ComponentProps {
-  // Props
-}
-
-// Component
-export function Component({ ...props }: ComponentProps) {
-  // Implementation
-}
-```
-
-### Accessibility
-- All form inputs must have labels
-- Keyboard navigation support
-- ARIA attributes where applicable
-- Color contrast compliance (WCAG AA)
 
 ---
 
 ## INTEGRATION POINTS
 
-### Module Dependencies
+### Cross-Agent Dependencies
 
-**Patient → Clinical**
-- Clinical notes require patient context
-- Shared patient demographics
-
-**Clinical → Scheduling**
-- Appointments linked to clinical encounters
-- Chief complaint from appointment to clinical note
-
-**Clinical → Billing**
-- Diagnoses and procedures generate charges
-- Clinical documentation supports billing
-
-**Clinical → Laboratory**
-- Lab orders from clinical workflow
-- Results displayed in clinical timeline
-
-**Clinical → Pharmacy**
-- Prescriptions from clinical notes
-- Medication list in clinical view
-
-**Clinical → Imaging**
-- Imaging orders from clinical workflow
-- Reports integrated into clinical record
-
-**Scheduling → Billing**
-- Appointment creates billing encounter
-- No-shows generate fees
-
-**Billing → Analytics**
-- Revenue data for financial reports
-- Claims data for denial analytics
-
-**All Modules → Audit**
-- All PHI access logged
-- User actions tracked
-
-**All Modules → Auth**
-- Authentication required
-- Permission checks enforced
-
-### Shared Services
-- `/src/lib/services/notification-service.ts` - System-wide notifications
-- `/src/lib/services/upload-service.ts` - File upload handling
-- `/src/lib/services/export-service.ts` - Data export (PDF, CSV, HL7)
-- `/src/lib/services/search-service.ts` - Global search functionality
-
-### Event System
-Use event emitters for inter-module communication:
-```typescript
-// Example: New lab result triggers clinical notification
-eventEmitter.emit('lab.result.completed', { orderId, patientId });
-```
-
-Events to implement:
-- `patient.created`, `patient.updated`
-- `appointment.booked`, `appointment.cancelled`
-- `lab.result.completed`, `lab.result.critical`
-- `prescription.created`, `prescription.dispensed`
-- `claim.submitted`, `claim.denied`
-- `user.login`, `user.logout`
+| Consumer       | Provider            | Interface             |
+| -------------- | ------------------- | --------------------- |
+| Dashboard (1)  | Analytics (8)       | Widget data APIs      |
+| Dashboard (1)  | All modules         | Quick action handlers |
+| SSO (2)        | RBAC (3)            | Permission assignment |
+| RBAC (3)       | Multi-Org (10)      | Organization scopes   |
+| Telehealth (4) | Clinical (existing) | Encounter creation    |
+| FHIR (5)       | All clinical        | Resource transformers |
+| CDS (6)        | Pharmacy/Clinical   | Alert triggers        |
+| Population (7) | Analytics (8)       | Quality measures      |
+| UI/Theme (9)   | All agents          | Component library     |
+| Multi-Org (10) | RBAC (3)            | Tenant isolation      |
 
 ---
 
-## DEVELOPMENT WORKFLOW
+## COORDINATION NOTES
 
-### Branch Strategy
-- `main` - Production
-- `develop` - Development
-- `feature/{module}-{feature}` - Feature branches
-- `bugfix/{issue-number}` - Bug fixes
+### ✅ INFRASTRUCTURE COMPLETE (Agent 14)
 
-### Code Review Requirements
-- All code must be reviewed by coordinator
-- Pass TypeScript compilation
-- Pass ESLint/Prettier checks
-- Include unit tests for business logic
-- Update integration tests if APIs change
+**Shared Type Definitions - READY**
+All comprehensive type definitions are in place and exported:
 
-### Testing Strategy
-- **Unit Tests:** Jest + React Testing Library
-- **Integration Tests:** Playwright E2E
-- **API Tests:** Supertest
-- **Database Tests:** Prisma test database
-- Target: >80% code coverage
+- ✅ `/src/types/enterprise.ts` (823 lines) - Multi-org, facilities, departments, data sharing
+- ✅ `/src/types/telehealth.ts` (584 lines) - Video sessions, waiting rooms, WebRTC
+- ✅ `/src/types/cds.ts` (555 lines) - Clinical decision support, alerts, rules, drug interactions
+- ✅ `/src/types/population-health.ts` (933 lines) - Registries, care gaps, risk scores, SDOH
+- ✅ `/src/types/rbac.ts` (704 lines) - Advanced permissions, break-glass, policies
+- ✅ `/src/types/index.ts` - Updated to export all v0.2 types
 
-### Deployment
-- **Development:** Vercel preview deployments
-- **Staging:** staging.lithic.health
-- **Production:** app.lithic.health
-- CI/CD via GitHub Actions
+**Shared Utilities - READY**
+New utility modules created in `/src/lib/utils/`:
 
----
+- ✅ `/src/lib/utils/api-response.ts` - Standardized API responses, error codes, pagination
+- ✅ `/src/lib/utils/validation.ts` - Comprehensive validation (email, phone, medical codes, vitals)
+- ✅ `/src/lib/utils/date-utils.ts` - Date formatting, age calculation, relative time, ranges
+- ✅ `/src/lib/utils/index.ts` - Central export point for all utilities
 
-## HIPAA COMPLIANCE CHECKLIST
+**Integration Guidelines for All Agents:**
 
-### Technical Safeguards
-- [x] Encryption at rest (database level)
-- [x] Encryption in transit (HTTPS/TLS 1.3)
-- [x] Unique user identification
-- [x] Automatic logoff (15 min idle)
-- [x] Audit controls (comprehensive logging)
-- [x] Integrity controls (checksums, version control)
+1. **Import Types:**
 
-### Administrative Safeguards
-- [ ] Access management procedures (RBAC)
-- [ ] Workforce training documentation
-- [ ] Contingency planning (backup/disaster recovery)
-- [ ] Business associate agreements
+   ```typescript
+   import type { TelehealthSession, CDSAlert, Organization } from "@/types";
+   ```
 
-### Physical Safeguards
-- [ ] Facility access controls (datacenter security)
-- [ ] Workstation security (screen locks)
-- [ ] Device and media controls
+2. **Use Shared Utilities:**
 
-### Audit Requirements
-All of the following MUST be logged:
-- PHI access (who, what, when, from where)
-- PHI modifications (before/after values)
-- Failed login attempts
-- Permission changes
-- Emergency access usage
-- Data exports
+   ```typescript
+   import {
+     successResponse,
+     errorResponse,
+     standardError,
+   } from "@/lib/utils/api-response";
+   import { isValidEmail, createValidator } from "@/lib/utils/validation";
+   import {
+     formatDate,
+     calculateAge,
+     formatRelativeTime,
+   } from "@/lib/utils/date-utils";
+   ```
 
----
+3. **API Route Pattern:**
 
-## NEXT STEPS
+   ```typescript
+   // Success response
+   return NextResponse.json(successResponse(data, meta));
 
-### Phase 1: Foundation (Week 1-2)
-- Agent 1: Complete core infrastructure
-- Agent 10: Implement auth and RBAC
-- All: Review and align on shared types
+   // Error response
+   return NextResponse.json(standardError("NOT_FOUND"), { status: 404 });
 
-### Phase 2: Core Modules (Week 3-4)
-- Agent 2: Patient management
-- Agent 3: Clinical documentation
-- Agent 4: Scheduling
+   // Paginated response
+   return NextResponse.json(paginatedResponse(items, page, limit, total));
+   ```
 
-### Phase 3: Clinical Support (Week 5-6)
-- Agent 6: Laboratory
-- Agent 7: Pharmacy
-- Agent 8: Imaging
+4. **Validation Pattern:**
 
-### Phase 4: Revenue & Analytics (Week 7-8)
-- Agent 5: Billing
-- Agent 9: Analytics
+   ```typescript
+   const validator = createValidator();
+   const result = validator
+     .required(data.email, "Email")
+     .email(data.email, "Email")
+     .required(data.patientId, "Patient ID")
+     .getResult();
 
-### Phase 5: Integration & Testing (Week 9-10)
-- All agents: Integration testing
-- Performance optimization
-- Security audit
-- HIPAA compliance validation
+   if (!result.isValid) {
+     return NextResponse.json(
+       errorResponse("VALIDATION_ERROR", "Validation failed", {
+         errors: result.errors,
+       }),
+       { status: 400 },
+     );
+   }
+   ```
 
----
+### Priority Order
 
-## COORDINATION PROTOCOL
+1. ✅ Agent 14 (Coordinator) - **COMPLETED** - Infrastructure ready
+2. Agent 9 (UI/Theme) - Foundation for all UI components
+3. Agent 3 (RBAC) - Security foundation
+4. Agent 2 (SSO) - Authentication
+5. Agent 10 (Multi-Org) - Tenant management
+6. All others can proceed in parallel after foundation is set
 
-### Daily Standups (Async)
-Each agent posts to this scratchpad:
-- Yesterday's progress
-- Today's goals
-- Blockers/dependencies
+### Critical Files (Coordinate Changes)
 
-### Code Freeze
-- Coordinate with other agents before modifying shared types
-- Announce breaking changes 24h in advance
-- Update this scratchpad when adding new integration points
+- ✅ `/src/types/*.ts` - **READY** - All type definitions complete
+- ✅ `/src/lib/utils/*.ts` - **READY** - Shared utilities available
+- `/src/lib/utils.ts` - Existing utility functions (DO NOT MODIFY)
+- `/prisma/schema.prisma` - Database schema (coordinate major changes)
+- `/src/components/ui/*` - Shared UI components (Agent 9 responsibility)
 
-### Questions/Issues
-Post questions to relevant section. Coordinator responds within 4h.
+### Code Quality Standards
 
----
-
-## CONTACT & ESCALATION
-
-**Coordinator Agent:** Available for:
-- Architecture decisions
-- Merge conflict resolution
-- Cross-module integration issues
-- Shared type modifications
-- Database schema changes
-
-**Escalation Path:**
-1. Post issue in scratchpad
-2. Tag coordinator
-3. Wait for response (4h SLA)
-4. If urgent: Emergency protocol
+- ✅ Use TypeScript strict mode
+- ✅ Import types from `@/types` (path alias configured)
+- ✅ Use shared utilities from `@/lib/utils`
+- ✅ Follow existing patterns in v0.1 codebase
+- ✅ Add JSDoc comments for complex functions
+- ✅ Use standardized API responses
+- ✅ Validate all user inputs
+- ✅ Handle errors gracefully
+- ✅ Log security events to audit trail
 
 ---
 
-## REVISION HISTORY
+## GIT WORKFLOW
 
-| Date | Agent | Changes |
-|------|-------|---------|
-| 2026-01-01 | Coordinator | Initial scratchpad creation |
+Branch: `claude/lithic-enterprise-v0.2-O0Qgh`
+
+Commit Convention:
+
+- `feat(module): description` - New features
+- `fix(module): description` - Bug fixes
+- `refactor(module): description` - Refactoring
+- `docs: description` - Documentation
 
 ---
 
-**END OF SCRATCHPAD**
+**END OF v0.2 SCRATCHPAD**
 
-*This document is the source of truth for all development. Keep it updated.*
+_All agents: Update this document with your progress!_

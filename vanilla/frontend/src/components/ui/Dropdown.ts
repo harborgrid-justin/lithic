@@ -3,8 +3,8 @@
  * Dropdown Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface DropdownOption {
   value: string;
@@ -32,7 +32,7 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
     super(props, {
       isOpen: false,
       selectedValue: props.value || null,
-      searchQuery: '',
+      searchQuery: "",
     });
 
     this.toggleOpen = this.toggleOpen.bind(this);
@@ -41,21 +41,21 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
   }
 
   protected getClassName(): string {
-    const classes = ['dropdown'];
+    const classes = ["dropdown"];
 
     if (this.state.isOpen) {
-      classes.push('dropdown-open');
+      classes.push("dropdown-open");
     }
 
     if (this.props.disabled) {
-      classes.push('dropdown-disabled');
+      classes.push("dropdown-disabled");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
     const trigger = this.createTrigger();
@@ -69,24 +69,24 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
 
   private createTrigger(): HTMLElement {
     const selected = this.props.options.find(
-      (opt) => opt.value === this.state.selectedValue
+      (opt) => opt.value === this.state.selectedValue,
     );
 
-    const trigger = createElement('button', {
-      className: 'dropdown-trigger',
-      textContent: selected?.label || this.props.placeholder || 'Select...',
+    const trigger = createElement("button", {
+      className: "dropdown-trigger",
+      textContent: selected?.label || this.props.placeholder || "Select...",
       attributes: {
-        type: 'button',
-        disabled: this.props.disabled ? 'true' : undefined,
+        type: "button",
+        disabled: this.props.disabled ? "true" : undefined,
       },
       events: {
         click: this.toggleOpen,
       },
     });
 
-    const arrow = createElement('span', {
-      className: 'dropdown-arrow',
-      innerHTML: '▼',
+    const arrow = createElement("span", {
+      className: "dropdown-arrow",
+      innerHTML: "▼",
     });
     trigger.appendChild(arrow);
 
@@ -94,20 +94,22 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
   }
 
   private createMenu(): HTMLElement {
-    const menu = createElement('div', {
-      className: 'dropdown-menu',
+    const menu = createElement("div", {
+      className: "dropdown-menu",
     });
 
     if (this.props.searchable) {
-      const search = createElement('input', {
-        className: 'dropdown-search',
+      const search = createElement("input", {
+        className: "dropdown-search",
         attributes: {
-          type: 'text',
-          placeholder: 'Search...',
+          type: "text",
+          placeholder: "Search...",
         },
         events: {
           input: (e) => {
-            this.setState({ searchQuery: (e.target as HTMLInputElement).value });
+            this.setState({
+              searchQuery: (e.target as HTMLInputElement).value,
+            });
           },
           click: (e) => e.stopPropagation(),
         },
@@ -115,21 +117,23 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
       menu.appendChild(search);
     }
 
-    const optionsList = createElement('div', {
-      className: 'dropdown-options',
+    const optionsList = createElement("div", {
+      className: "dropdown-options",
     });
 
     const filteredOptions = this.getFilteredOptions();
 
     filteredOptions.forEach((option) => {
-      const optionEl = createElement('button', {
+      const optionEl = createElement("button", {
         className: `dropdown-option ${
-          option.value === this.state.selectedValue ? 'dropdown-option-selected' : ''
-        } ${option.disabled ? 'dropdown-option-disabled' : ''}`,
+          option.value === this.state.selectedValue
+            ? "dropdown-option-selected"
+            : ""
+        } ${option.disabled ? "dropdown-option-disabled" : ""}`,
         textContent: option.label,
         attributes: {
-          type: 'button',
-          disabled: option.disabled ? 'true' : undefined,
+          type: "button",
+          disabled: option.disabled ? "true" : undefined,
         },
         events: {
           click: () => this.handleSelect(option.value),
@@ -150,7 +154,7 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
 
     const query = this.state.searchQuery.toLowerCase();
     return this.props.options.filter((opt) =>
-      opt.label.toLowerCase().includes(query)
+      opt.label.toLowerCase().includes(query),
     );
   }
 
@@ -158,7 +162,7 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
     this.setState({
       selectedValue: value,
       isOpen: false,
-      searchQuery: '',
+      searchQuery: "",
     });
 
     if (this.props.onChange) {
@@ -172,7 +176,7 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
   }
 
   private close(): void {
-    this.setState({ isOpen: false, searchQuery: '' });
+    this.setState({ isOpen: false, searchQuery: "" });
   }
 
   private handleDocumentClick(e: Event): void {
@@ -182,11 +186,11 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
   }
 
   protected onMount(): void {
-    document.addEventListener('click', this.handleDocumentClick);
+    document.addEventListener("click", this.handleDocumentClick);
   }
 
   protected onUnmount(): void {
-    document.removeEventListener('click', this.handleDocumentClick);
+    document.removeEventListener("click", this.handleDocumentClick);
   }
 
   public getValue(): string | null {

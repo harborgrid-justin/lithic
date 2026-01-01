@@ -3,8 +3,8 @@
  * E-Prescribing and medication history via Surescripts
  */
 
-import { z } from 'zod';
-import crypto from 'crypto';
+import { z } from "zod";
+import crypto from "crypto";
 
 const SurescriptsConfigSchema = z.object({
   baseUrl: z.string().url(),
@@ -58,7 +58,7 @@ interface Prescription {
     firstName: string;
     lastName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F';
+    gender: "M" | "F";
     address: string;
     city: string;
     state: string;
@@ -91,12 +91,16 @@ export class SurescriptsClient {
     patientFirstName: string;
     patientLastName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F';
+    gender: "M" | "F";
     zipCode?: string;
   }): Promise<Medication[]> {
     const request = this.buildMedicationHistoryRequest(params);
 
-    const response = await this.request('POST', '/medicationhistory/v1', request);
+    const response = await this.request(
+      "POST",
+      "/medicationhistory/v1",
+      request,
+    );
 
     return this.parseMedicationHistoryResponse(response);
   }
@@ -111,7 +115,11 @@ export class SurescriptsClient {
   }> {
     const request = this.buildNewRxRequest(prescription);
 
-    const response = await this.request('POST', '/prescription/v1/newrx', request);
+    const response = await this.request(
+      "POST",
+      "/prescription/v1/newrx",
+      request,
+    );
 
     return this.parseNewRxResponse(response);
   }
@@ -125,7 +133,11 @@ export class SurescriptsClient {
   }): Promise<{ success: boolean; errors?: string[] }> {
     const request = this.buildCancelRxRequest(params);
 
-    const response = await this.request('POST', '/prescription/v1/canrx', request);
+    const response = await this.request(
+      "POST",
+      "/prescription/v1/canrx",
+      request,
+    );
 
     return this.parseCancelRxResponse(response);
   }
@@ -142,7 +154,11 @@ export class SurescriptsClient {
   }): Promise<{ success: boolean; errors?: string[] }> {
     const request = this.buildRefillRequest(params);
 
-    const response = await this.request('POST', '/prescription/v1/refreq', request);
+    const response = await this.request(
+      "POST",
+      "/prescription/v1/refreq",
+      request,
+    );
 
     return this.parseRefillResponse(response);
   }
@@ -156,26 +172,31 @@ export class SurescriptsClient {
     state?: string;
     name?: string;
     radius?: number; // miles
-  }): Promise<Array<{
-    ncpdpId: string;
-    name: string;
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    phone: string;
-    fax?: string;
-    hours?: string;
-    services?: string[];
-  }>> {
+  }): Promise<
+    Array<{
+      ncpdpId: string;
+      name: string;
+      address: string;
+      city: string;
+      state: string;
+      zipCode: string;
+      phone: string;
+      fax?: string;
+      hours?: string;
+      services?: string[];
+    }>
+  > {
     const queryParams = new URLSearchParams();
-    if (params.zipCode) queryParams.append('zipCode', params.zipCode);
-    if (params.city) queryParams.append('city', params.city);
-    if (params.state) queryParams.append('state', params.state);
-    if (params.name) queryParams.append('name', params.name);
-    if (params.radius) queryParams.append('radius', params.radius.toString());
+    if (params.zipCode) queryParams.append("zipCode", params.zipCode);
+    if (params.city) queryParams.append("city", params.city);
+    if (params.state) queryParams.append("state", params.state);
+    if (params.name) queryParams.append("name", params.name);
+    if (params.radius) queryParams.append("radius", params.radius.toString());
 
-    const response = await this.request('GET', `/pharmacy/search?${queryParams.toString()}`);
+    const response = await this.request(
+      "GET",
+      `/pharmacy/search?${queryParams.toString()}`,
+    );
 
     return this.parsePharmacySearchResponse(response);
   }
@@ -203,7 +224,7 @@ export class SurescriptsClient {
   }> {
     const request = this.buildFormularyRequest(params);
 
-    const response = await this.request('POST', '/formulary/v1/check', request);
+    const response = await this.request("POST", "/formulary/v1/check", request);
 
     return this.parseFormularyResponse(response);
   }
@@ -211,21 +232,27 @@ export class SurescriptsClient {
   /**
    * Make HTTP request to Surescripts API
    */
-  private async request(method: string, path: string, body?: any): Promise<any> {
+  private async request(
+    method: string,
+    path: string,
+    body?: any,
+  ): Promise<any> {
     const url = `${this.config.baseUrl}${path}`;
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/xml',
-      'Accept': 'application/xml',
+      "Content-Type": "application/xml",
+      Accept: "application/xml",
     };
 
     // Add authentication
-    const auth = Buffer.from(`${this.config.username}:${this.config.password}`).toString('base64');
-    headers['Authorization'] = `Basic ${auth}`;
+    const auth = Buffer.from(
+      `${this.config.username}:${this.config.password}`,
+    ).toString("base64");
+    headers["Authorization"] = `Basic ${auth}`;
 
     // Add Surescripts-specific headers
-    headers['X-Surescripts-Account-Id'] = this.config.accountId;
-    headers['X-Surescripts-Site-Id'] = this.config.siteId;
+    headers["X-Surescripts-Account-Id"] = this.config.accountId;
+    headers["X-Surescripts-Site-Id"] = this.config.siteId;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.config.timeout);
@@ -241,7 +268,9 @@ export class SurescriptsClient {
       clearTimeout(timeout);
 
       if (!response.ok) {
-        throw new Error(`Surescripts API error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `Surescripts API error: ${response.status} ${response.statusText}`,
+        );
       }
 
       const text = await response.text();
@@ -259,7 +288,7 @@ export class SurescriptsClient {
     return {
       MedicationHistoryRequest: {
         Header: {
-          To: 'Surescripts',
+          To: "Surescripts",
           From: this.config.siteId,
           MessageID: crypto.randomUUID(),
           SentTime: new Date().toISOString(),
@@ -270,7 +299,7 @@ export class SurescriptsClient {
               Identification: {
                 FirstName: params.patientFirstName,
                 LastName: params.patientLastName,
-                DateOfBirth: params.dateOfBirth.toISOString().split('T')[0],
+                DateOfBirth: params.dateOfBirth.toISOString().split("T")[0],
                 Gender: params.gender,
                 ZipCode: params.zipCode,
               },
@@ -318,7 +347,9 @@ export class SurescriptsClient {
               Identification: {
                 FirstName: prescription.patient.firstName,
                 LastName: prescription.patient.lastName,
-                DateOfBirth: prescription.patient.dateOfBirth.toISOString().split('T')[0],
+                DateOfBirth: prescription.patient.dateOfBirth
+                  .toISOString()
+                  .split("T")[0],
                 Gender: prescription.patient.gender,
               },
               Address: {
@@ -339,7 +370,9 @@ export class SurescriptsClient {
               Refills: prescription.refills,
               Directions: prescription.directions,
               DaysSupply: prescription.daysSupply,
-              Substitutions: prescription.substitutionsAllowed ? 'Allowed' : 'Not Allowed',
+              Substitutions: prescription.substitutionsAllowed
+                ? "Allowed"
+                : "Not Allowed",
             },
           },
         },
@@ -386,7 +419,7 @@ export class SurescriptsClient {
         Patient: {
           FirstName: params.patientFirstName,
           LastName: params.patientLastName,
-          DateOfBirth: params.dateOfBirth.toISOString().split('T')[0],
+          DateOfBirth: params.dateOfBirth.toISOString().split("T")[0],
         },
       },
     };

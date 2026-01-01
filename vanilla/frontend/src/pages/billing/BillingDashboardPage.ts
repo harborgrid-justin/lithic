@@ -2,7 +2,7 @@
  * BillingDashboardPage - Main billing dashboard with KPIs and charts
  */
 
-import { BillingService } from '../../services/BillingService';
+import { BillingService } from "../../services/BillingService";
 
 export class BillingDashboardPage {
   private container: HTMLElement;
@@ -89,13 +89,13 @@ export class BillingDashboardPage {
       const denials = await this.billingService.getDenials();
       this.renderDenials(denials);
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      this.showError('Failed to load dashboard data');
+      console.error("Error loading dashboard data:", error);
+      this.showError("Failed to load dashboard data");
     }
   }
 
   private renderStats(stats: any): void {
-    const statsContainer = document.getElementById('statsContainer');
+    const statsContainer = document.getElementById("statsContainer");
     if (!statsContainer) return;
 
     statsContainer.innerHTML = `
@@ -114,16 +114,16 @@ export class BillingDashboardPage {
       <div class="stat-card">
         <div class="stat-label">A/R Outstanding</div>
         <div class="stat-value">$${stats.arOutstanding.toLocaleString()}</div>
-        <div class="stat-change ${stats.arChange < 0 ? 'positive' : 'negative'}">
-          ${stats.arChange > 0 ? '+' : ''}${stats.arChange}%
+        <div class="stat-change ${stats.arChange < 0 ? "positive" : "negative"}">
+          ${stats.arChange > 0 ? "+" : ""}${stats.arChange}%
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Collection Rate</div>
         <div class="stat-value">${stats.collectionRate}%</div>
-        <div class="stat-change ${stats.collectionRateChange > 0 ? 'positive' : 'negative'}">
-          ${stats.collectionRateChange > 0 ? '+' : ''}${stats.collectionRateChange}%
+        <div class="stat-change ${stats.collectionRateChange > 0 ? "positive" : "negative"}">
+          ${stats.collectionRateChange > 0 ? "+" : ""}${stats.collectionRateChange}%
         </div>
       </div>
 
@@ -136,8 +136,8 @@ export class BillingDashboardPage {
       <div class="stat-card">
         <div class="stat-label">Denial Rate</div>
         <div class="stat-value">${stats.denialRate}%</div>
-        <div class="stat-change ${stats.denialRateChange < 0 ? 'positive' : 'negative'}">
-          ${stats.denialRateChange > 0 ? '+' : ''}${stats.denialRateChange}%
+        <div class="stat-change ${stats.denialRateChange < 0 ? "positive" : "negative"}">
+          ${stats.denialRateChange > 0 ? "+" : ""}${stats.denialRateChange}%
         </div>
       </div>
 
@@ -170,17 +170,19 @@ export class BillingDashboardPage {
   }
 
   private renderRevenueChart(data: any[]): void {
-    const container = document.getElementById('revenueChart');
+    const container = document.getElementById("revenueChart");
     if (!container) return;
 
     // In production, use Chart.js or similar library
     // For now, render simple HTML chart
-    const maxValue = Math.max(...data.map(d => d.amount));
+    const maxValue = Math.max(...data.map((d) => d.amount));
 
     container.parentElement!.innerHTML = `
       <h3>Revenue Trend (Last 12 Months)</h3>
       <div class="simple-chart">
-        ${data.map(item => `
+        ${data
+          .map(
+            (item) => `
           <div class="chart-bar">
             <div class="bar-label">${item.month}</div>
             <div class="bar-container">
@@ -189,33 +191,42 @@ export class BillingDashboardPage {
               </div>
             </div>
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
 
   private renderClaimsStatusChart(data: any): void {
-    const container = document.getElementById('claimsStatusChart');
+    const container = document.getElementById("claimsStatusChart");
     if (!container) return;
 
-    const total = Object.values(data).reduce((sum: number, val: any) => sum + val, 0);
+    const total = Object.values(data).reduce(
+      (sum: number, val: any) => sum + val,
+      0,
+    );
 
     container.parentElement!.innerHTML = `
       <h3>Claims by Status</h3>
       <div class="pie-chart-legend">
-        ${Object.entries(data).map(([status, count]: [string, any]) => `
+        ${Object.entries(data)
+          .map(
+            ([status, count]: [string, any]) => `
           <div class="legend-item">
             <span class="legend-color" style="background: var(--${status}-color)"></span>
             <span class="legend-label">${status}</span>
             <span class="legend-value">${count} (${((count / total) * 100).toFixed(1)}%)</span>
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
 
   private renderARAgingReport(data: any): void {
-    const container = document.getElementById('arAgingContainer');
+    const container = document.getElementById("arAgingContainer");
     if (!container) return;
 
     container.innerHTML = `
@@ -265,7 +276,7 @@ export class BillingDashboardPage {
   }
 
   private renderTopPayers(payers: any[]): void {
-    const container = document.getElementById('topPayersContainer');
+    const container = document.getElementById("topPayersContainer");
     if (!container) return;
 
     container.innerHTML = `
@@ -279,26 +290,32 @@ export class BillingDashboardPage {
           </tr>
         </thead>
         <tbody>
-          ${payers.map(payer => `
+          ${payers
+            .map(
+              (payer) => `
             <tr>
               <td>${payer.name}</td>
               <td>${payer.claimCount}</td>
               <td>$${payer.amount.toLocaleString()}</td>
               <td>${payer.avgDays}</td>
             </tr>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
     `;
   }
 
   private renderRecentActivity(activities: any[]): void {
-    const container = document.getElementById('recentActivityContainer');
+    const container = document.getElementById("recentActivityContainer");
     if (!container) return;
 
     container.innerHTML = `
       <div class="activity-list">
-        ${activities.map(activity => `
+        ${activities
+          .map(
+            (activity) => `
           <div class="activity-item">
             <div class="activity-icon ${activity.type}">
               <i class="icon-${activity.type}"></i>
@@ -309,23 +326,28 @@ export class BillingDashboardPage {
             </div>
             <div class="activity-time">${this.formatTime(activity.timestamp)}</div>
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
 
   private renderDenials(denials: any[]): void {
-    const container = document.getElementById('denialsContainer');
+    const container = document.getElementById("denialsContainer");
     if (!container) return;
 
     if (denials.length === 0) {
-      container.innerHTML = '<p class="no-data">No denials requiring attention</p>';
+      container.innerHTML =
+        '<p class="no-data">No denials requiring attention</p>';
       return;
     }
 
     container.innerHTML = `
       <div class="denials-list">
-        ${denials.map(denial => `
+        ${denials
+          .map(
+            (denial) => `
           <div class="denial-item alert-${denial.severity}">
             <div class="denial-header">
               <span class="denial-claim">${denial.claimNumber}</span>
@@ -341,22 +363,24 @@ export class BillingDashboardPage {
               </button>
             </div>
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
 
   private attachEventListeners(): void {
-    const newClaimBtn = document.getElementById('newClaimBtn');
+    const newClaimBtn = document.getElementById("newClaimBtn");
     if (newClaimBtn) {
-      newClaimBtn.addEventListener('click', () => {
-        window.location.hash = '#/billing/claims/new';
+      newClaimBtn.addEventListener("click", () => {
+        window.location.hash = "#/billing/claims/new";
       });
     }
 
-    const uploadERABtn = document.getElementById('uploadERABtn');
+    const uploadERABtn = document.getElementById("uploadERABtn");
     if (uploadERABtn) {
-      uploadERABtn.addEventListener('click', () => {
+      uploadERABtn.addEventListener("click", () => {
         this.showERAUploadModal();
       });
     }
@@ -364,7 +388,7 @@ export class BillingDashboardPage {
 
   private showERAUploadModal(): void {
     // Implementation for ERA upload modal
-    console.log('Show ERA upload modal');
+    console.log("Show ERA upload modal");
   }
 
   private formatTime(timestamp: string): string {
@@ -382,10 +406,10 @@ export class BillingDashboardPage {
   }
 
   private showError(message: string): void {
-    const container = this.container.querySelector('.billing-dashboard');
+    const container = this.container.querySelector(".billing-dashboard");
     if (container) {
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'alert alert-error';
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "alert alert-error";
       errorDiv.textContent = message;
       container.insertBefore(errorDiv, container.firstChild);
     }

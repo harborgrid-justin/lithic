@@ -3,7 +3,7 @@
  * Main dashboard for pharmacy management
  */
 
-import pharmacyService from '../../services/PharmacyService';
+import pharmacyService from "../../services/PharmacyService";
 
 export class PharmacyDashboardPage {
   private container: HTMLElement;
@@ -36,9 +36,9 @@ export class PharmacyDashboardPage {
   private async loadStats(): Promise<void> {
     try {
       const [prescriptions, inventory, refills] = await Promise.all([
-        pharmacyService.getPrescriptions({ status: 'pending' }),
+        pharmacyService.getPrescriptions({ status: "pending" }),
         pharmacyService.getInventory({ lowStock: true }),
-        pharmacyService.getRefillRequests({ status: 'pending' }),
+        pharmacyService.getRefillRequests({ status: "pending" }),
       ]);
 
       this.stats.pendingPrescriptions = prescriptions.length;
@@ -46,14 +46,18 @@ export class PharmacyDashboardPage {
       this.stats.refillRequests = refills.length;
 
       // Get expiring medications
-      const allInventory = await pharmacyService.getInventory({ expiringSoon: true });
+      const allInventory = await pharmacyService.getInventory({
+        expiringSoon: true,
+      });
       this.stats.expiringMedications = allInventory.length;
 
       // Get controlled substances count
-      const controlledMeds = await pharmacyService.getMedications({ isControlled: true });
+      const controlledMeds = await pharmacyService.getMedications({
+        isControlled: true,
+      });
       this.stats.controlledSubstances = controlledMeds.length;
     } catch (error) {
-      console.error('Failed to load dashboard stats:', error);
+      console.error("Failed to load dashboard stats:", error);
     }
   }
 
@@ -361,22 +365,26 @@ export class PharmacyDashboardPage {
   }
 
   private attachEventListeners(): void {
-    const newRxBtn = this.container.querySelector('[data-action="new-prescription"]');
+    const newRxBtn = this.container.querySelector(
+      '[data-action="new-prescription"]',
+    );
     if (newRxBtn) {
-      newRxBtn.addEventListener('click', () => {
-        window.location.hash = '#/pharmacy/prescriptions/new';
+      newRxBtn.addEventListener("click", () => {
+        window.location.hash = "#/pharmacy/prescriptions/new";
       });
     }
 
-    const eprescribeBtn = this.container.querySelector('[data-action="eprescribe"]');
+    const eprescribeBtn = this.container.querySelector(
+      '[data-action="eprescribe"]',
+    );
     if (eprescribeBtn) {
-      eprescribeBtn.addEventListener('click', () => {
-        window.location.hash = '#/pharmacy/eprescribe';
+      eprescribeBtn.addEventListener("click", () => {
+        window.location.hash = "#/pharmacy/eprescribe";
       });
     }
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

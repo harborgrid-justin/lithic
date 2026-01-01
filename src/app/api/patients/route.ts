@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Patient } from '@/types/patient';
-import { mrnGenerator } from '@/lib/mrn-generator';
-import { auditLogger } from '@/lib/audit-logger';
+import { NextRequest, NextResponse } from "next/server";
+import { Patient } from "@/types/patient";
+import { mrnGenerator } from "@/lib/mrn-generator";
+import { auditLogger } from "@/lib/audit-logger";
 
 // Mock database - in production, replace with actual database
 let patients: Patient[] = [];
@@ -9,27 +9,28 @@ let patients: Patient[] = [];
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const query = searchParams.get('query') || '';
-    const status = searchParams.get('status');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const query = searchParams.get("query") || "";
+    const status = searchParams.get("status");
 
     // Filter patients
     let filteredPatients = patients;
 
     if (query) {
       const lowerQuery = query.toLowerCase();
-      filteredPatients = filteredPatients.filter(p => 
-        p.firstName.toLowerCase().includes(lowerQuery) ||
-        p.lastName.toLowerCase().includes(lowerQuery) ||
-        p.mrn.toLowerCase().includes(lowerQuery) ||
-        p.email?.toLowerCase().includes(lowerQuery) ||
-        p.phone?.includes(lowerQuery)
+      filteredPatients = filteredPatients.filter(
+        (p) =>
+          p.firstName.toLowerCase().includes(lowerQuery) ||
+          p.lastName.toLowerCase().includes(lowerQuery) ||
+          p.mrn.toLowerCase().includes(lowerQuery) ||
+          p.email?.toLowerCase().includes(lowerQuery) ||
+          p.phone?.includes(lowerQuery),
       );
     }
 
     if (status) {
-      filteredPatients = filteredPatients.filter(p => p.status === status);
+      filteredPatients = filteredPatients.filter((p) => p.status === status);
     }
 
     // Pagination
@@ -43,14 +44,14 @@ export async function GET(request: NextRequest) {
       { query, status, page, limit },
       total,
       {
-        userId: 'current-user-id', // Replace with actual user from session
-        username: 'current-user',
-        role: 'clinician',
+        userId: "current-user-id", // Replace with actual user from session
+        username: "current-user",
+        role: "clinician",
       },
       {
         ipAddress: request.ip,
-        userAgent: request.headers.get('user-agent') || undefined,
-      }
+        userAgent: request.headers.get("user-agent") || undefined,
+      },
     );
 
     return NextResponse.json({
@@ -60,10 +61,10 @@ export async function GET(request: NextRequest) {
       limit,
     });
   } catch (error) {
-    console.error('Error fetching patients:', error);
+    console.error("Error fetching patients:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch patients' },
-      { status: 500 }
+      { error: "Failed to fetch patients" },
+      { status: 500 },
     );
   }
 }
@@ -83,8 +84,8 @@ export async function POST(request: NextRequest) {
       ...data,
       createdAt: now,
       updatedAt: now,
-      createdBy: 'current-user-id', // Replace with actual user from session
-      updatedBy: 'current-user-id',
+      createdBy: "current-user-id", // Replace with actual user from session
+      updatedBy: "current-user-id",
     };
 
     // Add to database
@@ -93,25 +94,25 @@ export async function POST(request: NextRequest) {
     // Audit log
     await auditLogger.logPatientModification(
       newPatient.id,
-      'create',
+      "create",
       {
-        userId: 'current-user-id',
-        username: 'current-user',
-        role: 'clinician',
+        userId: "current-user-id",
+        username: "current-user",
+        role: "clinician",
       },
       { patient: newPatient },
       {
         ipAddress: request.ip,
-        userAgent: request.headers.get('user-agent') || undefined,
-      }
+        userAgent: request.headers.get("user-agent") || undefined,
+      },
     );
 
     return NextResponse.json(newPatient, { status: 201 });
   } catch (error) {
-    console.error('Error creating patient:', error);
+    console.error("Error creating patient:", error);
     return NextResponse.json(
-      { error: 'Failed to create patient' },
-      { status: 500 }
+      { error: "Failed to create patient" },
+      { status: 500 },
     );
   }
 }

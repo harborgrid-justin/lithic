@@ -1,55 +1,63 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Plug, Database, Cloud, Activity } from 'lucide-react';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Plug, Database, Cloud, Activity } from "lucide-react";
 
 const integrations = [
   {
-    id: '1',
-    name: 'Epic EHR',
-    type: 'EHR',
-    description: 'Connect to Epic electronic health records',
+    id: "1",
+    name: "Epic EHR",
+    type: "EHR",
+    description: "Connect to Epic electronic health records",
     icon: Database,
-    status: 'inactive',
-    color: 'text-purple-600',
+    status: "inactive",
+    color: "text-purple-600",
   },
   {
-    id: '2',
-    name: 'FHIR API',
-    type: 'FHIR',
-    description: 'Fast Healthcare Interoperability Resources',
+    id: "2",
+    name: "FHIR API",
+    type: "FHIR",
+    description: "Fast Healthcare Interoperability Resources",
     icon: Cloud,
-    status: 'active',
-    color: 'text-blue-600',
+    status: "active",
+    color: "text-blue-600",
   },
   {
-    id: '3',
-    name: 'HL7 Interface',
-    type: 'HL7',
-    description: 'Health Level 7 messaging standard',
+    id: "3",
+    name: "HL7 Interface",
+    type: "HL7",
+    description: "Health Level 7 messaging standard",
     icon: Activity,
-    status: 'inactive',
-    color: 'text-green-600',
+    status: "inactive",
+    color: "text-green-600",
   },
   {
-    id: '4',
-    name: 'AWS S3',
-    type: 'STORAGE',
-    description: 'Document storage and management',
+    id: "4",
+    name: "AWS S3",
+    type: "STORAGE",
+    description: "Document storage and management",
     icon: Cloud,
-    status: 'active',
-    color: 'text-orange-600',
+    status: "active",
+    color: "text-orange-600",
   },
 ];
 
 export default function IntegrationManager() {
-  const [activeIntegrations, setActiveIntegrations] = useState<Record<string, boolean>>({
-    '2': true,
-    '4': true,
+  const [activeIntegrations, setActiveIntegrations] = useState<
+    Record<string, boolean>
+  >({
+    "2": true,
+    "4": true,
   });
 
   const toggleIntegration = (id: string) => {
@@ -75,8 +83,12 @@ export default function IntegrationManager() {
                       <Icon className={`h-6 w-6 ${integration.color}`} />
                     </div>
                     <div>
-                      <CardTitle className="text-lg">{integration.name}</CardTitle>
-                      <CardDescription>{integration.description}</CardDescription>
+                      <CardTitle className="text-lg">
+                        {integration.name}
+                      </CardTitle>
+                      <CardDescription>
+                        {integration.description}
+                      </CardDescription>
                     </div>
                   </div>
                   <Switch
@@ -87,8 +99,8 @@ export default function IntegrationManager() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <Badge variant={isActive ? 'default' : 'secondary'}>
-                    {isActive ? 'Active' : 'Inactive'}
+                  <Badge variant={isActive ? "default" : "secondary"}>
+                    {isActive ? "Active" : "Inactive"}
                   </Badge>
                   <Button variant="outline" size="sm">
                     Configure
@@ -103,7 +115,9 @@ export default function IntegrationManager() {
       <Card>
         <CardHeader>
           <CardTitle>Custom Integration</CardTitle>
-          <CardDescription>Add a new integration using API keys</CardDescription>
+          <CardDescription>
+            Add a new integration using API keys
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Button>

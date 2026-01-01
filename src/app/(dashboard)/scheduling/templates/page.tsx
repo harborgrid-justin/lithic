@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Plus, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import ScheduleTemplateComponent from '@/components/scheduling/ScheduleTemplate';
-import { schedulingService } from '@/services/scheduling.service';
-import type { ScheduleTemplate, Provider } from '@/types/scheduling';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import ScheduleTemplateComponent from "@/components/scheduling/ScheduleTemplate";
+import { schedulingService } from "@/services/scheduling.service";
+import type { ScheduleTemplate, Provider } from "@/types/scheduling";
+import { toast } from "sonner";
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<ScheduleTemplate[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function TemplatesPage() {
       setTemplates(templatesData);
       setProviders(providersData);
     } catch (error) {
-      toast.error('Failed to load templates');
+      toast.error("Failed to load templates");
       console.error(error);
     } finally {
       setLoading(false);
@@ -39,46 +39,46 @@ export default function TemplatesPage() {
   };
 
   const handleDelete = async (template: ScheduleTemplate) => {
-    if (!confirm('Are you sure you want to delete this template?')) return;
+    if (!confirm("Are you sure you want to delete this template?")) return;
 
     try {
       await schedulingService.deleteScheduleTemplate(template.id);
-      toast.success('Template deleted successfully');
+      toast.success("Template deleted successfully");
       await loadData();
     } catch (error) {
-      toast.error('Failed to delete template');
+      toast.error("Failed to delete template");
       console.error(error);
     }
   };
 
   const handleApply = async (template: ScheduleTemplate) => {
     if (!template.providerId) {
-      toast.error('Template must have an assigned provider to apply');
+      toast.error("Template must have an assigned provider to apply");
       return;
     }
 
     try {
       // Apply template to provider schedule
-      const startDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date().toISOString().split("T")[0];
       const endDate = new Date();
       endDate.setMonth(endDate.getMonth() + 1);
-      const endDateStr = endDate.toISOString().split('T')[0];
+      const endDateStr = endDate.toISOString().split("T")[0];
 
       await schedulingService.applyScheduleTemplate(
         template.id,
         template.providerId,
         startDate,
-        endDateStr
+        endDateStr,
       );
-      toast.success('Template applied successfully');
+      toast.success("Template applied successfully");
     } catch (error) {
-      toast.error('Failed to apply template');
+      toast.error("Failed to apply template");
       console.error(error);
     }
   };
 
   const filteredTemplates = templates.filter((template) =>
-    template.name.toLowerCase().includes(searchQuery.toLowerCase())
+    template.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -101,7 +101,9 @@ export default function TemplatesPage() {
       <div className="grid grid-cols-3 gap-4">
         <Card>
           <div className="p-6 text-center">
-            <div className="text-3xl font-bold text-primary-600">{templates.length}</div>
+            <div className="text-3xl font-bold text-primary-600">
+              {templates.length}
+            </div>
             <div className="text-sm text-gray-500 mt-1">Total Templates</div>
           </div>
         </Card>
@@ -120,7 +122,9 @@ export default function TemplatesPage() {
             <div className="text-3xl font-bold text-blue-600">
               {templates.filter((t) => t.providerId).length}
             </div>
-            <div className="text-sm text-gray-500 mt-1">Assigned to Providers</div>
+            <div className="text-sm text-gray-500 mt-1">
+              Assigned to Providers
+            </div>
           </div>
         </Card>
       </div>

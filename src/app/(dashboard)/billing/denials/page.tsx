@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Denial } from '@/types/billing';
-import DenialManager from '@/components/billing/DenialManager';
-import { AlertTriangle, TrendingDown, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Denial } from "@/types/billing";
+import DenialManager from "@/components/billing/DenialManager";
+import { AlertTriangle, TrendingDown, CheckCircle } from "lucide-react";
 
 export default function DenialsPage() {
   const [denials, setDenials] = useState<Denial[]>([]);
@@ -13,34 +13,34 @@ export default function DenialsPage() {
     // Mock data - in production, fetch from API
     const mockDenials: Denial[] = [
       {
-        id: '1',
-        claimId: 'claim-1',
-        claimNumber: 'CLM-123456',
-        patientName: 'John Doe',
-        denialDate: '2024-01-15',
-        denialReason: 'coding_error',
-        denialDetails: 'Invalid CPT code combination',
+        id: "1",
+        claimId: "claim-1",
+        claimNumber: "CLM-123456",
+        patientName: "John Doe",
+        denialDate: "2024-01-15",
+        denialReason: "coding_error",
+        denialDetails: "Invalid CPT code combination",
         deniedAmount: 250,
-        status: 'pending',
-        priority: 'high',
-        appealDeadline: '2024-02-15',
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-15',
+        status: "pending",
+        priority: "high",
+        appealDeadline: "2024-02-15",
+        createdAt: "2024-01-15",
+        updatedAt: "2024-01-15",
       },
       {
-        id: '2',
-        claimId: 'claim-2',
-        claimNumber: 'CLM-123457',
-        patientName: 'Jane Smith',
-        denialDate: '2024-01-14',
-        denialReason: 'authorization_required',
-        denialDetails: 'Prior authorization not obtained',
+        id: "2",
+        claimId: "claim-2",
+        claimNumber: "CLM-123457",
+        patientName: "Jane Smith",
+        denialDate: "2024-01-14",
+        denialReason: "authorization_required",
+        denialDetails: "Prior authorization not obtained",
         deniedAmount: 500,
-        status: 'in_progress',
-        priority: 'medium',
-        appealDeadline: '2024-02-14',
-        createdAt: '2024-01-14',
-        updatedAt: '2024-01-16',
+        status: "in_progress",
+        priority: "medium",
+        appealDeadline: "2024-02-14",
+        createdAt: "2024-01-14",
+        updatedAt: "2024-01-16",
       },
     ];
 
@@ -54,8 +54,10 @@ export default function DenialsPage() {
     // Update denial
     setDenials((prev) =>
       prev.map((denial) =>
-        denial.id === id ? { ...denial, ...data, updatedAt: new Date().toISOString() } : denial
-      )
+        denial.id === id
+          ? { ...denial, ...data, updatedAt: new Date().toISOString() }
+          : denial,
+      ),
     );
   };
 
@@ -66,15 +68,15 @@ export default function DenialsPage() {
         denial.id === id
           ? {
               ...denial,
-              status: 'appealed',
+              status: "appealed",
               appealDate: new Date().toISOString(),
               appealNotes: notes,
               updatedAt: new Date().toISOString(),
             }
-          : denial
-      )
+          : denial,
+      ),
     );
-    alert('Appeal submitted successfully!');
+    alert("Appeal submitted successfully!");
   };
 
   return (
@@ -96,13 +98,14 @@ export default function DenialsPage() {
               Denial Management Best Practices
             </h3>
             <p className="text-sm text-orange-800 mb-3">
-              Effective denial management is critical to maintaining healthy revenue cycle
-              performance. Follow these guidelines:
+              Effective denial management is critical to maintaining healthy
+              revenue cycle performance. Follow these guidelines:
             </p>
             <ul className="space-y-1 text-sm text-orange-800">
               <li className="flex items-center gap-2">
                 <TrendingDown className="w-4 h-4" />
-                Work high-priority denials first (high-value, approaching appeal deadline)
+                Work high-priority denials first (high-value, approaching appeal
+                deadline)
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4" />

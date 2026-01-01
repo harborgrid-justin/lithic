@@ -4,14 +4,21 @@
  * Implements NCPDP SCRIPT standard for electronic prescriptions
  */
 
-import { EventEmitter } from 'events';
-import type { Prescription, Medication } from './PharmacyService';
+import { EventEmitter } from "events";
+import type { Prescription, Medication } from "./PharmacyService";
 
 export interface EPrescription {
   id: string;
   messageId: string; // NCPDP Message ID
   version: string; // NCPDP version (e.g., "10.6")
-  messageType: 'NEWRX' | 'RXCHG' | 'RXFILL' | 'CANRX' | 'REFRES' | 'RXHREQ' | 'RXHRES';
+  messageType:
+    | "NEWRX"
+    | "RXCHG"
+    | "RXFILL"
+    | "CANRX"
+    | "REFRES"
+    | "RXHREQ"
+    | "RXHRES";
 
   // Prescriber information
   prescriber: {
@@ -37,7 +44,7 @@ export interface EPrescription {
     firstName: string;
     lastName: string;
     dateOfBirth: Date;
-    gender: 'M' | 'F' | 'U';
+    gender: "M" | "F" | "U";
     address: {
       line1: string;
       line2?: string;
@@ -89,7 +96,7 @@ export interface EPrescription {
   processedDate?: Date;
 
   // Status
-  status: 'pending' | 'accepted' | 'rejected' | 'changed' | 'cancelled';
+  status: "pending" | "accepted" | "rejected" | "changed" | "cancelled";
   rejectionReason?: string;
 
   createdAt: Date;
@@ -106,14 +113,14 @@ export interface ValidationError {
   code: string;
   field: string;
   message: string;
-  severity: 'error';
+  severity: "error";
 }
 
 export interface ValidationWarning {
   code: string;
   field: string;
   message: string;
-  severity: 'warning';
+  severity: "warning";
 }
 
 export interface RefillRequest {
@@ -121,8 +128,8 @@ export interface RefillRequest {
   prescriptionId: string;
   patientId: string;
   requestedDate: Date;
-  requestedBy: 'patient' | 'prescriber' | 'pharmacy';
-  status: 'pending' | 'approved' | 'denied' | 'prescriber_review';
+  requestedBy: "patient" | "prescriber" | "pharmacy";
+  status: "pending" | "approved" | "denied" | "prescriber_review";
   denialReason?: string;
   processedDate?: Date;
   processedBy?: string;
@@ -136,7 +143,7 @@ export class PrescriptionService extends EventEmitter {
   private refillRequests: Map<string, RefillRequest> = new Map();
 
   // NCPDP message version
-  private readonly NCPDP_VERSION = '10.6';
+  private readonly NCPDP_VERSION = "10.6";
 
   constructor() {
     super();
@@ -145,62 +152,67 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Validate a prescription for completeness and correctness
    */
-  async validatePrescription(prescription: Partial<Prescription>): Promise<PrescriptionValidation> {
+  async validatePrescription(
+    prescription: Partial<Prescription>,
+  ): Promise<PrescriptionValidation> {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
     // Required fields validation
     if (!prescription.patientId) {
       errors.push({
-        code: 'REQUIRED_FIELD',
-        field: 'patientId',
-        message: 'Patient ID is required',
-        severity: 'error',
+        code: "REQUIRED_FIELD",
+        field: "patientId",
+        message: "Patient ID is required",
+        severity: "error",
       });
     }
 
     if (!prescription.prescriberId) {
       errors.push({
-        code: 'REQUIRED_FIELD',
-        field: 'prescriberId',
-        message: 'Prescriber ID is required',
-        severity: 'error',
+        code: "REQUIRED_FIELD",
+        field: "prescriberId",
+        message: "Prescriber ID is required",
+        severity: "error",
       });
     }
 
     if (!prescription.medicationId) {
       errors.push({
-        code: 'REQUIRED_FIELD',
-        field: 'medicationId',
-        message: 'Medication ID is required',
-        severity: 'error',
+        code: "REQUIRED_FIELD",
+        field: "medicationId",
+        message: "Medication ID is required",
+        severity: "error",
       });
     }
 
-    if (!prescription.directions || prescription.directions.trim().length === 0) {
+    if (
+      !prescription.directions ||
+      prescription.directions.trim().length === 0
+    ) {
       errors.push({
-        code: 'REQUIRED_FIELD',
-        field: 'directions',
-        message: 'Directions (SIG) are required',
-        severity: 'error',
+        code: "REQUIRED_FIELD",
+        field: "directions",
+        message: "Directions (SIG) are required",
+        severity: "error",
       });
     }
 
     if (!prescription.quantity || prescription.quantity <= 0) {
       errors.push({
-        code: 'INVALID_VALUE',
-        field: 'quantity',
-        message: 'Quantity must be greater than zero',
-        severity: 'error',
+        code: "INVALID_VALUE",
+        field: "quantity",
+        message: "Quantity must be greater than zero",
+        severity: "error",
       });
     }
 
     if (!prescription.daysSupply || prescription.daysSupply <= 0) {
       errors.push({
-        code: 'INVALID_VALUE',
-        field: 'daysSupply',
-        message: 'Days supply must be greater than zero',
-        severity: 'error',
+        code: "INVALID_VALUE",
+        field: "daysSupply",
+        message: "Days supply must be greater than zero",
+        severity: "error",
       });
     }
 
@@ -208,48 +220,60 @@ export class PrescriptionService extends EventEmitter {
     if (prescription.isControlled) {
       if (!prescription.prescriberDEA) {
         errors.push({
-          code: 'DEA_REQUIRED',
-          field: 'prescriberDEA',
-          message: 'DEA number required for controlled substances',
-          severity: 'error',
+          code: "DEA_REQUIRED",
+          field: "prescriberDEA",
+          message: "DEA number required for controlled substances",
+          severity: "error",
         });
       }
 
       if (!prescription.diagnosis) {
         warnings.push({
-          code: 'DIAGNOSIS_RECOMMENDED',
-          field: 'diagnosis',
-          message: 'Diagnosis code recommended for controlled substances',
-          severity: 'warning',
+          code: "DIAGNOSIS_RECOMMENDED",
+          field: "diagnosis",
+          message: "Diagnosis code recommended for controlled substances",
+          severity: "warning",
         });
       }
 
       // Controlled substance quantity limits
       const medication = prescription.medication as Medication;
-      if (medication?.deaSchedule === '2' && prescription.daysSupply && prescription.daysSupply > 30) {
+      if (
+        medication?.deaSchedule === "2" &&
+        prescription.daysSupply &&
+        prescription.daysSupply > 30
+      ) {
         warnings.push({
-          code: 'DAYS_SUPPLY_LIMIT',
-          field: 'daysSupply',
-          message: 'Schedule II controlled substances typically limited to 30 days supply',
-          severity: 'warning',
+          code: "DAYS_SUPPLY_LIMIT",
+          field: "daysSupply",
+          message:
+            "Schedule II controlled substances typically limited to 30 days supply",
+          severity: "warning",
         });
       }
 
-      if (prescription.refillsAuthorized && prescription.refillsAuthorized > 0) {
-        if (medication?.deaSchedule === '2') {
+      if (
+        prescription.refillsAuthorized &&
+        prescription.refillsAuthorized > 0
+      ) {
+        if (medication?.deaSchedule === "2") {
           errors.push({
-            code: 'NO_REFILLS_ALLOWED',
-            field: 'refillsAuthorized',
-            message: 'Schedule II controlled substances cannot have refills',
-            severity: 'error',
+            code: "NO_REFILLS_ALLOWED",
+            field: "refillsAuthorized",
+            message: "Schedule II controlled substances cannot have refills",
+            severity: "error",
           });
-        } else if (medication?.deaSchedule && ['3', '4', '5'].includes(medication.deaSchedule)) {
+        } else if (
+          medication?.deaSchedule &&
+          ["3", "4", "5"].includes(medication.deaSchedule)
+        ) {
           if (prescription.refillsAuthorized > 5) {
             errors.push({
-              code: 'REFILL_LIMIT',
-              field: 'refillsAuthorized',
-              message: 'Schedule III-V controlled substances limited to 5 refills',
-              severity: 'error',
+              code: "REFILL_LIMIT",
+              field: "refillsAuthorized",
+              message:
+                "Schedule III-V controlled substances limited to 5 refills",
+              severity: "error",
             });
           }
         }
@@ -260,20 +284,20 @@ export class PrescriptionService extends EventEmitter {
     if (prescription.writtenDate && prescription.expirationDate) {
       if (prescription.expirationDate <= prescription.writtenDate) {
         errors.push({
-          code: 'INVALID_DATE',
-          field: 'expirationDate',
-          message: 'Expiration date must be after written date',
-          severity: 'error',
+          code: "INVALID_DATE",
+          field: "expirationDate",
+          message: "Expiration date must be after written date",
+          severity: "error",
         });
       }
 
       // Check if prescription is expired
       if (prescription.expirationDate < new Date()) {
         errors.push({
-          code: 'EXPIRED',
-          field: 'expirationDate',
-          message: 'Prescription has expired',
-          severity: 'error',
+          code: "EXPIRED",
+          field: "expirationDate",
+          message: "Prescription has expired",
+          severity: "error",
         });
       }
     }
@@ -281,10 +305,10 @@ export class PrescriptionService extends EventEmitter {
     // Drug interaction check warning
     if (!prescription.drugInteractionChecked) {
       warnings.push({
-        code: 'INTERACTION_CHECK_REQUIRED',
-        field: 'drugInteractionChecked',
-        message: 'Drug interaction check should be performed',
-        severity: 'warning',
+        code: "INTERACTION_CHECK_REQUIRED",
+        field: "drugInteractionChecked",
+        message: "Drug interaction check should be performed",
+        severity: "warning",
       });
     }
 
@@ -298,16 +322,18 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Process incoming NCPDP e-prescription
    */
-  async processEPrescription(data: Omit<EPrescription, 'id' | 'createdAt' | 'updatedAt'>): Promise<EPrescription> {
+  async processEPrescription(
+    data: Omit<EPrescription, "id" | "createdAt" | "updatedAt">,
+  ): Promise<EPrescription> {
     const ePrescription: EPrescription = {
       ...data,
-      id: this.generateId('ERX'),
+      id: this.generateId("ERX"),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     this.ePrescriptions.set(ePrescription.id, ePrescription);
-    this.emit('eprescription:received', ePrescription);
+    this.emit("eprescription:received", ePrescription);
 
     return ePrescription;
   }
@@ -315,19 +341,22 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Accept an e-prescription
    */
-  async acceptEPrescription(id: string, processedBy: string): Promise<EPrescription | null> {
+  async acceptEPrescription(
+    id: string,
+    processedBy: string,
+  ): Promise<EPrescription | null> {
     const erx = this.ePrescriptions.get(id);
     if (!erx) return null;
 
     const updated: EPrescription = {
       ...erx,
-      status: 'accepted',
+      status: "accepted",
       processedDate: new Date(),
       updatedAt: new Date(),
     };
 
     this.ePrescriptions.set(id, updated);
-    this.emit('eprescription:accepted', updated);
+    this.emit("eprescription:accepted", updated);
 
     return updated;
   }
@@ -335,20 +364,23 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Reject an e-prescription
    */
-  async rejectEPrescription(id: string, reason: string): Promise<EPrescription | null> {
+  async rejectEPrescription(
+    id: string,
+    reason: string,
+  ): Promise<EPrescription | null> {
     const erx = this.ePrescriptions.get(id);
     if (!erx) return null;
 
     const updated: EPrescription = {
       ...erx,
-      status: 'rejected',
+      status: "rejected",
       rejectionReason: reason,
       processedDate: new Date(),
       updatedAt: new Date(),
     };
 
     this.ePrescriptions.set(id, updated);
-    this.emit('eprescription:rejected', updated);
+    this.emit("eprescription:rejected", updated);
 
     return updated;
   }
@@ -356,27 +388,30 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Send NCPDP change request
    */
-  async sendChangeRequest(prescriptionId: string, changes: {
-    quantity?: number;
-    daysSupply?: number;
-    directions?: string;
-    reason: string;
-  }): Promise<EPrescription> {
+  async sendChangeRequest(
+    prescriptionId: string,
+    changes: {
+      quantity?: number;
+      daysSupply?: number;
+      directions?: string;
+      reason: string;
+    },
+  ): Promise<EPrescription> {
     const changeRequest: EPrescription = {
-      id: this.generateId('ERX'),
+      id: this.generateId("ERX"),
       messageId: this.generateMessageId(),
       version: this.NCPDP_VERSION,
-      messageType: 'RXCHG',
-      status: 'pending',
+      messageType: "RXCHG",
+      status: "pending",
       prescriber: {} as any, // Would be populated from the prescription
       patient: {} as any,
       medication: {
-        description: '',
-        strength: '',
-        dosageForm: '',
+        description: "",
+        strength: "",
+        dosageForm: "",
         quantity: changes.quantity || 0,
-        quantityUnit: '',
-        directions: changes.directions || '',
+        quantityUnit: "",
+        directions: changes.directions || "",
         daysSupply: changes.daysSupply || 0,
         refills: 0,
         substitutionsAllowed: false,
@@ -389,7 +424,7 @@ export class PrescriptionService extends EventEmitter {
     };
 
     this.ePrescriptions.set(changeRequest.id, changeRequest);
-    this.emit('eprescription:change_request', changeRequest);
+    this.emit("eprescription:change_request", changeRequest);
 
     return changeRequest;
   }
@@ -397,28 +432,31 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Send NCPDP refill request
    */
-  async sendRefillRequest(prescriptionId: string, requestedBy: RefillRequest['requestedBy']): Promise<RefillRequest> {
+  async sendRefillRequest(
+    prescriptionId: string,
+    requestedBy: RefillRequest["requestedBy"],
+  ): Promise<RefillRequest> {
     const request: RefillRequest = {
-      id: this.generateId('REFILL'),
+      id: this.generateId("REFILL"),
       prescriptionId,
-      patientId: '', // Would be from prescription
+      patientId: "", // Would be from prescription
       requestedDate: new Date(),
       requestedBy,
-      status: 'pending',
+      status: "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     this.refillRequests.set(request.id, request);
-    this.emit('refill:requested', request);
+    this.emit("refill:requested", request);
 
     // Send NCPDP REFRES message
     const refillMessage: EPrescription = {
-      id: this.generateId('ERX'),
+      id: this.generateId("ERX"),
       messageId: this.generateMessageId(),
       version: this.NCPDP_VERSION,
-      messageType: 'REFRES',
-      status: 'pending',
+      messageType: "REFRES",
+      status: "pending",
       prescriber: {} as any,
       patient: {} as any,
       medication: {} as any,
@@ -436,20 +474,23 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Approve refill request
    */
-  async approveRefillRequest(id: string, processedBy: string): Promise<RefillRequest | null> {
+  async approveRefillRequest(
+    id: string,
+    processedBy: string,
+  ): Promise<RefillRequest | null> {
     const request = this.refillRequests.get(id);
     if (!request) return null;
 
     const updated: RefillRequest = {
       ...request,
-      status: 'approved',
+      status: "approved",
       processedDate: new Date(),
       processedBy,
       updatedAt: new Date(),
     };
 
     this.refillRequests.set(id, updated);
-    this.emit('refill:approved', updated);
+    this.emit("refill:approved", updated);
 
     return updated;
   }
@@ -457,13 +498,17 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Deny refill request
    */
-  async denyRefillRequest(id: string, reason: string, processedBy: string): Promise<RefillRequest | null> {
+  async denyRefillRequest(
+    id: string,
+    reason: string,
+    processedBy: string,
+  ): Promise<RefillRequest | null> {
     const request = this.refillRequests.get(id);
     if (!request) return null;
 
     const updated: RefillRequest = {
       ...request,
-      status: 'denied',
+      status: "denied",
       denialReason: reason,
       processedDate: new Date(),
       processedBy,
@@ -471,7 +516,7 @@ export class PrescriptionService extends EventEmitter {
     };
 
     this.refillRequests.set(id, updated);
-    this.emit('refill:denied', updated);
+    this.emit("refill:denied", updated);
 
     return updated;
   }
@@ -481,37 +526,39 @@ export class PrescriptionService extends EventEmitter {
    */
   async getRefillRequests(filters?: {
     patientId?: string;
-    status?: RefillRequest['status'];
+    status?: RefillRequest["status"];
   }): Promise<RefillRequest[]> {
     let requests = Array.from(this.refillRequests.values());
 
     if (filters) {
       if (filters.patientId) {
-        requests = requests.filter(r => r.patientId === filters.patientId);
+        requests = requests.filter((r) => r.patientId === filters.patientId);
       }
       if (filters.status) {
-        requests = requests.filter(r => r.status === filters.status);
+        requests = requests.filter((r) => r.status === filters.status);
       }
     }
 
-    return requests.sort((a, b) => b.requestedDate.getTime() - a.requestedDate.getTime());
+    return requests.sort(
+      (a, b) => b.requestedDate.getTime() - a.requestedDate.getTime(),
+    );
   }
 
   /**
    * Get all e-prescriptions
    */
   async getEPrescriptions(filters?: {
-    status?: EPrescription['status'];
-    messageType?: EPrescription['messageType'];
+    status?: EPrescription["status"];
+    messageType?: EPrescription["messageType"];
   }): Promise<EPrescription[]> {
     let erxs = Array.from(this.ePrescriptions.values());
 
     if (filters) {
       if (filters.status) {
-        erxs = erxs.filter(e => e.status === filters.status);
+        erxs = erxs.filter((e) => e.status === filters.status);
       }
       if (filters.messageType) {
-        erxs = erxs.filter(e => e.messageType === filters.messageType);
+        erxs = erxs.filter((e) => e.messageType === filters.messageType);
       }
     }
 
@@ -521,16 +568,20 @@ export class PrescriptionService extends EventEmitter {
   /**
    * Calculate expiration date based on prescription type
    */
-  calculateExpirationDate(writtenDate: Date, isControlled: boolean, deaSchedule?: string): Date {
+  calculateExpirationDate(
+    writtenDate: Date,
+    isControlled: boolean,
+    deaSchedule?: string,
+  ): Date {
     const expiration = new Date(writtenDate);
 
     if (isControlled && deaSchedule) {
       // Schedule II: 90 days from written date in most states
-      if (deaSchedule === '2') {
+      if (deaSchedule === "2") {
         expiration.setDate(expiration.getDate() + 90);
       }
       // Schedule III-V: 180 days (6 months)
-      else if (['3', '4', '5'].includes(deaSchedule)) {
+      else if (["3", "4", "5"].includes(deaSchedule)) {
         expiration.setDate(expiration.getDate() + 180);
       }
     } else {

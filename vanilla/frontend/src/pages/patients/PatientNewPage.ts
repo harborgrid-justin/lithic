@@ -2,9 +2,9 @@
  * PatientNewPage - Create new patient
  */
 
-import { PatientForm } from '../../components/patients/PatientForm';
-import { Patient, DuplicateMatch } from '../../types/Patient';
-import PatientService from '../../services/PatientService';
+import { PatientForm } from "../../components/patients/PatientForm";
+import { Patient, DuplicateMatch } from "../../types/Patient";
+import PatientService from "../../services/PatientService";
 
 export class PatientNewPage {
   private patientForm: PatientForm;
@@ -13,9 +13,9 @@ export class PatientNewPage {
   constructor() {
     this.initializePage();
     this.patientForm = new PatientForm(
-      'formContainer',
+      "formContainer",
       (patient) => this.handleSuccess(patient),
-      () => this.handleCancel()
+      () => this.handleCancel(),
     );
     this.patientForm.render();
   }
@@ -58,10 +58,10 @@ export class PatientNewPage {
    * Attach page-level event listeners
    */
   private attachPageEventListeners(): void {
-    const backBtn = document.getElementById('backBtn');
+    const backBtn = document.getElementById("backBtn");
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        window.location.href = '/patients';
+      backBtn.addEventListener("click", () => {
+        window.location.href = "/patients";
       });
     }
   }
@@ -79,21 +79,22 @@ export class PatientNewPage {
    * Handle form cancellation
    */
   private handleCancel(): void {
-    window.location.href = '/patients';
+    window.location.href = "/patients";
   }
 
   /**
    * Show duplicate warning
    */
   private showDuplicateWarning(duplicates: DuplicateMatch[]): void {
-    const warningEl = document.getElementById('duplicateWarning');
-    const listEl = document.getElementById('duplicateList');
+    const warningEl = document.getElementById("duplicateWarning");
+    const listEl = document.getElementById("duplicateList");
 
     if (!warningEl || !listEl) return;
 
-    listEl.innerHTML = duplicates.map(dup => {
-      const { patient, score, matchedFields } = dup;
-      return `
+    listEl.innerHTML = duplicates
+      .map((dup) => {
+        const { patient, score, matchedFields } = dup;
+        return `
         <div class="duplicate-item">
           <div class="duplicate-info">
             <strong>${patient.firstName} ${patient.lastName}</strong>
@@ -101,17 +102,18 @@ export class PatientNewPage {
             <span class="score">${score.toFixed(0)}% match</span>
           </div>
           <div class="matched-fields">
-            Matched: ${matchedFields.join(', ')}
+            Matched: ${matchedFields.join(", ")}
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join("");
 
-    warningEl.style.display = 'block';
+    warningEl.style.display = "block";
   }
 }
 
 // Initialize page
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   new PatientNewPage();
 });

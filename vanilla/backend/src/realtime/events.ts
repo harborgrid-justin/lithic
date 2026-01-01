@@ -4,52 +4,52 @@
  * Event definitions and emitters for real-time updates
  */
 
-import { SocketManager, SocketMessage } from './socket';
-import { logger } from '../utils/logger';
+import { SocketManager, SocketMessage } from "./socket";
+import { logger } from "../utils/logger";
 
 // Event Types
 export enum EventType {
   // Patient events
-  PATIENT_CREATED = 'patient:created',
-  PATIENT_UPDATED = 'patient:updated',
-  PATIENT_DELETED = 'patient:deleted',
+  PATIENT_CREATED = "patient:created",
+  PATIENT_UPDATED = "patient:updated",
+  PATIENT_DELETED = "patient:deleted",
 
   // Appointment events
-  APPOINTMENT_CREATED = 'appointment:created',
-  APPOINTMENT_UPDATED = 'appointment:updated',
-  APPOINTMENT_CANCELLED = 'appointment:cancelled',
-  APPOINTMENT_REMINDER = 'appointment:reminder',
+  APPOINTMENT_CREATED = "appointment:created",
+  APPOINTMENT_UPDATED = "appointment:updated",
+  APPOINTMENT_CANCELLED = "appointment:cancelled",
+  APPOINTMENT_REMINDER = "appointment:reminder",
 
   // Order events
-  ORDER_CREATED = 'order:created',
-  ORDER_UPDATED = 'order:updated',
-  ORDER_COMPLETED = 'order:completed',
+  ORDER_CREATED = "order:created",
+  ORDER_UPDATED = "order:updated",
+  ORDER_COMPLETED = "order:completed",
 
   // Result events
-  RESULT_AVAILABLE = 'result:available',
-  RESULT_CRITICAL = 'result:critical',
+  RESULT_AVAILABLE = "result:available",
+  RESULT_CRITICAL = "result:critical",
 
   // Prescription events
-  PRESCRIPTION_CREATED = 'prescription:created',
-  PRESCRIPTION_UPDATED = 'prescription:updated',
-  PRESCRIPTION_FILLED = 'prescription:filled',
+  PRESCRIPTION_CREATED = "prescription:created",
+  PRESCRIPTION_UPDATED = "prescription:updated",
+  PRESCRIPTION_FILLED = "prescription:filled",
 
   // Encounter events
-  ENCOUNTER_STARTED = 'encounter:started',
-  ENCOUNTER_UPDATED = 'encounter:updated',
-  ENCOUNTER_COMPLETED = 'encounter:completed',
+  ENCOUNTER_STARTED = "encounter:started",
+  ENCOUNTER_UPDATED = "encounter:updated",
+  ENCOUNTER_COMPLETED = "encounter:completed",
 
   // Messaging events
-  MESSAGE_RECEIVED = 'message:received',
-  MESSAGE_READ = 'message:read',
+  MESSAGE_RECEIVED = "message:received",
+  MESSAGE_READ = "message:read",
 
   // Notification events
-  NOTIFICATION = 'notification',
-  ALERT = 'alert',
+  NOTIFICATION = "notification",
+  ALERT = "alert",
 
   // System events
-  SYSTEM_UPDATE = 'system:update',
-  SYSTEM_MAINTENANCE = 'system:maintenance',
+  SYSTEM_UPDATE = "system:update",
+  SYSTEM_MAINTENANCE = "system:maintenance",
 }
 
 // Event Payload
@@ -61,7 +61,7 @@ export interface EventPayload {
     patientId?: string;
     providerId?: string;
     timestamp?: string;
-    priority?: 'low' | 'normal' | 'high' | 'critical';
+    priority?: "low" | "normal" | "high" | "critical";
   };
 }
 
@@ -76,7 +76,7 @@ export class EventEmitter {
    */
   emitToUser(userId: string, payload: EventPayload): void {
     const message: SocketMessage = {
-      type: 'event',
+      type: "event",
       payload,
       timestamp: new Date().toISOString(),
       id: crypto.randomUUID(),
@@ -84,7 +84,7 @@ export class EventEmitter {
 
     const sent = this.socketManager.sendToUser(userId, message);
 
-    logger.debug('Event emitted to user', {
+    logger.debug("Event emitted to user", {
       userId,
       eventType: payload.eventType,
       sent,
@@ -105,7 +105,7 @@ export class EventEmitter {
    */
   emitToChannel(channel: string, payload: EventPayload): void {
     const message: SocketMessage = {
-      type: 'event',
+      type: "event",
       payload,
       timestamp: new Date().toISOString(),
       id: crypto.randomUUID(),
@@ -113,7 +113,7 @@ export class EventEmitter {
 
     const sent = this.socketManager.broadcastToChannel(channel, message);
 
-    logger.debug('Event emitted to channel', {
+    logger.debug("Event emitted to channel", {
       channel,
       eventType: payload.eventType,
       sent,
@@ -125,15 +125,18 @@ export class EventEmitter {
    */
   broadcast(payload: EventPayload): void {
     const message: SocketMessage = {
-      type: 'event',
+      type: "event",
       payload,
       timestamp: new Date().toISOString(),
       id: crypto.randomUUID(),
     };
 
-    const sent = this.socketManager.broadcast(message, (client) => client.authenticated);
+    const sent = this.socketManager.broadcast(
+      message,
+      (client) => client.authenticated,
+    );
 
-    logger.debug('Event broadcasted', {
+    logger.debug("Event broadcasted", {
       eventType: payload.eventType,
       sent,
     });
@@ -143,12 +146,15 @@ export class EventEmitter {
    * Emit patient event
    */
   emitPatientEvent(
-    eventType: EventType.PATIENT_CREATED | EventType.PATIENT_UPDATED | EventType.PATIENT_DELETED,
+    eventType:
+      | EventType.PATIENT_CREATED
+      | EventType.PATIENT_UPDATED
+      | EventType.PATIENT_DELETED,
     patientData: any,
     options?: {
       notifyUsers?: string[];
       notifyProviders?: string[];
-    }
+    },
   ): void {
     const payload: EventPayload = {
       eventType,
@@ -156,7 +162,7 @@ export class EventEmitter {
       metadata: {
         patientId: patientData.id,
         timestamp: new Date().toISOString(),
-        priority: 'normal',
+        priority: "normal",
       },
     };
 
@@ -173,8 +179,11 @@ export class EventEmitter {
    * Emit appointment event
    */
   emitAppointmentEvent(
-    eventType: EventType.APPOINTMENT_CREATED | EventType.APPOINTMENT_UPDATED | EventType.APPOINTMENT_CANCELLED,
-    appointmentData: any
+    eventType:
+      | EventType.APPOINTMENT_CREATED
+      | EventType.APPOINTMENT_UPDATED
+      | EventType.APPOINTMENT_CANCELLED,
+    appointmentData: any,
   ): void {
     const payload: EventPayload = {
       eventType,
@@ -183,7 +192,7 @@ export class EventEmitter {
         patientId: appointmentData.patientId,
         providerId: appointmentData.providerId,
         timestamp: new Date().toISOString(),
-        priority: 'normal',
+        priority: "normal",
       },
     };
 
@@ -205,7 +214,9 @@ export class EventEmitter {
    * Emit result notification
    */
   emitResultAvailable(resultData: any, critical: boolean = false): void {
-    const eventType = critical ? EventType.RESULT_CRITICAL : EventType.RESULT_AVAILABLE;
+    const eventType = critical
+      ? EventType.RESULT_CRITICAL
+      : EventType.RESULT_AVAILABLE;
 
     const payload: EventPayload = {
       eventType,
@@ -214,7 +225,7 @@ export class EventEmitter {
         patientId: resultData.patientId,
         providerId: resultData.providerId,
         timestamp: new Date().toISOString(),
-        priority: critical ? 'critical' : 'high',
+        priority: critical ? "critical" : "high",
       },
     };
 
@@ -228,7 +239,7 @@ export class EventEmitter {
       this.emitToChannel(`provider:${resultData.providerId}`, payload);
     }
 
-    logger.info('Result notification emitted', {
+    logger.info("Result notification emitted", {
       resultId: resultData.id,
       critical,
     });
@@ -238,8 +249,11 @@ export class EventEmitter {
    * Emit prescription event
    */
   emitPrescriptionEvent(
-    eventType: EventType.PRESCRIPTION_CREATED | EventType.PRESCRIPTION_UPDATED | EventType.PRESCRIPTION_FILLED,
-    prescriptionData: any
+    eventType:
+      | EventType.PRESCRIPTION_CREATED
+      | EventType.PRESCRIPTION_UPDATED
+      | EventType.PRESCRIPTION_FILLED,
+    prescriptionData: any,
   ): void {
     const payload: EventPayload = {
       eventType,
@@ -248,7 +262,7 @@ export class EventEmitter {
         patientId: prescriptionData.patientId,
         providerId: prescriptionData.providerId,
         timestamp: new Date().toISOString(),
-        priority: 'normal',
+        priority: "normal",
       },
     };
 
@@ -271,12 +285,12 @@ export class EventEmitter {
     notification: {
       title: string;
       message: string;
-      type: 'info' | 'success' | 'warning' | 'error';
+      type: "info" | "success" | "warning" | "error";
       action?: {
         label: string;
         url: string;
       };
-    }
+    },
   ): void {
     const payload: EventPayload = {
       eventType: EventType.NOTIFICATION,
@@ -284,7 +298,7 @@ export class EventEmitter {
       metadata: {
         userId,
         timestamp: new Date().toISOString(),
-        priority: notification.type === 'error' ? 'high' : 'normal',
+        priority: notification.type === "error" ? "high" : "normal",
       },
     };
 
@@ -294,21 +308,22 @@ export class EventEmitter {
   /**
    * Emit alert
    */
-  emitAlert(
-    alert: {
-      title: string;
-      message: string;
-      severity: 'low' | 'medium' | 'high' | 'critical';
-      category: string;
-      affectedUsers?: string[];
-    }
-  ): void {
+  emitAlert(alert: {
+    title: string;
+    message: string;
+    severity: "low" | "medium" | "high" | "critical";
+    category: string;
+    affectedUsers?: string[];
+  }): void {
     const payload: EventPayload = {
       eventType: EventType.ALERT,
       data: alert,
       metadata: {
         timestamp: new Date().toISOString(),
-        priority: alert.severity === 'critical' || alert.severity === 'high' ? 'critical' : 'high',
+        priority:
+          alert.severity === "critical" || alert.severity === "high"
+            ? "critical"
+            : "high",
       },
     };
 
@@ -318,7 +333,7 @@ export class EventEmitter {
       this.broadcast(payload);
     }
 
-    logger.warn('Alert emitted', {
+    logger.warn("Alert emitted", {
       severity: alert.severity,
       category: alert.category,
     });
@@ -341,13 +356,13 @@ export class EventEmitter {
       data: update,
       metadata: {
         timestamp: new Date().toISOString(),
-        priority: 'normal',
+        priority: "normal",
       },
     };
 
     this.broadcast(payload);
 
-    logger.info('System update broadcasted', {
+    logger.info("System update broadcasted", {
       version: update.version,
     });
   }
@@ -362,7 +377,7 @@ export class EventEmitter {
       from: string;
       subject: string;
       preview: string;
-    }
+    },
   ): void {
     const payload: EventPayload = {
       eventType: EventType.MESSAGE_RECEIVED,
@@ -370,7 +385,7 @@ export class EventEmitter {
       metadata: {
         userId,
         timestamp: new Date().toISOString(),
-        priority: 'normal',
+        priority: "normal",
       },
     };
 

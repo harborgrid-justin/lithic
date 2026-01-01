@@ -67,7 +67,14 @@ export interface ViewportSettings {
 }
 
 export interface MeasurementData {
-  type: 'length' | 'area' | 'angle' | 'rectangle' | 'ellipse' | 'point' | 'arrow';
+  type:
+    | "length"
+    | "area"
+    | "angle"
+    | "rectangle"
+    | "ellipse"
+    | "point"
+    | "arrow";
   coordinates: number[][];
   value?: number;
   unit?: string;
@@ -75,7 +82,7 @@ export interface MeasurementData {
 }
 
 export interface AnnotationData {
-  type: 'arrow' | 'text' | 'freehand' | 'rectangle' | 'circle' | 'polygon';
+  type: "arrow" | "text" | "freehand" | "rectangle" | "circle" | "polygon";
   coordinates: number[][];
   text?: string;
   color: string;
@@ -86,7 +93,7 @@ export interface PACSConfiguration {
   aeTitle: string;
   host: string;
   port: number;
-  protocol: 'DICOM' | 'DICOMweb';
+  protocol: "DICOM" | "DICOMweb";
   qidoUrl?: string;
   wadoUrl?: string;
   stowUrl?: string;
@@ -103,33 +110,35 @@ export interface DicomNode {
 }
 
 class DicomService {
-  private baseUrl = '/api/imaging/dicom';
+  private baseUrl = "/api/imaging/dicom";
   private pacsConfig: PACSConfiguration | null = null;
 
   // PACS Configuration
   async getPACSConfiguration(): Promise<PACSConfiguration> {
     const response = await fetch(`${this.baseUrl}/config`);
-    if (!response.ok) throw new Error('Failed to fetch PACS configuration');
+    if (!response.ok) throw new Error("Failed to fetch PACS configuration");
     this.pacsConfig = await response.json();
     return this.pacsConfig;
   }
 
-  async updatePACSConfiguration(config: Partial<PACSConfiguration>): Promise<PACSConfiguration> {
+  async updatePACSConfiguration(
+    config: Partial<PACSConfiguration>,
+  ): Promise<PACSConfiguration> {
     const response = await fetch(`${this.baseUrl}/config`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(config),
     });
-    if (!response.ok) throw new Error('Failed to update PACS configuration');
+    if (!response.ok) throw new Error("Failed to update PACS configuration");
     this.pacsConfig = await response.json();
     return this.pacsConfig;
   }
 
   async testPACSConnection(): Promise<{ success: boolean; message: string }> {
     const response = await fetch(`${this.baseUrl}/test-connection`, {
-      method: 'POST',
+      method: "POST",
     });
-    if (!response.ok) throw new Error('Failed to test PACS connection');
+    if (!response.ok) throw new Error("Failed to test PACS connection");
     return response.json();
   }
 
@@ -147,50 +156,57 @@ class DicomService {
     });
 
     const response = await fetch(`${this.baseUrl}/find/studies?${queryParams}`);
-    if (!response.ok) throw new Error('Failed to query studies');
+    if (!response.ok) throw new Error("Failed to query studies");
     return response.json();
   }
 
   async findSeries(studyInstanceUID: string): Promise<DicomMetadata[]> {
     const response = await fetch(
-      `${this.baseUrl}/find/series?studyInstanceUID=${studyInstanceUID}`
+      `${this.baseUrl}/find/series?studyInstanceUID=${studyInstanceUID}`,
     );
-    if (!response.ok) throw new Error('Failed to query series');
+    if (!response.ok) throw new Error("Failed to query series");
     return response.json();
   }
 
   async findInstances(
     studyInstanceUID: string,
-    seriesInstanceUID: string
+    seriesInstanceUID: string,
   ): Promise<DicomMetadata[]> {
     const response = await fetch(
-      `${this.baseUrl}/find/instances?studyInstanceUID=${studyInstanceUID}&seriesInstanceUID=${seriesInstanceUID}`
+      `${this.baseUrl}/find/instances?studyInstanceUID=${studyInstanceUID}&seriesInstanceUID=${seriesInstanceUID}`,
     );
-    if (!response.ok) throw new Error('Failed to query instances');
+    if (!response.ok) throw new Error("Failed to query instances");
     return response.json();
   }
 
   // DICOM Retrieve (C-MOVE / WADO-RS)
-  async retrieveStudy(studyInstanceUID: string, destination?: string): Promise<void> {
+  async retrieveStudy(
+    studyInstanceUID: string,
+    destination?: string,
+  ): Promise<void> {
     const response = await fetch(`${this.baseUrl}/retrieve/study`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ studyInstanceUID, destination }),
     });
-    if (!response.ok) throw new Error('Failed to retrieve study');
+    if (!response.ok) throw new Error("Failed to retrieve study");
   }
 
   async retrieveSeries(
     studyInstanceUID: string,
     seriesInstanceUID: string,
-    destination?: string
+    destination?: string,
   ): Promise<void> {
     const response = await fetch(`${this.baseUrl}/retrieve/series`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ studyInstanceUID, seriesInstanceUID, destination }),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        studyInstanceUID,
+        seriesInstanceUID,
+        destination,
+      }),
     });
-    if (!response.ok) throw new Error('Failed to retrieve series');
+    if (!response.ok) throw new Error("Failed to retrieve series");
   }
 
   // WADO-URI / WADO-RS (Web Access to DICOM Objects)
@@ -198,14 +214,14 @@ class DicomService {
     studyInstanceUID: string,
     seriesInstanceUID: string,
     sopInstanceUID: string,
-    frame?: number
+    frame?: number,
   ): string {
     const params = new URLSearchParams({
       studyInstanceUID,
       seriesInstanceUID,
       sopInstanceUID,
     });
-    if (frame !== undefined) params.append('frame', frame.toString());
+    if (frame !== undefined) params.append("frame", frame.toString());
     return `${this.baseUrl}/wado?${params}`;
   }
 
@@ -213,7 +229,7 @@ class DicomService {
     studyInstanceUID: string,
     seriesInstanceUID: string,
     sopInstanceUID: string,
-    size: number = 200
+    size: number = 200,
   ): string {
     const params = new URLSearchParams({
       studyInstanceUID,
@@ -228,49 +244,49 @@ class DicomService {
   async getMetadata(
     studyInstanceUID: string,
     seriesInstanceUID: string,
-    sopInstanceUID: string
+    sopInstanceUID: string,
   ): Promise<DicomMetadata> {
     const response = await fetch(
-      `${this.baseUrl}/metadata?studyInstanceUID=${studyInstanceUID}&seriesInstanceUID=${seriesInstanceUID}&sopInstanceUID=${sopInstanceUID}`
+      `${this.baseUrl}/metadata?studyInstanceUID=${studyInstanceUID}&seriesInstanceUID=${seriesInstanceUID}&sopInstanceUID=${sopInstanceUID}`,
     );
-    if (!response.ok) throw new Error('Failed to fetch DICOM metadata');
+    if (!response.ok) throw new Error("Failed to fetch DICOM metadata");
     return response.json();
   }
 
   async getDicomTags(
     studyInstanceUID: string,
     seriesInstanceUID: string,
-    sopInstanceUID: string
+    sopInstanceUID: string,
   ): Promise<DicomTag[]> {
     const response = await fetch(
-      `${this.baseUrl}/tags?studyInstanceUID=${studyInstanceUID}&seriesInstanceUID=${seriesInstanceUID}&sopInstanceUID=${sopInstanceUID}`
+      `${this.baseUrl}/tags?studyInstanceUID=${studyInstanceUID}&seriesInstanceUID=${seriesInstanceUID}&sopInstanceUID=${sopInstanceUID}`,
     );
-    if (!response.ok) throw new Error('Failed to fetch DICOM tags');
+    if (!response.ok) throw new Error("Failed to fetch DICOM tags");
     return response.json();
   }
 
   // DICOM Store (C-STORE / STOW-RS)
   async storeInstance(file: File, studyInstanceUID?: string): Promise<void> {
     const formData = new FormData();
-    formData.append('file', file);
-    if (studyInstanceUID) formData.append('studyInstanceUID', studyInstanceUID);
+    formData.append("file", file);
+    if (studyInstanceUID) formData.append("studyInstanceUID", studyInstanceUID);
 
     const response = await fetch(`${this.baseUrl}/store`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
-    if (!response.ok) throw new Error('Failed to store DICOM instance');
+    if (!response.ok) throw new Error("Failed to store DICOM instance");
   }
 
   async storeMultiple(files: File[]): Promise<void> {
     const formData = new FormData();
-    files.forEach(file => formData.append('files', file));
+    files.forEach((file) => formData.append("files", file));
 
     const response = await fetch(`${this.baseUrl}/store/multiple`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
-    if (!response.ok) throw new Error('Failed to store DICOM instances');
+    if (!response.ok) throw new Error("Failed to store DICOM instances");
   }
 
   // Image Processing
@@ -279,7 +295,7 @@ class DicomService {
     windowCenter: number,
     windowWidth: number,
     rescaleSlope: number = 1,
-    rescaleIntercept: number = 0
+    rescaleIntercept: number = 0,
   ): ImageData {
     const data = imageData.data;
     const windowMin = windowCenter - windowWidth / 2;
@@ -317,7 +333,11 @@ class DicomService {
   }
 
   // Measurement Utilities
-  calculateDistance(point1: number[], point2: number[], pixelSpacing?: number[]): number {
+  calculateDistance(
+    point1: number[],
+    point2: number[],
+    pixelSpacing?: number[],
+  ): number {
     const dx = point2[0] - point1[0];
     const dy = point2[1] - point1[1];
     const pixels = Math.sqrt(dx * dx + dy * dy);
@@ -365,7 +385,11 @@ class DicomService {
   }
 
   // Hounsfield Units (for CT)
-  calculateHU(pixelValue: number, rescaleSlope: number, rescaleIntercept: number): number {
+  calculateHU(
+    pixelValue: number,
+    rescaleSlope: number,
+    rescaleIntercept: number,
+  ): number {
     return pixelValue * rescaleSlope + rescaleIntercept;
   }
 
@@ -376,32 +400,35 @@ class DicomService {
     injectedDose: number,
     scanTime: string,
     injectionTime: string,
-    halfLife: number = 6586.2 // F-18 half-life in seconds
+    halfLife: number = 6586.2, // F-18 half-life in seconds
   ): number {
     const scanDateTime = new Date(scanTime).getTime();
     const injectionDateTime = new Date(injectionTime).getTime();
     const elapsedTime = (scanDateTime - injectionDateTime) / 1000; // in seconds
 
     // Decay correction
-    const decayedDose = injectedDose * Math.exp((-Math.LN2 * elapsedTime) / halfLife);
+    const decayedDose =
+      injectedDose * Math.exp((-Math.LN2 * elapsedTime) / halfLife);
 
     // SUV = (activity concentration * patient weight) / injected dose
     return (pixelValue * patientWeight * 1000) / decayedDose;
   }
 
   // Presets for common window/level settings
-  getWindowLevelPresets(modality: string): { [key: string]: { center: number; width: number } } {
+  getWindowLevelPresets(modality: string): {
+    [key: string]: { center: number; width: number };
+  } {
     const presets: { [key: string]: any } = {
       CT: {
-        'Soft Tissue': { center: 40, width: 400 },
+        "Soft Tissue": { center: 40, width: 400 },
         Lung: { center: -600, width: 1500 },
         Liver: { center: 80, width: 150 },
         Bone: { center: 400, width: 1800 },
         Brain: { center: 40, width: 80 },
-        'Subdural': { center: 75, width: 150 },
+        Subdural: { center: 75, width: 150 },
         Stroke: { center: 35, width: 40 },
-        'Temporal Bone': { center: 600, width: 2800 },
-        'C-Spine': { center: 40, width: 400 },
+        "Temporal Bone": { center: 600, width: 2800 },
+        "C-Spine": { center: 40, width: 400 },
       },
       MR: {
         Default: { center: 128, width: 256 },
@@ -421,25 +448,25 @@ class DicomService {
   async printStudy(
     studyInstanceUID: string,
     printer: DicomNode,
-    copies: number = 1
+    copies: number = 1,
   ): Promise<void> {
     const response = await fetch(`${this.baseUrl}/print`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ studyInstanceUID, printer, copies }),
     });
-    if (!response.ok) throw new Error('Failed to print study');
+    if (!response.ok) throw new Error("Failed to print study");
   }
 
   // Export
   async exportStudy(
     studyInstanceUID: string,
-    format: 'DICOM' | 'JPEG' | 'PNG' | 'NIfTI'
+    format: "DICOM" | "JPEG" | "PNG" | "NIfTI",
   ): Promise<Blob> {
     const response = await fetch(
-      `${this.baseUrl}/export?studyInstanceUID=${studyInstanceUID}&format=${format}`
+      `${this.baseUrl}/export?studyInstanceUID=${studyInstanceUID}&format=${format}`,
     );
-    if (!response.ok) throw new Error('Failed to export study');
+    if (!response.ok) throw new Error("Failed to export study");
     return response.blob();
   }
 
@@ -450,14 +477,14 @@ class DicomService {
       keepPatientAge?: boolean;
       keepPatientSex?: boolean;
       keepStudyDate?: boolean;
-    }
+    },
   ): Promise<string> {
     const response = await fetch(`${this.baseUrl}/anonymize`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ studyInstanceUID, options }),
     });
-    if (!response.ok) throw new Error('Failed to anonymize study');
+    if (!response.ok) throw new Error("Failed to anonymize study");
     const result = await response.json();
     return result.newStudyInstanceUID;
   }
@@ -474,25 +501,25 @@ class DicomService {
     });
 
     const response = await fetch(`${this.baseUrl}/worklist?${queryParams}`);
-    if (!response.ok) throw new Error('Failed to fetch modality worklist');
+    if (!response.ok) throw new Error("Failed to fetch modality worklist");
     return response.json();
   }
 
   // MPPS (Modality Performed Procedure Step)
   async sendMPPS(data: {
     studyInstanceUID: string;
-    status: 'IN_PROGRESS' | 'COMPLETED' | 'DISCONTINUED';
+    status: "IN_PROGRESS" | "COMPLETED" | "DISCONTINUED";
     performedProcedureStepStartDate?: string;
     performedProcedureStepStartTime?: string;
     performedProcedureStepEndDate?: string;
     performedProcedureStepEndTime?: string;
   }): Promise<void> {
     const response = await fetch(`${this.baseUrl}/mpps`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to send MPPS');
+    if (!response.ok) throw new Error("Failed to send MPPS");
   }
 }
 

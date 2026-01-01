@@ -1,6 +1,6 @@
 // Medications Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import MedicationList from '../../components/clinical/MedicationList';
+import ClinicalService from "../../services/ClinicalService";
+import MedicationList from "../../components/clinical/MedicationList";
 
 export class MedicationsPage {
   private container: HTMLElement;
@@ -151,128 +151,170 @@ export class MedicationsPage {
 
   private async loadMedications(): Promise<void> {
     try {
-      const activeOnly = (document.getElementById('active-only-checkbox') as HTMLInputElement)?.checked ?? true;
-      const medications = await ClinicalService.getMedicationsByPatient(this.patientId, activeOnly);
+      const activeOnly =
+        (document.getElementById("active-only-checkbox") as HTMLInputElement)
+          ?.checked ?? true;
+      const medications = await ClinicalService.getMedicationsByPatient(
+        this.patientId,
+        activeOnly,
+      );
 
-      this.medicationList = new MedicationList('medication-list-container', async (medicationId, status) => {
-        await this.updateMedicationStatus(medicationId, status);
-      });
+      this.medicationList = new MedicationList(
+        "medication-list-container",
+        async (medicationId, status) => {
+          await this.updateMedicationStatus(medicationId, status);
+        },
+      );
 
       this.medicationList.setMedications(medications);
     } catch (error) {
-      console.error('Error loading medications:', error);
+      console.error("Error loading medications:", error);
     }
   }
 
-  private async updateMedicationStatus(medicationId: string, status: string): Promise<void> {
+  private async updateMedicationStatus(
+    medicationId: string,
+    status: string,
+  ): Promise<void> {
     try {
       await ClinicalService.updateMedication(medicationId, { status });
       await this.loadMedications();
     } catch (error) {
-      console.error('Error updating medication:', error);
-      alert('Failed to update medication');
+      console.error("Error updating medication:", error);
+      alert("Failed to update medication");
     }
   }
 
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('back-btn');
-    backBtn?.addEventListener('click', () => {
+    const backBtn = document.getElementById("back-btn");
+    backBtn?.addEventListener("click", () => {
       window.history.back();
     });
 
-    const addMedicationBtn = document.getElementById('add-medication-btn');
-    addMedicationBtn?.addEventListener('click', () => {
+    const addMedicationBtn = document.getElementById("add-medication-btn");
+    addMedicationBtn?.addEventListener("click", () => {
       this.showModal();
     });
 
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    closeModalBtn?.addEventListener('click', () => {
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    closeModalBtn?.addEventListener("click", () => {
       this.hideModal();
     });
 
-    const activeOnlyCheckbox = document.getElementById('active-only-checkbox');
-    activeOnlyCheckbox?.addEventListener('change', async () => {
+    const activeOnlyCheckbox = document.getElementById("active-only-checkbox");
+    activeOnlyCheckbox?.addEventListener("change", async () => {
       await this.loadMedications();
     });
 
-    const frequencySelect = document.getElementById('frequency') as HTMLSelectElement;
-    frequencySelect?.addEventListener('change', (e) => {
-      const otherInput = document.getElementById('frequency-other') as HTMLInputElement;
-      if ((e.target as HTMLSelectElement).value === 'other') {
-        otherInput.style.display = 'block';
+    const frequencySelect = document.getElementById(
+      "frequency",
+    ) as HTMLSelectElement;
+    frequencySelect?.addEventListener("change", (e) => {
+      const otherInput = document.getElementById(
+        "frequency-other",
+      ) as HTMLInputElement;
+      if ((e.target as HTMLSelectElement).value === "other") {
+        otherInput.style.display = "block";
       } else {
-        otherInput.style.display = 'none';
+        otherInput.style.display = "none";
       }
     });
 
-    const addMedicationForm = document.getElementById('add-medication-form') as HTMLFormElement;
-    addMedicationForm?.addEventListener('submit', async (e) => {
+    const addMedicationForm = document.getElementById(
+      "add-medication-form",
+    ) as HTMLFormElement;
+    addMedicationForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.addMedication(addMedicationForm);
     });
 
-    const cancelBtn = document.getElementById('cancel-btn');
-    cancelBtn?.addEventListener('click', () => {
+    const cancelBtn = document.getElementById("cancel-btn");
+    cancelBtn?.addEventListener("click", () => {
       this.hideModal();
     });
   }
 
   private showModal(): void {
-    const modal = document.getElementById('add-medication-modal');
+    const modal = document.getElementById("add-medication-modal");
     if (modal) {
-      modal.style.display = 'block';
+      modal.style.display = "block";
       // Set default start date to today
-      const startDateInput = document.getElementById('start-date') as HTMLInputElement;
+      const startDateInput = document.getElementById(
+        "start-date",
+      ) as HTMLInputElement;
       if (startDateInput) {
-        startDateInput.value = new Date().toISOString().split('T')[0];
+        startDateInput.value = new Date().toISOString().split("T")[0];
       }
     }
   }
 
   private hideModal(): void {
-    const modal = document.getElementById('add-medication-modal');
+    const modal = document.getElementById("add-medication-modal");
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.display = "none";
     }
   }
 
   private async addMedication(form: HTMLFormElement): Promise<void> {
     try {
-      let frequency = (document.getElementById('frequency') as HTMLSelectElement)?.value;
-      if (frequency === 'other') {
-        frequency = (document.getElementById('frequency-other') as HTMLInputElement)?.value;
+      let frequency = (
+        document.getElementById("frequency") as HTMLSelectElement
+      )?.value;
+      if (frequency === "other") {
+        frequency = (
+          document.getElementById("frequency-other") as HTMLInputElement
+        )?.value;
       }
 
       const data = {
         patientId: this.patientId,
-        medicationName: (document.getElementById('medication-name') as HTMLInputElement)?.value,
-        genericName: (document.getElementById('generic-name') as HTMLInputElement)?.value || undefined,
-        dosage: (document.getElementById('dosage') as HTMLInputElement)?.value,
-        route: (document.getElementById('route') as HTMLSelectElement)?.value,
+        medicationName: (
+          document.getElementById("medication-name") as HTMLInputElement
+        )?.value,
+        genericName:
+          (document.getElementById("generic-name") as HTMLInputElement)
+            ?.value || undefined,
+        dosage: (document.getElementById("dosage") as HTMLInputElement)?.value,
+        route: (document.getElementById("route") as HTMLSelectElement)?.value,
         frequency,
-        startDate: (document.getElementById('start-date') as HTMLInputElement)?.value,
-        endDate: (document.getElementById('end-date') as HTMLInputElement)?.value || undefined,
-        indication: (document.getElementById('indication') as HTMLInputElement)?.value || undefined,
-        refills: parseInt((document.getElementById('refills') as HTMLInputElement)?.value) || 0,
-        quantity: parseInt((document.getElementById('quantity') as HTMLInputElement)?.value) || undefined,
-        instructions: (document.getElementById('instructions') as HTMLTextAreaElement)?.value || undefined,
-        pharmacy: (document.getElementById('pharmacy') as HTMLInputElement)?.value || undefined,
+        startDate: (document.getElementById("start-date") as HTMLInputElement)
+          ?.value,
+        endDate:
+          (document.getElementById("end-date") as HTMLInputElement)?.value ||
+          undefined,
+        indication:
+          (document.getElementById("indication") as HTMLInputElement)?.value ||
+          undefined,
+        refills:
+          parseInt(
+            (document.getElementById("refills") as HTMLInputElement)?.value,
+          ) || 0,
+        quantity:
+          parseInt(
+            (document.getElementById("quantity") as HTMLInputElement)?.value,
+          ) || undefined,
+        instructions:
+          (document.getElementById("instructions") as HTMLTextAreaElement)
+            ?.value || undefined,
+        pharmacy:
+          (document.getElementById("pharmacy") as HTMLInputElement)?.value ||
+          undefined,
       };
 
       await ClinicalService.createMedication(data);
-      alert('Medication prescribed successfully');
+      alert("Medication prescribed successfully");
       this.hideModal();
       form.reset();
       await this.loadMedications();
     } catch (error) {
-      console.error('Error prescribing medication:', error);
-      alert('Failed to prescribe medication');
+      console.error("Error prescribing medication:", error);
+      alert("Failed to prescribe medication");
     }
   }
 
   destroy(): void {
     this.medicationList?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

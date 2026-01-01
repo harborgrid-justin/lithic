@@ -1,12 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Claim } from '@/types/billing';
-import ClaimDetail from '@/components/billing/ClaimDetail';
-import { ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Claim } from "@/types/billing";
+import ClaimDetail from "@/components/billing/ClaimDetail";
+import { ArrowLeft } from "lucide-react";
 
-export default function ClaimDetailPage({ params }: { params: { id: string } }) {
+export default function ClaimDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
   const [claim, setClaim] = useState<Claim | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,11 +26,11 @@ export default function ClaimDetailPage({ params }: { params: { id: string } }) 
         const data = await response.json();
         setClaim(data);
       } else {
-        router.push('/billing/claims');
+        router.push("/billing/claims");
       }
     } catch (error) {
-      console.error('Error fetching claim:', error);
-      router.push('/billing/claims');
+      console.error("Error fetching claim:", error);
+      router.push("/billing/claims");
     } finally {
       setIsLoading(false);
     }
@@ -36,22 +40,22 @@ export default function ClaimDetailPage({ params }: { params: { id: string } }) 
     if (!claim) return;
 
     try {
-      const response = await fetch('/api/billing/claims/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/billing/claims/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ claimId: claim.id }),
       });
 
       if (response.ok) {
-        alert('Claim submitted successfully!');
+        alert("Claim submitted successfully!");
         fetchClaim();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error || 'Failed to submit claim'}`);
+        alert(`Error: ${error.error || "Failed to submit claim"}`);
       }
     } catch (error) {
-      console.error('Error submitting claim:', error);
-      alert('Failed to submit claim');
+      console.error("Error submitting claim:", error);
+      alert("Failed to submit claim");
     }
   };
 
@@ -64,7 +68,7 @@ export default function ClaimDetailPage({ params }: { params: { id: string } }) 
       {/* Header */}
       <div>
         <button
-          onClick={() => router.push('/billing/claims')}
+          onClick={() => router.push("/billing/claims")}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -79,7 +83,11 @@ export default function ClaimDetailPage({ params }: { params: { id: string } }) 
           <p className="text-gray-500">Loading claim...</p>
         </div>
       ) : claim ? (
-        <ClaimDetail claim={claim} onEdit={handleEdit} onSubmit={handleSubmit} />
+        <ClaimDetail
+          claim={claim}
+          onEdit={handleEdit}
+          onSubmit={handleSubmit}
+        />
       ) : (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <p className="text-gray-500">Claim not found</p>

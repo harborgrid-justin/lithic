@@ -5,7 +5,11 @@ export class ReportEditor {
 
   constructor() {}
 
-  async render(container: HTMLElement, reportData?: any, onSave?: (data: any) => Promise<void>) {
+  async render(
+    container: HTMLElement,
+    reportData?: any,
+    onSave?: (data: any) => Promise<void>,
+  ) {
     this.container = container;
     this.reportData = reportData || {};
     this.onSave = onSave;
@@ -36,21 +40,21 @@ export class ReportEditor {
           <div class="form-section">
             <h3>Clinical History</h3>
             <div class="form-group">
-              <textarea id="clinical-history" name="clinicalHistory" class="form-textarea" rows="3">${this.reportData.clinicalHistory || ''}</textarea>
+              <textarea id="clinical-history" name="clinicalHistory" class="form-textarea" rows="3">${this.reportData.clinicalHistory || ""}</textarea>
             </div>
           </div>
 
           <div class="form-section">
             <h3>Technique</h3>
             <div class="form-group">
-              <textarea id="technique" name="technique" class="form-textarea" rows="3">${this.reportData.technique || ''}</textarea>
+              <textarea id="technique" name="technique" class="form-textarea" rows="3">${this.reportData.technique || ""}</textarea>
             </div>
           </div>
 
           <div class="form-section">
             <h3>Comparison</h3>
             <div class="form-group">
-              <textarea id="comparison" name="comparison" class="form-textarea" rows="2">${this.reportData.comparison || ''}</textarea>
+              <textarea id="comparison" name="comparison" class="form-textarea" rows="2">${this.reportData.comparison || ""}</textarea>
             </div>
           </div>
 
@@ -62,21 +66,21 @@ export class ReportEditor {
                 <button type="button" class="btn btn-sm" data-action="insert-template">📋 Template</button>
                 <button type="button" class="btn btn-sm" data-action="insert-measurement">📏 Insert Measurement</button>
               </div>
-              <textarea id="findings" name="findings" class="form-textarea editor-main" rows="10" required>${this.reportData.findings || ''}</textarea>
+              <textarea id="findings" name="findings" class="form-textarea editor-main" rows="10" required>${this.reportData.findings || ""}</textarea>
             </div>
           </div>
 
           <div class="form-section">
             <h3>Impression *</h3>
             <div class="form-group">
-              <textarea id="impression" name="impression" class="form-textarea" rows="5" required>${this.reportData.impression || ''}</textarea>
+              <textarea id="impression" name="impression" class="form-textarea" rows="5" required>${this.reportData.impression || ""}</textarea>
             </div>
           </div>
 
           <div class="form-section">
             <h3>Recommendation</h3>
             <div class="form-group">
-              <textarea id="recommendation" name="recommendation" class="form-textarea" rows="3">${this.reportData.recommendation || ''}</textarea>
+              <textarea id="recommendation" name="recommendation" class="form-textarea" rows="3">${this.reportData.recommendation || ""}</textarea>
             </div>
           </div>
 
@@ -94,37 +98,47 @@ export class ReportEditor {
   private attachEventListeners() {
     if (!this.container) return;
 
-    const form = this.container.querySelector('#report-form') as HTMLFormElement;
+    const form = this.container.querySelector(
+      "#report-form",
+    ) as HTMLFormElement;
 
     // Voice dictation
-    const voiceBtn = this.container.querySelector('[data-action="voice-dictation"]');
-    voiceBtn?.addEventListener('click', () => this.startVoiceDictation());
+    const voiceBtn = this.container.querySelector(
+      '[data-action="voice-dictation"]',
+    );
+    voiceBtn?.addEventListener("click", () => this.startVoiceDictation());
 
     // Template insertion
-    const templateBtn = this.container.querySelector('[data-action="insert-template"]');
-    templateBtn?.addEventListener('click', () => this.insertTemplate());
+    const templateBtn = this.container.querySelector(
+      '[data-action="insert-template"]',
+    );
+    templateBtn?.addEventListener("click", () => this.insertTemplate());
 
     // Measurement insertion
-    const measurementBtn = this.container.querySelector('[data-action="insert-measurement"]');
-    measurementBtn?.addEventListener('click', () => this.insertMeasurement());
+    const measurementBtn = this.container.querySelector(
+      '[data-action="insert-measurement"]',
+    );
+    measurementBtn?.addEventListener("click", () => this.insertMeasurement());
 
     // Save draft
-    const saveDraftBtn = this.container.querySelector('[data-action="save-draft"]');
-    saveDraftBtn?.addEventListener('click', async () => {
+    const saveDraftBtn = this.container.querySelector(
+      '[data-action="save-draft"]',
+    );
+    saveDraftBtn?.addEventListener("click", async () => {
       const data = this.getFormData(form);
-      data.status = 'DRAFT';
+      data.status = "DRAFT";
       await this.saveReport(data);
     });
 
     // Sign and finalize
     const signBtn = this.container.querySelector('[data-action="sign"]');
-    signBtn?.addEventListener('click', async () => {
+    signBtn?.addEventListener("click", async () => {
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
       const data = this.getFormData(form);
-      data.status = 'FINAL';
+      data.status = "FINAL";
       await this.signReport(data);
     });
   }
@@ -134,8 +148,8 @@ export class ReportEditor {
     const data: any = {};
 
     formData.forEach((value, key) => {
-      if (key === 'criticalResult') {
-        data[key] = formData.get(key) === 'on';
+      if (key === "criticalResult") {
+        data[key] = formData.get(key) === "on";
       } else {
         data[key] = value;
       }
@@ -147,46 +161,52 @@ export class ReportEditor {
   private async saveReport(data: any) {
     if (this.onSave) {
       await this.onSave(data);
-      alert('Report saved as draft');
+      alert("Report saved as draft");
     }
   }
 
   private async signReport(data: any) {
-    if (!confirm('Sign and finalize this report? This action cannot be undone.')) {
+    if (
+      !confirm("Sign and finalize this report? This action cannot be undone.")
+    ) {
       return;
     }
 
     if (this.onSave) {
       await this.onSave(data);
-      alert('Report signed and finalized');
+      alert("Report signed and finalized");
     }
   }
 
   private startVoiceDictation() {
     // TODO: Implement Web Speech API
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
 
       recognition.continuous = true;
       recognition.interimResults = true;
 
       recognition.onresult = (event: any) => {
-        let transcript = '';
+        let transcript = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
           transcript += event.results[i][0].transcript;
         }
 
-        const findingsTextarea = this.container?.querySelector('#findings') as HTMLTextAreaElement;
+        const findingsTextarea = this.container?.querySelector(
+          "#findings",
+        ) as HTMLTextAreaElement;
         if (findingsTextarea) {
-          findingsTextarea.value += transcript + ' ';
+          findingsTextarea.value += transcript + " ";
         }
       };
 
       recognition.start();
-      alert('Voice dictation started. Speak into your microphone.');
+      alert("Voice dictation started. Speak into your microphone.");
     } else {
-      alert('Voice recognition not supported in this browser');
+      alert("Voice recognition not supported in this browser");
     }
   }
 
@@ -203,7 +223,9 @@ IMPRESSION:
 [Provide impression]
     `.trim();
 
-    const findingsTextarea = this.container?.querySelector('#findings') as HTMLTextAreaElement;
+    const findingsTextarea = this.container?.querySelector(
+      "#findings",
+    ) as HTMLTextAreaElement;
     if (findingsTextarea && !findingsTextarea.value) {
       findingsTextarea.value = template;
     }
@@ -211,9 +233,11 @@ IMPRESSION:
 
   private insertMeasurement() {
     // TODO: Get measurements from viewer
-    const measurement = '[Measurement: 12.5 mm]';
+    const measurement = "[Measurement: 12.5 mm]";
 
-    const findingsTextarea = this.container?.querySelector('#findings') as HTMLTextAreaElement;
+    const findingsTextarea = this.container?.querySelector(
+      "#findings",
+    ) as HTMLTextAreaElement;
     if (findingsTextarea) {
       const cursorPos = findingsTextarea.selectionStart;
       const textBefore = findingsTextarea.value.substring(0, cursorPos);

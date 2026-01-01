@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * OrganizationSettings Component
@@ -33,7 +33,7 @@ export class OrganizationSettings {
                   <input
                     type="checkbox"
                     id="mfa-required"
-                    ${this.settings.mfaRequired ? 'checked' : ''}
+                    ${this.settings.mfaRequired ? "checked" : ""}
                   />
                   Require MFA for all users
                 </label>
@@ -85,7 +85,7 @@ export class OrganizationSettings {
                   <input
                     type="checkbox"
                     id="password-require-special"
-                    ${this.settings.passwordPolicy?.requireSpecialChars ? 'checked' : ''}
+                    ${this.settings.passwordPolicy?.requireSpecialChars ? "checked" : ""}
                   />
                   Require special characters
                 </label>
@@ -96,7 +96,7 @@ export class OrganizationSettings {
                   <input
                     type="checkbox"
                     id="password-require-numbers"
-                    ${this.settings.passwordPolicy?.requireNumbers ? 'checked' : ''}
+                    ${this.settings.passwordPolicy?.requireNumbers ? "checked" : ""}
                   />
                   Require numbers
                 </label>
@@ -124,7 +124,7 @@ export class OrganizationSettings {
                   <input
                     type="checkbox"
                     id="auto-logout"
-                    ${this.settings.autoLogout !== false ? 'checked' : ''}
+                    ${this.settings.autoLogout !== false ? "checked" : ""}
                   />
                   Auto-logout on inactivity
                 </label>
@@ -135,7 +135,7 @@ export class OrganizationSettings {
                   <input
                     type="checkbox"
                     id="audit-phi-access"
-                    ${this.settings.auditPHIAccess !== false ? 'checked' : ''}
+                    ${this.settings.auditPHIAccess !== false ? "checked" : ""}
                   />
                   Audit all PHI access
                 </label>
@@ -177,8 +177,8 @@ export class OrganizationSettings {
   }
 
   private attachEventListeners(): void {
-    const form = document.getElementById('settings-form') as HTMLFormElement;
-    form?.addEventListener('submit', async (e) => {
+    const form = document.getElementById("settings-form") as HTMLFormElement;
+    form?.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.saveSettings();
     });
@@ -186,18 +186,43 @@ export class OrganizationSettings {
 
   private async saveSettings(): Promise<void> {
     const updatedSettings = {
-      mfaRequired: (document.getElementById('mfa-required') as HTMLInputElement).checked,
-      sessionTimeout: parseInt((document.getElementById('session-timeout') as HTMLInputElement).value),
-      maxLoginAttempts: parseInt((document.getElementById('max-login-attempts') as HTMLInputElement).value),
+      mfaRequired: (document.getElementById("mfa-required") as HTMLInputElement)
+        .checked,
+      sessionTimeout: parseInt(
+        (document.getElementById("session-timeout") as HTMLInputElement).value,
+      ),
+      maxLoginAttempts: parseInt(
+        (document.getElementById("max-login-attempts") as HTMLInputElement)
+          .value,
+      ),
       passwordPolicy: {
-        minLength: parseInt((document.getElementById('password-min-length') as HTMLInputElement).value),
-        requireSpecialChars: (document.getElementById('password-require-special') as HTMLInputElement).checked,
-        requireNumbers: (document.getElementById('password-require-numbers') as HTMLInputElement).checked,
-        expiryDays: parseInt((document.getElementById('password-expiry') as HTMLInputElement).value),
+        minLength: parseInt(
+          (document.getElementById("password-min-length") as HTMLInputElement)
+            .value,
+        ),
+        requireSpecialChars: (
+          document.getElementById(
+            "password-require-special",
+          ) as HTMLInputElement
+        ).checked,
+        requireNumbers: (
+          document.getElementById(
+            "password-require-numbers",
+          ) as HTMLInputElement
+        ).checked,
+        expiryDays: parseInt(
+          (document.getElementById("password-expiry") as HTMLInputElement)
+            .value,
+        ),
       },
-      autoLogout: (document.getElementById('auto-logout') as HTMLInputElement).checked,
-      auditPHIAccess: (document.getElementById('audit-phi-access') as HTMLInputElement).checked,
-      auditRetentionDays: parseInt((document.getElementById('audit-retention') as HTMLInputElement).value),
+      autoLogout: (document.getElementById("auto-logout") as HTMLInputElement)
+        .checked,
+      auditPHIAccess: (
+        document.getElementById("audit-phi-access") as HTMLInputElement
+      ).checked,
+      auditRetentionDays: parseInt(
+        (document.getElementById("audit-retention") as HTMLInputElement).value,
+      ),
     };
 
     try {
@@ -205,35 +230,35 @@ export class OrganizationSettings {
         settings: updatedSettings,
       });
 
-      this.showSuccess('Settings saved successfully');
+      this.showSuccess("Settings saved successfully");
     } catch (error: any) {
       this.showFormError(error.message);
     }
   }
 
   private showFormError(message: string): void {
-    const errorDiv = document.getElementById('settings-error');
-    const successDiv = document.getElementById('settings-success');
+    const errorDiv = document.getElementById("settings-error");
+    const successDiv = document.getElementById("settings-success");
 
     if (errorDiv) {
       errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
+      errorDiv.style.display = "block";
     }
     if (successDiv) {
-      successDiv.style.display = 'none';
+      successDiv.style.display = "none";
     }
   }
 
   private showSuccess(message: string): void {
-    const errorDiv = document.getElementById('settings-error');
-    const successDiv = document.getElementById('settings-success');
+    const errorDiv = document.getElementById("settings-error");
+    const successDiv = document.getElementById("settings-success");
 
     if (successDiv) {
       successDiv.textContent = message;
-      successDiv.style.display = 'block';
+      successDiv.style.display = "block";
     }
     if (errorDiv) {
-      errorDiv.style.display = 'none';
+      errorDiv.style.display = "none";
     }
   }
 
@@ -246,6 +271,6 @@ export class OrganizationSettings {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

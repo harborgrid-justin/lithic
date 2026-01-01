@@ -2,8 +2,8 @@
  * Table Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface TableColumn<T = any> {
   key: string;
@@ -23,12 +23,12 @@ export interface TableProps<T = any> {
   loading?: boolean;
   emptyMessage?: string;
   onRowClick?: (row: T, index: number) => void;
-  onSort?: (column: string, direction: 'asc' | 'desc') => void;
+  onSort?: (column: string, direction: "asc" | "desc") => void;
 }
 
 interface TableState {
   sortColumn: string | null;
-  sortDirection: 'asc' | 'desc';
+  sortDirection: "asc" | "desc";
   loading: boolean;
 }
 
@@ -36,7 +36,7 @@ export class Table<T = any> extends Component<TableProps<T>, TableState> {
   constructor(props: TableProps<T>) {
     super(props, {
       sortColumn: null,
-      sortDirection: 'asc',
+      sortDirection: "asc",
       loading: props.loading || false,
     });
 
@@ -44,44 +44,44 @@ export class Table<T = any> extends Component<TableProps<T>, TableState> {
   }
 
   protected getClassName(): string {
-    const classes = ['table-wrapper'];
+    const classes = ["table-wrapper"];
 
     if (this.state.loading) {
-      classes.push('table-loading');
+      classes.push("table-loading");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
     if (this.state.loading) {
-      const loader = createElement('div', {
-        className: 'table-loader',
+      const loader = createElement("div", {
+        className: "table-loader",
         innerHTML: '<div class="spinner"></div><p>Loading...</p>',
       });
       this.element.appendChild(loader);
       return;
     }
 
-    const tableClasses = ['table'];
+    const tableClasses = ["table"];
 
     if (this.props.striped) {
-      tableClasses.push('table-striped');
+      tableClasses.push("table-striped");
     }
 
     if (this.props.hoverable) {
-      tableClasses.push('table-hoverable');
+      tableClasses.push("table-hoverable");
     }
 
     if (this.props.bordered) {
-      tableClasses.push('table-bordered');
+      tableClasses.push("table-bordered");
     }
 
-    const table = createElement('table', {
-      className: tableClasses.join(' '),
+    const table = createElement("table", {
+      className: tableClasses.join(" "),
     });
 
     // Create header
@@ -96,33 +96,33 @@ export class Table<T = any> extends Component<TableProps<T>, TableState> {
   }
 
   private createHeader(): HTMLElement {
-    const thead = createElement('thead', { className: 'table-header' });
-    const tr = createElement('tr');
+    const thead = createElement("thead", { className: "table-header" });
+    const tr = createElement("tr");
 
     this.props.columns.forEach((column) => {
-      const th = createElement('th', {
-        className: column.sortable ? 'table-th-sortable' : 'table-th',
+      const th = createElement("th", {
+        className: column.sortable ? "table-th-sortable" : "table-th",
         ...(column.width && {
           attributes: { style: `width: ${column.width}` },
         }),
       });
 
-      const content = createElement('div', {
-        className: 'table-th-content',
+      const content = createElement("div", {
+        className: "table-th-content",
       });
 
-      const label = createElement('span', {
+      const label = createElement("span", {
         textContent: column.label,
       });
       content.appendChild(label);
 
       if (column.sortable) {
-        const sortIcon = createElement('span', {
+        const sortIcon = createElement("span", {
           className: this.getSortIconClass(column.key),
         });
         content.appendChild(sortIcon);
 
-        th.addEventListener('click', () => this.handleSort(column.key));
+        th.addEventListener("click", () => this.handleSort(column.key));
       }
 
       th.appendChild(content);
@@ -134,13 +134,13 @@ export class Table<T = any> extends Component<TableProps<T>, TableState> {
   }
 
   private createBody(): HTMLElement {
-    const tbody = createElement('tbody', { className: 'table-body' });
+    const tbody = createElement("tbody", { className: "table-body" });
 
     if (this.props.data.length === 0) {
-      const tr = createElement('tr');
-      const td = createElement('td', {
-        className: 'table-empty',
-        textContent: this.props.emptyMessage || 'No data available',
+      const tr = createElement("tr");
+      const td = createElement("td", {
+        className: "table-empty",
+        textContent: this.props.emptyMessage || "No data available",
         attributes: {
           colspan: String(this.props.columns.length),
         },
@@ -151,8 +151,8 @@ export class Table<T = any> extends Component<TableProps<T>, TableState> {
     }
 
     this.props.data.forEach((row, rowIndex) => {
-      const tr = createElement('tr', {
-        className: 'table-row',
+      const tr = createElement("tr", {
+        className: "table-row",
         ...(this.props.onRowClick && {
           events: {
             click: () => this.props.onRowClick!(row, rowIndex),
@@ -161,23 +161,23 @@ export class Table<T = any> extends Component<TableProps<T>, TableState> {
       });
 
       if (this.props.onRowClick) {
-        tr.classList.add('table-row-clickable');
+        tr.classList.add("table-row-clickable");
       }
 
       this.props.columns.forEach((column) => {
-        const td = createElement('td', { className: 'table-cell' });
+        const td = createElement("td", { className: "table-cell" });
 
         const value = (row as any)[column.key];
 
         if (column.render) {
           const rendered = column.render(value, row);
-          if (typeof rendered === 'string') {
+          if (typeof rendered === "string") {
             td.innerHTML = rendered;
           } else {
             td.appendChild(rendered);
           }
         } else {
-          td.textContent = value != null ? String(value) : '';
+          td.textContent = value != null ? String(value) : "";
         }
 
         tr.appendChild(td);
@@ -190,21 +190,21 @@ export class Table<T = any> extends Component<TableProps<T>, TableState> {
   }
 
   private getSortIconClass(columnKey: string): string {
-    const classes = ['table-sort-icon'];
+    const classes = ["table-sort-icon"];
 
     if (this.state.sortColumn === columnKey) {
-      classes.push('table-sort-active');
+      classes.push("table-sort-active");
       classes.push(`table-sort-${this.state.sortDirection}`);
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   private handleSort(columnKey: string): void {
-    let direction: 'asc' | 'desc' = 'asc';
+    let direction: "asc" | "desc" = "asc";
 
     if (this.state.sortColumn === columnKey) {
-      direction = this.state.sortDirection === 'asc' ? 'desc' : 'asc';
+      direction = this.state.sortDirection === "asc" ? "desc" : "asc";
     }
 
     this.setState({

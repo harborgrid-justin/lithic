@@ -11,7 +11,7 @@ export interface FilterOption {
 export interface Filter {
   id: string;
   label: string;
-  type: 'select' | 'multiselect' | 'text' | 'number' | 'daterange';
+  type: "select" | "multiselect" | "text" | "number" | "daterange";
   options?: FilterOption[];
   value?: any;
 }
@@ -41,10 +41,10 @@ export class FilterPanel {
   }
 
   private render(): void {
-    this.container.innerHTML = '';
-    this.container.className = 'filter-panel';
+    this.container.innerHTML = "";
+    this.container.className = "filter-panel";
 
-    const panel = document.createElement('div');
+    const panel = document.createElement("div");
     panel.style.cssText = `
       background: white;
       border-radius: 8px;
@@ -53,8 +53,8 @@ export class FilterPanel {
     `;
 
     // Title
-    const title = document.createElement('h3');
-    title.textContent = 'Filters';
+    const title = document.createElement("h3");
+    title.textContent = "Filters";
     title.style.cssText = `
       margin: 0 0 16px 0;
       font-size: 16px;
@@ -64,7 +64,7 @@ export class FilterPanel {
     panel.appendChild(title);
 
     // Filters
-    const filtersContainer = document.createElement('div');
+    const filtersContainer = document.createElement("div");
     filtersContainer.style.cssText = `
       display: flex;
       flex-direction: column;
@@ -80,17 +80,17 @@ export class FilterPanel {
     panel.appendChild(filtersContainer);
 
     // Buttons
-    const buttons = document.createElement('div');
+    const buttons = document.createElement("div");
     buttons.style.cssText = `
       display: flex;
       gap: 12px;
     `;
 
-    const applyBtn = this.createButton('Apply Filters', 'primary');
-    applyBtn.addEventListener('click', () => this.handleApply());
+    const applyBtn = this.createButton("Apply Filters", "primary");
+    applyBtn.addEventListener("click", () => this.handleApply());
 
-    const resetBtn = this.createButton('Reset', 'secondary');
-    resetBtn.addEventListener('click', () => this.handleReset());
+    const resetBtn = this.createButton("Reset", "secondary");
+    resetBtn.addEventListener("click", () => this.handleReset());
 
     buttons.appendChild(applyBtn);
     buttons.appendChild(resetBtn);
@@ -100,10 +100,10 @@ export class FilterPanel {
   }
 
   private createFilter(filter: Filter): HTMLElement {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
 
     // Label
-    const label = document.createElement('label');
+    const label = document.createElement("label");
     label.textContent = filter.label;
     label.style.cssText = `
       display: block;
@@ -117,19 +117,19 @@ export class FilterPanel {
     // Input
     let input: HTMLElement;
     switch (filter.type) {
-      case 'select':
+      case "select":
         input = this.createSelectInput(filter);
         break;
-      case 'multiselect':
+      case "multiselect":
         input = this.createMultiSelectInput(filter);
         break;
-      case 'text':
+      case "text":
         input = this.createTextInput(filter);
         break;
-      case 'number':
+      case "number":
         input = this.createNumberInput(filter);
         break;
-      case 'daterange':
+      case "daterange":
         input = this.createDateRangeInput(filter);
         break;
       default:
@@ -141,7 +141,7 @@ export class FilterPanel {
   }
 
   private createSelectInput(filter: Filter): HTMLElement {
-    const select = document.createElement('select');
+    const select = document.createElement("select");
     select.style.cssText = `
       width: 100%;
       padding: 8px 12px;
@@ -154,14 +154,14 @@ export class FilterPanel {
     `;
 
     // Default option
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Select...';
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select...";
     select.appendChild(defaultOption);
 
     // Options
     filter.options?.forEach((option) => {
-      const optionElement = document.createElement('option');
+      const optionElement = document.createElement("option");
       optionElement.value = String(option.value);
       optionElement.textContent = option.label;
       if (this.filterValues[filter.id] === option.value) {
@@ -170,7 +170,7 @@ export class FilterPanel {
       select.appendChild(optionElement);
     });
 
-    select.addEventListener('change', (e) => {
+    select.addEventListener("change", (e) => {
       const target = e.target as HTMLSelectElement;
       this.filterValues[filter.id] = target.value || null;
     });
@@ -179,7 +179,7 @@ export class FilterPanel {
   }
 
   private createMultiSelectInput(filter: Filter): HTMLElement {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     container.style.cssText = `
       border: 1px solid #dee2e6;
       border-radius: 4px;
@@ -193,7 +193,7 @@ export class FilterPanel {
     }
 
     filter.options?.forEach((option) => {
-      const label = document.createElement('label');
+      const label = document.createElement("label");
       label.style.cssText = `
         display: flex;
         align-items: center;
@@ -202,21 +202,21 @@ export class FilterPanel {
         font-size: 14px;
       `;
 
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
       checkbox.value = String(option.value);
       checkbox.checked = this.filterValues[filter.id].includes(option.value);
       checkbox.style.cssText = `
         margin-right: 8px;
       `;
 
-      checkbox.addEventListener('change', (e) => {
+      checkbox.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
         if (target.checked) {
           this.filterValues[filter.id].push(option.value);
         } else {
           this.filterValues[filter.id] = this.filterValues[filter.id].filter(
-            (v: any) => v !== option.value
+            (v: any) => v !== option.value,
           );
         }
       });
@@ -230,9 +230,9 @@ export class FilterPanel {
   }
 
   private createTextInput(filter: Filter): HTMLElement {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = this.filterValues[filter.id] || '';
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = this.filterValues[filter.id] || "";
     input.placeholder = `Enter ${filter.label.toLowerCase()}...`;
     input.style.cssText = `
       width: 100%;
@@ -243,7 +243,7 @@ export class FilterPanel {
       color: #333;
     `;
 
-    input.addEventListener('input', (e) => {
+    input.addEventListener("input", (e) => {
       const target = e.target as HTMLInputElement;
       this.filterValues[filter.id] = target.value || null;
     });
@@ -252,9 +252,9 @@ export class FilterPanel {
   }
 
   private createNumberInput(filter: Filter): HTMLElement {
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.value = this.filterValues[filter.id] || '';
+    const input = document.createElement("input");
+    input.type = "number";
+    input.value = this.filterValues[filter.id] || "";
     input.placeholder = `Enter ${filter.label.toLowerCase()}...`;
     input.style.cssText = `
       width: 100%;
@@ -265,7 +265,7 @@ export class FilterPanel {
       color: #333;
     `;
 
-    input.addEventListener('input', (e) => {
+    input.addEventListener("input", (e) => {
       const target = e.target as HTMLInputElement;
       this.filterValues[filter.id] = target.value ? Number(target.value) : null;
     });
@@ -274,15 +274,15 @@ export class FilterPanel {
   }
 
   private createDateRangeInput(filter: Filter): HTMLElement {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     container.style.cssText = `
       display: flex;
       gap: 8px;
       align-items: center;
     `;
 
-    const startInput = document.createElement('input');
-    startInput.type = 'date';
+    const startInput = document.createElement("input");
+    startInput.type = "date";
     startInput.style.cssText = `
       flex: 1;
       padding: 8px 12px;
@@ -292,12 +292,12 @@ export class FilterPanel {
       color: #333;
     `;
 
-    const separator = document.createElement('span');
-    separator.textContent = 'to';
-    separator.style.color = '#666';
+    const separator = document.createElement("span");
+    separator.textContent = "to";
+    separator.style.color = "#666";
 
-    const endInput = document.createElement('input');
-    endInput.type = 'date';
+    const endInput = document.createElement("input");
+    endInput.type = "date";
     endInput.style.cssText = `
       flex: 1;
       padding: 8px 12px;
@@ -308,8 +308,8 @@ export class FilterPanel {
     `;
 
     if (this.filterValues[filter.id]) {
-      startInput.value = this.filterValues[filter.id].start || '';
-      endInput.value = this.filterValues[filter.id].end || '';
+      startInput.value = this.filterValues[filter.id].start || "";
+      endInput.value = this.filterValues[filter.id].end || "";
     }
 
     const updateValue = () => {
@@ -319,8 +319,8 @@ export class FilterPanel {
       };
     };
 
-    startInput.addEventListener('change', updateValue);
-    endInput.addEventListener('change', updateValue);
+    startInput.addEventListener("change", updateValue);
+    endInput.addEventListener("change", updateValue);
 
     container.appendChild(startInput);
     container.appendChild(separator);
@@ -329,17 +329,20 @@ export class FilterPanel {
     return container;
   }
 
-  private createButton(text: string, variant: 'primary' | 'secondary'): HTMLButtonElement {
-    const btn = document.createElement('button');
+  private createButton(
+    text: string,
+    variant: "primary" | "secondary",
+  ): HTMLButtonElement {
+    const btn = document.createElement("button");
     btn.textContent = text;
 
-    const isPrimary = variant === 'primary';
+    const isPrimary = variant === "primary";
     btn.style.cssText = `
       flex: 1;
       padding: 10px 16px;
-      border: 1px solid ${isPrimary ? '#4a90e2' : '#dee2e6'};
-      background: ${isPrimary ? '#4a90e2' : 'white'};
-      color: ${isPrimary ? 'white' : '#333'};
+      border: 1px solid ${isPrimary ? "#4a90e2" : "#dee2e6"};
+      background: ${isPrimary ? "#4a90e2" : "white"};
+      color: ${isPrimary ? "white" : "#333"};
       border-radius: 4px;
       font-size: 14px;
       font-weight: 500;
@@ -347,14 +350,14 @@ export class FilterPanel {
       transition: all 0.2s;
     `;
 
-    btn.addEventListener('mouseenter', () => {
-      btn.style.transform = 'translateY(-1px)';
-      btn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    btn.addEventListener("mouseenter", () => {
+      btn.style.transform = "translateY(-1px)";
+      btn.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
     });
 
-    btn.addEventListener('mouseleave', () => {
-      btn.style.transform = '';
-      btn.style.boxShadow = '';
+    btn.addEventListener("mouseleave", () => {
+      btn.style.transform = "";
+      btn.style.boxShadow = "";
     });
 
     return btn;
@@ -364,7 +367,11 @@ export class FilterPanel {
     // Filter out null/empty values
     const activeFilters: Record<string, any> = {};
     Object.entries(this.filterValues).forEach(([key, value]) => {
-      if (value !== null && value !== '' && (!Array.isArray(value) || value.length > 0)) {
+      if (
+        value !== null &&
+        value !== "" &&
+        (!Array.isArray(value) || value.length > 0)
+      ) {
         activeFilters[key] = value;
       }
     });

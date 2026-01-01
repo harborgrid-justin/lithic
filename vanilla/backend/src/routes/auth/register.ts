@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { AuthController } from '../../controllers/AuthController';
+import { Router } from "express";
+import { AuthController } from "../../controllers/AuthController";
 
 /**
  * Registration route
@@ -11,7 +11,7 @@ export function createRegisterRoute(authController: AuthController): Router {
    * POST /auth/register
    * Register a new user
    */
-  router.post('/', authController.register);
+  router.post("/", authController.register);
 
   return router;
 }

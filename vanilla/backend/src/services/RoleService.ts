@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
-import { AuditService, AuditAction, ResourceType } from './AuditService';
+import { Pool } from "pg";
+import { AuditService, AuditAction, ResourceType } from "./AuditService";
 
 /**
  * RoleService - Role-Based Access Control (RBAC) service
@@ -25,28 +25,28 @@ export interface Permission {
 }
 
 export enum PermissionAction {
-  CREATE = 'CREATE',
-  READ = 'READ',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  EXPORT = 'EXPORT',
-  PRINT = 'PRINT',
-  MANAGE = 'MANAGE',
+  CREATE = "CREATE",
+  READ = "READ",
+  UPDATE = "UPDATE",
+  DELETE = "DELETE",
+  EXPORT = "EXPORT",
+  PRINT = "PRINT",
+  MANAGE = "MANAGE",
 }
 
 // Predefined system roles for healthcare
 export const SystemRoles = {
-  SUPER_ADMIN: 'SUPER_ADMIN',
-  ORG_ADMIN: 'ORG_ADMIN',
-  PHYSICIAN: 'PHYSICIAN',
-  NURSE: 'NURSE',
-  MEDICAL_ASSISTANT: 'MEDICAL_ASSISTANT',
-  RECEPTIONIST: 'RECEPTIONIST',
-  BILLING_SPECIALIST: 'BILLING_SPECIALIST',
-  LAB_TECHNICIAN: 'LAB_TECHNICIAN',
-  PHARMACIST: 'PHARMACIST',
-  PATIENT: 'PATIENT',
-  AUDITOR: 'AUDITOR',
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ORG_ADMIN: "ORG_ADMIN",
+  PHYSICIAN: "PHYSICIAN",
+  NURSE: "NURSE",
+  MEDICAL_ASSISTANT: "MEDICAL_ASSISTANT",
+  RECEPTIONIST: "RECEPTIONIST",
+  BILLING_SPECIALIST: "BILLING_SPECIALIST",
+  LAB_TECHNICIAN: "LAB_TECHNICIAN",
+  PHARMACIST: "PHARMACIST",
+  PATIENT: "PATIENT",
+  AUDITOR: "AUDITOR",
 };
 
 export class RoleService {
@@ -113,7 +113,7 @@ export class RoleService {
       await this.pool.query(createTablesQuery);
       await this.seedSystemRoles();
     } catch (error) {
-      console.error('Failed to initialize RBAC tables:', error);
+      console.error("Failed to initialize RBAC tables:", error);
     }
   }
 
@@ -124,117 +124,113 @@ export class RoleService {
     const systemRolesData = [
       {
         name: SystemRoles.SUPER_ADMIN,
-        description: 'Full system access across all organizations',
-        permissions: ['*:*'], // All permissions
+        description: "Full system access across all organizations",
+        permissions: ["*:*"], // All permissions
       },
       {
         name: SystemRoles.ORG_ADMIN,
-        description: 'Organization administrator with full org access',
+        description: "Organization administrator with full org access",
         permissions: [
-          'USERS:*',
-          'ROLES:*',
-          'PATIENTS:*',
-          'APPOINTMENTS:*',
-          'BILLING:*',
-          'REPORTS:*',
-          'SETTINGS:*',
+          "USERS:*",
+          "ROLES:*",
+          "PATIENTS:*",
+          "APPOINTMENTS:*",
+          "BILLING:*",
+          "REPORTS:*",
+          "SETTINGS:*",
         ],
       },
       {
         name: SystemRoles.PHYSICIAN,
-        description: 'Licensed physician with full patient care access',
+        description: "Licensed physician with full patient care access",
         permissions: [
-          'PATIENTS:READ',
-          'PATIENTS:UPDATE',
-          'PATIENTS:CREATE',
-          'MEDICAL_RECORDS:*',
-          'PRESCRIPTIONS:*',
-          'LAB_RESULTS:READ',
-          'APPOINTMENTS:*',
-          'BILLING:READ',
+          "PATIENTS:READ",
+          "PATIENTS:UPDATE",
+          "PATIENTS:CREATE",
+          "MEDICAL_RECORDS:*",
+          "PRESCRIPTIONS:*",
+          "LAB_RESULTS:READ",
+          "APPOINTMENTS:*",
+          "BILLING:READ",
         ],
       },
       {
         name: SystemRoles.NURSE,
-        description: 'Nursing staff with patient care access',
+        description: "Nursing staff with patient care access",
         permissions: [
-          'PATIENTS:READ',
-          'PATIENTS:UPDATE',
-          'MEDICAL_RECORDS:READ',
-          'MEDICAL_RECORDS:UPDATE',
-          'APPOINTMENTS:READ',
-          'APPOINTMENTS:UPDATE',
-          'LAB_RESULTS:READ',
+          "PATIENTS:READ",
+          "PATIENTS:UPDATE",
+          "MEDICAL_RECORDS:READ",
+          "MEDICAL_RECORDS:UPDATE",
+          "APPOINTMENTS:READ",
+          "APPOINTMENTS:UPDATE",
+          "LAB_RESULTS:READ",
         ],
       },
       {
         name: SystemRoles.MEDICAL_ASSISTANT,
-        description: 'Medical assistant with limited clinical access',
+        description: "Medical assistant with limited clinical access",
         permissions: [
-          'PATIENTS:READ',
-          'PATIENTS:UPDATE',
-          'APPOINTMENTS:*',
-          'MEDICAL_RECORDS:READ',
+          "PATIENTS:READ",
+          "PATIENTS:UPDATE",
+          "APPOINTMENTS:*",
+          "MEDICAL_RECORDS:READ",
         ],
       },
       {
         name: SystemRoles.RECEPTIONIST,
-        description: 'Front desk staff with scheduling access',
+        description: "Front desk staff with scheduling access",
         permissions: [
-          'PATIENTS:READ',
-          'PATIENTS:CREATE',
-          'PATIENTS:UPDATE',
-          'APPOINTMENTS:*',
-          'BILLING:READ',
+          "PATIENTS:READ",
+          "PATIENTS:CREATE",
+          "PATIENTS:UPDATE",
+          "APPOINTMENTS:*",
+          "BILLING:READ",
         ],
       },
       {
         name: SystemRoles.BILLING_SPECIALIST,
-        description: 'Billing department with financial access',
+        description: "Billing department with financial access",
         permissions: [
-          'PATIENTS:READ',
-          'BILLING:*',
-          'INSURANCE:*',
-          'REPORTS:READ',
+          "PATIENTS:READ",
+          "BILLING:*",
+          "INSURANCE:*",
+          "REPORTS:READ",
         ],
       },
       {
         name: SystemRoles.LAB_TECHNICIAN,
-        description: 'Laboratory staff with test result access',
-        permissions: [
-          'PATIENTS:READ',
-          'LAB_RESULTS:*',
-          'LAB_ORDERS:READ',
-        ],
+        description: "Laboratory staff with test result access",
+        permissions: ["PATIENTS:READ", "LAB_RESULTS:*", "LAB_ORDERS:READ"],
       },
       {
         name: SystemRoles.PHARMACIST,
-        description: 'Pharmacy staff with prescription access',
+        description: "Pharmacy staff with prescription access",
         permissions: [
-          'PATIENTS:READ',
-          'PRESCRIPTIONS:READ',
-          'PRESCRIPTIONS:UPDATE',
+          "PATIENTS:READ",
+          "PRESCRIPTIONS:READ",
+          "PRESCRIPTIONS:UPDATE",
         ],
       },
       {
         name: SystemRoles.PATIENT,
-        description: 'Patient with access to own records',
+        description: "Patient with access to own records",
         permissions: [
-          'PATIENT_PORTAL:READ',
-          'APPOINTMENTS:READ',
-          'APPOINTMENTS:CREATE',
-          'MEDICAL_RECORDS:READ',
-          'BILLING:READ',
+          "PATIENT_PORTAL:READ",
+          "APPOINTMENTS:READ",
+          "APPOINTMENTS:CREATE",
+          "MEDICAL_RECORDS:READ",
+          "BILLING:READ",
         ],
       },
       {
         name: SystemRoles.AUDITOR,
-        description: 'Compliance auditor with read-only access',
+        description: "Compliance auditor with read-only access",
         permissions: [
-          'AUDIT_LOGS:READ',
-          'PATIENTS:READ',
-          'USERS:READ',
-          'REPORTS:READ',
+          "AUDIT_LOGS:READ",
+          "PATIENTS:READ",
+          "USERS:READ",
+          "REPORTS:READ",
         ],
       },
     ];
@@ -262,7 +258,7 @@ export class RoleService {
 
           // Create and assign permissions
           for (const perm of roleData.permissions) {
-            const [resource, action] = perm.split(':');
+            const [resource, action] = perm.split(":");
             await this.assignPermissionToRole(roleId, resource, action);
           }
         }
@@ -279,7 +275,7 @@ export class RoleService {
     name: string,
     description: string,
     organizationId: string,
-    createdBy: string
+    createdBy: string,
   ): Promise<Role> {
     const query = `
       INSERT INTO roles (name, description, organization_id, is_system)
@@ -287,7 +283,11 @@ export class RoleService {
       RETURNING *
     `;
 
-    const result = await this.pool.query(query, [name, description, organizationId]);
+    const result = await this.pool.query(query, [
+      name,
+      description,
+      organizationId,
+    ]);
     const role = this.mapRowToRole(result.rows[0]);
 
     // Audit log
@@ -297,9 +297,9 @@ export class RoleService {
       action: AuditAction.ROLE_ASSIGNED,
       resourceType: ResourceType.ROLE,
       resourceId: role.id,
-      status: 'success',
+      status: "success",
       details: { roleName: name },
-      severity: 'medium',
+      severity: "medium",
     });
 
     return role;
@@ -311,7 +311,7 @@ export class RoleService {
   private async assignPermissionToRole(
     roleId: string,
     resource: string,
-    action: string
+    action: string,
   ): Promise<void> {
     // Create or get permission
     const permQuery = `
@@ -339,14 +339,17 @@ export class RoleService {
     userId: string,
     roleName: string,
     organizationId: string,
-    assignedBy: string
+    assignedBy: string,
   ): Promise<void> {
     // Get role ID
     const roleQuery = `
       SELECT id FROM roles
       WHERE name = $1 AND (organization_id = $2 OR is_system = true)
     `;
-    const roleResult = await this.pool.query(roleQuery, [roleName, organizationId]);
+    const roleResult = await this.pool.query(roleQuery, [
+      roleName,
+      organizationId,
+    ]);
 
     if (roleResult.rows.length === 0) {
       throw new Error(`Role ${roleName} not found`);
@@ -369,9 +372,9 @@ export class RoleService {
       action: AuditAction.ROLE_ASSIGNED,
       resourceType: ResourceType.USER,
       resourceId: userId,
-      status: 'success',
+      status: "success",
       details: { roleName, targetUserId: userId },
-      severity: 'medium',
+      severity: "medium",
     });
   }
 
@@ -382,7 +385,7 @@ export class RoleService {
     userId: string,
     roleName: string,
     organizationId: string,
-    revokedBy: string
+    revokedBy: string,
   ): Promise<void> {
     const query = `
       DELETE FROM user_roles
@@ -402,9 +405,9 @@ export class RoleService {
       action: AuditAction.ROLE_REVOKED,
       resourceType: ResourceType.USER,
       resourceId: userId,
-      status: 'success',
+      status: "success",
       details: { roleName, targetUserId: userId },
-      severity: 'medium',
+      severity: "medium",
     });
   }
 
@@ -450,19 +453,19 @@ export class RoleService {
   async hasPermission(
     userId: string,
     resource: string,
-    action: PermissionAction
+    action: PermissionAction,
   ): Promise<boolean> {
     const roles = await this.getUserRoles(userId);
 
     for (const role of roles) {
       for (const permission of role.permissions) {
         // Check for wildcard permissions
-        if (permission.resource === '*' && permission.action === '*') {
+        if (permission.resource === "*" && permission.action === "*") {
           return true;
         }
 
         // Check for resource wildcard
-        if (permission.resource === resource && permission.action === '*') {
+        if (permission.resource === resource && permission.action === "*") {
           return true;
         }
 

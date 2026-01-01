@@ -3,7 +3,7 @@
  * Manage and monitor laboratory quality control
  */
 
-import { labService } from '../../services/LaboratoryService';
+import { labService } from "../../services/LaboratoryService";
 
 export class QCPage {
   private container: HTMLElement;
@@ -159,20 +159,27 @@ export class QCPage {
     this.attachEventListeners();
   }
 
-  private async loadQCRecords(testCode?: string, dateFrom?: Date, dateTo?: Date): Promise<void> {
+  private async loadQCRecords(
+    testCode?: string,
+    dateFrom?: Date,
+    dateTo?: Date,
+  ): Promise<void> {
     try {
       const records = await labService.getQCRecords(testCode, dateFrom, dateTo);
 
-      const recordsContainer = this.container.querySelector('#qcRecordsContainer');
+      const recordsContainer = this.container.querySelector(
+        "#qcRecordsContainer",
+      );
       if (recordsContainer) {
-        recordsContainer.innerHTML = records.length > 0
-          ? this.renderQCTable(records)
-          : '<p>No QC records found</p>';
+        recordsContainer.innerHTML =
+          records.length > 0
+            ? this.renderQCTable(records)
+            : "<p>No QC records found</p>";
       }
 
       this.updateStats(records);
     } catch (error) {
-      console.error('Error loading QC records:', error);
+      console.error("Error loading QC records:", error);
     }
   }
 
@@ -193,15 +200,15 @@ export class QCPage {
           </tr>
         </thead>
         <tbody>
-          ${records.map(record => this.renderQCRow(record)).join('')}
+          ${records.map((record) => this.renderQCRow(record)).join("")}
         </tbody>
       </table>
     `;
   }
 
   private renderQCRow(record: any): string {
-    const resultClass = record.passed ? 'qc-passed' : 'qc-failed';
-    const resultText = record.passed ? 'PASS' : 'FAIL';
+    const resultClass = record.passed ? "qc-passed" : "qc-failed";
+    const resultText = record.passed ? "PASS" : "FAIL";
 
     return `
       <tr class="${resultClass}">
@@ -227,15 +234,20 @@ export class QCPage {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const todayRecords = records.filter(r => new Date(r.performedDateTime) >= today);
-    const passed = todayRecords.filter(r => r.passed).length;
-    const failed = todayRecords.filter(r => !r.passed).length;
-    const passRate = todayRecords.length > 0 ? Math.round((passed / todayRecords.length) * 100) : 0;
+    const todayRecords = records.filter(
+      (r) => new Date(r.performedDateTime) >= today,
+    );
+    const passed = todayRecords.filter((r) => r.passed).length;
+    const failed = todayRecords.filter((r) => !r.passed).length;
+    const passRate =
+      todayRecords.length > 0
+        ? Math.round((passed / todayRecords.length) * 100)
+        : 0;
 
-    this.updateStat('todayQCCount', todayRecords.length);
-    this.updateStat('passedCount', passed);
-    this.updateStat('failedCount', failed);
-    this.updateStat('passRate', passRate + '%');
+    this.updateStat("todayQCCount", todayRecords.length);
+    this.updateStat("passedCount", passed);
+    this.updateStat("failedCount", failed);
+    this.updateStat("passRate", passRate + "%");
   }
 
   private updateStat(elementId: string, value: string | number): void {
@@ -251,28 +263,28 @@ export class QCPage {
 
   private formatDateTime(date: Date | string): string {
     const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private showQCForm(): void {
-    const modal = this.container.querySelector('#qcFormModal') as HTMLElement;
+    const modal = this.container.querySelector("#qcFormModal") as HTMLElement;
     if (modal) {
-      modal.style.display = 'block';
+      modal.style.display = "block";
     }
   }
 
   private hideQCForm(): void {
-    const modal = this.container.querySelector('#qcFormModal') as HTMLElement;
+    const modal = this.container.querySelector("#qcFormModal") as HTMLElement;
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.display = "none";
     }
 
-    const form = this.container.querySelector('#qcForm') as HTMLFormElement;
+    const form = this.container.querySelector("#qcForm") as HTMLFormElement;
     if (form) {
       form.reset();
     }
@@ -285,84 +297,96 @@ export class QCPage {
     const formData = new FormData(form);
 
     const qcData = {
-      testCode: formData.get('qcTestCode') as string,
-      testName: formData.get('qcTestName') as string,
-      controlLevel: formData.get('qcControlLevel') as 'low' | 'normal' | 'high',
-      lotNumber: formData.get('qcLotNumber') as string,
-      expirationDate: new Date(formData.get('qcExpirationDate') as string),
-      expectedValue: parseFloat(formData.get('qcExpectedValue') as string),
-      measuredValue: parseFloat(formData.get('qcMeasuredValue') as string),
-      unit: formData.get('qcUnit') as string,
+      testCode: formData.get("qcTestCode") as string,
+      testName: formData.get("qcTestName") as string,
+      controlLevel: formData.get("qcControlLevel") as "low" | "normal" | "high",
+      lotNumber: formData.get("qcLotNumber") as string,
+      expirationDate: new Date(formData.get("qcExpirationDate") as string),
+      expectedValue: parseFloat(formData.get("qcExpectedValue") as string),
+      measuredValue: parseFloat(formData.get("qcMeasuredValue") as string),
+      unit: formData.get("qcUnit") as string,
       acceptableRange: {
-        min: parseFloat(formData.get('qcRangeMin') as string),
-        max: parseFloat(formData.get('qcRangeMax') as string)
+        min: parseFloat(formData.get("qcRangeMin") as string),
+        max: parseFloat(formData.get("qcRangeMax") as string),
       },
-      performedBy: formData.get('qcPerformedBy') as string,
-      instrument: formData.get('qcInstrument') as string,
-      comments: formData.get('qcComments') as string,
-      performedDateTime: new Date()
+      performedBy: formData.get("qcPerformedBy") as string,
+      instrument: formData.get("qcInstrument") as string,
+      comments: formData.get("qcComments") as string,
+      performedDateTime: new Date(),
     };
 
     try {
       await labService.recordQC(qcData);
-      alert('QC record saved successfully!');
+      alert("QC record saved successfully!");
       this.hideQCForm();
       this.loadQCRecords();
     } catch (error: any) {
-      console.error('Error recording QC:', error);
-      alert('Error recording QC: ' + error.message);
+      console.error("Error recording QC:", error);
+      alert("Error recording QC: " + error.message);
     }
   }
 
   private attachEventListeners(): void {
-    const recordQCBtn = this.container.querySelector('#recordQCBtn');
-    const closeModalBtn = this.container.querySelector('#closeModalBtn');
-    const cancelFormBtn = this.container.querySelector('#cancelFormBtn');
-    const qcForm = this.container.querySelector('#qcForm');
-    const searchBtn = this.container.querySelector('#searchBtn');
-    const clearBtn = this.container.querySelector('#clearBtn');
+    const recordQCBtn = this.container.querySelector("#recordQCBtn");
+    const closeModalBtn = this.container.querySelector("#closeModalBtn");
+    const cancelFormBtn = this.container.querySelector("#cancelFormBtn");
+    const qcForm = this.container.querySelector("#qcForm");
+    const searchBtn = this.container.querySelector("#searchBtn");
+    const clearBtn = this.container.querySelector("#clearBtn");
 
     if (recordQCBtn) {
-      recordQCBtn.addEventListener('click', () => this.showQCForm());
+      recordQCBtn.addEventListener("click", () => this.showQCForm());
     }
 
     if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', () => this.hideQCForm());
+      closeModalBtn.addEventListener("click", () => this.hideQCForm());
     }
 
     if (cancelFormBtn) {
-      cancelFormBtn.addEventListener('click', () => this.hideQCForm());
+      cancelFormBtn.addEventListener("click", () => this.hideQCForm());
     }
 
     if (qcForm) {
-      qcForm.addEventListener('submit', (e) => this.handleQCSubmit(e));
+      qcForm.addEventListener("submit", (e) => this.handleQCSubmit(e));
     }
 
     if (searchBtn) {
-      searchBtn.addEventListener('click', () => {
-        const testCode = (this.container.querySelector('#testFilter') as HTMLInputElement)?.value;
-        const dateFrom = (this.container.querySelector('#dateFromFilter') as HTMLInputElement)?.value;
-        const dateTo = (this.container.querySelector('#dateToFilter') as HTMLInputElement)?.value;
+      searchBtn.addEventListener("click", () => {
+        const testCode = (
+          this.container.querySelector("#testFilter") as HTMLInputElement
+        )?.value;
+        const dateFrom = (
+          this.container.querySelector("#dateFromFilter") as HTMLInputElement
+        )?.value;
+        const dateTo = (
+          this.container.querySelector("#dateToFilter") as HTMLInputElement
+        )?.value;
 
         this.loadQCRecords(
           testCode || undefined,
           dateFrom ? new Date(dateFrom) : undefined,
-          dateTo ? new Date(dateTo) : undefined
+          dateTo ? new Date(dateTo) : undefined,
         );
       });
     }
 
     if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        (this.container.querySelector('#testFilter') as HTMLInputElement).value = '';
-        (this.container.querySelector('#dateFromFilter') as HTMLInputElement).value = '';
-        (this.container.querySelector('#dateToFilter') as HTMLInputElement).value = '';
+      clearBtn.addEventListener("click", () => {
+        (
+          this.container.querySelector("#testFilter") as HTMLInputElement
+        ).value = "";
+        (
+          this.container.querySelector("#dateFromFilter") as HTMLInputElement
+        ).value = "";
+        (
+          this.container.querySelector("#dateToFilter") as HTMLInputElement
+        ).value = "";
         this.loadQCRecords();
       });
     }
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -1,26 +1,26 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
-import { Encounter } from '@/types/clinical'
-import { EncounterForm } from '@/components/clinical/EncounterForm'
-import { createEncounter } from '@/services/encounter.service'
+import { useRouter } from "next/navigation";
+import { Encounter } from "@/types/clinical";
+import { EncounterForm } from "@/components/clinical/EncounterForm";
+import { createEncounter } from "@/services/encounter.service";
 
 export default function NewEncounterPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   const handleSubmit = async (data: Partial<Encounter>) => {
     try {
-      await createEncounter(data)
-      router.push('/clinical/encounters')
+      await createEncounter(data);
+      router.push("/clinical/encounters");
     } catch (error) {
-      console.error('Failed to create encounter:', error)
-      alert('Failed to create encounter. Please try again.')
+      console.error("Failed to create encounter:", error);
+      alert("Failed to create encounter. Please try again.");
     }
-  }
+  };
 
   const handleCancel = () => {
-    router.back()
-  }
+    router.back();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -33,5 +33,5 @@ export default function NewEncounterPage() {
         <EncounterForm onSubmit={handleSubmit} onCancel={handleCancel} />
       </div>
     </div>
-  )
+  );
 }

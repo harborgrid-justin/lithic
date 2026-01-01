@@ -1,4 +1,4 @@
-import { PermissionMatrix } from '../../components/admin/PermissionMatrix';
+import { PermissionMatrix } from "../../components/admin/PermissionMatrix";
 
 /**
  * PermissionsPage
@@ -24,7 +24,9 @@ export class PermissionsPage {
       </div>
     `;
 
-    const matrixContainer = document.getElementById('permission-matrix-container');
+    const matrixContainer = document.getElementById(
+      "permission-matrix-container",
+    );
     if (matrixContainer) {
       this.permissionMatrix = new PermissionMatrix(matrixContainer);
       await this.permissionMatrix.render();
@@ -33,6 +35,6 @@ export class PermissionsPage {
 
   destroy(): void {
     this.permissionMatrix?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

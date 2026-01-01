@@ -1,4 +1,4 @@
-import { ImagingService } from '../../services/ImagingService';
+import { ImagingService } from "../../services/ImagingService";
 
 export class OrderDetailPage {
   private container: HTMLElement;
@@ -12,13 +12,13 @@ export class OrderDetailPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
     try {
       const order = await this.imagingService.getOrder(this.orderId);
 
-      const wrapper = document.createElement('div');
-      wrapper.className = 'order-detail-page';
+      const wrapper = document.createElement("div");
+      wrapper.className = "order-detail-page";
       wrapper.innerHTML = `
         <div class="page-header">
           <div class="header-content">
@@ -40,7 +40,7 @@ export class OrderDetailPage {
               </div>
               <div class="detail-item">
                 <label>Accession Number</label>
-                <div>${order.accessionNumber || 'N/A'}</div>
+                <div>${order.accessionNumber || "N/A"}</div>
               </div>
               <div class="detail-item">
                 <label>Status</label>
@@ -56,7 +56,7 @@ export class OrderDetailPage {
               </div>
               <div class="detail-item">
                 <label>Scheduled</label>
-                <div>${order.scheduledDateTime ? this.formatDate(order.scheduledDateTime) : 'Not scheduled'}</div>
+                <div>${order.scheduledDateTime ? this.formatDate(order.scheduledDateTime) : "Not scheduled"}</div>
               </div>
             </div>
           </div>
@@ -92,11 +92,11 @@ export class OrderDetailPage {
               </div>
               <div class="detail-item">
                 <label>Laterality</label>
-                <div>${order.laterality || 'N/A'}</div>
+                <div>${order.laterality || "N/A"}</div>
               </div>
               <div class="detail-item">
                 <label>Contrast</label>
-                <div>${order.contrast ? 'Yes' : 'No'}</div>
+                <div>${order.contrast ? "Yes" : "No"}</div>
               </div>
             </div>
           </div>
@@ -107,12 +107,16 @@ export class OrderDetailPage {
               <label>Clinical Indication</label>
               <div class="clinical-text">${order.clinicalIndication}</div>
             </div>
-            ${order.specialInstructions ? `
+            ${
+              order.specialInstructions
+                ? `
               <div class="detail-item full-width">
                 <label>Special Instructions</label>
                 <div class="clinical-text">${order.specialInstructions}</div>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
 
           <div class="detail-section">
@@ -129,25 +133,37 @@ export class OrderDetailPage {
             </div>
           </div>
 
-          ${order.assignedTechnicianId || order.assignedRadiologistId ? `
+          ${
+            order.assignedTechnicianId || order.assignedRadiologistId
+              ? `
             <div class="detail-section">
               <h2>Assigned Staff</h2>
               <div class="detail-grid">
-                ${order.assignedTechnicianId ? `
+                ${
+                  order.assignedTechnicianId
+                    ? `
                   <div class="detail-item">
                     <label>Technician</label>
                     <div>${order.assignedTechnicianName || order.assignedTechnicianId}</div>
                   </div>
-                ` : ''}
-                ${order.assignedRadiologistId ? `
+                `
+                    : ""
+                }
+                ${
+                  order.assignedRadiologistId
+                    ? `
                   <div class="detail-item">
                     <label>Radiologist</label>
                     <div>${order.assignedRadiologistName || order.assignedRadiologistId}</div>
                   </div>
-                ` : ''}
+                `
+                    : ""
+                }
               </div>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
 
           <div class="detail-section">
             <h2>Order History</h2>
@@ -162,44 +178,57 @@ export class OrderDetailPage {
       this.attachEventListeners();
       await this.loadOrderHistory();
     } catch (error) {
-      console.error('Error loading order:', error);
-      this.showError('Failed to load order details');
+      console.error("Error loading order:", error);
+      this.showError("Failed to load order details");
     }
   }
 
   private renderOrderActions(order: any): string {
     const actions = [];
 
-    if (order.status === 'PENDING') {
-      actions.push('<button class="btn btn-primary" data-action="schedule">Schedule</button>');
-      actions.push('<button class="btn btn-danger" data-action="cancel">Cancel</button>');
+    if (order.status === "PENDING") {
+      actions.push(
+        '<button class="btn btn-primary" data-action="schedule">Schedule</button>',
+      );
+      actions.push(
+        '<button class="btn btn-danger" data-action="cancel">Cancel</button>',
+      );
     }
 
-    if (order.status === 'SCHEDULED') {
-      actions.push('<button class="btn btn-success" data-action="start">Start Exam</button>');
-      actions.push('<button class="btn btn-secondary" data-action="reschedule">Reschedule</button>');
-      actions.push('<button class="btn btn-danger" data-action="cancel">Cancel</button>');
+    if (order.status === "SCHEDULED") {
+      actions.push(
+        '<button class="btn btn-success" data-action="start">Start Exam</button>',
+      );
+      actions.push(
+        '<button class="btn btn-secondary" data-action="reschedule">Reschedule</button>',
+      );
+      actions.push(
+        '<button class="btn btn-danger" data-action="cancel">Cancel</button>',
+      );
     }
 
-    if (order.status === 'IN_PROGRESS') {
-      actions.push('<button class="btn btn-success" data-action="complete">Complete</button>');
+    if (order.status === "IN_PROGRESS") {
+      actions.push(
+        '<button class="btn btn-success" data-action="complete">Complete</button>',
+      );
     }
 
-    return actions.join('');
+    return actions.join("");
   }
 
   private async loadOrderHistory() {
     try {
       const history = await this.imagingService.getOrderHistory(this.orderId);
-      const container = document.getElementById('order-history-container');
+      const container = document.getElementById("order-history-container");
 
       if (!container) return;
 
-      container.innerHTML = history.length > 0
-        ? `<div class="timeline">${history.map(h => this.createHistoryItem(h)).join('')}</div>`
-        : '<div class="empty-state">No history available</div>';
+      container.innerHTML =
+        history.length > 0
+          ? `<div class="timeline">${history.map((h) => this.createHistoryItem(h)).join("")}</div>`
+          : '<div class="empty-state">No history available</div>';
     } catch (error) {
-      console.error('Error loading order history:', error);
+      console.error("Error loading order history:", error);
     }
   }
 
@@ -213,7 +242,7 @@ export class OrderDetailPage {
             <span class="timeline-date">${this.formatDate(historyItem.performedAt)}</span>
           </div>
           <div class="timeline-user">by ${historyItem.performedBy}</div>
-          ${historyItem.notes ? `<div class="timeline-notes">${historyItem.notes}</div>` : ''}
+          ${historyItem.notes ? `<div class="timeline-notes">${historyItem.notes}</div>` : ""}
         </div>
       </div>
     `;
@@ -221,18 +250,18 @@ export class OrderDetailPage {
 
   private attachEventListeners() {
     const backBtn = this.container.querySelector('[data-action="back"]');
-    backBtn?.addEventListener('click', () => {
-      window.location.href = '#/imaging/orders';
+    backBtn?.addEventListener("click", () => {
+      window.location.href = "#/imaging/orders";
     });
 
-    this.container.addEventListener('click', async (e) => {
+    this.container.addEventListener("click", async (e) => {
       const target = e.target as HTMLElement;
       const action = target.dataset.action;
 
-      if (action === 'schedule') await this.scheduleOrder();
-      if (action === 'start') await this.startOrder();
-      if (action === 'complete') await this.completeOrder();
-      if (action === 'cancel') await this.cancelOrder();
+      if (action === "schedule") await this.scheduleOrder();
+      if (action === "start") await this.startOrder();
+      if (action === "complete") await this.completeOrder();
+      if (action === "cancel") await this.cancelOrder();
     });
   }
 
@@ -242,85 +271,85 @@ export class OrderDetailPage {
   }
 
   private async startOrder() {
-    if (!confirm('Start this imaging exam?')) return;
+    if (!confirm("Start this imaging exam?")) return;
 
     try {
       await this.imagingService.startOrder(this.orderId);
-      this.showSuccess('Order started');
+      this.showSuccess("Order started");
       await this.render();
     } catch (error) {
-      console.error('Error starting order:', error);
-      this.showError('Failed to start order');
+      console.error("Error starting order:", error);
+      this.showError("Failed to start order");
     }
   }
 
   private async completeOrder() {
-    if (!confirm('Mark this order as completed?')) return;
+    if (!confirm("Mark this order as completed?")) return;
 
     try {
       await this.imagingService.completeOrder(this.orderId);
-      this.showSuccess('Order completed');
+      this.showSuccess("Order completed");
       await this.render();
     } catch (error) {
-      console.error('Error completing order:', error);
-      this.showError('Failed to complete order');
+      console.error("Error completing order:", error);
+      this.showError("Failed to complete order");
     }
   }
 
   private async cancelOrder() {
-    const reason = prompt('Reason for cancellation:');
+    const reason = prompt("Reason for cancellation:");
     if (!reason) return;
 
     try {
       await this.imagingService.cancelOrder(this.orderId);
-      this.showSuccess('Order cancelled');
+      this.showSuccess("Order cancelled");
       await this.render();
     } catch (error) {
-      console.error('Error cancelling order:', error);
-      this.showError('Failed to cancel order');
+      console.error("Error cancelling order:", error);
+      this.showError("Failed to cancel order");
     }
   }
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      'PENDING': 'warning',
-      'SCHEDULED': 'info',
-      'IN_PROGRESS': 'primary',
-      'COMPLETED': 'success',
-      'CANCELLED': 'danger',
+      PENDING: "warning",
+      SCHEDULED: "info",
+      IN_PROGRESS: "primary",
+      COMPLETED: "success",
+      CANCELLED: "danger",
     };
-    return colors[status] || 'secondary';
+    return colors[status] || "secondary";
   }
 
   private getPriorityColor(priority: string): string {
     const colors: Record<string, string> = {
-      'ROUTINE': 'secondary',
-      'URGENT': 'warning',
-      'STAT': 'danger',
-      'ASAP': 'danger',
+      ROUTINE: "secondary",
+      URGENT: "warning",
+      STAT: "danger",
+      ASAP: "danger",
     };
-    return colors[priority] || 'secondary';
+    return colors[priority] || "secondary";
   }
 
   private getModalityColor(modality: string): string {
     const colors: Record<string, string> = {
-      'CT': 'blue',
-      'MRI': 'purple',
-      'XRAY': 'green',
-      'US': 'cyan',
+      CT: "blue",
+      MRI: "purple",
+      XRAY: "green",
+      US: "cyan",
     };
-    return colors[modality] || 'gray';
+    return colors[modality] || "gray";
   }
 
   private showSuccess(message: string) {
@@ -332,6 +361,6 @@ export class OrderDetailPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

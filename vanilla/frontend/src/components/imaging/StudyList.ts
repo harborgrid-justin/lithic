@@ -28,24 +28,28 @@ export class StudyList {
             </tr>
           </thead>
           <tbody>
-            ${this.studies.map(study => this.createStudyRow(study)).join('')}
+            ${this.studies.map((study) => this.createStudyRow(study)).join("")}
           </tbody>
         </table>
       </div>
 
-      ${studies.pagination ? `
+      ${
+        studies.pagination
+          ? `
         <div class="pagination">
-          <button class="btn btn-sm" data-page="${studies.pagination.page - 1}" ${studies.pagination.page === 1 ? 'disabled' : ''}>
+          <button class="btn btn-sm" data-page="${studies.pagination.page - 1}" ${studies.pagination.page === 1 ? "disabled" : ""}>
             Previous
           </button>
           <span class="pagination-info">
             Page ${studies.pagination.page} of ${studies.pagination.totalPages}
           </span>
-          <button class="btn btn-sm" data-page="${studies.pagination.page + 1}" ${studies.pagination.page === studies.pagination.totalPages ? 'disabled' : ''}>
+          <button class="btn btn-sm" data-page="${studies.pagination.page + 1}" ${studies.pagination.page === studies.pagination.totalPages ? "disabled" : ""}>
             Next
           </button>
         </div>
-      ` : ''}
+      `
+          : ""
+      }
     `;
 
     this.attachEventListeners(container);
@@ -58,7 +62,7 @@ export class StudyList {
         <td>${study.patientName}</td>
         <td>${study.accessionNumber}</td>
         <td><span class="badge badge-${this.getModalityColor(study.modality)}">${study.modality}</span></td>
-        <td>${study.studyDescription || 'N/A'}</td>
+        <td>${study.studyDescription || "N/A"}</td>
         <td>${study.numberOfSeries || 0}</td>
         <td>${study.numberOfInstances || 0}</td>
         <td><span class="badge badge-${this.getStatusColor(study.readingStatus)}">${study.readingStatus}</span></td>
@@ -71,22 +75,22 @@ export class StudyList {
   }
 
   private attachEventListeners(container: HTMLElement) {
-    container.addEventListener('click', (e) => {
+    container.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
       const studyUID = target.dataset.studyUid;
 
-      if (target.dataset.action === 'view' && studyUID) {
+      if (target.dataset.action === "view" && studyUID) {
         window.location.href = `#/imaging/studies/${studyUID}`;
       }
 
-      if (target.dataset.action === 'viewer' && studyUID) {
+      if (target.dataset.action === "viewer" && studyUID) {
         window.location.href = `#/imaging/viewer/${studyUID}`;
       }
 
       if (target.dataset.page) {
         const page = parseInt(target.dataset.page);
         if (page > 0) {
-          console.log('Load page:', page);
+          console.log("Load page:", page);
         }
       }
     });
@@ -94,30 +98,30 @@ export class StudyList {
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   }
 
   private getModalityColor(modality: string): string {
     const colors: Record<string, string> = {
-      'CT': 'blue',
-      'MRI': 'purple',
-      'XRAY': 'green',
-      'US': 'cyan',
+      CT: "blue",
+      MRI: "purple",
+      XRAY: "green",
+      US: "cyan",
     };
-    return colors[modality] || 'gray';
+    return colors[modality] || "gray";
   }
 
   private getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      'UNREAD': 'warning',
-      'PRELIMINARY': 'info',
-      'FINAL': 'success',
-      'AMENDED': 'secondary',
+      UNREAD: "warning",
+      PRELIMINARY: "info",
+      FINAL: "success",
+      AMENDED: "secondary",
     };
-    return colors[status] || 'gray';
+    return colors[status] || "gray";
   }
 }

@@ -3,7 +3,7 @@
  * Construct HL7 v2.x messages from structured data
  */
 
-import { DEFAULT_DELIMITERS, type HL7Delimiters } from './parser';
+import { DEFAULT_DELIMITERS, type HL7Delimiters } from "./parser";
 
 export class HL7Builder {
   private segments: string[] = [];
@@ -26,16 +26,28 @@ export class HL7Builder {
    * Escape HL7 special characters
    */
   private escapeHL7(text: string): string {
-    if (!text) return '';
+    if (!text) return "";
 
     const escape = this.delimiters.escape;
 
     return text
-      .replace(new RegExp(`\\${escape}`, 'g'), `${escape}E${escape}`)
-      .replace(new RegExp(`\\${this.delimiters.field}`, 'g'), `${escape}F${escape}`)
-      .replace(new RegExp(`\\${this.delimiters.component}`, 'g'), `${escape}S${escape}`)
-      .replace(new RegExp(`\\${this.delimiters.subComponent}`, 'g'), `${escape}T${escape}`)
-      .replace(new RegExp(`\\${this.delimiters.repetition}`, 'g'), `${escape}R${escape}`)
+      .replace(new RegExp(`\\${escape}`, "g"), `${escape}E${escape}`)
+      .replace(
+        new RegExp(`\\${this.delimiters.field}`, "g"),
+        `${escape}F${escape}`,
+      )
+      .replace(
+        new RegExp(`\\${this.delimiters.component}`, "g"),
+        `${escape}S${escape}`,
+      )
+      .replace(
+        new RegExp(`\\${this.delimiters.subComponent}`, "g"),
+        `${escape}T${escape}`,
+      )
+      .replace(
+        new RegExp(`\\${this.delimiters.repetition}`, "g"),
+        `${escape}R${escape}`,
+      )
       .replace(/\n/g, `${escape}.br${escape}`);
   }
 
@@ -44,9 +56,11 @@ export class HL7Builder {
    */
   buildField(components: (string | string[])[]): string {
     return components
-      .map(comp => {
+      .map((comp) => {
         if (Array.isArray(comp)) {
-          return comp.map(s => this.escapeHL7(s)).join(this.delimiters.subComponent);
+          return comp
+            .map((s) => this.escapeHL7(s))
+            .join(this.delimiters.subComponent);
         }
         return this.escapeHL7(comp);
       })
@@ -58,7 +72,7 @@ export class HL7Builder {
    */
   buildRepeatingField(repetitions: (string | string[])[][]): string {
     return repetitions
-      .map(rep => this.buildField(rep))
+      .map((rep) => this.buildField(rep))
       .join(this.delimiters.repetition);
   }
 
@@ -82,22 +96,22 @@ export class HL7Builder {
       receivingFacility,
       messageType,
       triggerEvent,
-      version = '2.5',
-      processingId = 'P',
+      version = "2.5",
+      processingId = "P",
     } = params;
 
     const timestamp = this.formatDateTime(new Date());
     const encodingChars = `${this.delimiters.component}${this.delimiters.repetition}${this.delimiters.escape}${this.delimiters.subComponent}`;
 
     const fields = [
-      'MSH',
+      "MSH",
       encodingChars,
       sendingApplication,
       sendingFacility,
       receivingApplication,
       receivingFacility,
       timestamp,
-      '', // Security
+      "", // Security
       `${messageType}^${triggerEvent}`,
       this.messageControlId,
       processingId,
@@ -118,7 +132,7 @@ export class HL7Builder {
     firstName: string;
     middleName?: string;
     dateOfBirth?: Date;
-    gender?: 'M' | 'F' | 'O' | 'U';
+    gender?: "M" | "F" | "O" | "U";
     address?: string;
     city?: string;
     state?: string;
@@ -129,39 +143,39 @@ export class HL7Builder {
     sequenceNumber?: number;
   }): this {
     const fields = [
-      'PID',
+      "PID",
       String(params.sequenceNumber || 1), // Set ID
-      params.patientId || '', // Patient ID (External)
-      params.patientIdList || '', // Patient ID (Internal)
-      '', // Alternate Patient ID
+      params.patientId || "", // Patient ID (External)
+      params.patientIdList || "", // Patient ID (Internal)
+      "", // Alternate Patient ID
       this.buildField([
         params.lastName,
         params.firstName,
-        params.middleName || '',
+        params.middleName || "",
       ]), // Patient Name
-      '', // Mother's Maiden Name
-      params.dateOfBirth ? this.formatDate(params.dateOfBirth) : '', // Date of Birth
-      params.gender || '', // Sex
-      '', // Patient Alias
-      '', // Race
+      "", // Mother's Maiden Name
+      params.dateOfBirth ? this.formatDate(params.dateOfBirth) : "", // Date of Birth
+      params.gender || "", // Sex
+      "", // Patient Alias
+      "", // Race
       params.address && params.city
         ? this.buildField([
             params.address,
-            '', // Other designation
+            "", // Other designation
             params.city,
-            params.state || '',
-            params.zipCode || '',
+            params.state || "",
+            params.zipCode || "",
           ])
-        : '', // Patient Address
-      '', // County Code
-      params.phone || '', // Phone Number - Home
-      '', // Phone Number - Business
-      '', // Primary Language
-      '', // Marital Status
-      '', // Religion
-      '', // Patient Account Number
-      params.ssn || '', // SSN
-      params.driversLicense || '', // Driver's License Number
+        : "", // Patient Address
+      "", // County Code
+      params.phone || "", // Phone Number - Home
+      "", // Phone Number - Business
+      "", // Primary Language
+      "", // Marital Status
+      "", // Religion
+      "", // Patient Account Number
+      params.ssn || "", // SSN
+      params.driversLicense || "", // Driver's License Number
     ];
 
     this.segments.push(fields.join(this.delimiters.field));
@@ -172,7 +186,7 @@ export class HL7Builder {
    * Add PV1 (Patient Visit) segment
    */
   addPV1(params: {
-    patientClass: 'E' | 'I' | 'O' | 'P' | 'R' | 'B'; // E=Emergency, I=Inpatient, O=Outpatient
+    patientClass: "E" | "I" | "O" | "P" | "R" | "B"; // E=Emergency, I=Inpatient, O=Outpatient
     assignedPatientLocation?: string;
     admissionType?: string;
     attendingDoctor?: string;
@@ -181,52 +195,54 @@ export class HL7Builder {
     dischargeDateTime?: Date;
   }): this {
     const fields = [
-      'PV1',
-      '1', // Set ID
+      "PV1",
+      "1", // Set ID
       params.patientClass,
-      params.assignedPatientLocation || '',
-      params.admissionType || '',
-      '', // Preadmit Number
-      '', // Prior Patient Location
-      params.attendingDoctor || '',
-      params.referringDoctor || '',
-      '', // Consulting Doctor
-      '', // Hospital Service
-      '', // Temporary Location
-      '', // Preadmit Test Indicator
-      '', // Re-admission Indicator
-      '', // Admit Source
-      '', // Ambulatory Status
-      '', // VIP Indicator
-      '', // Admitting Doctor
-      '', // Patient Type
-      '', // Visit Number
-      '', // Financial Class
-      '', // Charge Price Indicator
-      '', // Courtesy Code
-      '', // Credit Rating
-      '', // Contract Code
-      '', // Contract Effective Date
-      '', // Contract Amount
-      '', // Contract Period
-      '', // Interest Code
-      '', // Transfer to Bad Debt Code
-      '', // Transfer to Bad Debt Date
-      '', // Bad Debt Agency Code
-      '', // Bad Debt Transfer Amount
-      '', // Bad Debt Recovery Amount
-      '', // Delete Account Indicator
-      '', // Delete Account Date
-      '', // Discharge Disposition
-      '', // Discharged to Location
-      '', // Diet Type
-      '', // Servicing Facility
-      '', // Bed Status
-      '', // Account Status
-      '', // Pending Location
-      '', // Prior Temporary Location
-      params.admitDateTime ? this.formatDateTime(params.admitDateTime) : '',
-      params.dischargeDateTime ? this.formatDateTime(params.dischargeDateTime) : '',
+      params.assignedPatientLocation || "",
+      params.admissionType || "",
+      "", // Preadmit Number
+      "", // Prior Patient Location
+      params.attendingDoctor || "",
+      params.referringDoctor || "",
+      "", // Consulting Doctor
+      "", // Hospital Service
+      "", // Temporary Location
+      "", // Preadmit Test Indicator
+      "", // Re-admission Indicator
+      "", // Admit Source
+      "", // Ambulatory Status
+      "", // VIP Indicator
+      "", // Admitting Doctor
+      "", // Patient Type
+      "", // Visit Number
+      "", // Financial Class
+      "", // Charge Price Indicator
+      "", // Courtesy Code
+      "", // Credit Rating
+      "", // Contract Code
+      "", // Contract Effective Date
+      "", // Contract Amount
+      "", // Contract Period
+      "", // Interest Code
+      "", // Transfer to Bad Debt Code
+      "", // Transfer to Bad Debt Date
+      "", // Bad Debt Agency Code
+      "", // Bad Debt Transfer Amount
+      "", // Bad Debt Recovery Amount
+      "", // Delete Account Indicator
+      "", // Delete Account Date
+      "", // Discharge Disposition
+      "", // Discharged to Location
+      "", // Diet Type
+      "", // Servicing Facility
+      "", // Bed Status
+      "", // Account Status
+      "", // Pending Location
+      "", // Prior Temporary Location
+      params.admitDateTime ? this.formatDateTime(params.admitDateTime) : "",
+      params.dischargeDateTime
+        ? this.formatDateTime(params.dischargeDateTime)
+        : "",
     ];
 
     this.segments.push(fields.join(this.delimiters.field));
@@ -237,27 +253,72 @@ export class HL7Builder {
    * Add ORC (Common Order) segment
    */
   addORC(params: {
-    orderControl: 'NW' | 'CA' | 'OC' | 'CR' | 'DC' | 'DE' | 'DF' | 'DR' | 'FU' | 'HD' | 'HR' | 'NA' | 'OD' | 'OE' | 'OF' | 'OH' | 'OK' | 'OP' | 'OR' | 'PA' | 'PR' | 'RE' | 'RF' | 'RL' | 'RO' | 'RP' | 'RQ' | 'RR' | 'RU' | 'SC' | 'SN' | 'SR' | 'SS' | 'UA' | 'UC' | 'UD' | 'UF' | 'UH' | 'UM' | 'UN' | 'UP' | 'UR' | 'UX' | 'XO' | 'XR';
+    orderControl:
+      | "NW"
+      | "CA"
+      | "OC"
+      | "CR"
+      | "DC"
+      | "DE"
+      | "DF"
+      | "DR"
+      | "FU"
+      | "HD"
+      | "HR"
+      | "NA"
+      | "OD"
+      | "OE"
+      | "OF"
+      | "OH"
+      | "OK"
+      | "OP"
+      | "OR"
+      | "PA"
+      | "PR"
+      | "RE"
+      | "RF"
+      | "RL"
+      | "RO"
+      | "RP"
+      | "RQ"
+      | "RR"
+      | "RU"
+      | "SC"
+      | "SN"
+      | "SR"
+      | "SS"
+      | "UA"
+      | "UC"
+      | "UD"
+      | "UF"
+      | "UH"
+      | "UM"
+      | "UN"
+      | "UP"
+      | "UR"
+      | "UX"
+      | "XO"
+      | "XR";
     placerOrderNumber?: string;
     fillerOrderNumber?: string;
-    orderStatus?: 'A' | 'CA' | 'CM' | 'DC' | 'ER' | 'HD' | 'IP' | 'RP' | 'SC';
+    orderStatus?: "A" | "CA" | "CM" | "DC" | "ER" | "HD" | "IP" | "RP" | "SC";
     orderDateTime?: Date;
     orderingProvider?: string;
   }): this {
     const fields = [
-      'ORC',
+      "ORC",
       params.orderControl,
-      params.placerOrderNumber || '',
-      params.fillerOrderNumber || '',
-      '', // Placer Group Number
-      params.orderStatus || '',
-      '', // Response Flag
-      '', // Quantity/Timing
-      '', // Parent
-      params.orderDateTime ? this.formatDateTime(params.orderDateTime) : '',
-      '', // Entered By
-      '', // Verified By
-      params.orderingProvider || '',
+      params.placerOrderNumber || "",
+      params.fillerOrderNumber || "",
+      "", // Placer Group Number
+      params.orderStatus || "",
+      "", // Response Flag
+      "", // Quantity/Timing
+      "", // Parent
+      params.orderDateTime ? this.formatDateTime(params.orderDateTime) : "",
+      "", // Entered By
+      "", // Verified By
+      params.orderingProvider || "",
     ];
 
     this.segments.push(fields.join(this.delimiters.field));
@@ -276,35 +337,42 @@ export class HL7Builder {
     observationDateTime?: Date;
     specimenReceivedDateTime?: Date;
     orderingProvider?: string;
-    resultStatus?: 'O' | 'I' | 'S' | 'A' | 'P' | 'F' | 'R' | 'C' | 'M' | 'X';
+    resultStatus?: "O" | "I" | "S" | "A" | "P" | "F" | "R" | "C" | "M" | "X";
   }): this {
     const fields = [
-      'OBR',
+      "OBR",
       String(params.setId),
-      params.placerOrderNumber || '',
-      params.fillerOrderNumber || '',
-      this.buildField([params.universalServiceId, params.universalServiceText || '']),
-      '', // Priority
-      '', // Requested Date/Time
-      params.observationDateTime ? this.formatDateTime(params.observationDateTime) : '',
-      '', // Observation End Date/Time
-      '', // Collection Volume
-      '', // Collector Identifier
-      '', // Specimen Action Code
-      '', // Danger Code
-      '', // Relevant Clinical Info
-      params.specimenReceivedDateTime ? this.formatDateTime(params.specimenReceivedDateTime) : '',
-      '', // Specimen Source
-      params.orderingProvider || '',
-      '', // Order Callback Phone Number
-      '', // Placer Field 1
-      '', // Placer Field 2
-      '', // Filler Field 1
-      '', // Filler Field 2
-      '', // Results Rpt/Status Chng - Date/Time
-      '', // Charge to Practice
-      '', // Diagnostic Serv Sect ID
-      params.resultStatus || '',
+      params.placerOrderNumber || "",
+      params.fillerOrderNumber || "",
+      this.buildField([
+        params.universalServiceId,
+        params.universalServiceText || "",
+      ]),
+      "", // Priority
+      "", // Requested Date/Time
+      params.observationDateTime
+        ? this.formatDateTime(params.observationDateTime)
+        : "",
+      "", // Observation End Date/Time
+      "", // Collection Volume
+      "", // Collector Identifier
+      "", // Specimen Action Code
+      "", // Danger Code
+      "", // Relevant Clinical Info
+      params.specimenReceivedDateTime
+        ? this.formatDateTime(params.specimenReceivedDateTime)
+        : "",
+      "", // Specimen Source
+      params.orderingProvider || "",
+      "", // Order Callback Phone Number
+      "", // Placer Field 1
+      "", // Placer Field 2
+      "", // Filler Field 1
+      "", // Filler Field 2
+      "", // Results Rpt/Status Chng - Date/Time
+      "", // Charge to Practice
+      "", // Diagnostic Serv Sect ID
+      params.resultStatus || "",
     ];
 
     this.segments.push(fields.join(this.delimiters.field));
@@ -316,32 +384,56 @@ export class HL7Builder {
    */
   addOBX(params: {
     setId: number;
-    valueType: 'CE' | 'CWE' | 'DT' | 'DTM' | 'FT' | 'NM' | 'SN' | 'ST' | 'TM' | 'TS' | 'TX';
+    valueType:
+      | "CE"
+      | "CWE"
+      | "DT"
+      | "DTM"
+      | "FT"
+      | "NM"
+      | "SN"
+      | "ST"
+      | "TM"
+      | "TS"
+      | "TX";
     observationId: string;
     observationText?: string;
     observationValue: string | number;
     units?: string;
     referenceRange?: string;
     abnormalFlags?: string;
-    observationResultStatus: 'F' | 'P' | 'R' | 'C' | 'X' | 'I' | 'N' | 'D' | 'W' | 'S' | 'U';
+    observationResultStatus:
+      | "F"
+      | "P"
+      | "R"
+      | "C"
+      | "X"
+      | "I"
+      | "N"
+      | "D"
+      | "W"
+      | "S"
+      | "U";
     observationDateTime?: Date;
   }): this {
     const fields = [
-      'OBX',
+      "OBX",
       String(params.setId),
       params.valueType,
-      this.buildField([params.observationId, params.observationText || '']),
-      '', // Observation Sub-ID
+      this.buildField([params.observationId, params.observationText || ""]),
+      "", // Observation Sub-ID
       String(params.observationValue),
-      params.units || '',
-      params.referenceRange || '',
-      params.abnormalFlags || '',
-      '', // Probability
-      '', // Nature of Abnormal Test
+      params.units || "",
+      params.referenceRange || "",
+      params.abnormalFlags || "",
+      "", // Probability
+      "", // Nature of Abnormal Test
       params.observationResultStatus,
-      '', // Effective Date of Reference Range
-      '', // User Defined Access Checks
-      params.observationDateTime ? this.formatDateTime(params.observationDateTime) : '',
+      "", // Effective Date of Reference Range
+      "", // User Defined Access Checks
+      params.observationDateTime
+        ? this.formatDateTime(params.observationDateTime)
+        : "",
     ];
 
     this.segments.push(fields.join(this.delimiters.field));
@@ -362,14 +454,14 @@ export class HL7Builder {
    */
   build(): string {
     if (this.segments.length === 0) {
-      throw new Error('Message must have at least one segment');
+      throw new Error("Message must have at least one segment");
     }
 
-    if (!this.segments[0]?.startsWith('MSH')) {
-      throw new Error('Message must start with MSH segment');
+    if (!this.segments[0]?.startsWith("MSH")) {
+      throw new Error("Message must start with MSH segment");
     }
 
-    return this.segments.join('\r\n') + '\r\n';
+    return this.segments.join("\r\n") + "\r\n";
   }
 
   /**
@@ -377,8 +469,8 @@ export class HL7Builder {
    */
   private formatDate(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}${month}${day}`;
   }
 
@@ -387,9 +479,9 @@ export class HL7Builder {
    */
   private formatDateTime(date: Date): string {
     const dateStr = this.formatDate(date);
-    const hour = String(date.getHours()).padStart(2, '0');
-    const minute = String(date.getMinutes()).padStart(2, '0');
-    const second = String(date.getSeconds()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, "0");
+    const minute = String(date.getMinutes()).padStart(2, "0");
+    const second = String(date.getSeconds()).padStart(2, "0");
     return `${dateStr}${hour}${minute}${second}`;
   }
 

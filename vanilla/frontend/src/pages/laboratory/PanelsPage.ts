@@ -3,8 +3,8 @@
  * Manage laboratory test panels
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { LabPanelBuilder } from '../../components/laboratory/LabPanelBuilder';
+import { labService } from "../../services/LaboratoryService";
+import { LabPanelBuilder } from "../../components/laboratory/LabPanelBuilder";
 
 export class PanelsPage {
   private container: HTMLElement;
@@ -39,14 +39,15 @@ export class PanelsPage {
     try {
       const panels = await labService.getPanels();
 
-      const panelsListContainer = this.container.querySelector('#panelsList');
+      const panelsListContainer = this.container.querySelector("#panelsList");
       if (panelsListContainer) {
-        panelsListContainer.innerHTML = panels.length > 0
-          ? panels.map((panel: any) => this.renderPanelCard(panel)).join('')
-          : '<p>No panels found</p>';
+        panelsListContainer.innerHTML =
+          panels.length > 0
+            ? panels.map((panel: any) => this.renderPanelCard(panel)).join("")
+            : "<p>No panels found</p>";
       }
     } catch (error) {
-      console.error('Error loading panels:', error);
+      console.error("Error loading panels:", error);
     }
   }
 
@@ -66,19 +67,28 @@ export class PanelsPage {
             <span class="meta-item">
               <strong>Tests:</strong> ${panel.tests.length}
             </span>
-            ${panel.turnaroundTime ? `
+            ${
+              panel.turnaroundTime
+                ? `
               <span class="meta-item">
                 <strong>TAT:</strong> ${panel.turnaroundTime}h
               </span>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
           <div class="panel-tests">
             <strong>Included Tests:</strong>
             <ul>
-              ${panel.tests.slice(0, 5).map((testCode: string) => `
+              ${panel.tests
+                .slice(0, 5)
+                .map(
+                  (testCode: string) => `
                 <li>${testCode}</li>
-              `).join('')}
-              ${panel.tests.length > 5 ? `<li>... and ${panel.tests.length - 5} more</li>` : ''}
+              `,
+                )
+                .join("")}
+              ${panel.tests.length > 5 ? `<li>... and ${panel.tests.length - 5} more</li>` : ""}
             </ul>
           </div>
         </div>
@@ -94,33 +104,37 @@ export class PanelsPage {
     try {
       const loincCodes = await labService.getLOINCCodes();
 
-      const panelBuilderContainer = this.container.querySelector('#panelBuilder');
-      const panelsListContainer = this.container.querySelector('#panelsList');
+      const panelBuilderContainer =
+        this.container.querySelector("#panelBuilder");
+      const panelsListContainer = this.container.querySelector("#panelsList");
 
       if (panelBuilderContainer && panelsListContainer) {
-        (panelBuilderContainer as HTMLElement).style.display = 'block';
-        (panelsListContainer as HTMLElement).style.display = 'none';
+        (panelBuilderContainer as HTMLElement).style.display = "block";
+        (panelsListContainer as HTMLElement).style.display = "none";
 
-        this.panelBuilder = new LabPanelBuilder(panelBuilderContainer as HTMLElement, {
-          onSave: (panelData) => this.handleSavePanel(panelData)
-        });
+        this.panelBuilder = new LabPanelBuilder(
+          panelBuilderContainer as HTMLElement,
+          {
+            onSave: (panelData) => this.handleSavePanel(panelData),
+          },
+        );
         this.panelBuilder.setAvailableTests(loincCodes);
       }
 
       this.showBuilder = true;
       this.updateCreateButton();
     } catch (error) {
-      console.error('Error showing panel builder:', error);
+      console.error("Error showing panel builder:", error);
     }
   }
 
   private hidePanelBuilder(): void {
-    const panelBuilderContainer = this.container.querySelector('#panelBuilder');
-    const panelsListContainer = this.container.querySelector('#panelsList');
+    const panelBuilderContainer = this.container.querySelector("#panelBuilder");
+    const panelsListContainer = this.container.querySelector("#panelsList");
 
     if (panelBuilderContainer && panelsListContainer) {
-      (panelBuilderContainer as HTMLElement).style.display = 'none';
-      (panelsListContainer as HTMLElement).style.display = 'block';
+      (panelBuilderContainer as HTMLElement).style.display = "none";
+      (panelsListContainer as HTMLElement).style.display = "block";
     }
 
     if (this.panelBuilder) {
@@ -135,27 +149,27 @@ export class PanelsPage {
   private async handleSavePanel(panelData: any): Promise<void> {
     try {
       await labService.createPanel(panelData);
-      alert('Panel created successfully!');
+      alert("Panel created successfully!");
       this.hidePanelBuilder();
       this.loadPanels();
     } catch (error: any) {
-      console.error('Error saving panel:', error);
-      alert('Error saving panel: ' + error.message);
+      console.error("Error saving panel:", error);
+      alert("Error saving panel: " + error.message);
     }
   }
 
   private updateCreateButton(): void {
-    const createBtn = this.container.querySelector('#createPanelBtn');
+    const createBtn = this.container.querySelector("#createPanelBtn");
     if (createBtn) {
-      createBtn.textContent = this.showBuilder ? 'Cancel' : 'Create Panel';
+      createBtn.textContent = this.showBuilder ? "Cancel" : "Create Panel";
     }
   }
 
   private attachEventListeners(): void {
-    const createPanelBtn = this.container.querySelector('#createPanelBtn');
+    const createPanelBtn = this.container.querySelector("#createPanelBtn");
 
     if (createPanelBtn) {
-      createPanelBtn.addEventListener('click', () => {
+      createPanelBtn.addEventListener("click", () => {
         if (this.showBuilder) {
           this.hidePanelBuilder();
         } else {
@@ -169,6 +183,6 @@ export class PanelsPage {
     if (this.panelBuilder) {
       this.panelBuilder.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

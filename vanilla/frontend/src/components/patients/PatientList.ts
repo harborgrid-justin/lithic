@@ -2,14 +2,17 @@
  * PatientList Component - Displays a list of patients
  */
 
-import { Patient } from '../../types/Patient';
+import { Patient } from "../../types/Patient";
 
 export class PatientList {
   private container: HTMLElement;
   private patients: Patient[] = [];
   private onPatientClick?: (patient: Patient) => void;
 
-  constructor(containerId: string, onPatientClick?: (patient: Patient) => void) {
+  constructor(
+    containerId: string,
+    onPatientClick?: (patient: Patient) => void,
+  ) {
     const element = document.getElementById(containerId);
     if (!element) {
       throw new Error(`Container element with id "${containerId}" not found`);
@@ -39,8 +42,8 @@ export class PatientList {
       return;
     }
 
-    const table = document.createElement('table');
-    table.className = 'patient-list-table';
+    const table = document.createElement("table");
+    table.className = "patient-list-table";
     table.innerHTML = `
       <thead>
         <tr>
@@ -54,11 +57,11 @@ export class PatientList {
         </tr>
       </thead>
       <tbody>
-        ${this.patients.map(patient => this.renderPatientRow(patient)).join('')}
+        ${this.patients.map((patient) => this.renderPatientRow(patient)).join("")}
       </tbody>
     `;
 
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
     this.container.appendChild(table);
 
     // Attach click handlers
@@ -92,13 +95,13 @@ export class PatientList {
    * Attach event listeners
    */
   private attachEventListeners(): void {
-    const viewButtons = this.container.querySelectorAll('.btn-view');
-    viewButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
+    const viewButtons = this.container.querySelectorAll(".btn-view");
+    viewButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
         const target = e.target as HTMLElement;
-        const patientId = target.getAttribute('data-patient-id');
+        const patientId = target.getAttribute("data-patient-id");
         if (patientId && this.onPatientClick) {
-          const patient = this.patients.find(p => p.id === patientId);
+          const patient = this.patients.find((p) => p.id === patientId);
           if (patient) {
             this.onPatientClick(patient);
           }
@@ -112,6 +115,6 @@ export class PatientList {
    */
   public clear(): void {
     this.patients = [];
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

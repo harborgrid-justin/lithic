@@ -1,25 +1,85 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function ImagingDashboard() {
   const stats = [
-    { label: 'Pending Orders', value: '12', color: 'bg-yellow-500', link: '/imaging/orders?status=PENDING' },
-    { label: 'Today\'s Studies', value: '45', color: 'bg-blue-500', link: '/imaging/studies' },
-    { label: 'Awaiting Review', value: '8', color: 'bg-purple-500', link: '/imaging/studies?status=READY_FOR_REVIEW' },
-    { label: 'Reports to Sign', value: '5', color: 'bg-orange-500', link: '/imaging/reports?status=DRAFT' },
+    {
+      label: "Pending Orders",
+      value: "12",
+      color: "bg-yellow-500",
+      link: "/imaging/orders?status=PENDING",
+    },
+    {
+      label: "Today's Studies",
+      value: "45",
+      color: "bg-blue-500",
+      link: "/imaging/studies",
+    },
+    {
+      label: "Awaiting Review",
+      value: "8",
+      color: "bg-purple-500",
+      link: "/imaging/studies?status=READY_FOR_REVIEW",
+    },
+    {
+      label: "Reports to Sign",
+      value: "5",
+      color: "bg-orange-500",
+      link: "/imaging/reports?status=DRAFT",
+    },
   ];
 
   const quickActions = [
-    { name: 'New Order', href: '/imaging/orders/new', icon: '➕', color: 'bg-blue-600' },
-    { name: 'Worklist', href: '/imaging/worklist', icon: '📋', color: 'bg-green-600' },
-    { name: 'Viewer', href: '/imaging/viewer', icon: '🖼️', color: 'bg-purple-600' },
-    { name: 'Reports', href: '/imaging/reports', icon: '📄', color: 'bg-orange-600' },
+    {
+      name: "New Order",
+      href: "/imaging/orders/new",
+      icon: "➕",
+      color: "bg-blue-600",
+    },
+    {
+      name: "Worklist",
+      href: "/imaging/worklist",
+      icon: "📋",
+      color: "bg-green-600",
+    },
+    {
+      name: "Viewer",
+      href: "/imaging/viewer",
+      icon: "🖼️",
+      color: "bg-purple-600",
+    },
+    {
+      name: "Reports",
+      href: "/imaging/reports",
+      icon: "📄",
+      color: "bg-orange-600",
+    },
   ];
 
   const recentActivity = [
-    { type: 'Study', description: 'CT Chest - Johnson, Sarah', time: '5 min ago', status: 'Completed' },
-    { type: 'Report', description: 'MRI Brain - Davis, Michael', time: '15 min ago', status: 'Signed' },
-    { type: 'Order', description: 'X-Ray Hand - Martinez, Elena', time: '30 min ago', status: 'Scheduled' },
-    { type: 'Study', description: 'Ultrasound Abdomen - Brown, Robert', time: '1 hour ago', status: 'In Progress' },
+    {
+      type: "Study",
+      description: "CT Chest - Johnson, Sarah",
+      time: "5 min ago",
+      status: "Completed",
+    },
+    {
+      type: "Report",
+      description: "MRI Brain - Davis, Michael",
+      time: "15 min ago",
+      status: "Signed",
+    },
+    {
+      type: "Order",
+      description: "X-Ray Hand - Martinez, Elena",
+      time: "30 min ago",
+      status: "Scheduled",
+    },
+    {
+      type: "Study",
+      description: "Ultrasound Abdomen - Brown, Robert",
+      time: "1 hour ago",
+      status: "In Progress",
+    },
   ];
 
   return (
@@ -28,7 +88,9 @@ export default function ImagingDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Imaging & PACS</h1>
-          <p className="text-gray-600 mt-1">Medical imaging management and radiology workflow</p>
+          <p className="text-gray-600 mt-1">
+            Medical imaging management and radiology workflow
+          </p>
         </div>
         <div className="flex space-x-3">
           <Link
@@ -51,12 +113,28 @@ export default function ImagingDashboard() {
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    {stat.label}
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                    {stat.value}
+                  </p>
                 </div>
-                <div className={`w-12 h-12 ${stat.color} rounded-full flex items-center justify-center`}>
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <div
+                  className={`w-12 h-12 ${stat.color} rounded-full flex items-center justify-center`}
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -103,7 +181,9 @@ export default function ImagingDashboard() {
                         {activity.description}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {activity.time}
+                    </p>
                   </div>
                   <span className="text-xs font-medium text-green-600">
                     {activity.status}
@@ -113,7 +193,10 @@ export default function ImagingDashboard() {
             ))}
           </div>
           <div className="p-4 border-t border-gray-200">
-            <Link href="/imaging/orders" className="text-sm text-blue-600 hover:text-blue-800">
+            <Link
+              href="/imaging/orders"
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
               View all activity →
             </Link>
           </div>
@@ -131,11 +214,23 @@ export default function ImagingDashboard() {
                 <div className="text-2xl">📝</div>
                 <div>
                   <div className="font-medium">Imaging Orders</div>
-                  <div className="text-sm text-gray-600">Manage imaging orders and requisitions</div>
+                  <div className="text-sm text-gray-600">
+                    Manage imaging orders and requisitions
+                  </div>
                 </div>
               </div>
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
 
@@ -147,11 +242,23 @@ export default function ImagingDashboard() {
                 <div className="text-2xl">🏥</div>
                 <div>
                   <div className="font-medium">Studies</div>
-                  <div className="text-sm text-gray-600">Browse and review imaging studies</div>
+                  <div className="text-sm text-gray-600">
+                    Browse and review imaging studies
+                  </div>
                 </div>
               </div>
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
 
@@ -163,11 +270,23 @@ export default function ImagingDashboard() {
                 <div className="text-2xl">👁️</div>
                 <div>
                   <div className="font-medium">DICOM Viewer</div>
-                  <div className="text-sm text-gray-600">Advanced medical image viewer</div>
+                  <div className="text-sm text-gray-600">
+                    Advanced medical image viewer
+                  </div>
                 </div>
               </div>
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
 
@@ -179,11 +298,23 @@ export default function ImagingDashboard() {
                 <div className="text-2xl">✅</div>
                 <div>
                   <div className="font-medium">Worklist</div>
-                  <div className="text-sm text-gray-600">Technologist worklist and scheduling</div>
+                  <div className="text-sm text-gray-600">
+                    Technologist worklist and scheduling
+                  </div>
                 </div>
               </div>
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
 
@@ -195,11 +326,23 @@ export default function ImagingDashboard() {
                 <div className="text-2xl">📋</div>
                 <div>
                   <div className="font-medium">Radiology Reports</div>
-                  <div className="text-sm text-gray-600">Create and manage radiology reports</div>
+                  <div className="text-sm text-gray-600">
+                    Create and manage radiology reports
+                  </div>
                 </div>
               </div>
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
 
@@ -211,11 +354,23 @@ export default function ImagingDashboard() {
                 <div className="text-2xl">⚙️</div>
                 <div>
                   <div className="font-medium">Modality Status</div>
-                  <div className="text-sm text-gray-600">Monitor imaging equipment</div>
+                  <div className="text-sm text-gray-600">
+                    Monitor imaging equipment
+                  </div>
                 </div>
               </div>
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>

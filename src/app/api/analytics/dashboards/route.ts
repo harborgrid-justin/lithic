@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 // Mock database - in production, this would use a real database
 const mockDashboards = [
   {
-    id: 'dash-1',
-    name: 'Executive Dashboard',
-    description: 'High-level overview of key metrics',
-    type: 'custom',
+    id: "dash-1",
+    name: "Executive Dashboard",
+    description: "High-level overview of key metrics",
+    type: "custom",
     widgets: [],
     layout: [],
     filters: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    createdBy: 'admin',
+    createdBy: "admin",
     shared: true,
-    tags: ['executive', 'overview'],
+    tags: ["executive", "overview"],
   },
 ];
 
@@ -25,26 +25,26 @@ const mockDashboards = [
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type');
-    const shared = searchParams.get('shared');
+    const type = searchParams.get("type");
+    const shared = searchParams.get("shared");
 
     let dashboards = [...mockDashboards];
 
     // Apply filters
     if (type) {
-      dashboards = dashboards.filter(d => d.type === type);
+      dashboards = dashboards.filter((d) => d.type === type);
     }
 
     if (shared !== null) {
-      dashboards = dashboards.filter(d => d.shared === (shared === 'true'));
+      dashboards = dashboards.filter((d) => d.shared === (shared === "true"));
     }
 
     return NextResponse.json(dashboards);
   } catch (error) {
-    console.error('Error fetching dashboards:', error);
+    console.error("Error fetching dashboards:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch dashboards' },
-      { status: 500 }
+      { error: "Failed to fetch dashboards" },
+      { status: 500 },
     );
   }
 }
@@ -68,10 +68,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newDashboard, { status: 201 });
   } catch (error) {
-    console.error('Error creating dashboard:', error);
+    console.error("Error creating dashboard:", error);
     return NextResponse.json(
-      { error: 'Failed to create dashboard' },
-      { status: 500 }
+      { error: "Failed to create dashboard" },
+      { status: 500 },
     );
   }
 }

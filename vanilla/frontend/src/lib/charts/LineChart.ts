@@ -3,10 +3,15 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { ChartBase, ChartConfig } from './ChartBase';
+import { ChartBase, ChartConfig } from "./ChartBase";
 
 export class LineChart extends ChartBase {
-  private points: Array<{ x: number; y: number; seriesIndex: number; pointIndex: number }> = [];
+  private points: Array<{
+    x: number;
+    y: number;
+    seriesIndex: number;
+    pointIndex: number;
+  }> = [];
 
   constructor(canvas: HTMLCanvasElement, config: ChartConfig) {
     super(canvas, config);
@@ -17,7 +22,8 @@ export class LineChart extends ChartBase {
     this.points = [];
 
     this.config.series.forEach((series, seriesIndex) => {
-      const color = series.color || this.colors[seriesIndex % this.colors.length];
+      const color =
+        series.color || this.colors[seriesIndex % this.colors.length];
       const data = series.data;
 
       if (data.length === 0) return;
@@ -25,15 +31,15 @@ export class LineChart extends ChartBase {
       this.ctx.save();
 
       // Draw area fill if specified
-      if (series.type === 'area') {
+      if (series.type === "area") {
         this.drawAreaFill(data, min, max, color);
       }
 
       // Draw line
       this.ctx.strokeStyle = color;
       this.ctx.lineWidth = 2;
-      this.ctx.lineJoin = 'round';
-      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = "round";
+      this.ctx.lineCap = "round";
 
       this.ctx.beginPath();
 
@@ -64,7 +70,7 @@ export class LineChart extends ChartBase {
           this.hoveredPoint.seriesIndex === seriesIndex &&
           this.hoveredPoint.pointIndex === pointIndex;
 
-        this.ctx.fillStyle = isHovered ? '#fff' : color;
+        this.ctx.fillStyle = isHovered ? "#fff" : color;
         this.ctx.strokeStyle = color;
         this.ctx.lineWidth = isHovered ? 3 : 2;
 
@@ -89,7 +95,12 @@ export class LineChart extends ChartBase {
     this.drawYAxisLabels(min, max);
   }
 
-  private drawAreaFill(data: any[], min: number, max: number, color: string): void {
+  private drawAreaFill(
+    data: any[],
+    min: number,
+    max: number,
+    color: string,
+  ): void {
     const { paddingLeft, paddingTop, chartHeight } = this.dimensions;
 
     this.ctx.save();
@@ -114,11 +125,12 @@ export class LineChart extends ChartBase {
   }
 
   private drawGridLines(min: number, max: number): void {
-    const { paddingLeft, paddingTop, chartWidth, chartHeight } = this.dimensions;
+    const { paddingLeft, paddingTop, chartWidth, chartHeight } =
+      this.dimensions;
     const steps = 5;
 
     this.ctx.save();
-    this.ctx.strokeStyle = '#f0f0f0';
+    this.ctx.strokeStyle = "#f0f0f0";
     this.ctx.lineWidth = 1;
 
     for (let i = 0; i <= steps; i++) {
@@ -138,7 +150,10 @@ export class LineChart extends ChartBase {
     const { paddingLeft, paddingTop, chartHeight } = this.dimensions;
 
     // Get the first series for x-axis labels
-    if (this.config.series.length === 0 || this.config.series[0].data.length === 0) {
+    if (
+      this.config.series.length === 0 ||
+      this.config.series[0].data.length === 0
+    ) {
       return;
     }
 
@@ -147,9 +162,9 @@ export class LineChart extends ChartBase {
     const step = Math.ceil(data.length / maxLabels);
 
     this.ctx.save();
-    this.ctx.fillStyle = '#666';
-    this.ctx.font = '11px Arial, sans-serif';
-    this.ctx.textAlign = 'center';
+    this.ctx.fillStyle = "#666";
+    this.ctx.font = "11px Arial, sans-serif";
+    this.ctx.textAlign = "center";
 
     data.forEach((point, index) => {
       if (index % step !== 0 && index !== data.length - 1) return;
@@ -157,8 +172,8 @@ export class LineChart extends ChartBase {
       const x = this.scaleX(index, data.length);
       const y = paddingTop + chartHeight + 15;
 
-      let label = '';
-      if (typeof point.x === 'string') {
+      let label = "";
+      if (typeof point.x === "string") {
         label = point.x;
       } else if (point.x instanceof Date) {
         label = point.x.toLocaleDateString();
@@ -168,7 +183,7 @@ export class LineChart extends ChartBase {
 
       // Truncate long labels
       if (label.length > 12) {
-        label = label.substring(0, 10) + '...';
+        label = label.substring(0, 10) + "...";
       }
 
       this.ctx.fillText(label, x, y);
@@ -182,10 +197,10 @@ export class LineChart extends ChartBase {
     const steps = 5;
 
     this.ctx.save();
-    this.ctx.fillStyle = '#666';
-    this.ctx.font = '11px Arial, sans-serif';
-    this.ctx.textAlign = 'right';
-    this.ctx.textBaseline = 'middle';
+    this.ctx.fillStyle = "#666";
+    this.ctx.font = "11px Arial, sans-serif";
+    this.ctx.textAlign = "right";
+    this.ctx.textBaseline = "middle";
 
     for (let i = 0; i <= steps; i++) {
       const value = min + ((max - min) / steps) * i;
@@ -197,11 +212,16 @@ export class LineChart extends ChartBase {
     this.ctx.restore();
   }
 
-  protected getPointAtPosition(x: number, y: number): { seriesIndex: number; pointIndex: number } | null {
+  protected getPointAtPosition(
+    x: number,
+    y: number,
+  ): { seriesIndex: number; pointIndex: number } | null {
     const threshold = 10; // pixels
 
     for (const point of this.points) {
-      const distance = Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2));
+      const distance = Math.sqrt(
+        Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2),
+      );
       if (distance <= threshold) {
         return { seriesIndex: point.seriesIndex, pointIndex: point.pointIndex };
       }

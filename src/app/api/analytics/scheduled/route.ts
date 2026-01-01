@@ -1,32 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 // Mock database for scheduled reports
 const scheduledReports: Record<string, any> = {
-  'report-1': {
-    id: 'report-1',
-    name: 'Weekly Quality Report',
+  "report-1": {
+    id: "report-1",
+    name: "Weekly Quality Report",
     schedule: {
-      frequency: 'weekly',
-      time: '09:00',
+      frequency: "weekly",
+      time: "09:00",
       dayOfWeek: 1,
     },
-    recipients: ['admin@example.com', 'quality@example.com'],
+    recipients: ["admin@example.com", "quality@example.com"],
     lastRun: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     nextRun: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    status: 'active',
+    status: "active",
   },
-  'report-2': {
-    id: 'report-2',
-    name: 'Monthly Financial Report',
+  "report-2": {
+    id: "report-2",
+    name: "Monthly Financial Report",
     schedule: {
-      frequency: 'monthly',
-      time: '08:00',
+      frequency: "monthly",
+      time: "08:00",
       dayOfMonth: 1,
     },
-    recipients: ['cfo@example.com', 'finance@example.com'],
+    recipients: ["cfo@example.com", "finance@example.com"],
     lastRun: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     nextRun: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-    status: 'active',
+    status: "active",
   },
 };
 
@@ -39,10 +39,10 @@ export async function GET(request: NextRequest) {
     const reports = Object.values(scheduledReports);
     return NextResponse.json(reports);
   } catch (error) {
-    console.error('Error fetching scheduled reports:', error);
+    console.error("Error fetching scheduled reports:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch scheduled reports' },
-      { status: 500 }
+      { error: "Failed to fetch scheduled reports" },
+      { status: 500 },
     );
   }
 }
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       schedule,
       recipients,
       nextRun: nextRun.toISOString(),
-      status: 'active',
+      status: "active",
       createdAt: new Date().toISOString(),
     };
 
@@ -77,10 +77,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ id: reportId }, { status: 201 });
   } catch (error) {
-    console.error('Error creating scheduled report:', error);
+    console.error("Error creating scheduled report:", error);
     return NextResponse.json(
-      { error: 'Failed to create scheduled report' },
-      { status: 500 }
+      { error: "Failed to create scheduled report" },
+      { status: 500 },
     );
   }
 }
@@ -90,18 +90,18 @@ export async function POST(request: NextRequest) {
  */
 function calculateNextRun(schedule: any): Date {
   const now = new Date();
-  const [hours, minutes] = schedule.time.split(':').map(Number);
+  const [hours, minutes] = schedule.time.split(":").map(Number);
   const nextRun = new Date(now);
   nextRun.setHours(hours, minutes, 0, 0);
 
   switch (schedule.frequency) {
-    case 'daily':
+    case "daily":
       if (nextRun <= now) {
         nextRun.setDate(nextRun.getDate() + 1);
       }
       break;
 
-    case 'weekly':
+    case "weekly":
       const targetDay = schedule.dayOfWeek;
       const currentDay = nextRun.getDay();
       let daysToAdd = targetDay - currentDay;
@@ -111,14 +111,14 @@ function calculateNextRun(schedule: any): Date {
       nextRun.setDate(nextRun.getDate() + daysToAdd);
       break;
 
-    case 'monthly':
+    case "monthly":
       nextRun.setDate(schedule.dayOfMonth);
       if (nextRun <= now) {
         nextRun.setMonth(nextRun.getMonth() + 1);
       }
       break;
 
-    case 'quarterly':
+    case "quarterly":
       const currentMonth = nextRun.getMonth();
       const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
       nextRun.setMonth(quarterStartMonth);
@@ -143,30 +143,32 @@ function calculateNextRun(schedule: any): Date {
 export async function PUT(request: NextRequest) {
   try {
     const { pathname } = new URL(request.url);
-    const parts = pathname.split('/');
+    const parts = pathname.split("/");
     const id = parts[parts.length - 2];
     const action = parts[parts.length - 1];
 
     if (!scheduledReports[id]) {
       return NextResponse.json(
-        { error: 'Scheduled report not found' },
-        { status: 404 }
+        { error: "Scheduled report not found" },
+        { status: 404 },
       );
     }
 
-    if (action === 'pause') {
-      scheduledReports[id].status = 'paused';
-    } else if (action === 'resume') {
-      scheduledReports[id].status = 'active';
-      scheduledReports[id].nextRun = calculateNextRun(scheduledReports[id].schedule).toISOString();
+    if (action === "pause") {
+      scheduledReports[id].status = "paused";
+    } else if (action === "resume") {
+      scheduledReports[id].status = "active";
+      scheduledReports[id].nextRun = calculateNextRun(
+        scheduledReports[id].schedule,
+      ).toISOString();
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error updating scheduled report:', error);
+    console.error("Error updating scheduled report:", error);
     return NextResponse.json(
-      { error: 'Failed to update scheduled report' },
-      { status: 500 }
+      { error: "Failed to update scheduled report" },
+      { status: 500 },
     );
   }
 }

@@ -14,29 +14,29 @@ export class BillingService {
     // Mock implementation - replace with actual database queries
     const payments = [
       {
-        id: 'PMT001',
-        claimId: 'CLM001',
-        patientId: 'PAT001',
-        patientName: 'John Doe',
-        amount: 250.00,
-        paymentMethod: 'insurance',
-        paymentType: 'ERA',
-        paymentDate: '2025-12-15',
-        checkNumber: '1234567',
-        status: 'posted',
-        payer: 'Blue Cross Blue Shield',
-        reference: 'REF789'
-      }
+        id: "PMT001",
+        claimId: "CLM001",
+        patientId: "PAT001",
+        patientName: "John Doe",
+        amount: 250.0,
+        paymentMethod: "insurance",
+        paymentType: "ERA",
+        paymentDate: "2025-12-15",
+        checkNumber: "1234567",
+        status: "posted",
+        payer: "Blue Cross Blue Shield",
+        reference: "REF789",
+      },
     ];
 
     const summary = {
       totalPayments: 1,
-      totalAmount: 250.00,
+      totalAmount: 250.0,
       byMethod: {
-        insurance: 250.00,
+        insurance: 250.0,
         patient: 0,
-        other: 0
-      }
+        other: 0,
+      },
     };
 
     return {
@@ -45,33 +45,37 @@ export class BillingService {
         page,
         limit,
         total: payments.length,
-        totalPages: Math.ceil(payments.length / limit)
+        totalPages: Math.ceil(payments.length / limit),
       },
-      summary
+      summary,
     };
   }
 
   async getPaymentById(id: string) {
     return {
       id,
-      claimId: 'CLM001',
-      patientId: 'PAT001',
-      patientName: 'John Doe',
-      amount: 250.00,
-      paymentMethod: 'insurance',
-      paymentType: 'ERA',
-      paymentDate: '2025-12-15',
-      checkNumber: '1234567',
-      status: 'posted',
-      payer: 'Blue Cross Blue Shield',
-      reference: 'REF789',
+      claimId: "CLM001",
+      patientId: "PAT001",
+      patientName: "John Doe",
+      amount: 250.0,
+      paymentMethod: "insurance",
+      paymentType: "ERA",
+      paymentDate: "2025-12-15",
+      checkNumber: "1234567",
+      status: "posted",
+      payer: "Blue Cross Blue Shield",
+      reference: "REF789",
       adjustments: [
-        { code: 'CO-45', description: 'Charge exceeds fee schedule', amount: -50.00 }
+        {
+          code: "CO-45",
+          description: "Charge exceeds fee schedule",
+          amount: -50.0,
+        },
       ],
       deniedAmount: 0,
-      allowedAmount: 250.00,
-      createdAt: '2025-12-15T10:00:00Z',
-      createdBy: 'billing_user'
+      allowedAmount: 250.0,
+      createdAt: "2025-12-15T10:00:00Z",
+      createdBy: "billing_user",
     };
   }
 
@@ -79,13 +83,13 @@ export class BillingService {
     const payment = {
       id: `PMT${Date.now()}`,
       ...paymentData,
-      status: 'pending',
+      status: "pending",
       createdAt: new Date().toISOString(),
-      createdBy: userId
+      createdBy: userId,
     };
 
     // Save to database
-    console.log('Creating payment:', payment);
+    console.log("Creating payment:", payment);
 
     return payment;
   }
@@ -98,7 +102,7 @@ export class BillingService {
       paymentMethod,
       checkNumber,
       adjustments,
-      denials
+      denials,
     } = paymentData;
 
     // Validate claim exists and calculate balance
@@ -110,12 +114,12 @@ export class BillingService {
       claimId,
       amountPosted: amount,
       remainingBalance: 0,
-      claimStatus: 'paid',
+      claimStatus: "paid",
       postedAt: new Date().toISOString(),
-      postedBy: userId
+      postedBy: userId,
     };
 
-    console.log('Posted payment to claim:', result);
+    console.log("Posted payment to claim:", result);
 
     return result;
   }
@@ -127,10 +131,10 @@ export class BillingService {
       ...payment,
       ...updates,
       updatedAt: new Date().toISOString(),
-      updatedBy: userId
+      updatedBy: userId,
     };
 
-    console.log('Updated payment:', updatedPayment);
+    console.log("Updated payment:", updatedPayment);
 
     return updatedPayment;
   }
@@ -148,24 +152,24 @@ export class BillingService {
   async getPaymentsByPatient(patientId: string) {
     return [
       {
-        id: 'PMT001',
-        amount: 250.00,
-        paymentDate: '2025-12-15',
-        paymentMethod: 'insurance',
-        claimId: 'CLM001'
-      }
+        id: "PMT001",
+        amount: 250.0,
+        paymentDate: "2025-12-15",
+        paymentMethod: "insurance",
+        claimId: "CLM001",
+      },
     ];
   }
 
   async getPaymentsByClaim(claimId: string) {
     return [
       {
-        id: 'PMT001',
-        amount: 250.00,
-        paymentDate: '2025-12-15',
-        paymentMethod: 'insurance',
-        status: 'posted'
-      }
+        id: "PMT001",
+        amount: 250.0,
+        paymentDate: "2025-12-15",
+        paymentMethod: "insurance",
+        status: "posted",
+      },
     ];
   }
 
@@ -174,7 +178,7 @@ export class BillingService {
       successful: [] as any[],
       failed: [] as any[],
       totalPosted: 0,
-      totalAmount: 0
+      totalAmount: 0,
     };
 
     for (const payment of payments) {
@@ -186,7 +190,7 @@ export class BillingService {
       } catch (error) {
         results.failed.push({
           payment,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
@@ -197,13 +201,13 @@ export class BillingService {
   async getUnappliedPayments() {
     return [
       {
-        id: 'PMT002',
-        amount: 100.00,
-        paymentDate: '2025-12-20',
-        payer: 'Aetna',
-        status: 'unapplied',
-        checkNumber: '9876543'
-      }
+        id: "PMT002",
+        amount: 100.0,
+        paymentDate: "2025-12-20",
+        payer: "Aetna",
+        status: "unapplied",
+        checkNumber: "9876543",
+      },
     ];
   }
 
@@ -213,25 +217,31 @@ export class BillingService {
     return {
       paymentId,
       claimId,
-      status: 'applied',
+      status: "applied",
       appliedBy: userId,
-      appliedAt: new Date().toISOString()
+      appliedAt: new Date().toISOString(),
     };
   }
 
-  async refundPayment(paymentId: string, amount: number, reason: string, method: string, userId: string) {
+  async refundPayment(
+    paymentId: string,
+    amount: number,
+    reason: string,
+    method: string,
+    userId: string,
+  ) {
     const refund = {
       id: `REF${Date.now()}`,
       originalPaymentId: paymentId,
       amount,
       reason,
       method,
-      status: 'processed',
+      status: "processed",
       processedAt: new Date().toISOString(),
-      processedBy: userId
+      processedBy: userId,
     };
 
-    console.log('Processing refund:', refund);
+    console.log("Processing refund:", refund);
 
     return refund;
   }
@@ -239,23 +249,23 @@ export class BillingService {
   async getPaymentStats(startDate: string, endDate: string) {
     return {
       totalPayments: 150,
-      totalAmount: 45000.00,
-      averagePayment: 300.00,
+      totalAmount: 45000.0,
+      averagePayment: 300.0,
       byMethod: {
-        insurance: { count: 100, amount: 35000.00 },
-        patient: { count: 45, amount: 8000.00 },
-        other: { count: 5, amount: 2000.00 }
+        insurance: { count: 100, amount: 35000.0 },
+        patient: { count: 45, amount: 8000.0 },
+        other: { count: 5, amount: 2000.0 },
       },
       byStatus: {
-        posted: { count: 140, amount: 43000.00 },
-        pending: { count: 8, amount: 1800.00 },
-        unapplied: { count: 2, amount: 200.00 }
+        posted: { count: 140, amount: 43000.0 },
+        pending: { count: 8, amount: 1800.0 },
+        unapplied: { count: 2, amount: 200.0 },
       },
       trend: [
-        { date: '2025-12-01', count: 10, amount: 3000.00 },
-        { date: '2025-12-08', count: 15, amount: 4500.00 },
-        { date: '2025-12-15', count: 20, amount: 6000.00 }
-      ]
+        { date: "2025-12-01", count: 10, amount: 3000.0 },
+        { date: "2025-12-08", count: 15, amount: 4500.0 },
+        { date: "2025-12-15", count: 20, amount: 6000.0 },
+      ],
     };
   }
 
@@ -264,17 +274,17 @@ export class BillingService {
   async getInvoices(page: number, limit: number, filters: any) {
     const invoices = [
       {
-        id: 'INV001',
-        patientId: 'PAT001',
-        patientName: 'John Doe',
-        invoiceNumber: 'INV-2025-001',
-        invoiceDate: '2025-12-10',
-        dueDate: '2026-01-10',
-        totalAmount: 500.00,
-        paidAmount: 250.00,
-        balance: 250.00,
-        status: 'partial'
-      }
+        id: "INV001",
+        patientId: "PAT001",
+        patientName: "John Doe",
+        invoiceNumber: "INV-2025-001",
+        invoiceDate: "2025-12-10",
+        dueDate: "2026-01-10",
+        totalAmount: 500.0,
+        paidAmount: 250.0,
+        balance: 250.0,
+        status: "partial",
+      },
     ];
 
     return {
@@ -283,42 +293,42 @@ export class BillingService {
         page,
         limit,
         total: invoices.length,
-        totalPages: Math.ceil(invoices.length / limit)
-      }
+        totalPages: Math.ceil(invoices.length / limit),
+      },
     };
   }
 
   async getInvoiceById(id: string) {
     return {
       id,
-      patientId: 'PAT001',
-      patientName: 'John Doe',
-      invoiceNumber: 'INV-2025-001',
-      invoiceDate: '2025-12-10',
-      dueDate: '2026-01-10',
+      patientId: "PAT001",
+      patientName: "John Doe",
+      invoiceNumber: "INV-2025-001",
+      invoiceDate: "2025-12-10",
+      dueDate: "2026-01-10",
       lineItems: [
         {
-          description: 'Office Visit - Level 3',
-          code: '99213',
+          description: "Office Visit - Level 3",
+          code: "99213",
           quantity: 1,
-          unitPrice: 150.00,
-          amount: 150.00
+          unitPrice: 150.0,
+          amount: 150.0,
         },
         {
-          description: 'Blood Test - CBC',
-          code: '85025',
+          description: "Blood Test - CBC",
+          code: "85025",
           quantity: 1,
-          unitPrice: 50.00,
-          amount: 50.00
-        }
+          unitPrice: 50.0,
+          amount: 50.0,
+        },
       ],
-      subtotal: 200.00,
-      tax: 0.00,
-      totalAmount: 200.00,
-      paidAmount: 0.00,
-      balance: 200.00,
-      status: 'open',
-      notes: 'Payment due within 30 days'
+      subtotal: 200.0,
+      tax: 0.0,
+      totalAmount: 200.0,
+      paidAmount: 0.0,
+      balance: 200.0,
+      status: "open",
+      notes: "Payment due within 30 days",
     };
   }
 
@@ -327,12 +337,12 @@ export class BillingService {
       id: `INV${Date.now()}`,
       invoiceNumber: `INV-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}`,
       ...invoiceData,
-      status: 'draft',
+      status: "draft",
       createdAt: new Date().toISOString(),
-      createdBy: userId
+      createdBy: userId,
     };
 
-    console.log('Creating invoice:', invoice);
+    console.log("Creating invoice:", invoice);
 
     return invoice;
   }
@@ -346,12 +356,12 @@ export class BillingService {
       id: `INV${Date.now()}`,
       invoiceNumber: `INV-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}`,
       claimId,
-      status: 'generated',
+      status: "generated",
       createdAt: new Date().toISOString(),
-      createdBy: userId
+      createdBy: userId,
     };
 
-    console.log('Generated invoice from claim:', invoice);
+    console.log("Generated invoice from claim:", invoice);
 
     return invoice;
   }
@@ -363,10 +373,10 @@ export class BillingService {
       ...invoice,
       ...updates,
       updatedAt: new Date().toISOString(),
-      updatedBy: userId
+      updatedBy: userId,
     };
 
-    console.log('Updated invoice:', updatedInvoice);
+    console.log("Updated invoice:", updatedInvoice);
 
     return updatedInvoice;
   }
@@ -393,32 +403,36 @@ export class BillingService {
     // For now, return mock buffer
     const pdfContent = `Invoice ${invoice.invoiceNumber}\n\nTotal: $${invoice.totalAmount}`;
 
-    return Buffer.from(pdfContent, 'utf-8');
+    return Buffer.from(pdfContent, "utf-8");
   }
 
   async getInvoicesByPatient(patientId: string) {
     return [
       {
-        id: 'INV001',
-        invoiceNumber: 'INV-2025-001',
-        invoiceDate: '2025-12-10',
-        totalAmount: 200.00,
-        balance: 200.00,
-        status: 'open'
-      }
+        id: "INV001",
+        invoiceNumber: "INV-2025-001",
+        invoiceDate: "2025-12-10",
+        totalAmount: 200.0,
+        balance: 200.0,
+        status: "open",
+      },
     ];
   }
 
-  async recordInvoicePayment(invoiceId: string, paymentData: any, userId: string) {
+  async recordInvoicePayment(
+    invoiceId: string,
+    paymentData: any,
+    userId: string,
+  ) {
     const payment = {
       id: `PMT${Date.now()}`,
       invoiceId,
       ...paymentData,
       createdAt: new Date().toISOString(),
-      createdBy: userId
+      createdBy: userId,
     };
 
-    console.log('Recording invoice payment:', payment);
+    console.log("Recording invoice payment:", payment);
 
     return payment;
   }
@@ -426,32 +440,36 @@ export class BillingService {
   async getOverdueInvoices() {
     return [
       {
-        id: 'INV002',
-        patientName: 'Jane Smith',
-        invoiceNumber: 'INV-2025-002',
-        dueDate: '2025-11-30',
+        id: "INV002",
+        patientName: "Jane Smith",
+        invoiceNumber: "INV-2025-002",
+        dueDate: "2025-11-30",
         daysPastDue: 31,
-        balance: 350.00
-      }
+        balance: 350.0,
+      },
     ];
   }
 
-  async sendBatchInvoices(invoiceIds: string[], method: string, userId: string) {
+  async sendBatchInvoices(
+    invoiceIds: string[],
+    method: string,
+    userId: string,
+  ) {
     const results = {
       successful: [] as string[],
       failed: [] as any[],
-      totalSent: 0
+      totalSent: 0,
     };
 
     for (const invoiceId of invoiceIds) {
       try {
-        await this.sendInvoice(invoiceId, method, '', userId);
+        await this.sendInvoice(invoiceId, method, "", userId);
         results.successful.push(invoiceId);
         results.totalSent++;
       } catch (error) {
         results.failed.push({
           invoiceId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
@@ -462,23 +480,28 @@ export class BillingService {
   async getInvoiceStats(startDate: string, endDate: string) {
     return {
       totalInvoices: 200,
-      totalAmount: 60000.00,
-      totalPaid: 45000.00,
-      totalOutstanding: 15000.00,
+      totalAmount: 60000.0,
+      totalPaid: 45000.0,
+      totalOutstanding: 15000.0,
       byStatus: {
-        open: { count: 50, amount: 10000.00 },
-        partial: { count: 30, amount: 5000.00 },
-        paid: { count: 100, amount: 45000.00 },
-        overdue: { count: 20, amount: 5000.00 }
+        open: { count: 50, amount: 10000.0 },
+        partial: { count: 30, amount: 5000.0 },
+        paid: { count: 100, amount: 45000.0 },
+        overdue: { count: 20, amount: 5000.0 },
       },
       averageDaysToPay: 28,
-      collectionRate: 75.0
+      collectionRate: 75.0,
     };
   }
 
   // ==================== ELIGIBILITY ====================
 
-  async checkEligibility(patientId: string, insuranceId: string, serviceDate: string, userId: string) {
+  async checkEligibility(
+    patientId: string,
+    insuranceId: string,
+    serviceDate: string,
+    userId: string,
+  ) {
     // Make API call to payer or clearinghouse
     // Parse response
     // Store result
@@ -488,43 +511,43 @@ export class BillingService {
       patientId,
       insuranceId,
       serviceDate,
-      status: 'active',
-      coverageLevel: 'family',
-      effectiveDate: '2025-01-01',
+      status: "active",
+      coverageLevel: "family",
+      effectiveDate: "2025-01-01",
       terminationDate: null,
       copay: {
-        primaryCare: 25.00,
-        specialist: 50.00,
-        emergency: 150.00
+        primaryCare: 25.0,
+        specialist: 50.0,
+        emergency: 150.0,
       },
       deductible: {
-        individual: 1500.00,
-        family: 3000.00,
-        individualMet: 500.00,
-        familyMet: 1000.00,
-        individualRemaining: 1000.00,
-        familyRemaining: 2000.00
+        individual: 1500.0,
+        family: 3000.0,
+        individualMet: 500.0,
+        familyMet: 1000.0,
+        individualRemaining: 1000.0,
+        familyRemaining: 2000.0,
       },
       outOfPocketMax: {
-        individual: 6000.00,
-        family: 12000.00,
-        individualMet: 1500.00,
-        familyMet: 3000.00
+        individual: 6000.0,
+        family: 12000.0,
+        individualMet: 1500.0,
+        familyMet: 3000.0,
       },
       benefits: [
         {
-          serviceType: 'Office Visit',
-          coverage: 'Covered',
-          copay: 25.00,
+          serviceType: "Office Visit",
+          coverage: "Covered",
+          copay: 25.0,
           coinsurance: 20,
-          notes: 'Subject to deductible'
-        }
+          notes: "Subject to deductible",
+        },
       ],
       checkedAt: new Date().toISOString(),
-      checkedBy: userId
+      checkedBy: userId,
     };
 
-    console.log('Eligibility check result:', result);
+    console.log("Eligibility check result:", result);
 
     return result;
   }
@@ -534,7 +557,7 @@ export class BillingService {
     insuranceId: string,
     serviceType: string,
     procedureCodes: string[],
-    userId: string
+    userId: string,
   ) {
     // Verify specific benefits for procedures
     const benefits = {
@@ -543,17 +566,17 @@ export class BillingService {
       insuranceId,
       serviceType,
       procedureCodes,
-      verification: procedureCodes.map(code => ({
+      verification: procedureCodes.map((code) => ({
         code,
         covered: true,
-        requiresAuthorization: code === '99205',
-        copay: 25.00,
+        requiresAuthorization: code === "99205",
+        copay: 25.0,
         coinsurance: 20,
-        estimatedAllowed: 150.00,
-        estimatedPatientResponsibility: 55.00
+        estimatedAllowed: 150.0,
+        estimatedPatientResponsibility: 55.0,
       })),
       verifiedAt: new Date().toISOString(),
-      verifiedBy: userId
+      verifiedBy: userId,
     };
 
     return benefits;
@@ -562,27 +585,27 @@ export class BillingService {
   async getEligibilityHistory(patientId: string) {
     return [
       {
-        id: 'ELG001',
-        checkDate: '2025-12-01',
-        status: 'active',
-        insuranceName: 'Blue Cross Blue Shield',
-        checkedBy: 'front_desk_user'
-      }
+        id: "ELG001",
+        checkDate: "2025-12-01",
+        status: "active",
+        insuranceName: "Blue Cross Blue Shield",
+        checkedBy: "front_desk_user",
+      },
     ];
   }
 
   async getEligibilityById(id: string) {
     return {
       id,
-      patientId: 'PAT001',
-      insuranceId: 'INS001',
-      status: 'active',
-      effectiveDate: '2025-01-01',
+      patientId: "PAT001",
+      insuranceId: "INS001",
+      status: "active",
+      effectiveDate: "2025-01-01",
       deductible: {
-        individual: 1500.00,
-        individualMet: 500.00,
-        individualRemaining: 1000.00
-      }
+        individual: 1500.0,
+        individualMet: 500.0,
+        individualRemaining: 1000.0,
+      },
     };
   }
 
@@ -590,7 +613,7 @@ export class BillingService {
     const results = {
       successful: [] as any[],
       failed: [] as any[],
-      totalChecked: 0
+      totalChecked: 0,
     };
 
     for (const patient of patients) {
@@ -599,14 +622,14 @@ export class BillingService {
           patient.patientId,
           patient.insuranceId,
           patient.serviceDate,
-          userId
+          userId,
         );
         results.successful.push(result);
         results.totalChecked++;
       } catch (error) {
         results.failed.push({
           patient,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
@@ -618,14 +641,14 @@ export class BillingService {
     patientId: string,
     insuranceId: string,
     procedureCodes: string[],
-    charges: number[]
+    charges: number[],
   ) {
     // Calculate based on eligibility data
     const totalCharges = charges.reduce((sum, charge) => sum + charge, 0);
     const allowedAmount = totalCharges * 0.8; // 80% allowed
-    const deductibleApplied = 500.00;
+    const deductibleApplied = 500.0;
     const coinsurance = (allowedAmount - deductibleApplied) * 0.2; // 20%
-    const copay = 25.00;
+    const copay = 25.0;
 
     const estimate = {
       patientId,
@@ -642,8 +665,8 @@ export class BillingService {
         code: procedureCodes[index],
         charge,
         allowed: charge * 0.8,
-        patientPortion: charge * 0.3
-      }))
+        patientPortion: charge * 0.3,
+      })),
     };
 
     return estimate;
@@ -652,15 +675,15 @@ export class BillingService {
   async getPayerCoveredServices(payerId: string) {
     return [
       {
-        serviceType: 'Office Visit',
-        codes: ['99213', '99214', '99215'],
-        requiresAuth: false
+        serviceType: "Office Visit",
+        codes: ["99213", "99214", "99215"],
+        requiresAuth: false,
       },
       {
-        serviceType: 'Surgery',
-        codes: ['10120', '10121'],
-        requiresAuth: true
-      }
+        serviceType: "Surgery",
+        codes: ["10120", "10121"],
+        requiresAuth: true,
+      },
     ];
   }
 
@@ -670,8 +693,8 @@ export class BillingService {
     const refreshed = await this.checkEligibility(
       existing.patientId,
       existing.insuranceId,
-      new Date().toISOString().split('T')[0],
-      userId
+      new Date().toISOString().split("T")[0],
+      userId,
     );
 
     return refreshed;
@@ -685,10 +708,10 @@ export class BillingService {
       unknownEligibility: 10,
       averageDeductibleMet: 35.5,
       byPayer: {
-        'Blue Cross': { count: 200, active: 190 },
-        'Aetna': { count: 150, active: 145 },
-        'UnitedHealth': { count: 150, active: 115 }
-      }
+        "Blue Cross": { count: 200, active: 190 },
+        Aetna: { count: 150, active: 145 },
+        UnitedHealth: { count: 150, active: 115 },
+      },
     };
   }
 
@@ -698,73 +721,83 @@ export class BillingService {
     // Search CPT code database
     return [
       {
-        code: '99213',
-        description: 'Office or other outpatient visit, established patient, level 3',
-        category: 'E/M',
+        code: "99213",
+        description:
+          "Office or other outpatient visit, established patient, level 3",
+        category: "E/M",
         rvu: 1.3,
-        medicare_fee: 110.00
+        medicare_fee: 110.0,
       },
       {
-        code: '99214',
-        description: 'Office or other outpatient visit, established patient, level 4',
-        category: 'E/M',
+        code: "99214",
+        description:
+          "Office or other outpatient visit, established patient, level 4",
+        category: "E/M",
         rvu: 1.92,
-        medicare_fee: 165.00
-      }
-    ].filter(code =>
-      code.code.includes(query) ||
-      code.description.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, limit);
+        medicare_fee: 165.0,
+      },
+    ]
+      .filter(
+        (code) =>
+          code.code.includes(query) ||
+          code.description.toLowerCase().includes(query.toLowerCase()),
+      )
+      .slice(0, limit);
   }
 
   async getCPTCodeDetails(code: string) {
     return {
       code,
-      description: 'Office or other outpatient visit, established patient, level 3',
-      category: 'Evaluation and Management',
+      description:
+        "Office or other outpatient visit, established patient, level 3",
+      category: "Evaluation and Management",
       rvu: 1.3,
-      medicarePayment: 110.00,
-      modifiers: ['25', '59'],
-      bundledCodes: ['99211', '99212'],
-      excludedCodes: ['99215'],
+      medicarePayment: 110.0,
+      modifiers: ["25", "59"],
+      bundledCodes: ["99211", "99212"],
+      excludedCodes: ["99215"],
       requiresDocumentation: true,
       timeBased: false,
-      globalPeriod: 0
+      globalPeriod: 0,
     };
   }
 
   async searchICDCodes(query: string, version: string, limit: number) {
     return [
       {
-        code: 'I10',
-        description: 'Essential (primary) hypertension',
-        version: 'ICD-10',
-        category: 'Circulatory'
+        code: "I10",
+        description: "Essential (primary) hypertension",
+        version: "ICD-10",
+        category: "Circulatory",
       },
       {
-        code: 'E11.9',
-        description: 'Type 2 diabetes mellitus without complications',
-        version: 'ICD-10',
-        category: 'Endocrine'
-      }
-    ].filter(code =>
-      code.code.includes(query) ||
-      code.description.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, limit);
+        code: "E11.9",
+        description: "Type 2 diabetes mellitus without complications",
+        version: "ICD-10",
+        category: "Endocrine",
+      },
+    ]
+      .filter(
+        (code) =>
+          code.code.includes(query) ||
+          code.description.toLowerCase().includes(query.toLowerCase()),
+      )
+      .slice(0, limit);
   }
 
   async getICDCodeDetails(code: string) {
     return {
       code,
-      description: 'Essential (primary) hypertension',
-      version: 'ICD-10',
-      category: 'Diseases of the circulatory system',
-      subCategory: 'Hypertensive diseases',
+      description: "Essential (primary) hypertension",
+      version: "ICD-10",
+      category: "Diseases of the circulatory system",
+      subCategory: "Hypertensive diseases",
       billable: true,
       validForMedicare: true,
-      relatedCodes: ['I11', 'I12', 'I13'],
-      excludes: ['I15'],
-      notes: 'Use additional code to identify exposure to environmental tobacco smoke'
+      relatedCodes: ["I11", "I12", "I13"],
+      excludes: ["I15"],
+      notes:
+        "Use additional code to identify exposure to environmental tobacco smoke",
     };
   }
 
@@ -780,57 +813,78 @@ export class BillingService {
       ncciEdits: [] as any[],
       medicalNecessity: {
         supported: true,
-        reasons: ['Diagnosis supports procedure']
-      }
+        reasons: ["Diagnosis supports procedure"],
+      },
     };
 
     // Example validation
-    if (cptCodes.includes('99215') && !icdCodes.length) {
+    if (cptCodes.includes("99215") && !icdCodes.length) {
       validation.isValid = false;
-      validation.errors.push('High-level E/M code requires diagnosis codes');
+      validation.errors.push("High-level E/M code requires diagnosis codes");
     }
 
     return validation;
   }
 
-  async suggestCodes(encounterData: any, diagnosis: string, procedures: string[]) {
+  async suggestCodes(
+    encounterData: any,
+    diagnosis: string,
+    procedures: string[],
+  ) {
     // AI/ML-based code suggestion
     return {
       cptSuggestions: [
-        { code: '99213', confidence: 0.95, reason: 'Based on encounter complexity' },
-        { code: '99214', confidence: 0.75, reason: 'Alternative if more complex' }
+        {
+          code: "99213",
+          confidence: 0.95,
+          reason: "Based on encounter complexity",
+        },
+        {
+          code: "99214",
+          confidence: 0.75,
+          reason: "Alternative if more complex",
+        },
       ],
       icdSuggestions: [
-        { code: 'I10', confidence: 0.98, reason: 'Matches diagnosis: hypertension' },
-        { code: 'E11.9', confidence: 0.85, reason: 'Common comorbidity mentioned' }
+        {
+          code: "I10",
+          confidence: 0.98,
+          reason: "Matches diagnosis: hypertension",
+        },
+        {
+          code: "E11.9",
+          confidence: 0.85,
+          reason: "Common comorbidity mentioned",
+        },
       ],
-      modifiers: [
-        { code: '25', reason: 'Separate E/M service' }
-      ]
+      modifiers: [{ code: "25", reason: "Separate E/M service" }],
     };
   }
 
   async getCPTModifiers() {
     return [
-      { code: '22', description: 'Increased Procedural Services' },
-      { code: '25', description: 'Significant, Separately Identifiable E/M Service' },
-      { code: '26', description: 'Professional Component' },
-      { code: '50', description: 'Bilateral Procedure' },
-      { code: '51', description: 'Multiple Procedures' },
-      { code: '59', description: 'Distinct Procedural Service' },
-      { code: 'TC', description: 'Technical Component' }
+      { code: "22", description: "Increased Procedural Services" },
+      {
+        code: "25",
+        description: "Significant, Separately Identifiable E/M Service",
+      },
+      { code: "26", description: "Professional Component" },
+      { code: "50", description: "Bilateral Procedure" },
+      { code: "51", description: "Multiple Procedures" },
+      { code: "59", description: "Distinct Procedural Service" },
+      { code: "TC", description: "Technical Component" },
     ];
   }
 
   async getFeeSchedule(payerId: string, codes: string) {
-    const codeList = codes ? codes.split(',') : [];
+    const codeList = codes ? codes.split(",") : [];
 
-    return codeList.map(code => ({
+    return codeList.map((code) => ({
       code,
       payer: payerId,
-      allowedAmount: 150.00,
-      effectiveDate: '2025-01-01',
-      expirationDate: '2025-12-31'
+      allowedAmount: 150.0,
+      effectiveDate: "2025-01-01",
+      expirationDate: "2025-12-31",
     }));
   }
 
@@ -842,11 +896,11 @@ export class BillingService {
       targetVersion: toVersion,
       mappedCodes: [
         {
-          code: 'I10',
-          description: 'Essential (primary) hypertension',
-          mappingType: 'exact'
-        }
-      ]
+          code: "I10",
+          description: "Essential (primary) hypertension",
+          mappingType: "exact",
+        },
+      ],
     };
   }
 
@@ -858,7 +912,7 @@ export class BillingService {
       hasEdit: false,
       editType: null,
       modifierAllowed: false,
-      effectiveDate: '2025-01-01'
+      effectiveDate: "2025-01-01",
     };
   }
 
@@ -871,28 +925,26 @@ export class BillingService {
       score: 95,
       findings: [
         {
-          severity: 'info',
-          category: 'documentation',
-          message: 'All required documentation present'
-        }
+          severity: "info",
+          category: "documentation",
+          message: "All required documentation present",
+        },
       ],
-      recommendations: [
-        'Consider adding modifier 25 for clarity'
-      ],
-      complianceStatus: 'compliant'
+      recommendations: ["Consider adding modifier 25 for clarity"],
+      complianceStatus: "compliant",
     };
   }
 
   async getCodeBundles(specialty: string, type: string) {
     return [
       {
-        id: 'BUNDLE001',
-        name: 'Annual Physical - Adult',
-        specialty: 'Family Medicine',
-        cptCodes: ['99395', '36415', '85025'],
-        icdCodes: ['Z00.00'],
-        totalCharge: 250.00
-      }
+        id: "BUNDLE001",
+        name: "Annual Physical - Adult",
+        specialty: "Family Medicine",
+        cptCodes: ["99395", "36415", "85025"],
+        icdCodes: ["Z00.00"],
+        totalCharge: 250.0,
+      },
     ];
   }
 }

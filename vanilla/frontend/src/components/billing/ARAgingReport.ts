@@ -1,6 +1,8 @@
 export class ARAgingReport {
   private container: HTMLElement;
-  constructor(container: HTMLElement) { this.container = container; }
+  constructor(container: HTMLElement) {
+    this.container = container;
+  }
   render(data: any): void {
     this.container.innerHTML = `
       <div class="ar-aging-report">

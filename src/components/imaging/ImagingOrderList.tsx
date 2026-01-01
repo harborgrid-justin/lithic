@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { imagingService, ImagingOrder } from '@/services/imaging.service';
+import { useState, useEffect } from "react";
+import { imagingService, ImagingOrder } from "@/services/imaging.service";
 
 interface ImagingOrderListProps {
   patientId?: string;
@@ -16,9 +16,9 @@ export default function ImagingOrderList({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
-    status: '',
-    modality: '',
-    priority: '',
+    status: "",
+    modality: "",
+    priority: "",
   });
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function ImagingOrderList({
       });
       setOrders(data);
     } catch (err) {
-      setError('Failed to load orders');
+      setError("Failed to load orders");
       console.error(err);
     } finally {
       setLoading(false);
@@ -44,24 +44,24 @@ export default function ImagingOrderList({
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      PENDING: 'bg-yellow-100 text-yellow-800',
-      SCHEDULED: 'bg-blue-100 text-blue-800',
-      IN_PROGRESS: 'bg-purple-100 text-purple-800',
-      COMPLETED: 'bg-green-100 text-green-800',
-      CANCELLED: 'bg-red-100 text-red-800',
-      REPORTED: 'bg-emerald-100 text-emerald-800',
+      PENDING: "bg-yellow-100 text-yellow-800",
+      SCHEDULED: "bg-blue-100 text-blue-800",
+      IN_PROGRESS: "bg-purple-100 text-purple-800",
+      COMPLETED: "bg-green-100 text-green-800",
+      CANCELLED: "bg-red-100 text-red-800",
+      REPORTED: "bg-emerald-100 text-emerald-800",
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   const getPriorityColor = (priority: string) => {
     const colors: { [key: string]: string } = {
-      ROUTINE: 'text-gray-600',
-      URGENT: 'text-orange-600',
-      STAT: 'text-red-600',
-      EMERGENCY: 'text-red-700 font-bold',
+      ROUTINE: "text-gray-600",
+      URGENT: "text-orange-600",
+      STAT: "text-red-600",
+      EMERGENCY: "text-red-700 font-bold",
     };
-    return colors[priority] || 'text-gray-600';
+    return colors[priority] || "text-gray-600";
   };
 
   if (loading) {
@@ -91,7 +91,9 @@ export default function ImagingOrderList({
             </label>
             <select
               value={filters.status}
-              onChange={e => setFilters({ ...filters, status: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Statuses</option>
@@ -109,7 +111,9 @@ export default function ImagingOrderList({
             </label>
             <select
               value={filters.modality}
-              onChange={e => setFilters({ ...filters, modality: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, modality: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Modalities</option>
@@ -128,7 +132,9 @@ export default function ImagingOrderList({
             </label>
             <select
               value={filters.priority}
-              onChange={e => setFilters({ ...filters, priority: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, priority: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Priorities</option>
@@ -179,7 +185,7 @@ export default function ImagingOrderList({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {orders.map(order => (
+                {orders.map((order) => (
                   <tr
                     key={order.id}
                     className="hover:bg-gray-50 cursor-pointer"
@@ -197,30 +203,38 @@ export default function ImagingOrderList({
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{order.procedure}</div>
-                      <div className="text-sm text-gray-500">{order.bodyPart}</div>
+                      <div className="text-sm text-gray-900">
+                        {order.procedure}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {order.bodyPart}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {order.modality}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`text-sm font-medium ${getPriorityColor(order.priority)}`}>
+                      <span
+                        className={`text-sm font-medium ${getPriorityColor(order.priority)}`}
+                      >
                         {order.priority}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`}>
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`}
+                      >
                         {order.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {order.scheduledDate
                         ? new Date(order.scheduledDate).toLocaleString()
-                        : '-'}
+                        : "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           onSelectOrder?.(order);
                         }}
@@ -232,7 +246,7 @@ export default function ImagingOrderList({
                         <a
                           href={`/imaging/studies/${order.studyInstanceUID}`}
                           className="text-green-600 hover:text-green-900"
-                          onClick={e => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           Study
                         </a>

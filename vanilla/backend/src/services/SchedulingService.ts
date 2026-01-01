@@ -5,11 +5,14 @@
  * Handles core scheduling business logic, validation, and data processing.
  */
 
-import type { Appointment } from '../routes/scheduling/appointments';
-import type { Provider } from '../routes/scheduling/providers';
-import type { Resource, ResourceBooking } from '../routes/scheduling/resources';
-import type { WaitlistEntry } from '../routes/scheduling/waitlist';
-import type { RecurringAppointment, RecurrencePattern } from '../routes/scheduling/recurring';
+import type { Appointment } from "../routes/scheduling/appointments";
+import type { Provider } from "../routes/scheduling/providers";
+import type { Resource, ResourceBooking } from "../routes/scheduling/resources";
+import type { WaitlistEntry } from "../routes/scheduling/waitlist";
+import type {
+  RecurringAppointment,
+  RecurrencePattern,
+} from "../routes/scheduling/recurring";
 
 export class SchedulingService {
   /**
@@ -23,25 +26,25 @@ export class SchedulingService {
 
     // Required fields
     if (!appointmentData.patientId) {
-      errors.push('Patient ID is required');
+      errors.push("Patient ID is required");
     }
     if (!appointmentData.providerId) {
-      errors.push('Provider ID is required');
+      errors.push("Provider ID is required");
     }
     if (!appointmentData.startTime) {
-      errors.push('Start time is required');
+      errors.push("Start time is required");
     }
     if (!appointmentData.duration) {
-      errors.push('Duration is required');
+      errors.push("Duration is required");
     }
 
     // Validation rules
     if (appointmentData.duration && appointmentData.duration < 5) {
-      errors.push('Duration must be at least 5 minutes');
+      errors.push("Duration must be at least 5 minutes");
     }
 
     if (appointmentData.duration && appointmentData.duration > 480) {
-      errors.push('Duration cannot exceed 8 hours');
+      errors.push("Duration cannot exceed 8 hours");
     }
 
     if (appointmentData.startTime) {
@@ -49,7 +52,7 @@ export class SchedulingService {
       const now = new Date();
 
       if (startTime < now) {
-        errors.push('Cannot schedule appointments in the past');
+        errors.push("Cannot schedule appointments in the past");
       }
     }
 
@@ -57,13 +60,13 @@ export class SchedulingService {
     if (appointmentData.startTime) {
       const hour = new Date(appointmentData.startTime).getHours();
       if (hour < 6 || hour > 22) {
-        errors.push('Appointments must be scheduled between 6 AM and 10 PM');
+        errors.push("Appointments must be scheduled between 6 AM and 10 PM");
       }
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -83,7 +86,7 @@ export class SchedulingService {
     start1: Date,
     end1: Date,
     start2: Date,
-    end2: Date
+    end2: Date,
   ): boolean {
     return start1 < end2 && end1 > start2;
   }
@@ -95,7 +98,7 @@ export class SchedulingService {
     providerId: string,
     startTime: Date,
     endTime: Date,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<any[]> {
     const conflicts: any[] = [];
 
@@ -104,14 +107,14 @@ export class SchedulingService {
 
     for (const apt of existingAppointments) {
       if (apt.id === excludeAppointmentId) continue;
-      if (apt.status === 'cancelled') continue;
+      if (apt.status === "cancelled") continue;
 
       if (this.hasTimeOverlap(startTime, endTime, apt.startTime, apt.endTime)) {
         conflicts.push({
-          type: 'double-booking',
+          type: "double-booking",
           appointmentId: apt.id,
           message: `Provider has another appointment at this time`,
-          conflictingAppointment: apt
+          conflictingAppointment: apt,
         });
       }
     }
@@ -124,7 +127,7 @@ export class SchedulingService {
    */
   static calculateBufferTime(
     previousAppointment: Appointment,
-    nextAppointment: Appointment
+    nextAppointment: Appointment,
   ): number {
     const prevEnd = new Date(previousAppointment.endTime);
     const nextStart = new Date(nextAppointment.startTime);
@@ -144,7 +147,7 @@ export class SchedulingService {
       preferredDays?: number[];
       preferredTimeSlots?: string[];
       avoidBackToBack?: boolean;
-    }
+    },
   ): Promise<any[]> {
     const recommendedSlots: any[] = [];
 
@@ -164,7 +167,7 @@ export class SchedulingService {
    */
   static async processReminders(
     appointments: Appointment[],
-    reminderTiming: { hours?: number; days?: number }
+    reminderTiming: { hours?: number; days?: number },
   ): Promise<{
     sent: number;
     failed: number;
@@ -173,14 +176,14 @@ export class SchedulingService {
     const results = {
       sent: 0,
       failed: 0,
-      skipped: 0
+      skipped: 0,
     };
 
     for (const appointment of appointments) {
       try {
         // Check if reminder already sent
         const alreadySent = appointment.reminders.some(
-          r => r.type === 'email' && r.status === 'sent'
+          (r) => r.type === "email" && r.status === "sent",
         );
 
         if (alreadySent) {
@@ -206,13 +209,14 @@ export class SchedulingService {
 
     // Factors that increase no-show probability:
     // - Not confirmed: +20%
-    if (appointment.status !== 'confirmed') {
+    if (appointment.status !== "confirmed") {
       probability += 0.2;
     }
 
     // - More than 7 days away: +10%
     const daysUntil = Math.floor(
-      (new Date(appointment.startTime).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      (new Date(appointment.startTime).getTime() - Date.now()) /
+        (1000 * 60 * 60 * 24),
     );
     if (daysUntil > 7) {
       probability += 0.1;
@@ -240,11 +244,12 @@ export class SchedulingService {
     // Sort appointments to minimize gaps and optimize flow
     return appointments.sort((a, b) => {
       // Primary: Sort by start time
-      const timeCompare = new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+      const timeCompare =
+        new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
       if (timeCompare !== 0) return timeCompare;
 
       // Secondary: Urgent appointments first
-      const urgentTypes = ['urgent', 'emergency'];
+      const urgentTypes = ["urgent", "emergency"];
       const aIsUrgent = urgentTypes.includes(a.appointmentType);
       const bIsUrgent = urgentTypes.includes(b.appointmentType);
       if (aIsUrgent && !bIsUrgent) return -1;
@@ -259,19 +264,19 @@ export class SchedulingService {
    */
   static generateAppointmentSummary(appointment: Appointment): string {
     const date = new Date(appointment.startTime);
-    const time = date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    const time = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
-    const dateStr = date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
+    const dateStr = date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
     });
 
-    return `${appointment.appointmentType} appointment with ${appointment.providerName} on ${dateStr} at ${time}. Location: ${appointment.location.facilityName}${appointment.location.roomNumber ? ', Room ' + appointment.location.roomNumber : ''}.`;
+    return `${appointment.appointmentType} appointment with ${appointment.providerName} on ${dateStr} at ${time}. Location: ${appointment.location.facilityName}${appointment.location.roomNumber ? ", Room " + appointment.location.roomNumber : ""}.`;
   }
 
   /**
@@ -286,7 +291,7 @@ export class SchedulingService {
       totalDuration: 0,
       noShowRate: 0,
       cancellationRate: 0,
-      confirmationRate: 0
+      confirmationRate: 0,
     };
 
     let totalDuration = 0;
@@ -298,7 +303,8 @@ export class SchedulingService {
       statusCounts[apt.status] = (statusCounts[apt.status] || 0) + 1;
 
       // Count by type
-      typeCounts[apt.appointmentType] = (typeCounts[apt.appointmentType] || 0) + 1;
+      typeCounts[apt.appointmentType] =
+        (typeCounts[apt.appointmentType] || 0) + 1;
 
       // Sum duration
       totalDuration += apt.duration;
@@ -307,12 +313,15 @@ export class SchedulingService {
     stats.byStatus = statusCounts;
     stats.byType = typeCounts;
     stats.totalDuration = totalDuration;
-    stats.averageDuration = appointments.length > 0 ? totalDuration / appointments.length : 0;
+    stats.averageDuration =
+      appointments.length > 0 ? totalDuration / appointments.length : 0;
 
     if (appointments.length > 0) {
-      stats.noShowRate = (statusCounts['no-show'] || 0) / appointments.length;
-      stats.cancellationRate = (statusCounts['cancelled'] || 0) / appointments.length;
-      stats.confirmationRate = (statusCounts['confirmed'] || 0) / appointments.length;
+      stats.noShowRate = (statusCounts["no-show"] || 0) / appointments.length;
+      stats.cancellationRate =
+        (statusCounts["cancelled"] || 0) / appointments.length;
+      stats.confirmationRate =
+        (statusCounts["confirmed"] || 0) / appointments.length;
     }
 
     return stats;
@@ -328,37 +337,40 @@ export class SchedulingService {
     const errors: string[] = [];
 
     if (!pattern.frequency) {
-      errors.push('Frequency is required');
+      errors.push("Frequency is required");
     }
 
     if (!pattern.interval || pattern.interval < 1) {
-      errors.push('Interval must be at least 1');
+      errors.push("Interval must be at least 1");
     }
 
     if (!pattern.count && !pattern.endDate) {
-      errors.push('Either count or end date must be specified');
+      errors.push("Either count or end date must be specified");
     }
 
     if (pattern.count && pattern.count < 1) {
-      errors.push('Count must be at least 1');
+      errors.push("Count must be at least 1");
     }
 
     if (pattern.count && pattern.count > 100) {
-      errors.push('Count cannot exceed 100 occurrences');
+      errors.push("Count cannot exceed 100 occurrences");
     }
 
-    if (pattern.frequency === 'weekly' && pattern.daysOfWeek) {
-      if (!Array.isArray(pattern.daysOfWeek) || pattern.daysOfWeek.length === 0) {
-        errors.push('Days of week must be specified for weekly recurrence');
+    if (pattern.frequency === "weekly" && pattern.daysOfWeek) {
+      if (
+        !Array.isArray(pattern.daysOfWeek) ||
+        pattern.daysOfWeek.length === 0
+      ) {
+        errors.push("Days of week must be specified for weekly recurrence");
       }
-      if (pattern.daysOfWeek.some(d => d < 0 || d > 6)) {
-        errors.push('Days of week must be between 0 (Sunday) and 6 (Saturday)');
+      if (pattern.daysOfWeek.some((d) => d < 0 || d > 6)) {
+        errors.push("Days of week must be between 0 (Sunday) and 6 (Saturday)");
       }
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -367,21 +379,21 @@ export class SchedulingService {
    */
   static calculateNextRecurrence(
     lastDate: Date,
-    pattern: RecurrencePattern
+    pattern: RecurrencePattern,
   ): Date | null {
     const nextDate = new Date(lastDate);
 
     switch (pattern.frequency) {
-      case 'daily':
+      case "daily":
         nextDate.setDate(nextDate.getDate() + pattern.interval);
         break;
-      case 'weekly':
-        nextDate.setDate(nextDate.getDate() + (pattern.interval * 7));
+      case "weekly":
+        nextDate.setDate(nextDate.getDate() + pattern.interval * 7);
         break;
-      case 'monthly':
+      case "monthly":
         nextDate.setMonth(nextDate.getMonth() + pattern.interval);
         break;
-      case 'yearly':
+      case "yearly":
         nextDate.setFullYear(nextDate.getFullYear() + pattern.interval);
         break;
       default:
@@ -421,25 +433,25 @@ export class SchedulingService {
     const hoursUntil = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     // Check various conditions
-    if (appointment.status !== 'confirmed' && hoursUntil < 48) {
-      reasons.push('Not confirmed and less than 48 hours away');
+    if (appointment.status !== "confirmed" && hoursUntil < 48) {
+      reasons.push("Not confirmed and less than 48 hours away");
     }
 
     if (!appointment.insuranceVerified && hoursUntil < 24) {
-      reasons.push('Insurance not verified');
+      reasons.push("Insurance not verified");
     }
 
     if (appointment.reminders.length === 0 && hoursUntil < 24) {
-      reasons.push('No reminders sent');
+      reasons.push("No reminders sent");
     }
 
     if (appointment.telehealth?.enabled && !appointment.telehealth.meetingUrl) {
-      reasons.push('Telehealth enabled but no meeting URL');
+      reasons.push("Telehealth enabled but no meeting URL");
     }
 
     return {
       needs: reasons.length > 0,
-      reasons
+      reasons,
     };
   }
 }

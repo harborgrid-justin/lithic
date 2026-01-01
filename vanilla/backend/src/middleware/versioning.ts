@@ -4,11 +4,11 @@
  * Handle API versioning through headers, URL paths, and query parameters
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger';
+import { Request, Response, NextFunction } from "express";
+import { logger } from "../utils/logger";
 
 // API Version
-export type ApiVersion = 'v1' | 'v2';
+export type ApiVersion = "v1" | "v2";
 
 // Version Configuration
 interface VersionConfig {
@@ -18,8 +18,8 @@ interface VersionConfig {
 }
 
 const versionConfig: VersionConfig = {
-  current: 'v1',
-  supported: ['v1'],
+  current: "v1",
+  supported: ["v1"],
   deprecated: [],
 };
 
@@ -36,14 +36,16 @@ export function extractApiVersion(req: Request): ApiVersion | null {
   // 2. Check Accept header (application/vnd.lithic.v1+json)
   const acceptHeader = req.headers.accept;
   if (acceptHeader) {
-    const acceptMatch = acceptHeader.match(/application\/vnd\.lithic\.(v\d+)\+json/);
+    const acceptMatch = acceptHeader.match(
+      /application\/vnd\.lithic\.(v\d+)\+json/,
+    );
     if (acceptMatch) {
       return acceptMatch[1] as ApiVersion;
     }
   }
 
   // 3. Check custom header (X-API-Version)
-  const versionHeader = req.headers['x-api-version'];
+  const versionHeader = req.headers["x-api-version"];
   if (versionHeader) {
     return versionHeader as ApiVersion;
   }
@@ -60,7 +62,11 @@ export function extractApiVersion(req: Request): ApiVersion | null {
 /**
  * API versioning middleware
  */
-export function apiVersioning(req: Request, res: Response, next: NextFunction): void {
+export function apiVersioning(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const version = extractApiVersion(req);
 
   // Set default version if not specified
@@ -78,15 +84,18 @@ export function apiVersioning(req: Request, res: Response, next: NextFunction): 
   }
 
   // Add version headers to response
-  res.setHeader('X-API-Version', req.apiVersion);
-  res.setHeader('X-API-Supported-Versions', versionConfig.supported.join(', '));
+  res.setHeader("X-API-Version", req.apiVersion);
+  res.setHeader("X-API-Supported-Versions", versionConfig.supported.join(", "));
 
   // Warn about deprecated versions
   if (versionConfig.deprecated.includes(req.apiVersion)) {
-    res.setHeader('X-API-Deprecated', 'true');
-    res.setHeader('X-API-Deprecation-Info', `API version ${req.apiVersion} is deprecated. Please upgrade to ${versionConfig.current}`);
+    res.setHeader("X-API-Deprecated", "true");
+    res.setHeader(
+      "X-API-Deprecation-Info",
+      `API version ${req.apiVersion} is deprecated. Please upgrade to ${versionConfig.current}`,
+    );
 
-    logger.warn('Deprecated API version used', {
+    logger.warn("Deprecated API version used", {
       version: req.apiVersion,
       path: req.path,
       ip: req.ip,
@@ -106,7 +115,7 @@ export function requireVersion(...versions: ApiVersion[]) {
     if (!version || !versions.includes(version)) {
       res.status(400).json({
         success: false,
-        error: `This endpoint requires API version: ${versions.join(' or ')}`,
+        error: `This endpoint requires API version: ${versions.join(" or ")}`,
         currentVersion: version,
         requiredVersions: versions,
       });
@@ -121,19 +130,22 @@ export function requireVersion(...versions: ApiVersion[]) {
  * Deprecate API version
  */
 export function deprecateVersion(version: ApiVersion, sunsetDate?: string) {
-  return (req: Request, res: Response, next: NextFunction): void {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const currentVersion = req.apiVersion || extractApiVersion(req);
 
     if (currentVersion === version) {
-      res.setHeader('Deprecation', 'true');
+      res.setHeader("Deprecation", "true");
 
       if (sunsetDate) {
-        res.setHeader('Sunset', sunsetDate);
+        res.setHeader("Sunset", sunsetDate);
       }
 
-      res.setHeader('Link', `</api/${versionConfig.current}${req.path}>; rel="successor-version"`);
+      res.setHeader(
+        "Link",
+        `</api/${versionConfig.current}${req.path}>; rel="successor-version"`,
+      );
 
-      logger.warn('Deprecated API endpoint accessed', {
+      logger.warn("Deprecated API endpoint accessed", {
         version,
         path: req.path,
         sunsetDate,
@@ -147,24 +159,28 @@ export function deprecateVersion(version: ApiVersion, sunsetDate?: string) {
 /**
  * Version-specific response wrapper
  */
-export function versionedResponse(req: Request, data: any, metadata?: any): any {
-  const version = req.apiVersion || 'v1';
+export function versionedResponse(
+  req: Request,
+  data: any,
+  metadata?: any,
+): any {
+  const version = req.apiVersion || "v1";
 
   switch (version) {
-    case 'v1':
+    case "v1":
       return {
         success: true,
         data,
         ...metadata,
       };
 
-    case 'v2':
+    case "v2":
       // Different response format for v2
       return {
-        status: 'success',
+        status: "success",
         result: data,
         meta: metadata,
-        version: 'v2',
+        version: "v2",
       };
 
     default:
@@ -203,7 +219,7 @@ export function getDeprecatedVersions(): ApiVersion[] {
 export function addSupportedVersion(version: ApiVersion): void {
   if (!versionConfig.supported.includes(version)) {
     versionConfig.supported.push(version);
-    logger.info('API version added to supported list', { version });
+    logger.info("API version added to supported list", { version });
   }
 }
 
@@ -213,7 +229,7 @@ export function addSupportedVersion(version: ApiVersion): void {
 export function markVersionDeprecated(version: ApiVersion): void {
   if (!versionConfig.deprecated.includes(version)) {
     versionConfig.deprecated.push(version);
-    logger.info('API version marked as deprecated', { version });
+    logger.info("API version marked as deprecated", { version });
   }
 }
 
@@ -224,7 +240,7 @@ export function removeSupportedVersion(version: ApiVersion): void {
   const index = versionConfig.supported.indexOf(version);
   if (index > -1) {
     versionConfig.supported.splice(index, 1);
-    logger.info('API version removed from supported list', { version });
+    logger.info("API version removed from supported list", { version });
   }
 }
 

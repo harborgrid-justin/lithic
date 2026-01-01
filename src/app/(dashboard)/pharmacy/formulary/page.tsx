@@ -3,20 +3,23 @@
  * Search and manage drug formulary information
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { pharmacyService, type FormularyEntry } from '@/services/pharmacy.service';
-import { FormularySearch } from '@/components/pharmacy/FormularySearch';
+import { useState } from "react";
+import {
+  pharmacyService,
+  type FormularyEntry,
+} from "@/services/pharmacy.service";
+import { FormularySearch } from "@/components/pharmacy/FormularySearch";
 
 export default function FormularyPage() {
   const [results, setResults] = useState<FormularyEntry[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
-    tier: '',
-    status: '',
-    priorAuthRequired: '',
+    tier: "",
+    status: "",
+    priorAuthRequired: "",
   });
 
   const handleSearch = async () => {
@@ -27,18 +30,20 @@ export default function FormularyPage() {
       const data = await pharmacyService.searchFormulary(searchQuery, {
         tier: filters.tier ? parseInt(filters.tier) : undefined,
         status: filters.status || undefined,
-        priorAuthRequired: filters.priorAuthRequired ? filters.priorAuthRequired === 'true' : undefined,
+        priorAuthRequired: filters.priorAuthRequired
+          ? filters.priorAuthRequired === "true"
+          : undefined,
       });
       setResults(data);
     } catch (error) {
-      console.error('Failed to search formulary:', error);
+      console.error("Failed to search formulary:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -46,8 +51,12 @@ export default function FormularyPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Drug Formulary</h1>
-        <p className="text-gray-600">Search formulary and check coverage information</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Drug Formulary
+        </h1>
+        <p className="text-gray-600">
+          Search formulary and check coverage information
+        </p>
       </div>
 
       {/* Search */}
@@ -70,7 +79,7 @@ export default function FormularyPage() {
               disabled={loading}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
             >
-              {loading ? 'Searching...' : 'Search'}
+              {loading ? "Searching..." : "Search"}
             </button>
           </div>
         </div>
@@ -100,7 +109,9 @@ export default function FormularyPage() {
             </label>
             <select
               value={filters.status}
-              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">All Status</option>
@@ -117,7 +128,9 @@ export default function FormularyPage() {
             </label>
             <select
               value={filters.priorAuthRequired}
-              onChange={(e) => setFilters({ ...filters, priorAuthRequired: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, priorAuthRequired: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">All</option>

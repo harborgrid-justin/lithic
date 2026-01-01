@@ -30,6 +30,6 @@ export class FormularyPage {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -3,7 +3,7 @@
  * Agent 10: Security, Auth & HIPAA Compliance
  */
 
-import type { BaseEntity, User, Role, Permission } from './index';
+import type { BaseEntity, User, Role, Permission } from "./index";
 
 // ============================================================================
 // Authentication Types
@@ -46,10 +46,10 @@ export interface MFAChallenge {
 }
 
 export enum MFAType {
-  TOTP = 'TOTP',
-  SMS = 'SMS',
-  EMAIL = 'EMAIL',
-  BACKUP_CODE = 'BACKUP_CODE',
+  TOTP = "TOTP",
+  SMS = "SMS",
+  EMAIL = "EMAIL",
+  BACKUP_CODE = "BACKUP_CODE",
 }
 
 export interface MFASetup {
@@ -100,10 +100,10 @@ export interface UserSession extends BaseEntity {
 }
 
 export enum SessionStatus {
-  ACTIVE = 'ACTIVE',
-  EXPIRED = 'EXPIRED',
-  REVOKED = 'REVOKED',
-  LOGGED_OUT = 'LOGGED_OUT',
+  ACTIVE = "ACTIVE",
+  EXPIRED = "EXPIRED",
+  REVOKED = "REVOKED",
+  LOGGED_OUT = "LOGGED_OUT",
 }
 
 export interface DeviceInfo {
@@ -114,10 +114,10 @@ export interface DeviceInfo {
 }
 
 export enum DeviceType {
-  DESKTOP = 'DESKTOP',
-  MOBILE = 'MOBILE',
-  TABLET = 'TABLET',
-  UNKNOWN = 'UNKNOWN',
+  DESKTOP = "DESKTOP",
+  MOBILE = "MOBILE",
+  TABLET = "TABLET",
+  UNKNOWN = "UNKNOWN",
 }
 
 export interface LocationInfo {
@@ -198,10 +198,10 @@ export interface BreakGlassAction {
 }
 
 export enum ReviewStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  FLAGGED = 'FLAGGED',
-  VIOLATION = 'VIOLATION',
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  FLAGGED = "FLAGGED",
+  VIOLATION = "VIOLATION",
 }
 
 // ============================================================================
@@ -232,16 +232,16 @@ export interface PasswordHistory extends BaseEntity {
 }
 
 export enum PasswordChangeReason {
-  USER_INITIATED = 'USER_INITIATED',
-  EXPIRED = 'EXPIRED',
-  RESET = 'RESET',
-  ADMIN_FORCED = 'ADMIN_FORCED',
-  SECURITY_BREACH = 'SECURITY_BREACH',
+  USER_INITIATED = "USER_INITIATED",
+  EXPIRED = "EXPIRED",
+  RESET = "RESET",
+  ADMIN_FORCED = "ADMIN_FORCED",
+  SECURITY_BREACH = "SECURITY_BREACH",
 }
 
 export interface PasswordStrength {
   score: number;
-  strength: 'WEAK' | 'FAIR' | 'GOOD' | 'STRONG' | 'VERY_STRONG';
+  strength: "WEAK" | "FAIR" | "GOOD" | "STRONG" | "VERY_STRONG";
   feedback: string[];
 }
 
@@ -262,13 +262,13 @@ export interface LoginAttempt extends BaseEntity {
 }
 
 export enum LoginFailureReason {
-  INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
-  ACCOUNT_LOCKED = 'ACCOUNT_LOCKED',
-  ACCOUNT_DISABLED = 'ACCOUNT_DISABLED',
-  MFA_FAILED = 'MFA_FAILED',
-  IP_BLOCKED = 'IP_BLOCKED',
-  SESSION_EXPIRED = 'SESSION_EXPIRED',
-  ORGANIZATION_SUSPENDED = 'ORGANIZATION_SUSPENDED',
+  INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
+  ACCOUNT_LOCKED = "ACCOUNT_LOCKED",
+  ACCOUNT_DISABLED = "ACCOUNT_DISABLED",
+  MFA_FAILED = "MFA_FAILED",
+  IP_BLOCKED = "IP_BLOCKED",
+  SESSION_EXPIRED = "SESSION_EXPIRED",
+  ORGANIZATION_SUSPENDED = "ORGANIZATION_SUSPENDED",
 }
 
 // ============================================================================
@@ -292,10 +292,10 @@ export interface APIKey extends BaseEntity {
 }
 
 export enum APIKeyStatus {
-  ACTIVE = 'ACTIVE',
-  EXPIRED = 'EXPIRED',
-  REVOKED = 'REVOKED',
-  SUSPENDED = 'SUSPENDED',
+  ACTIVE = "ACTIVE",
+  EXPIRED = "EXPIRED",
+  REVOKED = "REVOKED",
+  SUSPENDED = "SUSPENDED",
 }
 
 export interface APIKeyUsage extends BaseEntity {
@@ -330,17 +330,17 @@ export interface OAuthClient extends BaseEntity {
 }
 
 export enum OAuthGrantType {
-  AUTHORIZATION_CODE = 'AUTHORIZATION_CODE',
-  CLIENT_CREDENTIALS = 'CLIENT_CREDENTIALS',
-  REFRESH_TOKEN = 'REFRESH_TOKEN',
-  PASSWORD = 'PASSWORD',
+  AUTHORIZATION_CODE = "AUTHORIZATION_CODE",
+  CLIENT_CREDENTIALS = "CLIENT_CREDENTIALS",
+  REFRESH_TOKEN = "REFRESH_TOKEN",
+  PASSWORD = "PASSWORD",
 }
 
 export enum OAuthClientStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  SUSPENDED = 'SUSPENDED',
-  REVOKED = 'REVOKED',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  SUSPENDED = "SUSPENDED",
+  REVOKED = "REVOKED",
 }
 
 export interface OAuthToken extends BaseEntity {
@@ -348,7 +348,7 @@ export interface OAuthToken extends BaseEntity {
   userId: string | null;
   accessToken: string;
   refreshToken: string | null;
-  tokenType: 'Bearer';
+  tokenType: "Bearer";
   scope: string[];
   expiresAt: Date;
   refreshExpiresAt: Date | null;
@@ -356,9 +356,9 @@ export interface OAuthToken extends BaseEntity {
 }
 
 export enum TokenStatus {
-  ACTIVE = 'ACTIVE',
-  EXPIRED = 'EXPIRED',
-  REVOKED = 'REVOKED',
+  ACTIVE = "ACTIVE",
+  EXPIRED = "EXPIRED",
+  REVOKED = "REVOKED",
 }
 
 // ============================================================================
@@ -387,23 +387,23 @@ export interface PHIAccessLog {
 }
 
 export enum PHIAccessType {
-  VIEW = 'VIEW',
-  CREATE = 'CREATE',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  EXPORT = 'EXPORT',
-  PRINT = 'PRINT',
-  SHARE = 'SHARE',
+  VIEW = "VIEW",
+  CREATE = "CREATE",
+  UPDATE = "UPDATE",
+  DELETE = "DELETE",
+  EXPORT = "EXPORT",
+  PRINT = "PRINT",
+  SHARE = "SHARE",
 }
 
 export enum AccessPurpose {
-  TREATMENT = 'TREATMENT',
-  PAYMENT = 'PAYMENT',
-  OPERATIONS = 'OPERATIONS',
-  RESEARCH = 'RESEARCH',
-  PUBLIC_HEALTH = 'PUBLIC_HEALTH',
-  EMERGENCY = 'EMERGENCY',
-  OTHER = 'OTHER',
+  TREATMENT = "TREATMENT",
+  PAYMENT = "PAYMENT",
+  OPERATIONS = "OPERATIONS",
+  RESEARCH = "RESEARCH",
+  PUBLIC_HEALTH = "PUBLIC_HEALTH",
+  EMERGENCY = "EMERGENCY",
+  OTHER = "OTHER",
 }
 
 export interface DataAccessAgreement extends BaseEntity {
@@ -417,11 +417,11 @@ export interface DataAccessAgreement extends BaseEntity {
 }
 
 export enum AgreementType {
-  HIPAA_PRIVACY = 'HIPAA_PRIVACY',
-  HIPAA_SECURITY = 'HIPAA_SECURITY',
-  BAA = 'BAA',
-  CONFIDENTIALITY = 'CONFIDENTIALITY',
-  TERMS_OF_USE = 'TERMS_OF_USE',
+  HIPAA_PRIVACY = "HIPAA_PRIVACY",
+  HIPAA_SECURITY = "HIPAA_SECURITY",
+  BAA = "BAA",
+  CONFIDENTIALITY = "CONFIDENTIALITY",
+  TERMS_OF_USE = "TERMS_OF_USE",
 }
 
 export interface EncryptionKey extends BaseEntity {
@@ -436,17 +436,17 @@ export interface EncryptionKey extends BaseEntity {
 }
 
 export enum EncryptionAlgorithm {
-  AES_256_GCM = 'AES_256_GCM',
-  AES_256_CBC = 'AES_256_CBC',
-  RSA_2048 = 'RSA_2048',
-  RSA_4096 = 'RSA_4096',
+  AES_256_GCM = "AES_256_GCM",
+  AES_256_CBC = "AES_256_CBC",
+  RSA_2048 = "RSA_2048",
+  RSA_4096 = "RSA_4096",
 }
 
 export enum KeyStatus {
-  ACTIVE = 'ACTIVE',
-  ROTATING = 'ROTATING',
-  RETIRED = 'RETIRED',
-  COMPROMISED = 'COMPROMISED',
+  ACTIVE = "ACTIVE",
+  ROTATING = "ROTATING",
+  RETIRED = "RETIRED",
+  COMPROMISED = "COMPROMISED",
 }
 
 // ============================================================================
@@ -471,30 +471,30 @@ export interface SecurityAlert extends BaseEntity {
 }
 
 export enum SecurityAlertType {
-  MULTIPLE_FAILED_LOGINS = 'MULTIPLE_FAILED_LOGINS',
-  UNUSUAL_LOCATION = 'UNUSUAL_LOCATION',
-  UNUSUAL_TIME = 'UNUSUAL_TIME',
-  EXCESSIVE_PHI_ACCESS = 'EXCESSIVE_PHI_ACCESS',
-  UNAUTHORIZED_ACCESS_ATTEMPT = 'UNAUTHORIZED_ACCESS_ATTEMPT',
-  PRIVILEGE_ESCALATION = 'PRIVILEGE_ESCALATION',
-  SUSPICIOUS_API_USAGE = 'SUSPICIOUS_API_USAGE',
-  DATA_EXFILTRATION = 'DATA_EXFILTRATION',
-  POLICY_VIOLATION = 'POLICY_VIOLATION',
+  MULTIPLE_FAILED_LOGINS = "MULTIPLE_FAILED_LOGINS",
+  UNUSUAL_LOCATION = "UNUSUAL_LOCATION",
+  UNUSUAL_TIME = "UNUSUAL_TIME",
+  EXCESSIVE_PHI_ACCESS = "EXCESSIVE_PHI_ACCESS",
+  UNAUTHORIZED_ACCESS_ATTEMPT = "UNAUTHORIZED_ACCESS_ATTEMPT",
+  PRIVILEGE_ESCALATION = "PRIVILEGE_ESCALATION",
+  SUSPICIOUS_API_USAGE = "SUSPICIOUS_API_USAGE",
+  DATA_EXFILTRATION = "DATA_EXFILTRATION",
+  POLICY_VIOLATION = "POLICY_VIOLATION",
 }
 
 export enum AlertSeverity {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL',
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  CRITICAL = "CRITICAL",
 }
 
 export enum SecurityAlertStatus {
-  NEW = 'NEW',
-  INVESTIGATING = 'INVESTIGATING',
-  ACKNOWLEDGED = 'ACKNOWLEDGED',
-  RESOLVED = 'RESOLVED',
-  FALSE_POSITIVE = 'FALSE_POSITIVE',
+  NEW = "NEW",
+  INVESTIGATING = "INVESTIGATING",
+  ACKNOWLEDGED = "ACKNOWLEDGED",
+  RESOLVED = "RESOLVED",
+  FALSE_POSITIVE = "FALSE_POSITIVE",
 }
 
 export interface RateLimitRule {
@@ -505,14 +505,14 @@ export interface RateLimitRule {
   maxRequests: number;
   windowSeconds: number;
   scope: RateLimitScope;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: "ACTIVE" | "INACTIVE";
 }
 
 export enum RateLimitScope {
-  GLOBAL = 'GLOBAL',
-  PER_USER = 'PER_USER',
-  PER_IP = 'PER_IP',
-  PER_API_KEY = 'PER_API_KEY',
+  GLOBAL = "GLOBAL",
+  PER_USER = "PER_USER",
+  PER_IP = "PER_IP",
+  PER_API_KEY = "PER_API_KEY",
 }
 
 export interface RateLimitViolation extends BaseEntity {

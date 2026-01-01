@@ -3,14 +3,20 @@
  * Toast Notification Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface ToastOptions {
   message: string;
-  type?: 'success' | 'error' | 'warning' | 'info';
+  type?: "success" | "error" | "warning" | "info";
   duration?: number;
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top-center"
+    | "bottom-center";
   closeable?: boolean;
 }
 
@@ -27,39 +33,39 @@ export class Toast extends Component<ToastOptions, ToastState> {
   }
 
   protected getClassName(): string {
-    const classes = ['toast'];
-    const type = this.props.type || 'info';
-    const position = this.props.position || 'top-right';
+    const classes = ["toast"];
+    const type = this.props.type || "info";
+    const position = this.props.position || "top-right";
 
     classes.push(`toast-${type}`);
     classes.push(`toast-${position}`);
 
     if (this.state.visible) {
-      classes.push('toast-visible');
+      classes.push("toast-visible");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
     this.element.className = this.getClassName();
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
 
-    const content = createElement('div', {
-      className: 'toast-content',
+    const content = createElement("div", {
+      className: "toast-content",
     });
 
     const icon = this.getIcon();
     if (icon) {
-      const iconEl = createElement('span', {
-        className: 'toast-icon',
+      const iconEl = createElement("span", {
+        className: "toast-icon",
         innerHTML: icon,
       });
       content.appendChild(iconEl);
     }
 
-    const message = createElement('span', {
-      className: 'toast-message',
+    const message = createElement("span", {
+      className: "toast-message",
       textContent: this.props.message,
     });
     content.appendChild(message);
@@ -67,9 +73,9 @@ export class Toast extends Component<ToastOptions, ToastState> {
     this.element.appendChild(content);
 
     if (this.props.closeable !== false) {
-      const closeBtn = createElement('button', {
-        className: 'toast-close',
-        innerHTML: '&times;',
+      const closeBtn = createElement("button", {
+        className: "toast-close",
+        innerHTML: "&times;",
         events: { click: this.close },
       });
       this.element.appendChild(closeBtn);
@@ -78,12 +84,12 @@ export class Toast extends Component<ToastOptions, ToastState> {
 
   private getIcon(): string {
     const icons = {
-      success: '✓',
-      error: '✕',
-      warning: '⚠',
-      info: 'ℹ',
+      success: "✓",
+      error: "✕",
+      warning: "⚠",
+      info: "ℹ",
     };
-    return icons[this.props.type || 'info'];
+    return icons[this.props.type || "info"];
   }
 
   protected onMount(): void {
@@ -118,9 +124,9 @@ class ToastContainer {
 
   private getContainer(): HTMLElement {
     if (!this.container) {
-      this.container = createElement('div', {
-        className: 'toast-container',
-        id: 'toast-container',
+      this.container = createElement("div", {
+        className: "toast-container",
+        id: "toast-container",
       });
       document.body.appendChild(this.container);
     }
@@ -134,19 +140,19 @@ class ToastContainer {
   }
 
   public success(message: string, duration?: number): void {
-    this.show({ message, type: 'success', duration });
+    this.show({ message, type: "success", duration });
   }
 
   public error(message: string, duration?: number): void {
-    this.show({ message, type: 'error', duration });
+    this.show({ message, type: "error", duration });
   }
 
   public warning(message: string, duration?: number): void {
-    this.show({ message, type: 'warning', duration });
+    this.show({ message, type: "warning", duration });
   }
 
   public info(message: string, duration?: number): void {
-    this.show({ message, type: 'info', duration });
+    this.show({ message, type: "info", duration });
   }
 }
 

@@ -3,8 +3,8 @@
  * Sidebar Layout Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface SidebarMenuItem {
   id: string;
@@ -32,25 +32,25 @@ export class Sidebar extends Component<SidebarProps, SidebarState> {
   }
 
   protected getClassName(): string {
-    const classes = ['sidebar'];
+    const classes = ["sidebar"];
 
     if (this.state.collapsed) {
-      classes.push('sidebar-collapsed');
+      classes.push("sidebar-collapsed");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
-    const nav = createElement('nav', {
-      className: 'sidebar-nav',
+    const nav = createElement("nav", {
+      className: "sidebar-nav",
     });
 
-    const menu = createElement('ul', {
-      className: 'sidebar-menu',
+    const menu = createElement("ul", {
+      className: "sidebar-menu",
     });
 
     this.props.items.forEach((item) => {
@@ -63,15 +63,15 @@ export class Sidebar extends Component<SidebarProps, SidebarState> {
   }
 
   private createMenuItem(item: SidebarMenuItem): HTMLElement {
-    const li = createElement('li', {
-      className: `sidebar-menu-item ${item.active ? 'sidebar-menu-item-active' : ''}`,
+    const li = createElement("li", {
+      className: `sidebar-menu-item ${item.active ? "sidebar-menu-item-active" : ""}`,
     });
 
-    const link = createElement('a', {
-      className: 'sidebar-menu-link',
+    const link = createElement("a", {
+      className: "sidebar-menu-link",
       attributes: {
-        href: '#',
-        'data-path': item.path,
+        href: "#",
+        "data-path": item.path,
       },
       events: {
         click: (e) => {
@@ -82,15 +82,15 @@ export class Sidebar extends Component<SidebarProps, SidebarState> {
     });
 
     if (item.icon) {
-      const icon = createElement('span', {
-        className: 'sidebar-menu-icon',
+      const icon = createElement("span", {
+        className: "sidebar-menu-icon",
         innerHTML: item.icon,
       });
       link.appendChild(icon);
     }
 
-    const label = createElement('span', {
-      className: 'sidebar-menu-label',
+    const label = createElement("span", {
+      className: "sidebar-menu-label",
       textContent: item.label,
     });
 

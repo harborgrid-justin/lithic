@@ -1,7 +1,7 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 // Encryption configuration
-const ALGORITHM = 'aes-256-gcm';
+const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 16;
 const SALT_LENGTH = 64;
 const TAG_LENGTH = 16;
@@ -12,7 +12,7 @@ const ITERATIONS = 100000;
 function getMasterKey(): string {
   const key = process.env.ENCRYPTION_KEY || process.env.NEXTAUTH_SECRET;
   if (!key) {
-    throw new Error('ENCRYPTION_KEY or NEXTAUTH_SECRET must be set');
+    throw new Error("ENCRYPTION_KEY or NEXTAUTH_SECRET must be set");
   }
   return key;
 }
@@ -26,7 +26,7 @@ function deriveKey(salt: Buffer): Buffer {
     salt,
     ITERATIONS,
     KEY_LENGTH,
-    'sha512'
+    "sha512",
   );
 }
 
@@ -46,8 +46,8 @@ export function encrypt(plaintext: string): string {
     const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
     // Encrypt data
-    let encrypted = cipher.update(plaintext, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
+    let encrypted = cipher.update(plaintext, "utf8", "hex");
+    encrypted += cipher.final("hex");
 
     // Get authentication tag
     const tag = cipher.getAuthTag();
@@ -57,14 +57,14 @@ export function encrypt(plaintext: string): string {
       salt,
       iv,
       tag,
-      Buffer.from(encrypted, 'hex'),
+      Buffer.from(encrypted, "hex"),
     ]);
 
     // Return base64 encoded result
-    return result.toString('base64');
+    return result.toString("base64");
   } catch (error) {
-    console.error('Encryption error:', error);
-    throw new Error('Failed to encrypt data');
+    console.error("Encryption error:", error);
+    throw new Error("Failed to encrypt data");
   }
 }
 
@@ -74,14 +74,14 @@ export function encrypt(plaintext: string): string {
 export function decrypt(ciphertext: string): string {
   try {
     // Decode base64
-    const buffer = Buffer.from(ciphertext, 'base64');
+    const buffer = Buffer.from(ciphertext, "base64");
 
     // Extract components
     const salt = buffer.slice(0, SALT_LENGTH);
     const iv = buffer.slice(SALT_LENGTH, SALT_LENGTH + IV_LENGTH);
     const tag = buffer.slice(
       SALT_LENGTH + IV_LENGTH,
-      SALT_LENGTH + IV_LENGTH + TAG_LENGTH
+      SALT_LENGTH + IV_LENGTH + TAG_LENGTH,
     );
     const encrypted = buffer.slice(SALT_LENGTH + IV_LENGTH + TAG_LENGTH);
 
@@ -96,10 +96,10 @@ export function decrypt(ciphertext: string): string {
     let decrypted = decipher.update(encrypted);
     decrypted = Buffer.concat([decrypted, decipher.final()]);
 
-    return decrypted.toString('utf8');
+    return decrypted.toString("utf8");
   } catch (error) {
-    console.error('Decryption error:', error);
-    throw new Error('Failed to decrypt data');
+    console.error("Decryption error:", error);
+    throw new Error("Failed to decrypt data");
   }
 }
 
@@ -123,7 +123,7 @@ export function decryptObject<T = any>(ciphertext: string): T {
  * Hash a password using bcrypt-compatible format
  */
 export async function hashPassword(password: string): Promise<string> {
-  const bcrypt = await import('bcryptjs');
+  const bcrypt = await import("bcryptjs");
   return bcrypt.hash(password, 12);
 }
 
@@ -132,9 +132,9 @@ export async function hashPassword(password: string): Promise<string> {
  */
 export async function verifyPassword(
   password: string,
-  hash: string
+  hash: string,
 ): Promise<boolean> {
-  const bcrypt = await import('bcryptjs');
+  const bcrypt = await import("bcryptjs");
   return bcrypt.compare(password, hash);
 }
 
@@ -142,7 +142,7 @@ export async function verifyPassword(
  * Generate a secure random token
  */
 export function generateToken(length: number = 32): string {
-  return crypto.randomBytes(length).toString('hex');
+  return crypto.randomBytes(length).toString("hex");
 }
 
 /**
@@ -150,7 +150,7 @@ export function generateToken(length: number = 32): string {
  */
 export function generateSecureString(
   length: number = 32,
-  charset: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  charset: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
 ): string {
   const randomBytes = crypto.randomBytes(length);
   const result = new Array(length);
@@ -159,14 +159,14 @@ export function generateSecureString(
     result[i] = charset[randomBytes[i] % charset.length];
   }
 
-  return result.join('');
+  return result.join("");
 }
 
 /**
  * Hash data using SHA-256
  */
 export function hash(data: string): string {
-  return crypto.createHash('sha256').update(data).digest('hex');
+  return crypto.createHash("sha256").update(data).digest("hex");
 }
 
 /**
@@ -174,7 +174,7 @@ export function hash(data: string): string {
  */
 export function createHMAC(data: string, secret?: string): string {
   const key = secret || getMasterKey();
-  return crypto.createHmac('sha256', key).update(data).digest('hex');
+  return crypto.createHmac("sha256", key).update(data).digest("hex");
 }
 
 /**
@@ -183,12 +183,12 @@ export function createHMAC(data: string, secret?: string): string {
 export function verifyHMAC(
   data: string,
   signature: string,
-  secret?: string
+  secret?: string,
 ): boolean {
   const expectedSignature = createHMAC(data, secret);
   return crypto.timingSafeEqual(
     Buffer.from(signature),
-    Buffer.from(expectedSignature)
+    Buffer.from(expectedSignature),
   );
 }
 
@@ -198,7 +198,7 @@ export function verifyHMAC(
 export function maskData(
   data: string,
   visibleChars: number = 4,
-  maskChar: string = '*'
+  maskChar: string = "*",
 ): string {
   if (!data || data.length <= visibleChars) {
     return data;
@@ -214,13 +214,13 @@ export function maskData(
  * Mask email address
  */
 export function maskEmail(email: string): string {
-  const [username, domain] = email.split('@');
+  const [username, domain] = email.split("@");
   if (!username || !domain) return email;
 
   const visibleChars = Math.min(3, username.length);
   const maskedUsername =
     username.slice(0, visibleChars) +
-    '*'.repeat(Math.max(0, username.length - visibleChars));
+    "*".repeat(Math.max(0, username.length - visibleChars));
 
   return `${maskedUsername}@${domain}`;
 }
@@ -230,7 +230,7 @@ export function maskEmail(email: string): string {
  */
 export function maskPhone(phone: string): string {
   // Remove all non-numeric characters
-  const cleaned = phone.replace(/\D/g, '');
+  const cleaned = phone.replace(/\D/g, "");
 
   if (cleaned.length === 10) {
     return `(***) ***-${cleaned.slice(-4)}`;
@@ -249,19 +249,22 @@ export function redactPHI(text: string): string {
   let redacted = text;
 
   // Redact SSN (XXX-XX-XXXX)
-  redacted = redacted.replace(/\b\d{3}-\d{2}-\d{4}\b/g, '***-**-****');
+  redacted = redacted.replace(/\b\d{3}-\d{2}-\d{4}\b/g, "***-**-****");
 
   // Redact email addresses
   redacted = redacted.replace(
     /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-    '***@***'
+    "***@***",
   );
 
   // Redact phone numbers
-  redacted = redacted.replace(/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/g, '***-***-****');
+  redacted = redacted.replace(/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/g, "***-***-****");
 
   // Redact credit card numbers
-  redacted = redacted.replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '****-****-****-****');
+  redacted = redacted.replace(
+    /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,
+    "****-****-****-****",
+  );
 
   return redacted;
 }
@@ -279,7 +282,7 @@ export function encryptPHI(data: any): EncryptedPHI {
   return {
     encrypted: encryptObject(data),
     timestamp: Date.now(),
-    version: '1.0',
+    version: "1.0",
   };
 }
 
@@ -294,7 +297,7 @@ export function decryptPHI<T = any>(encryptedPHI: EncryptedPHI): T {
  * Generate encryption key rotation
  */
 export function generateEncryptionKey(): string {
-  return crypto.randomBytes(32).toString('base64');
+  return crypto.randomBytes(32).toString("base64");
 }
 
 /**

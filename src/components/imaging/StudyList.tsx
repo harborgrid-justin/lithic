@@ -1,22 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { imagingService, ImagingStudy } from '@/services/imaging.service';
+import { useState, useEffect } from "react";
+import { imagingService, ImagingStudy } from "@/services/imaging.service";
 
 interface StudyListProps {
   patientId?: string;
   onSelectStudy?: (study: ImagingStudy) => void;
 }
 
-export default function StudyList({ patientId, onSelectStudy }: StudyListProps) {
+export default function StudyList({
+  patientId,
+  onSelectStudy,
+}: StudyListProps) {
   const [studies, setStudies] = useState<ImagingStudy[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
-    modality: '',
-    status: '',
-    startDate: '',
-    endDate: '',
+    modality: "",
+    status: "",
+    startDate: "",
+    endDate: "",
   });
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
       });
       setStudies(data);
     } catch (err) {
-      setError('Failed to load studies');
+      setError("Failed to load studies");
       console.error(err);
     } finally {
       setLoading(false);
@@ -42,21 +45,22 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      ACQUIRED: 'bg-blue-100 text-blue-800',
-      QUALITY_CHECK: 'bg-yellow-100 text-yellow-800',
-      READY_FOR_REVIEW: 'bg-purple-100 text-purple-800',
-      IN_REVIEW: 'bg-orange-100 text-orange-800',
-      REPORTED: 'bg-green-100 text-green-800',
-      FINALIZED: 'bg-emerald-100 text-emerald-800',
+      ACQUIRED: "bg-blue-100 text-blue-800",
+      QUALITY_CHECK: "bg-yellow-100 text-yellow-800",
+      READY_FOR_REVIEW: "bg-purple-100 text-purple-800",
+      IN_REVIEW: "bg-orange-100 text-orange-800",
+      REPORTED: "bg-green-100 text-green-800",
+      FINALIZED: "bg-emerald-100 text-emerald-800",
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+    if (bytes < 1024 * 1024 * 1024)
+      return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
   };
 
   if (loading) {
@@ -86,7 +90,9 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
             </label>
             <select
               value={filters.modality}
-              onChange={e => setFilters({ ...filters, modality: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, modality: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Modalities</option>
@@ -105,7 +111,9 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
             </label>
             <select
               value={filters.status}
-              onChange={e => setFilters({ ...filters, status: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Statuses</option>
@@ -124,7 +132,9 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
             <input
               type="date"
               value={filters.startDate}
-              onChange={e => setFilters({ ...filters, startDate: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, startDate: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -135,7 +145,9 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
             <input
               type="date"
               value={filters.endDate}
-              onChange={e => setFilters({ ...filters, endDate: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, endDate: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -149,7 +161,7 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
             No studies found
           </div>
         ) : (
-          studies.map(study => (
+          studies.map((study) => (
             <div
               key={study.id}
               className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer"
@@ -217,7 +229,9 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
                   <div className="flex justify-between">
                     <span className="font-medium">Date:</span>
                     <span>
-                      {new Date(`${study.studyDate} ${study.studyTime}`).toLocaleDateString()}
+                      {new Date(
+                        `${study.studyDate} ${study.studyTime}`,
+                      ).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -245,7 +259,7 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
                   <a
                     href={`/imaging/viewer?studyId=${study.id}`}
                     className="flex-1 bg-blue-600 text-white text-center px-3 py-2 rounded hover:bg-blue-700 text-sm font-medium"
-                    onClick={e => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     View Images
                   </a>
@@ -253,7 +267,7 @@ export default function StudyList({ patientId, onSelectStudy }: StudyListProps) 
                     <a
                       href={`/imaging/reports/${study.reportId}`}
                       className="flex-1 bg-green-600 text-white text-center px-3 py-2 rounded hover:bg-green-700 text-sm font-medium"
-                      onClick={e => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       View Report
                     </a>

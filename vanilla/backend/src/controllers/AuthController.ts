@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { AuthService } from '../services/AuthService';
-import { UserService } from '../services/UserService';
-import { MFAService } from '../services/MFAService';
-import { SessionService } from '../services/SessionService';
+import { Request, Response } from "express";
+import { AuthService } from "../services/AuthService";
+import { UserService } from "../services/UserService";
+import { MFAService } from "../services/MFAService";
+import { SessionService } from "../services/SessionService";
 
 /**
  * AuthController - Handles authentication endpoints
@@ -17,7 +17,7 @@ export class AuthController {
     authService: AuthService,
     userService: UserService,
     mfaService: MFAService,
-    sessionService: SessionService
+    sessionService: SessionService,
   ) {
     this.authService = authService;
     this.userService = userService;
@@ -36,13 +36,13 @@ export class AuthController {
       if (!email || !password) {
         res.status(400).json({
           success: false,
-          error: 'Email and password are required',
+          error: "Email and password are required",
         });
         return;
       }
 
-      const ipAddress = req.ip || req.connection.remoteAddress || '';
-      const userAgent = req.headers['user-agent'] || '';
+      const ipAddress = req.ip || req.connection.remoteAddress || "";
+      const userAgent = req.headers["user-agent"] || "";
 
       const tokens = await this.authService.login({
         email,
@@ -58,16 +58,16 @@ export class AuthController {
           success: true,
           requireMFA: true,
           tempToken: tokens.tempToken,
-          message: 'MFA verification required',
+          message: "MFA verification required",
         });
         return;
       }
 
       // Set refresh token as HTTP-only cookie
-      res.cookie('refreshToken', tokens.refreshToken, {
+      res.cookie("refreshToken", tokens.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -79,7 +79,7 @@ export class AuthController {
     } catch (error: any) {
       res.status(401).json({
         success: false,
-        error: error.message || 'Login failed',
+        error: error.message || "Login failed",
       });
     }
   };
@@ -95,26 +95,26 @@ export class AuthController {
       if (!tempToken || !mfaToken) {
         res.status(400).json({
           success: false,
-          error: 'Temporary token and MFA token are required',
+          error: "Temporary token and MFA token are required",
         });
         return;
       }
 
-      const ipAddress = req.ip || req.connection.remoteAddress || '';
-      const userAgent = req.headers['user-agent'] || '';
+      const ipAddress = req.ip || req.connection.remoteAddress || "";
+      const userAgent = req.headers["user-agent"] || "";
 
       const tokens = await this.authService.completeMFALogin(
         tempToken,
         mfaToken,
         ipAddress,
-        userAgent
+        userAgent,
       );
 
       // Set refresh token as HTTP-only cookie
-      res.cookie('refreshToken', tokens.refreshToken, {
+      res.cookie("refreshToken", tokens.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -126,7 +126,7 @@ export class AuthController {
     } catch (error: any) {
       res.status(401).json({
         success: false,
-        error: error.message || 'MFA verification failed',
+        error: error.message || "MFA verification failed",
       });
     }
   };
@@ -144,16 +144,16 @@ export class AuthController {
       }
 
       // Clear refresh token cookie
-      res.clearCookie('refreshToken');
+      res.clearCookie("refreshToken");
 
       res.status(200).json({
         success: true,
-        message: 'Logged out successfully',
+        message: "Logged out successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Logout failed',
+        error: error.message || "Logout failed",
       });
     }
   };
@@ -169,7 +169,7 @@ export class AuthController {
       if (!refreshToken) {
         res.status(401).json({
           success: false,
-          error: 'Refresh token is required',
+          error: "Refresh token is required",
         });
         return;
       }
@@ -177,10 +177,10 @@ export class AuthController {
       const tokens = await this.authService.refreshAccessToken(refreshToken);
 
       // Update refresh token cookie
-      res.cookie('refreshToken', tokens.refreshToken, {
+      res.cookie("refreshToken", tokens.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -192,7 +192,7 @@ export class AuthController {
     } catch (error: any) {
       res.status(401).json({
         success: false,
-        error: error.message || 'Token refresh failed',
+        error: error.message || "Token refresh failed",
       });
     }
   };
@@ -203,22 +203,24 @@ export class AuthController {
    */
   register = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, password, firstName, lastName, organizationId, roles } = req.body;
+      const { email, password, firstName, lastName, organizationId, roles } =
+        req.body;
 
       if (!email || !password || !firstName || !lastName || !organizationId) {
         res.status(400).json({
           success: false,
-          error: 'All required fields must be provided',
+          error: "All required fields must be provided",
         });
         return;
       }
 
       // Validate password strength
-      const passwordValidation = this.authService.validatePasswordStrength(password);
+      const passwordValidation =
+        this.authService.validatePasswordStrength(password);
       if (!passwordValidation.valid) {
         res.status(400).json({
           success: false,
-          error: 'Password does not meet requirements',
+          error: "Password does not meet requirements",
           details: passwordValidation.errors,
         });
         return;
@@ -229,13 +231,13 @@ export class AuthController {
       if (existingUser) {
         res.status(409).json({
           success: false,
-          error: 'User with this email already exists',
+          error: "User with this email already exists",
         });
         return;
       }
 
       // Create user (createdBy would be admin or system)
-      const createdBy = (req as any).user?.userId || 'system';
+      const createdBy = (req as any).user?.userId || "system";
       const user = await this.userService.createUser(
         {
           email,
@@ -245,7 +247,7 @@ export class AuthController {
           organizationId,
           roles,
         },
-        createdBy
+        createdBy,
       );
 
       res.status(201).json({
@@ -261,7 +263,7 @@ export class AuthController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Registration failed',
+        error: error.message || "Registration failed",
       });
     }
   };
@@ -278,17 +280,18 @@ export class AuthController {
       if (!oldPassword || !newPassword) {
         res.status(400).json({
           success: false,
-          error: 'Old password and new password are required',
+          error: "Old password and new password are required",
         });
         return;
       }
 
       // Validate new password strength
-      const passwordValidation = this.authService.validatePasswordStrength(newPassword);
+      const passwordValidation =
+        this.authService.validatePasswordStrength(newPassword);
       if (!passwordValidation.valid) {
         res.status(400).json({
           success: false,
-          error: 'Password does not meet requirements',
+          error: "Password does not meet requirements",
           details: passwordValidation.errors,
         });
         return;
@@ -297,25 +300,25 @@ export class AuthController {
       const success = await this.userService.changePassword(
         userId,
         oldPassword,
-        newPassword
+        newPassword,
       );
 
       if (!success) {
         res.status(401).json({
           success: false,
-          error: 'Invalid old password',
+          error: "Invalid old password",
         });
         return;
       }
 
       res.status(200).json({
         success: true,
-        message: 'Password changed successfully',
+        message: "Password changed successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Password change failed',
+        error: error.message || "Password change failed",
       });
     }
   };
@@ -333,7 +336,7 @@ export class AuthController {
       if (!user) {
         res.status(404).json({
           success: false,
-          error: 'User not found',
+          error: "User not found",
         });
         return;
       }
@@ -354,7 +357,7 @@ export class AuthController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get user info',
+        error: error.message || "Failed to get user info",
       });
     }
   };
@@ -382,7 +385,7 @@ export class AuthController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get sessions',
+        error: error.message || "Failed to get sessions",
       });
     }
   };
@@ -402,7 +405,7 @@ export class AuthController {
       if (!session || session.userId !== userId) {
         res.status(403).json({
           success: false,
-          error: 'Unauthorized',
+          error: "Unauthorized",
         });
         return;
       }
@@ -411,12 +414,12 @@ export class AuthController {
 
       res.status(200).json({
         success: true,
-        message: 'Session terminated successfully',
+        message: "Session terminated successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to terminate session',
+        error: error.message || "Failed to terminate session",
       });
     }
   };

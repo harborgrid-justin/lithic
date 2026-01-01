@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
+import { SchedulingService } from "../../services/SchedulingService";
 
 export class TemplatesPage {
   private container: HTMLElement;
@@ -36,13 +36,15 @@ export class TemplatesPage {
       const templates = await this.schedulingService.getRecurringTemplates();
       this.renderTemplates(templates);
     } catch (error) {
-      console.error('Error loading templates:', error);
+      console.error("Error loading templates:", error);
     }
   }
 
   private renderTemplates(templates: any[]): void {
-    const grid = document.getElementById('templatesGrid')!;
-    grid.innerHTML = templates.map(t => `
+    const grid = document.getElementById("templatesGrid")!;
+    grid.innerHTML = templates
+      .map(
+        (t) => `
       <div class="template-card" data-id="${t.id}">
         <h3>${t.name}</h3>
         <p>${t.description}</p>
@@ -53,7 +55,9 @@ export class TemplatesPage {
         </div>
         <button class="btn btn-small">Use Template</button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   destroy(): void {}

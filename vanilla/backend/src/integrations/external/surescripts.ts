@@ -4,21 +4,21 @@
  * Complete Surescripts e-prescribing integration with NCPDP SCRIPT support
  */
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
-import { logger } from '../../utils/logger';
+import axios, { AxiosInstance, AxiosError } from "axios";
+import { logger } from "../../utils/logger";
 
 // Surescripts Message Types
 export type SurescriptsMessageType =
-  | 'NEWRX'
-  | 'RXCHG'
-  | 'RXFILL'
-  | 'CANRX'
-  | 'REFREQ'
-  | 'REFRES'
-  | 'RXHREQ'
-  | 'RXHRES'
-  | 'STATUS'
-  | 'ERROR';
+  | "NEWRX"
+  | "RXCHG"
+  | "RXFILL"
+  | "CANRX"
+  | "REFREQ"
+  | "REFRES"
+  | "RXHREQ"
+  | "RXHRES"
+  | "STATUS"
+  | "ERROR";
 
 // Prescription Data
 export interface Prescription {
@@ -103,12 +103,15 @@ export class SurescriptsClient {
     this.accountId = config.accountId;
 
     this.client = axios.create({
-      baseURL: config.baseUrl || process.env.SURESCRIPTS_BASE_URL || 'https://eprescription.surescripts.net',
+      baseURL:
+        config.baseUrl ||
+        process.env.SURESCRIPTS_BASE_URL ||
+        "https://eprescription.surescripts.net",
       timeout: config.timeout || 30000,
       headers: {
-        'Content-Type': 'application/xml',
-        'X-API-Key': this.apiKey,
-        'X-Account-ID': this.accountId,
+        "Content-Type": "application/xml",
+        "X-API-Key": this.apiKey,
+        "X-Account-ID": this.accountId,
       },
     });
 
@@ -121,58 +124,60 @@ export class SurescriptsClient {
   private setupInterceptors(): void {
     this.client.interceptors.request.use(
       (config) => {
-        logger.debug('Surescripts Request', {
+        logger.debug("Surescripts Request", {
           method: config.method?.toUpperCase(),
           url: config.url,
         });
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     this.client.interceptors.response.use(
       (response) => {
-        logger.debug('Surescripts Response', {
+        logger.debug("Surescripts Response", {
           status: response.status,
         });
         return response;
       },
       async (error: AxiosError) => {
-        logger.error('Surescripts Error', {
+        logger.error("Surescripts Error", {
           status: error.response?.status,
           message: error.message,
         });
         throw new SurescriptsError(
           error.message,
           error.response?.status,
-          error.response?.data
+          error.response?.data,
         );
-      }
+      },
     );
   }
 
   /**
    * Send new prescription (NEWRX)
    */
-  async sendNewPrescription(prescription: Prescription): Promise<{ messageId: string; status: string }> {
+  async sendNewPrescription(
+    prescription: Prescription,
+  ): Promise<{ messageId: string; status: string }> {
     try {
       const xml = this.buildNewRxMessage(prescription);
 
-      const response = await this.client.post('/v2/prescription/new', xml, {
-        headers: { 'Content-Type': 'application/xml' },
+      const response = await this.client.post("/v2/prescription/new", xml, {
+        headers: { "Content-Type": "application/xml" },
       });
 
-      logger.info('New prescription sent to Surescripts', {
+      logger.info("New prescription sent to Surescripts", {
         prescriptionId: prescription.prescriptionId,
         pharmacy: prescription.pharmacyNCPDP,
       });
 
       return {
         messageId: response.data.messageId || crypto.randomUUID(),
-        status: 'sent',
+        status: "sent",
       };
     } catch (error) {
-      logger.error('Failed to send prescription', { error });
+      logger.error("Failed to send prescription", { error });
       throw error;
     }
   }
@@ -180,22 +185,25 @@ export class SurescriptsClient {
   /**
    * Cancel prescription (CANRX)
    */
-  async cancelPrescription(prescriptionId: string, reason: string): Promise<{ messageId: string; status: string }> {
+  async cancelPrescription(
+    prescriptionId: string,
+    reason: string,
+  ): Promise<{ messageId: string; status: string }> {
     try {
       const xml = this.buildCancelMessage(prescriptionId, reason);
 
-      const response = await this.client.post('/v2/prescription/cancel', xml, {
-        headers: { 'Content-Type': 'application/xml' },
+      const response = await this.client.post("/v2/prescription/cancel", xml, {
+        headers: { "Content-Type": "application/xml" },
       });
 
-      logger.info('Prescription cancellation sent', { prescriptionId });
+      logger.info("Prescription cancellation sent", { prescriptionId });
 
       return {
         messageId: response.data.messageId || crypto.randomUUID(),
-        status: 'cancelled',
+        status: "cancelled",
       };
     } catch (error) {
-      logger.error('Failed to cancel prescription', { error });
+      logger.error("Failed to cancel prescription", { error });
       throw error;
     }
   }
@@ -203,21 +211,28 @@ export class SurescriptsClient {
   /**
    * Request refill authorization (REFREQ)
    */
-  async requestRefillAuthorization(prescriptionId: string, pharmacyNCPDP: string): Promise<{ messageId: string }> {
+  async requestRefillAuthorization(
+    prescriptionId: string,
+    pharmacyNCPDP: string,
+  ): Promise<{ messageId: string }> {
     try {
       const xml = this.buildRefillRequestMessage(prescriptionId, pharmacyNCPDP);
 
-      const response = await this.client.post('/v2/prescription/refill-request', xml, {
-        headers: { 'Content-Type': 'application/xml' },
-      });
+      const response = await this.client.post(
+        "/v2/prescription/refill-request",
+        xml,
+        {
+          headers: { "Content-Type": "application/xml" },
+        },
+      );
 
-      logger.info('Refill authorization requested', { prescriptionId });
+      logger.info("Refill authorization requested", { prescriptionId });
 
       return {
         messageId: response.data.messageId || crypto.randomUUID(),
       };
     } catch (error) {
-      logger.error('Failed to request refill authorization', { error });
+      logger.error("Failed to request refill authorization", { error });
       throw error;
     }
   }
@@ -225,22 +240,24 @@ export class SurescriptsClient {
   /**
    * Get medication history (RXHREQ)
    */
-  async getMedicationHistory(request: MedicationHistoryRequest): Promise<MedicationHistoryResponse> {
+  async getMedicationHistory(
+    request: MedicationHistoryRequest,
+  ): Promise<MedicationHistoryResponse> {
     try {
       const xml = this.buildMedicationHistoryRequest(request);
 
-      const response = await this.client.post('/v2/medication-history', xml, {
-        headers: { 'Content-Type': 'application/xml' },
+      const response = await this.client.post("/v2/medication-history", xml, {
+        headers: { "Content-Type": "application/xml" },
       });
 
-      logger.info('Medication history requested', {
+      logger.info("Medication history requested", {
         patientId: request.patientId,
       });
 
       // Parse XML response (simplified)
       return this.parseMedicationHistoryResponse(response.data);
     } catch (error) {
-      logger.error('Failed to get medication history', { error });
+      logger.error("Failed to get medication history", { error });
       throw error;
     }
   }
@@ -256,15 +273,15 @@ export class SurescriptsClient {
     _24Hour?: boolean;
   }): Promise<Pharmacy[]> {
     try {
-      const response = await this.client.get('/v2/pharmacy/search', { params });
+      const response = await this.client.get("/v2/pharmacy/search", { params });
 
-      logger.info('Pharmacy search completed', {
+      logger.info("Pharmacy search completed", {
         resultsCount: response.data.length,
       });
 
       return response.data.pharmacies || [];
     } catch (error) {
-      logger.error('Failed to search pharmacies', { error });
+      logger.error("Failed to search pharmacies", { error });
       throw error;
     }
   }
@@ -278,7 +295,7 @@ export class SurescriptsClient {
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get pharmacy', { ncpdpId, error });
+      logger.error("Failed to get pharmacy", { ncpdpId, error });
       throw error;
     }
   }
@@ -286,16 +303,23 @@ export class SurescriptsClient {
   /**
    * Verify patient eligibility for e-prescribing
    */
-  async verifyPatientEligibility(patientId: string): Promise<{ eligible: boolean; reason?: string }> {
+  async verifyPatientEligibility(
+    patientId: string,
+  ): Promise<{ eligible: boolean; reason?: string }> {
     try {
-      const response = await this.client.get(`/v2/patient/${patientId}/eligibility`);
+      const response = await this.client.get(
+        `/v2/patient/${patientId}/eligibility`,
+      );
 
       return {
         eligible: response.data.eligible,
         reason: response.data.reason,
       };
     } catch (error) {
-      logger.error('Failed to verify patient eligibility', { patientId, error });
+      logger.error("Failed to verify patient eligibility", {
+        patientId,
+        error,
+      });
       throw error;
     }
   }
@@ -309,11 +333,16 @@ export class SurescriptsClient {
     pharmacy?: string;
   }> {
     try {
-      const response = await this.client.get(`/v2/prescription/${prescriptionId}/status`);
+      const response = await this.client.get(
+        `/v2/prescription/${prescriptionId}/status`,
+      );
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get prescription status', { prescriptionId, error });
+      logger.error("Failed to get prescription status", {
+        prescriptionId,
+        error,
+      });
       throw error;
     }
   }
@@ -382,7 +411,10 @@ export class SurescriptsClient {
   /**
    * Build refill request message
    */
-  private buildRefillRequestMessage(prescriptionId: string, pharmacyNCPDP: string): string {
+  private buildRefillRequestMessage(
+    prescriptionId: string,
+    pharmacyNCPDP: string,
+  ): string {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <Message>
   <Header>
@@ -402,7 +434,9 @@ export class SurescriptsClient {
   /**
    * Build medication history request
    */
-  private buildMedicationHistoryRequest(request: MedicationHistoryRequest): string {
+  private buildMedicationHistoryRequest(
+    request: MedicationHistoryRequest,
+  ): string {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <Message>
   <Header>
@@ -428,7 +462,7 @@ export class SurescriptsClient {
           <State>${request.address.state}</State>
           <ZipCode>${request.address.zipCode}</ZipCode>
         </Address>`
-            : ''
+            : ""
         }
       </Patient>
       <ConsentGiven>${request.consentGiven}</ConsentGiven>
@@ -440,12 +474,14 @@ export class SurescriptsClient {
   /**
    * Parse medication history response (simplified)
    */
-  private parseMedicationHistoryResponse(xmlData: any): MedicationHistoryResponse {
+  private parseMedicationHistoryResponse(
+    xmlData: any,
+  ): MedicationHistoryResponse {
     // This is a simplified parser. Real implementation would use proper XML parsing
     return {
       medications: [],
       requestId: crypto.randomUUID(),
-      status: 'completed',
+      status: "completed",
     };
   }
 }
@@ -457,10 +493,10 @@ export class SurescriptsError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
-    this.name = 'SurescriptsError';
+    this.name = "SurescriptsError";
   }
 }
 
@@ -469,7 +505,7 @@ export class SurescriptsError extends Error {
  */
 export const surescriptsClient = new SurescriptsClient({
   baseUrl: process.env.SURESCRIPTS_BASE_URL,
-  apiKey: process.env.SURESCRIPTS_API_KEY || '',
-  accountId: process.env.SURESCRIPTS_ACCOUNT_ID || '',
-  timeout: parseInt(process.env.SURESCRIPTS_TIMEOUT || '30000', 10),
+  apiKey: process.env.SURESCRIPTS_API_KEY || "",
+  accountId: process.env.SURESCRIPTS_ACCOUNT_ID || "",
+  timeout: parseInt(process.env.SURESCRIPTS_TIMEOUT || "30000", 10),
 });

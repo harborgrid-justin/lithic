@@ -3,8 +3,8 @@
  * Lithic Healthcare Platform
  */
 
-import { Router } from 'express';
-import { analyticsController } from '../../controllers/AnalyticsController';
+import { Router } from "express";
+import { analyticsController } from "../../controllers/AnalyticsController";
 
 const router = Router();
 
@@ -18,47 +18,47 @@ const router = Router();
  * @body    parameters - Export parameters
  * @access  Private
  */
-router.post('/', analyticsController.createExportJob);
+router.post("/", analyticsController.createExportJob);
 
 /**
  * @route   GET /api/analytics/exports
  * @desc    Get all export jobs for the current user
  * @access  Private
  */
-router.get('/', analyticsController.getExportJobs);
+router.get("/", analyticsController.getExportJobs);
 
 /**
  * @route   GET /api/analytics/exports/:id
  * @desc    Get a specific export job
  * @access  Private
  */
-router.get('/:id', analyticsController.getExportJob);
+router.get("/:id", analyticsController.getExportJob);
 
 /**
  * @route   POST /api/analytics/exports/:id/cancel
  * @desc    Cancel a running export job
  * @access  Private
  */
-router.post('/:id/cancel', analyticsController.cancelExportJob);
+router.post("/:id/cancel", analyticsController.cancelExportJob);
 
 /**
  * @route   GET /api/analytics/exports/statistics
  * @desc    Get export statistics
  * @access  Private
  */
-router.get('/statistics', analyticsController.getExportStatistics);
+router.get("/statistics", analyticsController.getExportStatistics);
 
 /**
  * @route   GET /api/analytics/exports/download/:id
  * @desc    Download an exported file
  * @access  Private
  */
-router.get('/download/:id', (req, res) => {
+router.get("/download/:id", (req, res) => {
   // In production, this would stream the file from storage
   // For now, return a placeholder response
   res.json({
     success: true,
-    message: 'File download would be initiated here',
+    message: "File download would be initiated here",
     id: req.params.id,
   });
 });

@@ -1,75 +1,88 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import dynamic from 'next/dynamic'
-import { ClinicalNote } from '@/types/clinical'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select } from '@/components/ui/select'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import 'react-quill/dist/quill.snow.css'
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { ClinicalNote } from "@/types/clinical";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import "react-quill/dist/quill.snow.css";
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 interface NoteEditorProps {
-  note?: ClinicalNote
-  onSubmit: (data: Partial<ClinicalNote>) => void
-  onCancel: () => void
-  onSign?: (signature: string) => void
+  note?: ClinicalNote;
+  onSubmit: (data: Partial<ClinicalNote>) => void;
+  onCancel: () => void;
+  onSign?: (signature: string) => void;
 }
 
-export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps) {
+export function NoteEditor({
+  note,
+  onSubmit,
+  onCancel,
+  onSign,
+}: NoteEditorProps) {
   const [formData, setFormData] = useState<Partial<ClinicalNote>>({
-    patientId: note?.patientId || '',
-    patientName: note?.patientName || '',
-    providerId: note?.providerId || '',
-    providerName: note?.providerName || '',
-    encounterId: note?.encounterId || '',
-    type: note?.type || 'soap',
-    title: note?.title || '',
-    content: note?.content || '',
-    subjective: note?.subjective || '',
-    objective: note?.objective || '',
-    assessment: note?.assessment || '',
-    plan: note?.plan || '',
-  })
+    patientId: note?.patientId || "",
+    patientName: note?.patientName || "",
+    providerId: note?.providerId || "",
+    providerName: note?.providerName || "",
+    encounterId: note?.encounterId || "",
+    type: note?.type || "soap",
+    title: note?.title || "",
+    content: note?.content || "",
+    subjective: note?.subjective || "",
+    objective: note?.objective || "",
+    assessment: note?.assessment || "",
+    plan: note?.plan || "",
+  });
 
-  const [showSignature, setShowSignature] = useState(false)
-  const [signature, setSignature] = useState('')
+  const [showSignature, setShowSignature] = useState(false);
+  const [signature, setSignature] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData)
-  }
+    e.preventDefault();
+    onSubmit(formData);
+  };
 
   const handleSign = () => {
     if (signature && onSign) {
-      onSign(signature)
-      setShowSignature(false)
+      onSign(signature);
+      setShowSignature(false);
     }
-  }
+  };
 
   const handleChange = (field: keyof ClinicalNote, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['blockquote', 'code-block'],
-      ['link'],
-      ['clean'],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["blockquote", "code-block"],
+      ["link"],
+      ["clean"],
     ],
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>{note ? 'Edit Clinical Note' : 'New Clinical Note'}</CardTitle>
+          <CardTitle>
+            {note ? "Edit Clinical Note" : "New Clinical Note"}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -78,7 +91,7 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
               <Select
                 id="type"
                 value={formData.type}
-                onChange={(e) => handleChange('type', e.target.value as any)}
+                onChange={(e) => handleChange("type", e.target.value as any)}
                 required
               >
                 <option value="soap">SOAP Note</option>
@@ -94,20 +107,20 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => handleChange('title', e.target.value)}
+                onChange={(e) => handleChange("title", e.target.value)}
                 required
               />
             </div>
           </div>
 
-          {formData.type === 'soap' ? (
+          {formData.type === "soap" ? (
             <>
               <div className="space-y-2">
                 <Label htmlFor="subjective">Subjective</Label>
                 <ReactQuill
                   theme="snow"
                   value={formData.subjective}
-                  onChange={(value) => handleChange('subjective', value)}
+                  onChange={(value) => handleChange("subjective", value)}
                   modules={modules}
                   className="bg-white"
                 />
@@ -117,7 +130,7 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
                 <ReactQuill
                   theme="snow"
                   value={formData.objective}
-                  onChange={(value) => handleChange('objective', value)}
+                  onChange={(value) => handleChange("objective", value)}
                   modules={modules}
                   className="bg-white"
                 />
@@ -127,7 +140,7 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
                 <ReactQuill
                   theme="snow"
                   value={formData.assessment}
-                  onChange={(value) => handleChange('assessment', value)}
+                  onChange={(value) => handleChange("assessment", value)}
                   modules={modules}
                   className="bg-white"
                 />
@@ -137,7 +150,7 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
                 <ReactQuill
                   theme="snow"
                   value={formData.plan}
-                  onChange={(value) => handleChange('plan', value)}
+                  onChange={(value) => handleChange("plan", value)}
                   modules={modules}
                   className="bg-white"
                 />
@@ -149,7 +162,7 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
               <ReactQuill
                 theme="snow"
                 value={formData.content}
-                onChange={(value) => handleChange('content', value)}
+                onChange={(value) => handleChange("content", value)}
                 modules={modules}
                 className="bg-white min-h-[400px]"
               />
@@ -179,7 +192,7 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
                 variant="secondary"
                 onClick={() => setShowSignature(!showSignature)}
               >
-                {showSignature ? 'Cancel Sign' : 'Sign Note'}
+                {showSignature ? "Cancel Sign" : "Sign Note"}
               </Button>
             )}
             {showSignature && (
@@ -187,12 +200,10 @@ export function NoteEditor({ note, onSubmit, onCancel, onSign }: NoteEditorProps
                 Apply Signature
               </Button>
             )}
-            <Button type="submit">
-              {note ? 'Update' : 'Create'} Note
-            </Button>
+            <Button type="submit">{note ? "Update" : "Create"} Note</Button>
           </div>
         </CardFooter>
       </Card>
     </form>
-  )
+  );
 }

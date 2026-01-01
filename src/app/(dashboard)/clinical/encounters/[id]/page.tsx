@@ -1,47 +1,51 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { Encounter } from '@/types/clinical'
-import { getEncounter, updateEncounter, completeEncounter } from '@/services/encounter.service'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { formatDateTime } from '@/lib/utils'
-import { ArrowLeft, CheckCircle, Edit } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Encounter } from "@/types/clinical";
+import {
+  getEncounter,
+  updateEncounter,
+  completeEncounter,
+} from "@/services/encounter.service";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatDateTime } from "@/lib/utils";
+import { ArrowLeft, CheckCircle, Edit } from "lucide-react";
 
 export default function EncounterDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const [encounter, setEncounter] = useState<Encounter | null>(null)
-  const [loading, setLoading] = useState(true)
+  const params = useParams();
+  const router = useRouter();
+  const [encounter, setEncounter] = useState<Encounter | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (params.id) {
-      loadEncounter(params.id as string)
+      loadEncounter(params.id as string);
     }
-  }, [params.id])
+  }, [params.id]);
 
   const loadEncounter = async (id: string) => {
     try {
-      const data = await getEncounter(id)
-      setEncounter(data)
+      const data = await getEncounter(id);
+      setEncounter(data);
     } catch (error) {
-      console.error('Failed to load encounter:', error)
+      console.error("Failed to load encounter:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleComplete = async () => {
-    if (!encounter) return
+    if (!encounter) return;
     try {
-      const updated = await completeEncounter(encounter.id)
-      setEncounter(updated)
+      const updated = await completeEncounter(encounter.id);
+      setEncounter(updated);
     } catch (error) {
-      console.error('Failed to complete encounter:', error)
+      console.error("Failed to complete encounter:", error);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -50,7 +54,7 @@ export default function EncounterDetailPage() {
           <p>Loading encounter...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!encounter) {
@@ -60,18 +64,18 @@ export default function EncounterDetailPage() {
           <p>Encounter not found</p>
         </div>
       </div>
-    )
+    );
   }
 
-  const getStatusColor = (status: Encounter['status']) => {
+  const getStatusColor = (status: Encounter["status"]) => {
     const colors = {
-      scheduled: 'info',
-      'in-progress': 'warning',
-      completed: 'success',
-      cancelled: 'danger',
-    }
-    return colors[status] as 'info' | 'warning' | 'success' | 'danger'
-  }
+      scheduled: "info",
+      "in-progress": "warning",
+      completed: "success",
+      cancelled: "danger",
+    };
+    return colors[status] as "info" | "warning" | "success" | "danger";
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -83,14 +87,16 @@ export default function EncounterDetailPage() {
               Back
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Encounter Details</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Encounter Details
+              </h1>
               <p className="text-gray-600 mt-1">
                 {encounter.patientName} - {formatDateTime(encounter.date)}
               </p>
             </div>
           </div>
           <div className="flex gap-2">
-            {encounter.status !== 'completed' && (
+            {encounter.status !== "completed" && (
               <Button onClick={handleComplete} variant="secondary">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Complete Encounter
@@ -120,7 +126,9 @@ export default function EncounterDetailPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Type</p>
-                <p className="font-medium capitalize">{encounter.type.replace('-', ' ')}</p>
+                <p className="font-medium capitalize">
+                  {encounter.type.replace("-", " ")}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Date & Time</p>
@@ -139,7 +147,11 @@ export default function EncounterDetailPage() {
                 <div className="space-y-2">
                   {encounter.diagnosis.map((dx) => (
                     <div key={dx.id} className="flex items-center gap-2">
-                      <Badge variant={dx.type === 'primary' ? 'default' : 'secondary'}>
+                      <Badge
+                        variant={
+                          dx.type === "primary" ? "default" : "secondary"
+                        }
+                      >
                         {dx.icd10Code}
                       </Badge>
                       <span className="text-sm">{dx.description}</span>
@@ -157,7 +169,8 @@ export default function EncounterDetailPage() {
                     <div>
                       <p className="text-gray-500">Temperature</p>
                       <p className="font-medium">
-                        {encounter.vitals.temperature}°{encounter.vitals.temperatureUnit}
+                        {encounter.vitals.temperature}°
+                        {encounter.vitals.temperatureUnit}
                       </p>
                     </div>
                   )}
@@ -173,13 +186,17 @@ export default function EncounterDetailPage() {
                   {encounter.vitals.heartRate && (
                     <div>
                       <p className="text-gray-500">Heart Rate</p>
-                      <p className="font-medium">{encounter.vitals.heartRate} bpm</p>
+                      <p className="font-medium">
+                        {encounter.vitals.heartRate} bpm
+                      </p>
                     </div>
                   )}
                   {encounter.vitals.oxygenSaturation && (
                     <div>
                       <p className="text-gray-500">O2 Sat</p>
-                      <p className="font-medium">{encounter.vitals.oxygenSaturation}%</p>
+                      <p className="font-medium">
+                        {encounter.vitals.oxygenSaturation}%
+                      </p>
                     </div>
                   )}
                 </div>
@@ -196,5 +213,5 @@ export default function EncounterDetailPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

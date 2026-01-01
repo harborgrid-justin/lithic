@@ -28,7 +28,7 @@ export interface Insurance {
   groupNumber?: string;
   subscriberName: string;
   subscriberId: string;
-  relationship: 'self' | 'spouse' | 'child' | 'other';
+  relationship: "self" | "spouse" | "child" | "other";
   effectiveDate: Date;
   expirationDate?: Date;
   isPrimary: boolean;
@@ -42,7 +42,14 @@ export interface Insurance {
 export interface Document {
   id: string;
   patientId: string;
-  type: 'consent' | 'insurance_card' | 'id' | 'medical_records' | 'lab_results' | 'imaging' | 'other';
+  type:
+    | "consent"
+    | "insurance_card"
+    | "id"
+    | "medical_records"
+    | "lab_results"
+    | "imaging"
+    | "other";
   name: string;
   description?: string;
   fileUrl: string;
@@ -50,13 +57,13 @@ export interface Document {
   size: number;
   uploadedBy: string;
   uploadedAt: Date;
-  encryptionStatus: 'encrypted' | 'not_encrypted';
+  encryptionStatus: "encrypted" | "not_encrypted";
 }
 
 export interface AuditLog {
   id: string;
   patientId: string;
-  action: 'created' | 'updated' | 'viewed' | 'merged' | 'deleted' | 'exported';
+  action: "created" | "updated" | "viewed" | "merged" | "deleted" | "exported";
   performedBy: string;
   performedAt: Date;
   changes?: Record<string, any>;
@@ -73,7 +80,7 @@ export interface Patient {
   middleName?: string;
   lastName: string;
   dateOfBirth: Date;
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  gender: "male" | "female" | "other" | "prefer_not_to_say";
   ssn?: string; // Encrypted, optional
 
   // Contact Information
@@ -84,17 +91,17 @@ export interface Patient {
   insurance: Insurance[];
 
   // Clinical
-  bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  bloodType?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
   allergies?: string[];
   medications?: string[];
   conditions?: string[];
 
   // Administrative
-  status: 'active' | 'inactive' | 'deceased' | 'merged';
+  status: "active" | "inactive" | "deceased" | "merged";
   preferredLanguage?: string;
   race?: string;
   ethnicity?: string;
-  maritalStatus?: 'single' | 'married' | 'divorced' | 'widowed' | 'other';
+  maritalStatus?: "single" | "married" | "divorced" | "widowed" | "other";
 
   // System
   createdAt: Date;
@@ -115,7 +122,7 @@ export interface PatientSearchParams {
   ssn?: string;
   phone?: string;
   email?: string;
-  status?: Patient['status'];
+  status?: Patient["status"];
   limit?: number;
   offset?: number;
 }

@@ -1,4 +1,4 @@
-import { Patient, DuplicatePatient } from '@/types/patient';
+import { Patient, DuplicatePatient } from "@/types/patient";
 
 export interface MatchCriteria {
   exactSSN?: number;
@@ -28,7 +28,10 @@ export class DuplicateDetector {
   /**
    * Find potential duplicate patients
    */
-  findDuplicates(patient: Partial<Patient>, existingPatients: Patient[]): DuplicatePatient[] {
+  findDuplicates(
+    patient: Partial<Patient>,
+    existingPatients: Patient[],
+  ): DuplicatePatient[] {
     const duplicates: DuplicatePatient[] = [];
 
     for (const existing of existingPatients) {
@@ -36,7 +39,7 @@ export class DuplicateDetector {
       if (patient.id && patient.id === existing.id) continue;
 
       const matchResult = this.calculateMatch(patient, existing);
-      
+
       if (matchResult.score >= this.threshold) {
         duplicates.push({
           patient: existing,
@@ -55,43 +58,57 @@ export class DuplicateDetector {
    */
   private calculateMatch(
     patient1: Partial<Patient>,
-    patient2: Patient
+    patient2: Patient,
   ): { score: number; reasons: string[] } {
     let score = 0;
     const reasons: string[] = [];
 
     // Exact SSN match (highest priority)
-    if (patient1.ssn && patient2.ssn && this.normalizeSSN(patient1.ssn) === this.normalizeSSN(patient2.ssn)) {
+    if (
+      patient1.ssn &&
+      patient2.ssn &&
+      this.normalizeSSN(patient1.ssn) === this.normalizeSSN(patient2.ssn)
+    ) {
       score = Math.max(score, this.matchCriteria.exactSSN || 0);
-      reasons.push('Exact SSN match');
+      reasons.push("Exact SSN match");
     }
 
     // Exact MRN match
     if (patient1.mrn && patient2.mrn && patient1.mrn === patient2.mrn) {
       score = Math.max(score, this.matchCriteria.exactMRN || 0);
-      reasons.push('Exact MRN match');
+      reasons.push("Exact MRN match");
     }
 
     // Name and DOB match
-    if (this.namesMatch(patient1, patient2) && patient1.dateOfBirth === patient2.dateOfBirth) {
+    if (
+      this.namesMatch(patient1, patient2) &&
+      patient1.dateOfBirth === patient2.dateOfBirth
+    ) {
       score = Math.max(score, this.matchCriteria.nameAndDOB || 0);
-      reasons.push('Name and date of birth match');
+      reasons.push("Name and date of birth match");
     }
 
     // Phone and DOB match
-    if (patient1.phone && patient2.phone && 
-        this.normalizePhone(patient1.phone) === this.normalizePhone(patient2.phone) &&
-        patient1.dateOfBirth === patient2.dateOfBirth) {
+    if (
+      patient1.phone &&
+      patient2.phone &&
+      this.normalizePhone(patient1.phone) ===
+        this.normalizePhone(patient2.phone) &&
+      patient1.dateOfBirth === patient2.dateOfBirth
+    ) {
       score = Math.max(score, this.matchCriteria.phoneAndDOB || 0);
-      reasons.push('Phone and date of birth match');
+      reasons.push("Phone and date of birth match");
     }
 
     // Email and name match
-    if (patient1.email && patient2.email && 
-        patient1.email.toLowerCase() === patient2.email.toLowerCase() &&
-        this.namesMatch(patient1, patient2)) {
+    if (
+      patient1.email &&
+      patient2.email &&
+      patient1.email.toLowerCase() === patient2.email.toLowerCase() &&
+      this.namesMatch(patient1, patient2)
+    ) {
       score = Math.max(score, this.matchCriteria.emailAndName || 0);
-      reasons.push('Email and name match');
+      reasons.push("Email and name match");
     }
 
     return { score, reasons };
@@ -104,17 +121,17 @@ export class DuplicateDetector {
   }
 
   private normalizeName(firstName?: string, lastName?: string): string {
-    const fn = (firstName || '').toLowerCase().trim();
-    const ln = (lastName || '').toLowerCase().trim();
-    return fn + '|' + ln;
+    const fn = (firstName || "").toLowerCase().trim();
+    const ln = (lastName || "").toLowerCase().trim();
+    return fn + "|" + ln;
   }
 
   private normalizePhone(phone: string): string {
-    return phone.replace(/\D/g, '');
+    return phone.replace(/\D/g, "");
   }
 
   private normalizeSSN(ssn: string): string {
-    return ssn.replace(/\D/g, '');
+    return ssn.replace(/\D/g, "");
   }
 }
 

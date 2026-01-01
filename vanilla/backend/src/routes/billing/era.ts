@@ -1,8 +1,8 @@
-import { Router, Request, Response } from 'express';
-import { BillingController } from '../../controllers/BillingController';
-import { authenticate, authorize } from '../../middleware/auth';
-import { validateRequest } from '../../middleware/validation';
-import multer from 'multer';
+import { Router, Request, Response } from "express";
+import { BillingController } from "../../controllers/BillingController";
+import { authenticate, authorize } from "../../middleware/auth";
+import { validateRequest } from "../../middleware/validation";
+import multer from "multer";
 
 const router = Router();
 const billingController = new BillingController();
@@ -11,20 +11,22 @@ const billingController = new BillingController();
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
+    fileSize: 10 * 1024 * 1024, // 10MB limit
   },
   fileFilter: (req, file, cb) => {
     // Accept EDI 835 files and text files
-    if (file.mimetype === 'text/plain' ||
-        file.mimetype === 'application/octet-stream' ||
-        file.originalname.endsWith('.835') ||
-        file.originalname.endsWith('.edi') ||
-        file.originalname.endsWith('.txt')) {
+    if (
+      file.mimetype === "text/plain" ||
+      file.mimetype === "application/octet-stream" ||
+      file.originalname.endsWith(".835") ||
+      file.originalname.endsWith(".edi") ||
+      file.originalname.endsWith(".txt")
+    ) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only EDI 835 files are allowed.'));
+      cb(new Error("Invalid file type. Only EDI 835 files are allowed."));
     }
-  }
+  },
 });
 
 // Apply authentication to all routes
@@ -36,22 +38,22 @@ router.use(authenticate);
  * @access  Private (Billing Staff, Admin)
  */
 router.post(
-  '/upload',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
-  upload.single('eraFile'),
+  "/upload",
+  authorize(["billing_staff", "billing_admin", "admin"]),
+  upload.single("eraFile"),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.uploadERA(req, res);
       return result;
     } catch (error) {
-      console.error('Error in POST /era/upload:', error);
+      console.error("Error in POST /era/upload:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -60,21 +62,21 @@ router.post(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getERAs(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era:', error);
+      console.error("Error in GET /era:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -83,21 +85,21 @@ router.get(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/:id',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/:id",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getERAById(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era/:id:', error);
+      console.error("Error in GET /era/:id:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -106,21 +108,21 @@ router.get(
  * @access  Private (Billing Staff, Admin)
  */
 router.post(
-  '/:id/process',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/:id/process",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.processERA(req, res);
       return result;
     } catch (error) {
-      console.error('Error in POST /era/:id/process:', error);
+      console.error("Error in POST /era/:id/process:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -129,22 +131,22 @@ router.post(
  * @access  Private (Billing Staff, Admin)
  */
 router.post(
-  '/:id/auto-post',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
-  validateRequest('autoPostERA'),
+  "/:id/auto-post",
+  authorize(["billing_staff", "billing_admin", "admin"]),
+  validateRequest("autoPostERA"),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.autoPostERA(req, res);
       return result;
     } catch (error) {
-      console.error('Error in POST /era/:id/auto-post:', error);
+      console.error("Error in POST /era/:id/auto-post:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -153,21 +155,21 @@ router.post(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/:id/payments',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/:id/payments",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getERAPayments(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era/:id/payments:', error);
+      console.error("Error in GET /era/:id/payments:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -176,21 +178,21 @@ router.get(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/:id/adjustments',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/:id/adjustments",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getERAAdjustments(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era/:id/adjustments:', error);
+      console.error("Error in GET /era/:id/adjustments:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -199,21 +201,21 @@ router.get(
  * @access  Private (Billing Staff, Admin)
  */
 router.post(
-  '/:id/match',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/:id/match",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.matchERAToClaims(req, res);
       return result;
     } catch (error) {
-      console.error('Error in POST /era/:id/match:', error);
+      console.error("Error in POST /era/:id/match:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -222,21 +224,21 @@ router.post(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/:id/denials',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/:id/denials",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getERADenials(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era/:id/denials:', error);
+      console.error("Error in GET /era/:id/denials:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -245,21 +247,21 @@ router.get(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/:id/raw',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/:id/raw",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getRawERA(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era/:id/raw:', error);
+      console.error("Error in GET /era/:id/raw:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -268,21 +270,21 @@ router.get(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/unprocessed/list',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/unprocessed/list",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getUnprocessedERAs(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era/unprocessed/list:', error);
+      console.error("Error in GET /era/unprocessed/list:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -291,22 +293,22 @@ router.get(
  * @access  Private (Billing Admin, Admin)
  */
 router.post(
-  '/:id/reconcile',
-  authorize(['billing_admin', 'admin']),
-  validateRequest('reconcileERA'),
+  "/:id/reconcile",
+  authorize(["billing_admin", "admin"]),
+  validateRequest("reconcileERA"),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.reconcileERA(req, res);
       return result;
     } catch (error) {
-      console.error('Error in POST /era/:id/reconcile:', error);
+      console.error("Error in POST /era/:id/reconcile:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -315,21 +317,21 @@ router.post(
  * @access  Private (Billing Staff, Admin)
  */
 router.get(
-  '/stats/summary',
-  authorize(['billing_staff', 'billing_admin', 'admin']),
+  "/stats/summary",
+  authorize(["billing_staff", "billing_admin", "admin"]),
   async (req: Request, res: Response) => {
     try {
       const result = await billingController.getERAStats(req, res);
       return result;
     } catch (error) {
-      console.error('Error in GET /era/stats/summary:', error);
+      console.error("Error in GET /era/stats/summary:", error);
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 export default router;

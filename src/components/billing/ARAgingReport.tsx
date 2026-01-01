@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ARAgingBucket } from '@/types/billing';
-import { formatCurrency } from '@/lib/utils';
-import { FileText, TrendingUp, AlertCircle } from 'lucide-react';
+import { ARAgingBucket } from "@/types/billing";
+import { formatCurrency } from "@/lib/utils";
+import { FileText, TrendingUp, AlertCircle } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -12,7 +12,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-} from 'recharts';
+} from "recharts";
 
 interface ARAgingReportProps {
   buckets: ARAgingBucket[];
@@ -29,23 +29,25 @@ export default function ARAgingReport({ buckets }: ARAgingReportProps) {
   }));
 
   const getBarColor = (range: string) => {
-    if (range.includes('0-30')) return '#10b981';
-    if (range.includes('31-60')) return '#3b82f6';
-    if (range.includes('61-90')) return '#f59e0b';
-    if (range.includes('91-120')) return '#ef4444';
-    return '#991b1b';
+    if (range.includes("0-30")) return "#10b981";
+    if (range.includes("31-60")) return "#3b82f6";
+    if (range.includes("61-90")) return "#f59e0b";
+    if (range.includes("91-120")) return "#ef4444";
+    return "#991b1b";
   };
 
   const getRiskLevel = () => {
     const over90Days = buckets
-      .filter((b) => b.range.includes('91-') || b.range.includes('120+'))
+      .filter((b) => b.range.includes("91-") || b.range.includes("120+"))
       .reduce((sum, b) => sum + b.amount, 0);
 
     const percentage = total > 0 ? (over90Days / total) * 100 : 0;
 
-    if (percentage < 15) return { level: 'Low', color: 'text-green-600', bg: 'bg-green-50' };
-    if (percentage < 30) return { level: 'Medium', color: 'text-yellow-600', bg: 'bg-yellow-50' };
-    return { level: 'High', color: 'text-red-600', bg: 'bg-red-50' };
+    if (percentage < 15)
+      return { level: "Low", color: "text-green-600", bg: "bg-green-50" };
+    if (percentage < 30)
+      return { level: "Medium", color: "text-yellow-600", bg: "bg-yellow-50" };
+    return { level: "High", color: "text-red-600", bg: "bg-red-50" };
   };
 
   const risk = getRiskLevel();
@@ -59,16 +61,21 @@ export default function ARAgingReport({ buckets }: ARAgingReportProps) {
             <FileText className="w-5 h-5 text-primary-600" />
             <p className="text-sm text-gray-500">Total A/R</p>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(total)}</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {formatCurrency(total)}
+          </p>
           <p className="text-xs text-gray-500 mt-1">{totalCount} accounts</p>
         </div>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-sm text-green-700">0-30 Days</p>
           <p className="text-2xl font-bold text-green-900">
-            {formatCurrency(buckets.find((b) => b.range.includes('0-30'))?.amount || 0)}
+            {formatCurrency(
+              buckets.find((b) => b.range.includes("0-30"))?.amount || 0,
+            )}
           </p>
           <p className="text-xs text-green-600 mt-1">
-            {buckets.find((b) => b.range.includes('0-30'))?.percentage || 0}% of total
+            {buckets.find((b) => b.range.includes("0-30"))?.percentage || 0}% of
+            total
           </p>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -76,13 +83,17 @@ export default function ARAgingReport({ buckets }: ARAgingReportProps) {
           <p className="text-2xl font-bold text-red-900">
             {formatCurrency(
               buckets
-                .filter((b) => b.range.includes('91-') || b.range.includes('120+'))
-                .reduce((sum, b) => sum + b.amount, 0)
+                .filter(
+                  (b) => b.range.includes("91-") || b.range.includes("120+"),
+                )
+                .reduce((sum, b) => sum + b.amount, 0),
             )}
           </p>
           <p className="text-xs text-red-600 mt-1">
             {buckets
-              .filter((b) => b.range.includes('91-') || b.range.includes('120+'))
+              .filter(
+                (b) => b.range.includes("91-") || b.range.includes("120+"),
+              )
               .reduce((sum, b) => sum + b.percentage, 0)
               .toFixed(1)}
             % of total
@@ -94,7 +105,9 @@ export default function ARAgingReport({ buckets }: ARAgingReportProps) {
             <p className="text-sm text-gray-700">Risk Level</p>
           </div>
           <p className={`text-2xl font-bold ${risk.color}`}>{risk.level}</p>
-          <p className="text-xs text-gray-600 mt-1">Based on aging distribution</p>
+          <p className="text-xs text-gray-600 mt-1">
+            Based on aging distribution
+          </p>
         </div>
       </div>
 
@@ -108,7 +121,7 @@ export default function ARAgingReport({ buckets }: ARAgingReportProps) {
             <YAxis />
             <Tooltip
               formatter={(value: number, name: string) =>
-                name === 'amount' ? formatCurrency(value) : value
+                name === "amount" ? formatCurrency(value) : value
               }
             />
             <Bar dataKey="amount" name="Amount">
@@ -199,17 +212,20 @@ export default function ARAgingReport({ buckets }: ARAgingReportProps) {
         </h4>
         <ul className="space-y-1 text-sm text-blue-800">
           <li>
-            • {((buckets.find((b) => b.range.includes('0-30'))?.percentage || 0)).toFixed(1)}% of
-            receivables are current (0-30 days)
+            •{" "}
+            {(
+              buckets.find((b) => b.range.includes("0-30"))?.percentage || 0
+            ).toFixed(1)}
+            % of receivables are current (0-30 days)
           </li>
+          <li>• {totalCount} total accounts with outstanding balances</li>
           <li>
-            • {totalCount} total accounts with outstanding balances
-          </li>
-          <li>
-            • Focus collection efforts on{' '}
+            • Focus collection efforts on{" "}
             {buckets
-              .filter((b) => b.range.includes('91-') || b.range.includes('120+'))
-              .reduce((sum, b) => sum + b.count, 0)}{' '}
+              .filter(
+                (b) => b.range.includes("91-") || b.range.includes("120+"),
+              )
+              .reduce((sum, b) => sum + b.count, 0)}{" "}
             accounts over 90 days
           </li>
         </ul>

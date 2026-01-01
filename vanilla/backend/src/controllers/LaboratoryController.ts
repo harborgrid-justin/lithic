@@ -3,10 +3,10 @@
  * Handles HTTP requests for laboratory operations
  */
 
-import { Request, Response } from 'express';
-import { LaboratoryService } from '../services/LaboratoryService';
-import { SpecimenService } from '../services/SpecimenService';
-import { HL7Service } from '../services/HL7Service';
+import { Request, Response } from "express";
+import { LaboratoryService } from "../services/LaboratoryService";
+import { SpecimenService } from "../services/SpecimenService";
+import { HL7Service } from "../services/HL7Service";
 
 export class LaboratoryController {
   private labService: LaboratoryService;
@@ -28,12 +28,12 @@ export class LaboratoryController {
 
       res.status(201).json({
         success: true,
-        data: order
+        data: order,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -44,16 +44,19 @@ export class LaboratoryController {
   createOrderFromPanel = async (req: Request, res: Response): Promise<void> => {
     try {
       const { panelId } = req.params;
-      const order = await this.labService.createOrderFromPanel(panelId, req.body);
+      const order = await this.labService.createOrderFromPanel(
+        panelId,
+        req.body,
+      );
 
       res.status(201).json({
         success: true,
-        data: order
+        data: order,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -69,19 +72,19 @@ export class LaboratoryController {
       if (!order) {
         res.status(404).json({
           success: false,
-          error: 'Order not found'
+          error: "Order not found",
         });
         return;
       }
 
       res.json({
         success: true,
-        data: order
+        data: order,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -96,12 +99,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: orders
+        data: orders,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -115,12 +118,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: orders
+        data: orders,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -137,12 +140,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: order
+        data: order,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -159,12 +162,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: order
+        data: order,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -180,7 +183,7 @@ export class LaboratoryController {
       if (!order) {
         res.status(404).json({
           success: false,
-          error: 'Order not found'
+          error: "Order not found",
         });
         return;
       }
@@ -189,46 +192,47 @@ export class LaboratoryController {
       const hl7Message = HL7Service.generateOrderMessage({
         patient: {
           mrn: order.patientMRN,
-          firstName: order.patientName.split(' ')[0],
-          lastName: order.patientName.split(' ')[1] || '',
-          dateOfBirth: new Date('1980-01-01'),
-          gender: 'M'
+          firstName: order.patientName.split(" ")[0],
+          lastName: order.patientName.split(" ")[1] || "",
+          dateOfBirth: new Date("1980-01-01"),
+          gender: "M",
         },
         visit: {
-          patientClass: 'O',
+          patientClass: "O",
           visitNumber: order.orderNumber,
-          admitDateTime: order.orderDateTime
+          admitDateTime: order.orderDateTime,
         },
         order: {
           placerOrderNumber: order.orderNumber,
           fillerOrderNumber: order.orderNumber,
-          status: 'NW',
+          status: "NW",
           orderDateTime: order.orderDateTime,
           orderingProvider: {
             id: order.orderingProviderId,
-            firstName: order.orderingProviderName.split(' ')[0],
-            lastName: order.orderingProviderName.split(' ')[1] || ''
-          }
+            firstName: order.orderingProviderName.split(" ")[0],
+            lastName: order.orderingProviderName.split(" ")[1] || "",
+          },
         },
-        tests: order.tests.map(test => ({
+        tests: order.tests.map((test) => ({
           testCode: test.testCode,
           testName: test.testName,
           observationDateTime: new Date(),
-          collectionDateTime: test.collectedDateTime || order.collectionDateTime
-        }))
+          collectionDateTime:
+            test.collectedDateTime || order.collectionDateTime,
+        })),
       });
 
       res.json({
         success: true,
         data: {
           hl7Message,
-          orderId: order.id
-        }
+          orderId: order.id,
+        },
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -244,12 +248,12 @@ export class LaboratoryController {
 
       res.status(201).json({
         success: true,
-        data: result
+        data: result,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -266,12 +270,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: result
+        data: result,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -286,12 +290,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: results
+        data: results,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -306,12 +310,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: results
+        data: results,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -325,12 +329,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: results
+        data: results,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -343,21 +347,30 @@ export class LaboratoryController {
       const criteria = {
         patientId: req.query.patientId as string,
         loincCode: req.query.loincCode as string,
-        dateFrom: req.query.dateFrom ? new Date(req.query.dateFrom as string) : undefined,
-        dateTo: req.query.dateTo ? new Date(req.query.dateTo as string) : undefined,
-        critical: req.query.critical === 'true' ? true : req.query.critical === 'false' ? false : undefined
+        dateFrom: req.query.dateFrom
+          ? new Date(req.query.dateFrom as string)
+          : undefined,
+        dateTo: req.query.dateTo
+          ? new Date(req.query.dateTo as string)
+          : undefined,
+        critical:
+          req.query.critical === "true"
+            ? true
+            : req.query.critical === "false"
+              ? false
+              : undefined,
       };
 
       const results = await this.labService.searchResults(criteria);
 
       res.json({
         success: true,
-        data: results
+        data: results,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -373,7 +386,7 @@ export class LaboratoryController {
       if (!order) {
         res.status(404).json({
           success: false,
-          error: 'Order not found'
+          error: "Order not found",
         });
         return;
       }
@@ -383,15 +396,15 @@ export class LaboratoryController {
       const hl7Message = HL7Service.generateResultMessage({
         patient: {
           mrn: order.patientMRN,
-          firstName: order.patientName.split(' ')[0],
-          lastName: order.patientName.split(' ')[1] || '',
-          dateOfBirth: new Date('1980-01-01'),
-          gender: 'M'
+          firstName: order.patientName.split(" ")[0],
+          lastName: order.patientName.split(" ")[1] || "",
+          dateOfBirth: new Date("1980-01-01"),
+          gender: "M",
         },
         visit: {
-          patientClass: 'O',
+          patientClass: "O",
           visitNumber: order.orderNumber,
-          admitDateTime: order.orderDateTime
+          admitDateTime: order.orderDateTime,
         },
         order: {
           placerOrderNumber: order.orderNumber,
@@ -399,33 +412,33 @@ export class LaboratoryController {
           testCode: order.tests[0]?.testCode,
           testName: order.tests[0]?.testName,
           observationDateTime: new Date(),
-          resultsDateTime: new Date()
+          resultsDateTime: new Date(),
         },
-        results: results.map(result => ({
+        results: results.map((result) => ({
           testCode: result.loincCode,
           testName: result.testName,
           value: result.value,
           unit: result.unit,
           referenceRange: result.referenceRange,
           abnormalFlag: result.abnormalFlag,
-          valueType: result.valueType === 'numeric' ? 'NM' : 'ST',
+          valueType: result.valueType === "numeric" ? "NM" : "ST",
           observationDateTime: result.performedDateTime,
           analysisDateTime: result.performedDateTime,
-          observationResultStatus: result.status === 'final' ? 'F' : 'P'
-        }))
+          observationResultStatus: result.status === "final" ? "F" : "P",
+        })),
       });
 
       res.json({
         success: true,
         data: {
           hl7Message,
-          orderId: order.id
-        }
+          orderId: order.id,
+        },
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -441,12 +454,12 @@ export class LaboratoryController {
 
       res.status(201).json({
         success: true,
-        data: specimen
+        data: specimen,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -459,16 +472,19 @@ export class LaboratoryController {
       const { specimenId } = req.params;
       const { receivedBy } = req.body;
 
-      const specimen = await this.specimenService.receiveSpecimen(specimenId, receivedBy);
+      const specimen = await this.specimenService.receiveSpecimen(
+        specimenId,
+        receivedBy,
+      );
 
       res.json({
         success: true,
-        data: specimen
+        data: specimen,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -481,16 +497,21 @@ export class LaboratoryController {
       const { specimenId } = req.params;
       const { status, performedBy, notes } = req.body;
 
-      const specimen = await this.specimenService.updateStatus(specimenId, status, performedBy, notes);
+      const specimen = await this.specimenService.updateStatus(
+        specimenId,
+        status,
+        performedBy,
+        notes,
+      );
 
       res.json({
         success: true,
-        data: specimen
+        data: specimen,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -506,19 +527,19 @@ export class LaboratoryController {
       if (!specimen) {
         res.status(404).json({
           success: false,
-          error: 'Specimen not found'
+          error: "Specimen not found",
         });
         return;
       }
 
       res.json({
         success: true,
-        data: specimen
+        data: specimen,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -534,19 +555,19 @@ export class LaboratoryController {
       if (!specimen) {
         res.status(404).json({
           success: false,
-          error: 'Specimen not found'
+          error: "Specimen not found",
         });
         return;
       }
 
       res.json({
         success: true,
-        data: specimen
+        data: specimen,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -557,16 +578,17 @@ export class LaboratoryController {
   getSpecimensForOrder = async (req: Request, res: Response): Promise<void> => {
     try {
       const { orderId } = req.params;
-      const specimens = await this.specimenService.getSpecimensForOrder(orderId);
+      const specimens =
+        await this.specimenService.getSpecimensForOrder(orderId);
 
       res.json({
         success: true,
-        data: specimens
+        data: specimens,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -581,12 +603,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: history
+        data: history,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -599,16 +621,20 @@ export class LaboratoryController {
       const { specimenId } = req.params;
       const { reason, rejectedBy } = req.body;
 
-      const specimen = await this.specimenService.rejectSpecimen(specimenId, reason, rejectedBy);
+      const specimen = await this.specimenService.rejectSpecimen(
+        specimenId,
+        reason,
+        rejectedBy,
+      );
 
       res.json({
         success: true,
-        data: specimen
+        data: specimen,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -619,16 +645,19 @@ export class LaboratoryController {
   addQualityIssue = async (req: Request, res: Response): Promise<void> => {
     try {
       const { specimenId } = req.params;
-      const specimen = await this.specimenService.addQualityIssue(specimenId, req.body);
+      const specimen = await this.specimenService.addQualityIssue(
+        specimenId,
+        req.body,
+      );
 
       res.json({
         success: true,
-        data: specimen
+        data: specimen,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -644,12 +673,12 @@ export class LaboratoryController {
 
       res.json({
         success: true,
-        data: panels
+        data: panels,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -665,19 +694,19 @@ export class LaboratoryController {
       if (!panel) {
         res.status(404).json({
           success: false,
-          error: 'Panel not found'
+          error: "Panel not found",
         });
         return;
       }
 
       res.json({
         success: true,
-        data: panel
+        data: panel,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -691,12 +720,12 @@ export class LaboratoryController {
 
       res.status(201).json({
         success: true,
-        data: panel
+        data: panel,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -712,12 +741,12 @@ export class LaboratoryController {
 
       res.status(201).json({
         success: true,
-        data: qc
+        data: qc,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -728,19 +757,27 @@ export class LaboratoryController {
   getQCRecords = async (req: Request, res: Response): Promise<void> => {
     try {
       const testCode = req.query.testCode as string;
-      const dateFrom = req.query.dateFrom ? new Date(req.query.dateFrom as string) : undefined;
-      const dateTo = req.query.dateTo ? new Date(req.query.dateTo as string) : undefined;
+      const dateFrom = req.query.dateFrom
+        ? new Date(req.query.dateFrom as string)
+        : undefined;
+      const dateTo = req.query.dateTo
+        ? new Date(req.query.dateTo as string)
+        : undefined;
 
-      const records = await this.labService.getQCRecords(testCode, dateFrom, dateTo);
+      const records = await this.labService.getQCRecords(
+        testCode,
+        dateFrom,
+        dateTo,
+      );
 
       res.json({
         success: true,
-        data: records
+        data: records,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };
@@ -750,17 +787,19 @@ export class LaboratoryController {
    */
   getFailedQC = async (req: Request, res: Response): Promise<void> => {
     try {
-      const dateFrom = req.query.dateFrom ? new Date(req.query.dateFrom as string) : undefined;
+      const dateFrom = req.query.dateFrom
+        ? new Date(req.query.dateFrom as string)
+        : undefined;
       const records = await this.labService.getFailedQC(dateFrom);
 
       res.json({
         success: true,
-        data: records
+        data: records,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   };

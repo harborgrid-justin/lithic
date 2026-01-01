@@ -1,7 +1,7 @@
-import { prisma } from '@/lib/db';
-import { logAudit } from '@/lib/audit';
-import { initializeSystemRoles } from '@/lib/permissions';
-import { generateToken } from '@/lib/encryption';
+import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
+import { initializeSystemRoles } from "@/lib/permissions";
+import { generateToken } from "@/lib/encryption";
 
 export interface CreateOrganizationData {
   name: string;
@@ -26,7 +26,7 @@ export async function createOrganization(data: CreateOrganizationData) {
   });
 
   if (existingOrg) {
-    throw new Error('Organization with this NPI already exists');
+    throw new Error("Organization with this NPI already exists");
   }
 
   // Create organization
@@ -50,12 +50,12 @@ export async function createOrganization(data: CreateOrganizationData) {
           expiryDays: 90,
         },
       },
-      status: 'TRIAL',
-      subscription: data.subscription || 'trial',
+      status: "TRIAL",
+      subscription: data.subscription || "trial",
       licenseCount: 10,
       activeUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days trial
-      createdBy: 'system',
-      updatedBy: 'system',
+      createdBy: "system",
+      updatedBy: "system",
     },
   });
 
@@ -63,7 +63,7 @@ export async function createOrganization(data: CreateOrganizationData) {
   await initializeSystemRoles(organization.id);
 
   // Create admin user
-  const bcrypt = await import('bcryptjs');
+  const bcrypt = await import("bcryptjs");
   const tempPassword = generateToken(16);
   const passwordHash = await bcrypt.hash(tempPassword, 12);
 
@@ -71,7 +71,7 @@ export async function createOrganization(data: CreateOrganizationData) {
   const adminRole = await prisma.role.findFirst({
     where: {
       organizationId: organization.id,
-      name: 'ADMIN',
+      name: "ADMIN",
     },
   });
 
@@ -82,11 +82,11 @@ export async function createOrganization(data: CreateOrganizationData) {
       passwordHash,
       firstName: data.adminFirstName,
       lastName: data.adminLastName,
-      status: 'ACTIVE',
+      status: "ACTIVE",
       emailVerified: new Date(),
       lastPasswordChange: new Date(),
-      createdBy: 'system',
-      updatedBy: 'system',
+      createdBy: "system",
+      updatedBy: "system",
     },
   });
 
@@ -103,8 +103,8 @@ export async function createOrganization(data: CreateOrganizationData) {
   // Log organization creation
   await logAudit({
     userId: adminUser.id,
-    action: 'CREATE',
-    resource: 'Organization',
+    action: "CREATE",
+    resource: "Organization",
     resourceId: organization.id,
     description: `New organization created: ${organization.name}`,
     metadata: {
@@ -153,7 +153,7 @@ export async function updateOrganizationSettings(
     passwordPolicy?: any;
     ipWhitelist?: string[];
   },
-  updatedBy: string
+  updatedBy: string,
 ) {
   const organization = await prisma.organization.findUnique({
     where: { id: organizationId },
@@ -161,7 +161,7 @@ export async function updateOrganizationSettings(
   });
 
   if (!organization) {
-    throw new Error('Organization not found');
+    throw new Error("Organization not found");
   }
 
   const currentSettings = (organization.settings as any) || {};
@@ -178,10 +178,10 @@ export async function updateOrganizationSettings(
   // Log settings update
   await logAudit({
     userId: updatedBy,
-    action: 'SYSTEM_CONFIG_CHANGED',
-    resource: 'Organization',
+    action: "SYSTEM_CONFIG_CHANGED",
+    resource: "Organization",
     resourceId: organizationId,
-    description: 'Organization settings updated',
+    description: "Organization settings updated",
     metadata: { settings },
     organizationId,
   });
@@ -200,7 +200,7 @@ export async function updateSubscription(
     licenseCount?: number;
     activeUntil?: Date;
   },
-  updatedBy: string
+  updatedBy: string,
 ) {
   const updatedOrg = await prisma.organization.update({
     where: { id: organizationId },
@@ -216,10 +216,10 @@ export async function updateSubscription(
   // Log subscription update
   await logAudit({
     userId: updatedBy,
-    action: 'UPDATE',
-    resource: 'Organization',
+    action: "UPDATE",
+    resource: "Organization",
     resourceId: organizationId,
-    description: 'Organization subscription updated',
+    description: "Organization subscription updated",
     metadata: { subscription },
     organizationId,
   });
@@ -237,7 +237,7 @@ export async function getOrganizationUsers(
     search?: string;
     page?: number;
     limit?: number;
-  }
+  },
 ) {
   const { status, search, page = 1, limit = 50 } = params || {};
 
@@ -247,9 +247,9 @@ export async function getOrganizationUsers(
 
   if (search) {
     where.OR = [
-      { email: { contains: search, mode: 'insensitive' } },
-      { firstName: { contains: search, mode: 'insensitive' } },
-      { lastName: { contains: search, mode: 'insensitive' } },
+      { email: { contains: search, mode: "insensitive" } },
+      { firstName: { contains: search, mode: "insensitive" } },
+      { lastName: { contains: search, mode: "insensitive" } },
     ];
   }
 
@@ -263,7 +263,7 @@ export async function getOrganizationUsers(
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       skip: (page - 1) * limit,
       take: limit,
     }),
@@ -298,7 +298,7 @@ export async function getOrganizationStats(organizationId: string) {
     prisma.user.count({
       where: {
         organizationId,
-        status: 'ACTIVE',
+        status: "ACTIVE",
       },
     }),
     prisma.patient.count({
@@ -344,12 +344,12 @@ export async function getOrganizationStats(organizationId: string) {
 export async function suspendOrganization(
   organizationId: string,
   reason: string,
-  suspendedBy: string
+  suspendedBy: string,
 ) {
   const organization = await prisma.organization.update({
     where: { id: organizationId },
     data: {
-      status: 'SUSPENDED',
+      status: "SUSPENDED",
       updatedBy: suspendedBy,
     },
   });
@@ -358,10 +358,10 @@ export async function suspendOrganization(
   await prisma.session.updateMany({
     where: {
       user: { organizationId },
-      status: 'active',
+      status: "active",
     },
     data: {
-      status: 'revoked',
+      status: "revoked",
       logoutAt: new Date(),
       logoutReason: `Organization suspended: ${reason}`,
     },
@@ -370,8 +370,8 @@ export async function suspendOrganization(
   // Log suspension
   await logAudit({
     userId: suspendedBy,
-    action: 'UPDATE',
-    resource: 'Organization',
+    action: "UPDATE",
+    resource: "Organization",
     resourceId: organizationId,
     description: `Organization suspended: ${reason}`,
     metadata: { reason },
@@ -386,12 +386,12 @@ export async function suspendOrganization(
  */
 export async function reactivateOrganization(
   organizationId: string,
-  reactivatedBy: string
+  reactivatedBy: string,
 ) {
   const organization = await prisma.organization.update({
     where: { id: organizationId },
     data: {
-      status: 'ACTIVE',
+      status: "ACTIVE",
       updatedBy: reactivatedBy,
     },
   });
@@ -399,10 +399,10 @@ export async function reactivateOrganization(
   // Log reactivation
   await logAudit({
     userId: reactivatedBy,
-    action: 'UPDATE',
-    resource: 'Organization',
+    action: "UPDATE",
+    resource: "Organization",
     resourceId: organizationId,
-    description: 'Organization reactivated',
+    description: "Organization reactivated",
     organizationId,
   });
 
@@ -415,12 +415,12 @@ export async function reactivateOrganization(
 export async function deleteOrganization(
   organizationId: string,
   deletedBy: string,
-  reason: string
+  reason: string,
 ) {
   const organization = await prisma.organization.update({
     where: { id: organizationId },
     data: {
-      status: 'CHURNED',
+      status: "CHURNED",
       deletedAt: new Date(),
       updatedBy: deletedBy,
     },
@@ -430,7 +430,7 @@ export async function deleteOrganization(
   await prisma.user.updateMany({
     where: { organizationId },
     data: {
-      status: 'INACTIVE',
+      status: "INACTIVE",
       deletedAt: new Date(),
       updatedBy: deletedBy,
     },
@@ -440,10 +440,10 @@ export async function deleteOrganization(
   await prisma.session.updateMany({
     where: {
       user: { organizationId },
-      status: 'active',
+      status: "active",
     },
     data: {
-      status: 'revoked',
+      status: "revoked",
       logoutAt: new Date(),
       logoutReason: `Organization deleted: ${reason}`,
     },
@@ -452,8 +452,8 @@ export async function deleteOrganization(
   // Log deletion
   await logAudit({
     userId: deletedBy,
-    action: 'DELETE',
-    resource: 'Organization',
+    action: "DELETE",
+    resource: "Organization",
     resourceId: organizationId,
     description: `Organization deleted: ${reason}`,
     metadata: { reason },
@@ -486,7 +486,7 @@ export async function getOrganizationIntegrations(organizationId: string) {
 export async function updateBAAStatus(
   organizationId: string,
   signedBy: string,
-  status: boolean
+  status: boolean,
 ) {
   const organization = await prisma.organization.update({
     where: { id: organizationId },
@@ -499,10 +499,10 @@ export async function updateBAAStatus(
   // Log BAA status change
   await logAudit({
     userId: signedBy,
-    action: 'UPDATE',
-    resource: 'Organization',
+    action: "UPDATE",
+    resource: "Organization",
     resourceId: organizationId,
-    description: `BAA ${status ? 'signed' : 'revoked'}`,
+    description: `BAA ${status ? "signed" : "revoked"}`,
     metadata: { baaStatus: status },
     organizationId,
   });

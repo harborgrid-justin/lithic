@@ -3,11 +3,11 @@
  * Lithic Healthcare Platform
  */
 
-import { Request, Response } from 'express';
-import { AnalyticsService } from '../services/AnalyticsService';
-import { ReportingService } from '../services/ReportingService';
-import { ExportService } from '../services/ExportService';
-import { AnalyticsAudit } from '../models/Analytics';
+import { Request, Response } from "express";
+import { AnalyticsService } from "../services/AnalyticsService";
+import { ReportingService } from "../services/ReportingService";
+import { ExportService } from "../services/ExportService";
+import { AnalyticsAudit } from "../models/Analytics";
 
 export class AnalyticsController {
   private analyticsService: AnalyticsService;
@@ -25,7 +25,7 @@ export class AnalyticsController {
 
   getDashboards = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { category } = req.query;
 
       const dashboards = await this.analyticsService.getDashboards(userId, {
@@ -33,10 +33,10 @@ export class AnalyticsController {
       });
 
       this.logAudit({
-        action: 'dashboard_viewed',
-        resourceType: 'dashboard',
-        resourceId: 'list',
-        resourceName: 'All Dashboards',
+        action: "dashboard_viewed",
+        resourceType: "dashboard",
+        resourceId: "list",
+        resourceName: "All Dashboards",
         performedBy: userId,
         performedAt: new Date(),
       });
@@ -56,7 +56,7 @@ export class AnalyticsController {
 
   getDashboard = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { id } = req.params;
 
       const dashboard = await this.analyticsService.getDashboard(id, userId);
@@ -64,14 +64,14 @@ export class AnalyticsController {
       if (!dashboard) {
         res.status(404).json({
           success: false,
-          error: 'Dashboard not found',
+          error: "Dashboard not found",
         });
         return;
       }
 
       this.logAudit({
-        action: 'dashboard_viewed',
-        resourceType: 'dashboard',
+        action: "dashboard_viewed",
+        resourceType: "dashboard",
         resourceId: id,
         resourceName: dashboard.name,
         performedBy: userId,
@@ -83,7 +83,7 @@ export class AnalyticsController {
         data: dashboard,
       });
     } catch (error: any) {
-      res.status(error.message.includes('Access denied') ? 403 : 500).json({
+      res.status(error.message.includes("Access denied") ? 403 : 500).json({
         success: false,
         error: error.message,
       });
@@ -92,14 +92,17 @@ export class AnalyticsController {
 
   createDashboard = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const dashboardData = req.body;
 
-      const dashboard = await this.analyticsService.createDashboard(dashboardData, userId);
+      const dashboard = await this.analyticsService.createDashboard(
+        dashboardData,
+        userId,
+      );
 
       this.logAudit({
-        action: 'dashboard_created',
-        resourceType: 'dashboard',
+        action: "dashboard_created",
+        resourceType: "dashboard",
         resourceId: dashboard.id,
         resourceName: dashboard.name,
         performedBy: userId,
@@ -121,15 +124,19 @@ export class AnalyticsController {
 
   updateDashboard = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { id } = req.params;
       const updates = req.body;
 
-      const dashboard = await this.analyticsService.updateDashboard(id, updates, userId);
+      const dashboard = await this.analyticsService.updateDashboard(
+        id,
+        updates,
+        userId,
+      );
 
       this.logAudit({
-        action: 'dashboard_modified',
-        resourceType: 'dashboard',
+        action: "dashboard_modified",
+        resourceType: "dashboard",
         resourceId: id,
         resourceName: dashboard.name,
         performedBy: userId,
@@ -142,7 +149,7 @@ export class AnalyticsController {
         data: dashboard,
       });
     } catch (error: any) {
-      res.status(error.message.includes('not found') ? 404 : 403).json({
+      res.status(error.message.includes("not found") ? 404 : 403).json({
         success: false,
         error: error.message,
       });
@@ -151,27 +158,27 @@ export class AnalyticsController {
 
   deleteDashboard = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { id } = req.params;
 
       const dashboard = await this.analyticsService.getDashboard(id, userId);
       await this.analyticsService.deleteDashboard(id, userId);
 
       this.logAudit({
-        action: 'dashboard_deleted',
-        resourceType: 'dashboard',
+        action: "dashboard_deleted",
+        resourceType: "dashboard",
         resourceId: id,
-        resourceName: dashboard?.name || 'Unknown',
+        resourceName: dashboard?.name || "Unknown",
         performedBy: userId,
         performedAt: new Date(),
       });
 
       res.json({
         success: true,
-        message: 'Dashboard deleted successfully',
+        message: "Dashboard deleted successfully",
       });
     } catch (error: any) {
-      res.status(error.message.includes('not found') ? 404 : 403).json({
+      res.status(error.message.includes("not found") ? 404 : 403).json({
         success: false,
         error: error.message,
       });
@@ -180,10 +187,13 @@ export class AnalyticsController {
 
   duplicateDashboard = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { id } = req.params;
 
-      const dashboard = await this.analyticsService.duplicateDashboard(id, userId);
+      const dashboard = await this.analyticsService.duplicateDashboard(
+        id,
+        userId,
+      );
 
       res.status(201).json({
         success: true,
@@ -245,7 +255,7 @@ export class AnalyticsController {
       if (!metric) {
         res.status(404).json({
           success: false,
-          error: 'Metric not found',
+          error: "Metric not found",
         });
         return;
       }
@@ -270,11 +280,11 @@ export class AnalyticsController {
       const value = await this.analyticsService.calculateMetric(id, parameters);
 
       this.logAudit({
-        action: 'metric_calculated',
-        resourceType: 'metric',
+        action: "metric_calculated",
+        resourceType: "metric",
         resourceId: id,
-        resourceName: 'Metric Calculation',
-        performedBy: req.user?.id || 'anonymous',
+        resourceName: "Metric Calculation",
+        performedBy: req.user?.id || "anonymous",
         performedAt: new Date(),
         details: { parameters, value },
       });
@@ -322,7 +332,10 @@ export class AnalyticsController {
     }
   };
 
-  calculateQualityMeasure = async (req: Request, res: Response): Promise<void> => {
+  calculateQualityMeasure = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { id } = req.params;
 
@@ -349,7 +362,7 @@ export class AnalyticsController {
       if (!startDate || !endDate) {
         res.status(400).json({
           success: false,
-          error: 'Start date and end date are required',
+          error: "Start date and end date are required",
         });
         return;
       }
@@ -374,14 +387,17 @@ export class AnalyticsController {
 
   // ==================== Operational Metrics Endpoints ====================
 
-  getOperationalMetrics = async (req: Request, res: Response): Promise<void> => {
+  getOperationalMetrics = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { startDate, endDate } = req.query;
 
       if (!startDate || !endDate) {
         res.status(400).json({
           success: false,
-          error: 'Start date and end date are required',
+          error: "Start date and end date are required",
         });
         return;
       }
@@ -406,11 +422,16 @@ export class AnalyticsController {
 
   // ==================== Population Health Endpoints ====================
 
-  getPopulationHealthMetrics = async (req: Request, res: Response): Promise<void> => {
+  getPopulationHealthMetrics = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { populationId } = req.query;
 
-      const metrics = await this.analyticsService.getPopulationHealthMetrics(populationId as string);
+      const metrics = await this.analyticsService.getPopulationHealthMetrics(
+        populationId as string,
+      );
 
       res.json({
         success: true,
@@ -458,7 +479,7 @@ export class AnalyticsController {
       if (!report) {
         res.status(404).json({
           success: false,
-          error: 'Report not found',
+          error: "Report not found",
         });
         return;
       }
@@ -477,11 +498,12 @@ export class AnalyticsController {
 
   createReport = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const reportData = req.body;
 
       // Validate configuration
-      const validation = await this.reportingService.validateReportConfig(reportData);
+      const validation =
+        await this.reportingService.validateReportConfig(reportData);
       if (!validation.valid) {
         res.status(400).json({
           success: false,
@@ -490,7 +512,10 @@ export class AnalyticsController {
         return;
       }
 
-      const report = await this.reportingService.createReport(reportData, userId);
+      const report = await this.reportingService.createReport(
+        reportData,
+        userId,
+      );
 
       res.status(201).json({
         success: true,
@@ -506,18 +531,22 @@ export class AnalyticsController {
 
   updateReport = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { id } = req.params;
       const updates = req.body;
 
-      const report = await this.reportingService.updateReport(id, updates, userId);
+      const report = await this.reportingService.updateReport(
+        id,
+        updates,
+        userId,
+      );
 
       res.json({
         success: true,
         data: report,
       });
     } catch (error: any) {
-      res.status(error.message.includes('not found') ? 404 : 400).json({
+      res.status(error.message.includes("not found") ? 404 : 400).json({
         success: false,
         error: error.message,
       });
@@ -532,7 +561,7 @@ export class AnalyticsController {
 
       res.json({
         success: true,
-        message: 'Report deleted successfully',
+        message: "Report deleted successfully",
       });
     } catch (error: any) {
       res.status(500).json({
@@ -544,15 +573,19 @@ export class AnalyticsController {
 
   generateReport = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { id } = req.params;
       const parameters = req.body;
 
-      const instance = await this.reportingService.generateReport(id, userId, parameters);
+      const instance = await this.reportingService.generateReport(
+        id,
+        userId,
+        parameters,
+      );
 
       this.logAudit({
-        action: 'report_generated',
-        resourceType: 'report',
+        action: "report_generated",
+        resourceType: "report",
         resourceId: id,
         resourceName: instance.name,
         performedBy: userId,
@@ -563,7 +596,7 @@ export class AnalyticsController {
       res.status(202).json({
         success: true,
         data: instance,
-        message: 'Report generation started',
+        message: "Report generation started",
       });
     } catch (error: any) {
       res.status(404).json({
@@ -579,7 +612,7 @@ export class AnalyticsController {
 
       const instances = await this.reportingService.getReportInstances(
         reportId as string,
-        userId as string
+        userId as string,
       );
 
       res.json({
@@ -604,7 +637,7 @@ export class AnalyticsController {
       if (!instance) {
         res.status(404).json({
           success: false,
-          error: 'Report instance not found',
+          error: "Report instance not found",
         });
         return;
       }
@@ -644,7 +677,9 @@ export class AnalyticsController {
     try {
       const { reportId } = req.query;
 
-      const scheduled = await this.reportingService.getScheduledReports(reportId as string);
+      const scheduled = await this.reportingService.getScheduledReports(
+        reportId as string,
+      );
 
       res.json({
         success: true,
@@ -659,18 +694,24 @@ export class AnalyticsController {
     }
   };
 
-  createScheduledReport = async (req: Request, res: Response): Promise<void> => {
+  createScheduledReport = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const scheduleData = req.body;
 
-      const scheduled = await this.reportingService.createScheduledReport(scheduleData, userId);
+      const scheduled = await this.reportingService.createScheduledReport(
+        scheduleData,
+        userId,
+      );
 
       this.logAudit({
-        action: 'report_scheduled',
-        resourceType: 'report',
+        action: "report_scheduled",
+        resourceType: "report",
         resourceId: scheduled.reportConfigId,
-        resourceName: 'Scheduled Report',
+        resourceName: "Scheduled Report",
         performedBy: userId,
         performedAt: new Date(),
         details: scheduleData,
@@ -688,12 +729,18 @@ export class AnalyticsController {
     }
   };
 
-  updateScheduledReport = async (req: Request, res: Response): Promise<void> => {
+  updateScheduledReport = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const updates = req.body;
 
-      const scheduled = await this.reportingService.updateScheduledReport(id, updates);
+      const scheduled = await this.reportingService.updateScheduledReport(
+        id,
+        updates,
+      );
 
       res.json({
         success: true,
@@ -707,7 +754,10 @@ export class AnalyticsController {
     }
   };
 
-  deleteScheduledReport = async (req: Request, res: Response): Promise<void> => {
+  deleteScheduledReport = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { id } = req.params;
 
@@ -715,7 +765,7 @@ export class AnalyticsController {
 
       res.json({
         success: true,
-        message: 'Scheduled report deleted successfully',
+        message: "Scheduled report deleted successfully",
       });
     } catch (error: any) {
       res.status(500).json({
@@ -725,12 +775,18 @@ export class AnalyticsController {
     }
   };
 
-  toggleScheduledReport = async (req: Request, res: Response): Promise<void> => {
+  toggleScheduledReport = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const { isActive } = req.body;
 
-      const scheduled = await this.reportingService.toggleScheduledReport(id, isActive);
+      const scheduled = await this.reportingService.toggleScheduledReport(
+        id,
+        isActive,
+      );
 
       res.json({
         success: true,
@@ -748,7 +804,7 @@ export class AnalyticsController {
 
   createExportJob = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const { type, sourceId, sourceName, format, parameters } = req.body;
 
       const job = await this.exportService.createExportJob(
@@ -757,12 +813,12 @@ export class AnalyticsController {
         sourceName,
         format,
         parameters,
-        userId
+        userId,
       );
 
       this.logAudit({
-        action: 'data_exported',
-        resourceType: 'export',
+        action: "data_exported",
+        resourceType: "export",
         resourceId: job.id,
         resourceName: sourceName,
         performedBy: userId,
@@ -773,7 +829,7 @@ export class AnalyticsController {
       res.status(202).json({
         success: true,
         data: job,
-        message: 'Export job created',
+        message: "Export job created",
       });
     } catch (error: any) {
       res.status(400).json({
@@ -792,7 +848,7 @@ export class AnalyticsController {
       if (!job) {
         res.status(404).json({
           success: false,
-          error: 'Export job not found',
+          error: "Export job not found",
         });
         return;
       }
@@ -811,7 +867,7 @@ export class AnalyticsController {
 
   getExportJobs = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
 
       const jobs = await this.exportService.getExportJobs(userId);
 
@@ -836,7 +892,7 @@ export class AnalyticsController {
 
       res.json({
         success: true,
-        message: 'Export job cancelled',
+        message: "Export job cancelled",
       });
     } catch (error: any) {
       res.status(404).json({
@@ -868,7 +924,8 @@ export class AnalyticsController {
 
   getAuditLog = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { resourceType, resourceId, userId, startDate, endDate } = req.query;
+      const { resourceType, resourceId, userId, startDate, endDate } =
+        req.query;
 
       let filtered = [...this.auditLog];
 
@@ -884,12 +941,16 @@ export class AnalyticsController {
       if (startDate && endDate) {
         const start = new Date(startDate as string);
         const end = new Date(endDate as string);
-        filtered = filtered.filter((a) => a.performedAt >= start && a.performedAt <= end);
+        filtered = filtered.filter(
+          (a) => a.performedAt >= start && a.performedAt <= end,
+        );
       }
 
       res.json({
         success: true,
-        data: filtered.sort((a, b) => b.performedAt.getTime() - a.performedAt.getTime()),
+        data: filtered.sort(
+          (a, b) => b.performedAt.getTime() - a.performedAt.getTime(),
+        ),
         count: filtered.length,
       });
     } catch (error: any) {
@@ -902,7 +963,7 @@ export class AnalyticsController {
 
   // ==================== Helper Methods ====================
 
-  private logAudit(audit: Omit<AnalyticsAudit, 'id'>): void {
+  private logAudit(audit: Omit<AnalyticsAudit, "id">): void {
     const auditEntry: AnalyticsAudit = {
       ...audit,
       id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,

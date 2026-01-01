@@ -1,20 +1,35 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { LabResult } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FileText, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
-import { formatDateTime } from '@/lib/utils';
-import LaboratoryService from '@/services/laboratory.service';
+import React, { useEffect, useState } from "react";
+import { LabResult } from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  FileText,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
+import LaboratoryService from "@/services/laboratory.service";
 
 interface ResultViewerProps {
   orderId?: string;
   patientId?: string;
 }
 
-export default function ResultViewer({ orderId, patientId }: ResultViewerProps) {
+export default function ResultViewer({
+  orderId,
+  patientId,
+}: ResultViewerProps) {
   const [results, setResults] = useState<LabResult[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +43,7 @@ export default function ResultViewer({ orderId, patientId }: ResultViewerProps) 
       const data = await LaboratoryService.getResults({ orderId, patientId });
       setResults(data);
     } catch (error) {
-      console.error('Failed to load results:', error);
+      console.error("Failed to load results:", error);
     } finally {
       setLoading(false);
     }
@@ -36,14 +51,14 @@ export default function ResultViewer({ orderId, patientId }: ResultViewerProps) 
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, any> = {
-      PRELIMINARY: 'warning',
-      FINAL: 'success',
-      CORRECTED: 'default',
-      CANCELLED: 'destructive',
-      AMENDED: 'default',
+      PRELIMINARY: "warning",
+      FINAL: "success",
+      CORRECTED: "default",
+      CANCELLED: "destructive",
+      AMENDED: "default",
     };
 
-    return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
+    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
   };
 
   const getFlagBadge = (flag: string, isCritical: boolean) => {
@@ -57,12 +72,12 @@ export default function ResultViewer({ orderId, patientId }: ResultViewerProps) 
     }
 
     const variants: Record<string, any> = {
-      NORMAL: 'outline',
-      LOW: 'warning',
-      HIGH: 'warning',
-      CRITICAL_LOW: 'destructive',
-      CRITICAL_HIGH: 'destructive',
-      ABNORMAL: 'warning',
+      NORMAL: "outline",
+      LOW: "warning",
+      HIGH: "warning",
+      CRITICAL_LOW: "destructive",
+      CRITICAL_HIGH: "destructive",
+      ABNORMAL: "warning",
     };
 
     const icons: Record<string, any> = {
@@ -73,7 +88,7 @@ export default function ResultViewer({ orderId, patientId }: ResultViewerProps) 
     };
 
     return (
-      <Badge variant={variants[flag] || 'outline'} className="gap-1">
+      <Badge variant={variants[flag] || "outline"} className="gap-1">
         {icons[flag]}
         {flag}
       </Badge>
@@ -110,17 +125,22 @@ export default function ResultViewer({ orderId, patientId }: ResultViewerProps) 
           <TableBody>
             {results.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={9}
+                  className="text-center text-muted-foreground"
+                >
                   No results available
                 </TableCell>
               </TableRow>
             ) : (
               results.map((result) => (
-                <TableRow 
+                <TableRow
                   key={result.id}
-                  className={result.isCritical ? 'bg-destructive/5' : ''}
+                  className={result.isCritical ? "bg-destructive/5" : ""}
                 >
-                  <TableCell className="font-medium">{result.testName}</TableCell>
+                  <TableCell className="font-medium">
+                    {result.testName}
+                  </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {result.loincCode}
                   </TableCell>
@@ -129,17 +149,19 @@ export default function ResultViewer({ orderId, patientId }: ResultViewerProps) 
                   </TableCell>
                   <TableCell>{result.unit}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {result.referenceRange || 'N/A'}
+                    {result.referenceRange || "N/A"}
                   </TableCell>
                   <TableCell>
                     {getFlagBadge(result.flag, result.isCritical)}
                   </TableCell>
                   <TableCell>{getStatusBadge(result.status)}</TableCell>
                   <TableCell className="text-sm">
-                    {result.performedAt ? formatDateTime(result.performedAt) : 'N/A'}
+                    {result.performedAt
+                      ? formatDateTime(result.performedAt)
+                      : "N/A"}
                   </TableCell>
                   <TableCell className="text-sm">
-                    {result.verifiedBy || 'Pending'}
+                    {result.verifiedBy || "Pending"}
                   </TableCell>
                 </TableRow>
               ))
@@ -147,14 +169,18 @@ export default function ResultViewer({ orderId, patientId }: ResultViewerProps) 
           </TableBody>
         </Table>
 
-        {results.length > 0 && results.some(r => r.comments) && (
+        {results.length > 0 && results.some((r) => r.comments) && (
           <div className="mt-6 space-y-2">
             <h4 className="font-semibold">Comments:</h4>
             {results
-              .filter(r => r.comments)
+              .filter((r) => r.comments)
               .map((result) => (
-                <div key={result.id} className="text-sm border-l-2 border-primary pl-3 py-1">
-                  <span className="font-medium">{result.testName}:</span> {result.comments}
+                <div
+                  key={result.id}
+                  className="text-sm border-l-2 border-primary pl-3 py-1"
+                >
+                  <span className="font-medium">{result.testName}:</span>{" "}
+                  {result.comments}
                 </div>
               ))}
           </div>

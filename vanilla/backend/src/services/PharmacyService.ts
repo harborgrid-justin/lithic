@@ -4,7 +4,7 @@
  * Handles pharmacy operations, inventory, and controlled substances
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 export interface Medication {
   id: string;
@@ -15,8 +15,8 @@ export interface Medication {
   dosageForm: string;
   strength: string;
   manufacturer: string;
-  deaSchedule?: '1' | '2' | '3' | '4' | '5'; // Controlled substance schedule
-  formularyStatus: 'preferred' | 'alternative' | 'non-formulary';
+  deaSchedule?: "1" | "2" | "3" | "4" | "5"; // Controlled substance schedule
+  formularyStatus: "preferred" | "alternative" | "non-formulary";
   unitPrice: number;
   packageSize: number;
   requiresPriorAuth: boolean;
@@ -37,7 +37,7 @@ export interface InventoryItem {
   location: string;
   reorderLevel: number;
   reorderQuantity: number;
-  status: 'active' | 'expired' | 'recalled' | 'quarantine';
+  status: "active" | "expired" | "recalled" | "quarantine";
   cost: number;
   supplier: string;
   receivedDate: Date;
@@ -76,12 +76,18 @@ export interface Prescription {
   // E-prescribing (NCPDP)
   ncpdpMessageId?: string;
   ncpdpVersion?: string;
-  eRxStatus?: 'pending' | 'accepted' | 'rejected' | 'changed' | 'cancelled';
+  eRxStatus?: "pending" | "accepted" | "rejected" | "changed" | "cancelled";
   eRxReceivedDate?: Date;
 
   // Status and flags
-  status: 'pending' | 'verified' | 'filled' | 'partially_filled' | 'cancelled' | 'on_hold';
-  priority: 'routine' | 'urgent' | 'stat';
+  status:
+    | "pending"
+    | "verified"
+    | "filled"
+    | "partially_filled"
+    | "cancelled"
+    | "on_hold";
+  priority: "routine" | "urgent" | "stat";
   isControlled: boolean;
   requiresCounseling: boolean;
 
@@ -143,7 +149,12 @@ export interface ControlledSubstanceLog {
   id: string;
   medicationId: string;
   medication?: Medication;
-  action: 'receive' | 'dispense' | 'waste' | 'transfer' | 'inventory_adjustment';
+  action:
+    | "receive"
+    | "dispense"
+    | "waste"
+    | "transfer"
+    | "inventory_adjustment";
   quantity: number;
   runningBalance: number;
 
@@ -171,12 +182,12 @@ export interface FormularyEntry {
   medicationId: string;
   medication?: Medication;
   tier: 1 | 2 | 3 | 4 | 5;
-  status: 'preferred' | 'alternative' | 'non-formulary' | 'restricted';
+  status: "preferred" | "alternative" | "non-formulary" | "restricted";
   requiresPriorAuth: boolean;
   priorAuthCriteria?: string;
   quantityLimits?: {
     maxQuantity: number;
-    period: 'day' | 'week' | 'month' | 'year';
+    period: "day" | "week" | "month" | "year";
   };
   stepTherapyRequired: boolean;
   stepTherapyAlternatives?: string[];
@@ -192,7 +203,8 @@ export class PharmacyService extends EventEmitter {
   private inventory: Map<string, InventoryItem> = new Map();
   private prescriptions: Map<string, Prescription> = new Map();
   private dispensingRecords: Map<string, DispensingRecord> = new Map();
-  private controlledSubstanceLogs: Map<string, ControlledSubstanceLog> = new Map();
+  private controlledSubstanceLogs: Map<string, ControlledSubstanceLog> =
+    new Map();
   private formulary: Map<string, FormularyEntry> = new Map();
 
   constructor() {
@@ -206,16 +218,21 @@ export class PharmacyService extends EventEmitter {
   }
 
   async getMedicationByNDC(ndcCode: string): Promise<Medication | null> {
-    return Array.from(this.medications.values()).find(m => m.ndcCode === ndcCode) || null;
+    return (
+      Array.from(this.medications.values()).find(
+        (m) => m.ndcCode === ndcCode,
+      ) || null
+    );
   }
 
   async searchMedications(query: string): Promise<Medication[]> {
     const searchTerm = query.toLowerCase();
-    return Array.from(this.medications.values()).filter(med =>
-      med.name.toLowerCase().includes(searchTerm) ||
-      med.genericName.toLowerCase().includes(searchTerm) ||
-      med.brandName?.toLowerCase().includes(searchTerm) ||
-      med.ndcCode.includes(searchTerm)
+    return Array.from(this.medications.values()).filter(
+      (med) =>
+        med.name.toLowerCase().includes(searchTerm) ||
+        med.genericName.toLowerCase().includes(searchTerm) ||
+        med.brandName?.toLowerCase().includes(searchTerm) ||
+        med.ndcCode.includes(searchTerm),
     );
   }
 
@@ -229,43 +246,52 @@ export class PharmacyService extends EventEmitter {
 
     if (filters) {
       if (filters.isControlled !== undefined) {
-        meds = meds.filter(m => m.isControlled === filters.isControlled);
+        meds = meds.filter((m) => m.isControlled === filters.isControlled);
       }
       if (filters.deaSchedule) {
-        meds = meds.filter(m => m.deaSchedule === filters.deaSchedule);
+        meds = meds.filter((m) => m.deaSchedule === filters.deaSchedule);
       }
       if (filters.formularyStatus) {
-        meds = meds.filter(m => m.formularyStatus === filters.formularyStatus);
+        meds = meds.filter(
+          (m) => m.formularyStatus === filters.formularyStatus,
+        );
       }
       if (filters.therapeuticClass) {
-        meds = meds.filter(m => m.therapeuticClass === filters.therapeuticClass);
+        meds = meds.filter(
+          (m) => m.therapeuticClass === filters.therapeuticClass,
+        );
       }
     }
 
     return meds;
   }
 
-  async createMedication(data: Omit<Medication, 'id' | 'createdAt' | 'updatedAt'>): Promise<Medication> {
+  async createMedication(
+    data: Omit<Medication, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Medication> {
     const medication: Medication = {
       ...data,
-      id: this.generateId('MED'),
+      id: this.generateId("MED"),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     this.medications.set(medication.id, medication);
-    this.emit('medication:created', medication);
+    this.emit("medication:created", medication);
 
     return medication;
   }
 
-  async updateMedication(id: string, updates: Partial<Medication>): Promise<Medication | null> {
+  async updateMedication(
+    id: string,
+    updates: Partial<Medication>,
+  ): Promise<Medication | null> {
     const medication = this.medications.get(id);
     if (!medication) return null;
 
     const updated = { ...medication, ...updates, updatedAt: new Date() };
     this.medications.set(id, updated);
-    this.emit('medication:updated', updated);
+    this.emit("medication:updated", updated);
 
     return updated;
   }
@@ -275,9 +301,12 @@ export class PharmacyService extends EventEmitter {
     return this.inventory.get(id) || null;
   }
 
-  async getInventoryByMedication(medicationId: string): Promise<InventoryItem[]> {
-    return Array.from(this.inventory.values())
-      .filter(item => item.medicationId === medicationId && item.status === 'active');
+  async getInventoryByMedication(
+    medicationId: string,
+  ): Promise<InventoryItem[]> {
+    return Array.from(this.inventory.values()).filter(
+      (item) => item.medicationId === medicationId && item.status === "active",
+    );
   }
 
   async getAllInventory(filters?: {
@@ -289,36 +318,42 @@ export class PharmacyService extends EventEmitter {
 
     if (filters) {
       if (filters.status) {
-        items = items.filter(i => i.status === filters.status);
+        items = items.filter((i) => i.status === filters.status);
       }
       if (filters.lowStock) {
-        items = items.filter(i => i.quantity <= i.reorderLevel);
+        items = items.filter((i) => i.quantity <= i.reorderLevel);
       }
       if (filters.expiringSoon) {
         const thirtyDaysFromNow = new Date();
         thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-        items = items.filter(i => i.expirationDate <= thirtyDaysFromNow);
+        items = items.filter((i) => i.expirationDate <= thirtyDaysFromNow);
       }
     }
 
     return items;
   }
 
-  async createInventoryItem(data: Omit<InventoryItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<InventoryItem> {
+  async createInventoryItem(
+    data: Omit<InventoryItem, "id" | "createdAt" | "updatedAt">,
+  ): Promise<InventoryItem> {
     const item: InventoryItem = {
       ...data,
-      id: this.generateId('INV'),
+      id: this.generateId("INV"),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     this.inventory.set(item.id, item);
-    this.emit('inventory:created', item);
+    this.emit("inventory:created", item);
 
     return item;
   }
 
-  async updateInventoryQuantity(id: string, quantityChange: number, reason: string): Promise<InventoryItem | null> {
+  async updateInventoryQuantity(
+    id: string,
+    quantityChange: number,
+    reason: string,
+  ): Promise<InventoryItem | null> {
     const item = this.inventory.get(id);
     if (!item) return null;
 
@@ -329,16 +364,16 @@ export class PharmacyService extends EventEmitter {
     };
 
     this.inventory.set(id, updated);
-    this.emit('inventory:updated', { item: updated, quantityChange, reason });
+    this.emit("inventory:updated", { item: updated, quantityChange, reason });
 
     // Check if controlled substance
     if (item.medication?.isControlled) {
       await this.logControlledSubstanceAction({
         medicationId: item.medicationId,
-        action: 'inventory_adjustment',
+        action: "inventory_adjustment",
         quantity: Math.abs(quantityChange),
         runningBalance: updated.quantity,
-        performedBy: 'system',
+        performedBy: "system",
         lotNumber: item.lotNumber,
         reason,
         timestamp: new Date(),
@@ -353,27 +388,38 @@ export class PharmacyService extends EventEmitter {
     return this.prescriptions.get(id) || null;
   }
 
-  async getPrescriptionByRxNumber(rxNumber: string): Promise<Prescription | null> {
-    return Array.from(this.prescriptions.values()).find(p => p.rxNumber === rxNumber) || null;
+  async getPrescriptionByRxNumber(
+    rxNumber: string,
+  ): Promise<Prescription | null> {
+    return (
+      Array.from(this.prescriptions.values()).find(
+        (p) => p.rxNumber === rxNumber,
+      ) || null
+    );
   }
 
-  async getPrescriptionsByPatient(patientId: string, filters?: {
-    status?: string;
-    active?: boolean;
-  }): Promise<Prescription[]> {
-    let rxs = Array.from(this.prescriptions.values())
-      .filter(p => p.patientId === patientId);
+  async getPrescriptionsByPatient(
+    patientId: string,
+    filters?: {
+      status?: string;
+      active?: boolean;
+    },
+  ): Promise<Prescription[]> {
+    let rxs = Array.from(this.prescriptions.values()).filter(
+      (p) => p.patientId === patientId,
+    );
 
     if (filters) {
       if (filters.status) {
-        rxs = rxs.filter(p => p.status === filters.status);
+        rxs = rxs.filter((p) => p.status === filters.status);
       }
       if (filters.active) {
         const now = new Date();
-        rxs = rxs.filter(p =>
-          p.status === 'filled' &&
-          p.refillsRemaining > 0 &&
-          p.expirationDate > now
+        rxs = rxs.filter(
+          (p) =>
+            p.status === "filled" &&
+            p.refillsRemaining > 0 &&
+            p.expirationDate > now,
         );
       }
     }
@@ -390,38 +436,40 @@ export class PharmacyService extends EventEmitter {
 
     if (filters) {
       if (filters.status) {
-        rxs = rxs.filter(p => p.status === filters.status);
+        rxs = rxs.filter((p) => p.status === filters.status);
       }
       if (filters.priority) {
-        rxs = rxs.filter(p => p.priority === filters.priority);
+        rxs = rxs.filter((p) => p.priority === filters.priority);
       }
       if (filters.isControlled !== undefined) {
-        rxs = rxs.filter(p => p.isControlled === filters.isControlled);
+        rxs = rxs.filter((p) => p.isControlled === filters.isControlled);
       }
     }
 
     return rxs;
   }
 
-  async createPrescription(data: Omit<Prescription, 'id' | 'rxNumber' | 'createdAt' | 'updatedAt'>): Promise<Prescription> {
+  async createPrescription(
+    data: Omit<Prescription, "id" | "rxNumber" | "createdAt" | "updatedAt">,
+  ): Promise<Prescription> {
     const prescription: Prescription = {
       ...data,
-      id: this.generateId('RX'),
+      id: this.generateId("RX"),
       rxNumber: this.generateRxNumber(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     this.prescriptions.set(prescription.id, prescription);
-    this.emit('prescription:created', prescription);
+    this.emit("prescription:created", prescription);
 
     return prescription;
   }
 
   async updatePrescriptionStatus(
     id: string,
-    status: Prescription['status'],
-    notes?: string
+    status: Prescription["status"],
+    notes?: string,
   ): Promise<Prescription | null> {
     const prescription = this.prescriptions.get(id);
     if (!prescription) return null;
@@ -434,7 +482,10 @@ export class PharmacyService extends EventEmitter {
     };
 
     this.prescriptions.set(id, updated);
-    this.emit('prescription:status_changed', { prescription: updated, oldStatus: prescription.status });
+    this.emit("prescription:status_changed", {
+      prescription: updated,
+      oldStatus: prescription.status,
+    });
 
     return updated;
   }
@@ -455,13 +506,13 @@ export class PharmacyService extends EventEmitter {
     const prescription = this.prescriptions.get(data.prescriptionId);
     if (!prescription) return null;
 
-    if (prescription.status !== 'verified') {
-      throw new Error('Prescription must be verified before dispensing');
+    if (prescription.status !== "verified") {
+      throw new Error("Prescription must be verified before dispensing");
     }
 
     // Create dispensing record
     const record: DispensingRecord = {
-      id: this.generateId('DISP'),
+      id: this.generateId("DISP"),
       prescriptionId: data.prescriptionId,
       dispensedDate: new Date(),
       dispensedBy: data.dispensedBy,
@@ -483,7 +534,7 @@ export class PharmacyService extends EventEmitter {
     const isPartialFill = data.quantity < prescription.quantity;
     await this.updatePrescriptionStatus(
       data.prescriptionId,
-      isPartialFill ? 'partially_filled' : 'filled'
+      isPartialFill ? "partially_filled" : "filled",
     );
 
     const updatedRx = {
@@ -492,25 +543,37 @@ export class PharmacyService extends EventEmitter {
       dispensedBy: data.dispensedBy,
       dispensedQuantity: data.quantity,
       lotNumber: data.lotNumber,
-      status: (isPartialFill ? 'partially_filled' : 'filled') as Prescription['status'],
+      status: (isPartialFill
+        ? "partially_filled"
+        : "filled") as Prescription["status"],
       updatedAt: new Date(),
     };
     this.prescriptions.set(prescription.id, updatedRx);
 
     // Update inventory
-    const inventoryItems = await this.getInventoryByMedication(prescription.medicationId);
-    const inventoryItem = inventoryItems.find(i => i.lotNumber === data.lotNumber);
+    const inventoryItems = await this.getInventoryByMedication(
+      prescription.medicationId,
+    );
+    const inventoryItem = inventoryItems.find(
+      (i) => i.lotNumber === data.lotNumber,
+    );
     if (inventoryItem) {
-      await this.updateInventoryQuantity(inventoryItem.id, -data.quantity, `Dispensed for RX ${prescription.rxNumber}`);
+      await this.updateInventoryQuantity(
+        inventoryItem.id,
+        -data.quantity,
+        `Dispensed for RX ${prescription.rxNumber}`,
+      );
     }
 
     // Log controlled substance if applicable
     if (prescription.isControlled) {
       await this.logControlledSubstanceAction({
         medicationId: prescription.medicationId,
-        action: 'dispense',
+        action: "dispense",
         quantity: data.quantity,
-        runningBalance: inventoryItem ? inventoryItem.quantity - data.quantity : 0,
+        runningBalance: inventoryItem
+          ? inventoryItem.quantity - data.quantity
+          : 0,
         prescriptionId: prescription.id,
         dispensingRecordId: record.id,
         performedBy: data.dispensedBy,
@@ -520,23 +583,23 @@ export class PharmacyService extends EventEmitter {
       });
     }
 
-    this.emit('prescription:dispensed', { record, prescription: updatedRx });
+    this.emit("prescription:dispensed", { record, prescription: updatedRx });
 
     return record;
   }
 
   // Controlled Substance Logging
   async logControlledSubstanceAction(
-    data: Omit<ControlledSubstanceLog, 'id' | 'createdAt'>
+    data: Omit<ControlledSubstanceLog, "id" | "createdAt">,
   ): Promise<ControlledSubstanceLog> {
     const log: ControlledSubstanceLog = {
       ...data,
-      id: this.generateId('CSL'),
+      id: this.generateId("CSL"),
       createdAt: new Date(),
     };
 
     this.controlledSubstanceLogs.set(log.id, log);
-    this.emit('controlled_substance:logged', log);
+    this.emit("controlled_substance:logged", log);
 
     return log;
   }
@@ -551,16 +614,16 @@ export class PharmacyService extends EventEmitter {
 
     if (filters) {
       if (filters.medicationId) {
-        logs = logs.filter(l => l.medicationId === filters.medicationId);
+        logs = logs.filter((l) => l.medicationId === filters.medicationId);
       }
       if (filters.action) {
-        logs = logs.filter(l => l.action === filters.action);
+        logs = logs.filter((l) => l.action === filters.action);
       }
       if (filters.startDate) {
-        logs = logs.filter(l => l.timestamp >= filters.startDate!);
+        logs = logs.filter((l) => l.timestamp >= filters.startDate!);
       }
       if (filters.endDate) {
-        logs = logs.filter(l => l.timestamp <= filters.endDate!);
+        logs = logs.filter((l) => l.timestamp <= filters.endDate!);
       }
     }
 
@@ -568,8 +631,14 @@ export class PharmacyService extends EventEmitter {
   }
 
   // Formulary Management
-  async getFormularyEntry(medicationId: string): Promise<FormularyEntry | null> {
-    return Array.from(this.formulary.values()).find(f => f.medicationId === medicationId) || null;
+  async getFormularyEntry(
+    medicationId: string,
+  ): Promise<FormularyEntry | null> {
+    return (
+      Array.from(this.formulary.values()).find(
+        (f) => f.medicationId === medicationId,
+      ) || null
+    );
   }
 
   async getAllFormulary(filters?: {
@@ -580,10 +649,10 @@ export class PharmacyService extends EventEmitter {
 
     if (filters) {
       if (filters.tier) {
-        entries = entries.filter(e => e.tier === filters.tier);
+        entries = entries.filter((e) => e.tier === filters.tier);
       }
       if (filters.status) {
-        entries = entries.filter(e => e.status === filters.status);
+        entries = entries.filter((e) => e.status === filters.status);
       }
     }
 
@@ -591,17 +660,17 @@ export class PharmacyService extends EventEmitter {
   }
 
   async createFormularyEntry(
-    data: Omit<FormularyEntry, 'id' | 'createdAt' | 'updatedAt'>
+    data: Omit<FormularyEntry, "id" | "createdAt" | "updatedAt">,
   ): Promise<FormularyEntry> {
     const entry: FormularyEntry = {
       ...data,
-      id: this.generateId('FORM'),
+      id: this.generateId("FORM"),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     this.formulary.set(entry.id, entry);
-    this.emit('formulary:created', entry);
+    this.emit("formulary:created", entry);
 
     return entry;
   }
@@ -620,61 +689,61 @@ export class PharmacyService extends EventEmitter {
   // Sample data initialization
   private initializeSampleData(): void {
     // Sample medications
-    const medications: Omit<Medication, 'id' | 'createdAt' | 'updatedAt'>[] = [
+    const medications: Omit<Medication, "id" | "createdAt" | "updatedAt">[] = [
       {
-        ndcCode: '00002-3227-01',
-        name: 'Prozac 20mg Capsules',
-        genericName: 'Fluoxetine Hydrochloride',
-        brandName: 'Prozac',
-        dosageForm: 'Capsule',
-        strength: '20mg',
-        manufacturer: 'Eli Lilly',
-        formularyStatus: 'preferred',
-        unitPrice: 2.50,
+        ndcCode: "00002-3227-01",
+        name: "Prozac 20mg Capsules",
+        genericName: "Fluoxetine Hydrochloride",
+        brandName: "Prozac",
+        dosageForm: "Capsule",
+        strength: "20mg",
+        manufacturer: "Eli Lilly",
+        formularyStatus: "preferred",
+        unitPrice: 2.5,
         packageSize: 30,
         requiresPriorAuth: false,
-        therapeuticClass: 'SSRI Antidepressant',
-        routeOfAdministration: ['Oral'],
+        therapeuticClass: "SSRI Antidepressant",
+        routeOfAdministration: ["Oral"],
         isControlled: false,
       },
       {
-        ndcCode: '59762-5020-1',
-        name: 'Oxycodone 5mg Tablets',
-        genericName: 'Oxycodone Hydrochloride',
-        dosageForm: 'Tablet',
-        strength: '5mg',
-        manufacturer: 'Greenstone',
-        deaSchedule: '2',
-        formularyStatus: 'alternative',
+        ndcCode: "59762-5020-1",
+        name: "Oxycodone 5mg Tablets",
+        genericName: "Oxycodone Hydrochloride",
+        dosageForm: "Tablet",
+        strength: "5mg",
+        manufacturer: "Greenstone",
+        deaSchedule: "2",
+        formularyStatus: "alternative",
         unitPrice: 0.85,
         packageSize: 100,
         requiresPriorAuth: true,
-        therapeuticClass: 'Opioid Analgesic',
-        routeOfAdministration: ['Oral'],
+        therapeuticClass: "Opioid Analgesic",
+        routeOfAdministration: ["Oral"],
         isControlled: true,
       },
       {
-        ndcCode: '00071-0156-23',
-        name: 'Lipitor 40mg Tablets',
-        genericName: 'Atorvastatin Calcium',
-        brandName: 'Lipitor',
-        dosageForm: 'Tablet',
-        strength: '40mg',
-        manufacturer: 'Pfizer',
-        formularyStatus: 'preferred',
-        unitPrice: 1.20,
+        ndcCode: "00071-0156-23",
+        name: "Lipitor 40mg Tablets",
+        genericName: "Atorvastatin Calcium",
+        brandName: "Lipitor",
+        dosageForm: "Tablet",
+        strength: "40mg",
+        manufacturer: "Pfizer",
+        formularyStatus: "preferred",
+        unitPrice: 1.2,
         packageSize: 90,
         requiresPriorAuth: false,
-        therapeuticClass: 'Statin',
-        routeOfAdministration: ['Oral'],
+        therapeuticClass: "Statin",
+        routeOfAdministration: ["Oral"],
         isControlled: false,
       },
     ];
 
-    medications.forEach(med => {
+    medications.forEach((med) => {
       const medication: Medication = {
         ...med,
-        id: this.generateId('MED'),
+        id: this.generateId("MED"),
         createdAt: new Date(),
         updatedAt: new Date(),
       };

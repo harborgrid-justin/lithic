@@ -3,47 +3,47 @@
  * Handle individual prescription operations
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 // Mock database - shared with prescriptions/route.ts in production
 const prescriptionsDb: any[] = [];
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
-    const prescription = prescriptionsDb.find(p => p.id === params.id);
+    const prescription = prescriptionsDb.find((p) => p.id === params.id);
 
     if (!prescription) {
       return NextResponse.json(
-        { error: 'Prescription not found' },
-        { status: 404 }
+        { error: "Prescription not found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(prescription);
   } catch (error) {
-    console.error('Error fetching prescription:', error);
+    console.error("Error fetching prescription:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch prescription' },
-      { status: 500 }
+      { error: "Failed to fetch prescription" },
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const data = await request.json();
-    const index = prescriptionsDb.findIndex(p => p.id === params.id);
+    const index = prescriptionsDb.findIndex((p) => p.id === params.id);
 
     if (index === -1) {
       return NextResponse.json(
-        { error: 'Prescription not found' },
-        { status: 404 }
+        { error: "Prescription not found" },
+        { status: 404 },
       );
     }
 
@@ -55,25 +55,25 @@ export async function PATCH(
 
     return NextResponse.json(prescriptionsDb[index]);
   } catch (error) {
-    console.error('Error updating prescription:', error);
+    console.error("Error updating prescription:", error);
     return NextResponse.json(
-      { error: 'Failed to update prescription' },
-      { status: 500 }
+      { error: "Failed to update prescription" },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
-    const index = prescriptionsDb.findIndex(p => p.id === params.id);
+    const index = prescriptionsDb.findIndex((p) => p.id === params.id);
 
     if (index === -1) {
       return NextResponse.json(
-        { error: 'Prescription not found' },
-        { status: 404 }
+        { error: "Prescription not found" },
+        { status: 404 },
       );
     }
 
@@ -81,10 +81,10 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting prescription:', error);
+    console.error("Error deleting prescription:", error);
     return NextResponse.json(
-      { error: 'Failed to delete prescription' },
-      { status: 500 }
+      { error: "Failed to delete prescription" },
+      { status: 500 },
     );
   }
 }

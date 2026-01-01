@@ -1,13 +1,15 @@
 export class VoiceDictation {
   private recognition: any = null;
   private isRecording: boolean = false;
-  private transcript: string = '';
+  private transcript: string = "";
   private onTranscript?: (text: string) => void;
 
   constructor() {
     // Initialize Web Speech API
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
       this.recognition = new SpeechRecognition();
       this.setupRecognition();
     }
@@ -18,16 +20,16 @@ export class VoiceDictation {
 
     this.recognition.continuous = true;
     this.recognition.interimResults = true;
-    this.recognition.lang = 'en-US';
+    this.recognition.lang = "en-US";
 
     this.recognition.onresult = (event: any) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
+      let interimTranscript = "";
+      let finalTranscript = "";
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
-          finalTranscript += transcript + ' ';
+          finalTranscript += transcript + " ";
         } else {
           interimTranscript += transcript;
         }
@@ -41,7 +43,7 @@ export class VoiceDictation {
     };
 
     this.recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
+      console.error("Speech recognition error:", event.error);
       this.isRecording = false;
       this.updateUI();
     };
@@ -60,12 +62,12 @@ export class VoiceDictation {
     container.innerHTML = `
       <div class="voice-dictation">
         <div class="dictation-controls">
-          <button class="btn-record ${this.isRecording ? 'recording' : ''}" data-action="toggle-record">
-            <span class="record-icon">${this.isRecording ? '⏸️' : '🎤'}</span>
-            <span class="record-label">${this.isRecording ? 'Stop' : 'Start'} Dictation</span>
+          <button class="btn-record ${this.isRecording ? "recording" : ""}" data-action="toggle-record">
+            <span class="record-icon">${this.isRecording ? "⏸️" : "🎤"}</span>
+            <span class="record-label">${this.isRecording ? "Stop" : "Start"} Dictation</span>
           </button>
 
-          <button class="btn btn-secondary" data-action="clear" ${!this.transcript ? 'disabled' : ''}>
+          <button class="btn btn-secondary" data-action="clear" ${!this.transcript ? "disabled" : ""}>
             Clear
           </button>
 
@@ -74,23 +76,31 @@ export class VoiceDictation {
           </button>
         </div>
 
-        ${!this.isSupported() ? `
+        ${
+          !this.isSupported()
+            ? `
           <div class="alert alert-warning">
             Voice dictation is not supported in this browser. Please use Chrome, Edge, or Safari.
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div class="dictation-status">
-          ${this.isRecording ? `
+          ${
+            this.isRecording
+              ? `
             <div class="status-indicator recording">
               <span class="status-dot"></span>
               <span class="status-text">Recording...</span>
             </div>
-          ` : `
+          `
+              : `
             <div class="status-indicator">
               <span class="status-text">Ready</span>
             </div>
-          `}
+          `
+          }
         </div>
 
         <div class="dictation-transcript">
@@ -125,18 +135,20 @@ export class VoiceDictation {
 
   private attachEventListeners(container: HTMLElement) {
     const recordBtn = container.querySelector('[data-action="toggle-record"]');
-    recordBtn?.addEventListener('click', () => this.toggleRecording());
+    recordBtn?.addEventListener("click", () => this.toggleRecording());
 
     const clearBtn = container.querySelector('[data-action="clear"]');
-    clearBtn?.addEventListener('click', () => this.clearTranscript());
+    clearBtn?.addEventListener("click", () => this.clearTranscript());
 
-    const templateBtn = container.querySelector('[data-action="insert-template"]');
-    templateBtn?.addEventListener('click', () => this.insertTemplate());
+    const templateBtn = container.querySelector(
+      '[data-action="insert-template"]',
+    );
+    templateBtn?.addEventListener("click", () => this.insertTemplate());
   }
 
   private toggleRecording() {
     if (!this.isSupported()) {
-      alert('Voice dictation is not supported in this browser');
+      alert("Voice dictation is not supported in this browser");
       return;
     }
 
@@ -155,7 +167,7 @@ export class VoiceDictation {
       this.isRecording = true;
       this.updateUI();
     } catch (error) {
-      console.error('Error starting recognition:', error);
+      console.error("Error starting recognition:", error);
     }
   }
 
@@ -168,11 +180,11 @@ export class VoiceDictation {
   }
 
   private clearTranscript() {
-    this.transcript = '';
+    this.transcript = "";
     this.updateTranscriptDisplay();
 
     if (this.onTranscript) {
-      this.onTranscript('');
+      this.onTranscript("");
     }
   }
 
@@ -194,7 +206,7 @@ RECOMMENDATIONS:
 [Follow-up recommendations]
     `.trim();
 
-    this.transcript += '\n\n' + template;
+    this.transcript += "\n\n" + template;
     this.updateTranscriptDisplay();
 
     if (this.onTranscript) {
@@ -203,25 +215,29 @@ RECOMMENDATIONS:
   }
 
   private updateUI() {
-    const recordBtn = document.querySelector('.btn-record');
+    const recordBtn = document.querySelector(".btn-record");
     if (recordBtn) {
-      recordBtn.className = `btn-record ${this.isRecording ? 'recording' : ''}`;
+      recordBtn.className = `btn-record ${this.isRecording ? "recording" : ""}`;
 
-      const icon = recordBtn.querySelector('.record-icon');
-      const label = recordBtn.querySelector('.record-label');
+      const icon = recordBtn.querySelector(".record-icon");
+      const label = recordBtn.querySelector(".record-label");
 
-      if (icon) icon.textContent = this.isRecording ? '⏸️' : '🎤';
-      if (label) label.textContent = (this.isRecording ? 'Stop' : 'Start') + ' Dictation';
+      if (icon) icon.textContent = this.isRecording ? "⏸️" : "🎤";
+      if (label)
+        label.textContent =
+          (this.isRecording ? "Stop" : "Start") + " Dictation";
     }
 
-    const status = document.querySelector('.dictation-status');
+    const status = document.querySelector(".dictation-status");
     if (status) {
-      status.innerHTML = this.isRecording ? `
+      status.innerHTML = this.isRecording
+        ? `
         <div class="status-indicator recording">
           <span class="status-dot"></span>
           <span class="status-text">Recording...</span>
         </div>
-      ` : `
+      `
+        : `
         <div class="status-indicator">
           <span class="status-text">Ready</span>
         </div>
@@ -230,19 +246,23 @@ RECOMMENDATIONS:
   }
 
   private updateTranscriptDisplay() {
-    const transcriptContent = document.getElementById('transcript-content');
+    const transcriptContent = document.getElementById("transcript-content");
     if (transcriptContent) {
-      transcriptContent.innerHTML = this.transcript || '<span class="placeholder">Your dictation will appear here...</span>';
+      transcriptContent.innerHTML =
+        this.transcript ||
+        '<span class="placeholder">Your dictation will appear here...</span>';
     }
 
-    const clearBtn = document.querySelector('[data-action="clear"]') as HTMLButtonElement;
+    const clearBtn = document.querySelector(
+      '[data-action="clear"]',
+    ) as HTMLButtonElement;
     if (clearBtn) {
       clearBtn.disabled = !this.transcript;
     }
   }
 
   isSupported(): boolean {
-    return 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+    return "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
   }
 
   getTranscript(): string {

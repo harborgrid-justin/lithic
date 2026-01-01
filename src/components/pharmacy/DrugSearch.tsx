@@ -3,10 +3,10 @@
  * Search for medications by name, generic, or NDC
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { pharmacyService, type Drug } from '@/services/pharmacy.service';
+import { useState } from "react";
+import { pharmacyService, type Drug } from "@/services/pharmacy.service";
 
 interface DrugSearchProps {
   onSelect: (drug: Drug) => void;
@@ -14,11 +14,11 @@ interface DrugSearchProps {
 }
 
 export function DrugSearch({ onSelect, selectedDrugs = [] }: DrugSearchProps) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<Drug[]>([]);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
-    dosageForm: '',
+    dosageForm: "",
     controlled: false,
   });
 
@@ -33,21 +33,21 @@ export function DrugSearch({ onSelect, selectedDrugs = [] }: DrugSearchProps) {
       });
       setResults(drugs);
     } catch (error) {
-      console.error('Failed to search drugs:', error);
-      alert('Failed to search medications');
+      console.error("Failed to search drugs:", error);
+      alert("Failed to search medications");
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
 
   const isSelected = (drugId: string) => {
-    return selectedDrugs.some(d => d.id === drugId);
+    return selectedDrugs.some((d) => d.id === drugId);
   };
 
   return (
@@ -71,7 +71,7 @@ export function DrugSearch({ onSelect, selectedDrugs = [] }: DrugSearchProps) {
             disabled={loading}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
           >
-            {loading ? 'Searching...' : 'Search'}
+            {loading ? "Searching..." : "Search"}
           </button>
         </div>
       </div>
@@ -84,7 +84,9 @@ export function DrugSearch({ onSelect, selectedDrugs = [] }: DrugSearchProps) {
           </label>
           <select
             value={filters.dosageForm}
-            onChange={(e) => setFilters({ ...filters, dosageForm: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, dosageForm: e.target.value })
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Forms</option>
@@ -101,10 +103,14 @@ export function DrugSearch({ onSelect, selectedDrugs = [] }: DrugSearchProps) {
             <input
               type="checkbox"
               checked={filters.controlled}
-              onChange={(e) => setFilters({ ...filters, controlled: e.target.checked })}
+              onChange={(e) =>
+                setFilters({ ...filters, controlled: e.target.checked })
+              }
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Controlled Substances Only</span>
+            <span className="ml-2 text-sm text-gray-700">
+              Controlled Substances Only
+            </span>
           </label>
         </div>
       </div>
@@ -116,7 +122,7 @@ export function DrugSearch({ onSelect, selectedDrugs = [] }: DrugSearchProps) {
             <div
               key={drug.id}
               className={`p-4 hover:bg-gray-50 cursor-pointer ${
-                isSelected(drug.id) ? 'bg-blue-50' : ''
+                isSelected(drug.id) ? "bg-blue-50" : ""
               }`}
               onClick={() => onSelect(drug)}
             >
@@ -146,7 +152,11 @@ export function DrugSearch({ onSelect, selectedDrugs = [] }: DrugSearchProps) {
                 </div>
                 {isSelected(drug.id) && (
                   <div className="ml-4 text-blue-600">
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      className="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"

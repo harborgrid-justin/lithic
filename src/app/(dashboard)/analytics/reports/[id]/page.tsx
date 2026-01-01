@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { FileText, ArrowLeft, Edit, Play, Calendar } from 'lucide-react';
-import { Report, ReportExecution, reportingService } from '@/services/reporting.service';
-import { DataTable } from '@/components/analytics/DataTable';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { FileText, ArrowLeft, Edit, Play, Calendar } from "lucide-react";
+import {
+  Report,
+  ReportExecution,
+  reportingService,
+} from "@/services/reporting.service";
+import { DataTable } from "@/components/analytics/DataTable";
 
 export default function ReportDetailPage() {
   const params = useParams();
@@ -27,7 +31,7 @@ export default function ReportDetailPage() {
       setReport(reportData);
       setExecutions(executionHistory);
     } catch (error) {
-      console.error('Failed to load report:', error);
+      console.error("Failed to load report:", error);
     } finally {
       setLoading(false);
     }
@@ -39,23 +43,25 @@ export default function ReportDetailPage() {
     try {
       const execution = await reportingService.executeReport(report.id);
       setExecutions([execution, ...executions]);
-      alert('Report execution started');
+      alert("Report execution started");
     } catch (error) {
-      console.error('Failed to run report:', error);
-      alert('Failed to run report');
+      console.error("Failed to run report:", error);
+      alert("Failed to run report");
     }
   };
 
-  const getStatusBadge = (status: ReportExecution['status']) => {
+  const getStatusBadge = (status: ReportExecution["status"]) => {
     const styles = {
-      completed: 'bg-green-100 text-green-700',
-      running: 'bg-blue-100 text-blue-700',
-      pending: 'bg-yellow-100 text-yellow-700',
-      failed: 'bg-red-100 text-red-700',
+      completed: "bg-green-100 text-green-700",
+      running: "bg-blue-100 text-blue-700",
+      pending: "bg-yellow-100 text-yellow-700",
+      failed: "bg-red-100 text-red-700",
     };
 
     return (
-      <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status]}`}>
+      <span
+        className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status]}`}
+      >
         {status}
       </span>
     );
@@ -73,8 +79,12 @@ export default function ReportDetailPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Report not found</h2>
-          <p className="text-gray-500 mb-6">The report you&apos;re looking for doesn&apos;t exist.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Report not found
+          </h2>
+          <p className="text-gray-500 mb-6">
+            The report you&apos;re looking for doesn&apos;t exist.
+          </p>
           <Link
             href="/analytics/reports"
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -88,11 +98,26 @@ export default function ReportDetailPage() {
   }
 
   const executionColumns = [
-    { key: 'id', label: 'Execution ID', sortable: true },
-    { key: 'status', label: 'Status', sortable: true },
-    { key: 'startedAt', label: 'Started', format: 'date' as const, sortable: true },
-    { key: 'completedAt', label: 'Completed', format: 'date' as const, sortable: true },
-    { key: 'fileSize', label: 'File Size', format: 'number' as const, sortable: true },
+    { key: "id", label: "Execution ID", sortable: true },
+    { key: "status", label: "Status", sortable: true },
+    {
+      key: "startedAt",
+      label: "Started",
+      format: "date" as const,
+      sortable: true,
+    },
+    {
+      key: "completedAt",
+      label: "Completed",
+      format: "date" as const,
+      sortable: true,
+    },
+    {
+      key: "fileSize",
+      label: "File Size",
+      format: "number" as const,
+      sortable: true,
+    },
   ];
 
   return (
@@ -114,7 +139,9 @@ export default function ReportDetailPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-3xl font-bold text-gray-900">{report.name}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    {report.name}
+                  </h1>
                   <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-sm font-medium capitalize">
                     {report.type}
                   </span>
@@ -150,45 +177,58 @@ export default function ReportDetailPage() {
           <div className="col-span-2 space-y-6">
             {/* Configuration */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Configuration</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Configuration
+              </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Metrics</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Metrics
+                  </label>
                   <div className="mt-1 flex flex-wrap gap-2">
                     {report.query.metrics.map((metric) => (
                       <span
                         key={metric}
                         className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
                       >
-                        {metric.replace(/_/g, ' ')}
+                        {metric.replace(/_/g, " ")}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                {report.query.dimensions && report.query.dimensions.length > 0 && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Dimensions</label>
-                    <div className="mt-1 flex flex-wrap gap-2">
-                      {report.query.dimensions.map((dimension) => (
-                        <span
-                          key={dimension}
-                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                        >
-                          {dimension}
-                        </span>
-                      ))}
+                {report.query.dimensions &&
+                  report.query.dimensions.length > 0 && (
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">
+                        Dimensions
+                      </label>
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {report.query.dimensions.map((dimension) => (
+                          <span
+                            key={dimension}
+                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                          >
+                            {dimension}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Format</label>
-                    <p className="text-gray-900 uppercase mt-1">{report.format}</p>
+                    <label className="text-sm font-medium text-gray-700">
+                      Format
+                    </label>
+                    <p className="text-gray-900 uppercase mt-1">
+                      {report.format}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Status</label>
+                    <label className="text-sm font-medium text-gray-700">
+                      Status
+                    </label>
                     <p className="mt-1">{getStatusBadge(report.status)}</p>
                   </div>
                 </div>
@@ -198,7 +238,9 @@ export default function ReportDetailPage() {
             {/* Execution History */}
             <div className="bg-white rounded-lg border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Execution History</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Execution History
+                </h2>
               </div>
               <DataTable
                 data={executions}
@@ -215,12 +257,16 @@ export default function ReportDetailPage() {
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Calendar className="w-5 h-5 text-gray-600" />
-                  <h2 className="text-lg font-semibold text-gray-900">Schedule</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Schedule
+                  </h2>
                 </div>
                 <div className="space-y-3 text-sm">
                   <div>
                     <label className="text-gray-500">Frequency</label>
-                    <p className="text-gray-900 capitalize">{report.schedule.frequency}</p>
+                    <p className="text-gray-900 capitalize">
+                      {report.schedule.frequency}
+                    </p>
                   </div>
                   <div>
                     <label className="text-gray-500">Time</label>
@@ -241,7 +287,9 @@ export default function ReportDetailPage() {
             {/* Recipients */}
             {report.recipients && report.recipients.length > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Recipients</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  Recipients
+                </h2>
                 <div className="space-y-2">
                   {report.recipients.map((email) => (
                     <div
@@ -257,7 +305,9 @@ export default function ReportDetailPage() {
 
             {/* Metadata */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Metadata</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Metadata
+              </h2>
               <div className="space-y-3 text-sm">
                 <div>
                   <label className="text-gray-500">Created</label>

@@ -20,8 +20,8 @@ export interface Encounter {
   patientId: string;
   providerId: string;
   facilityId: string;
-  encounterType: 'inpatient' | 'outpatient' | 'emergency' | 'telehealth';
-  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
+  encounterType: "inpatient" | "outpatient" | "emergency" | "telehealth";
+  status: "scheduled" | "in-progress" | "completed" | "cancelled";
   chiefComplaint: string;
   encounterDate: Date;
   startTime: Date;
@@ -42,14 +42,20 @@ export interface ClinicalNote {
   encounterId: string;
   patientId: string;
   providerId: string;
-  noteType: 'progress' | 'soap' | 'admission' | 'discharge' | 'consult' | 'procedure';
+  noteType:
+    | "progress"
+    | "soap"
+    | "admission"
+    | "discharge"
+    | "consult"
+    | "procedure";
   template?: string;
   subjective?: string;
   objective?: string;
   assessment?: string;
   plan?: string;
   content: string;
-  status: 'draft' | 'signed' | 'amended' | 'addended';
+  status: "draft" | "signed" | "amended" | "addended";
   createdAt: Date;
   updatedAt: Date;
   signedAt?: Date;
@@ -65,16 +71,16 @@ export interface VitalSigns {
   recordedAt: Date;
   recordedBy: string;
   temperature?: number;
-  temperatureUnit: 'F' | 'C';
+  temperatureUnit: "F" | "C";
   pulse?: number;
   respiratoryRate?: number;
   bloodPressureSystolic?: number;
   bloodPressureDiastolic?: number;
   oxygenSaturation?: number;
   weight?: number;
-  weightUnit: 'lbs' | 'kg';
+  weightUnit: "lbs" | "kg";
   height?: number;
-  heightUnit: 'in' | 'cm';
+  heightUnit: "in" | "cm";
   bmi?: number;
   painLevel?: number; // 0-10 scale
   headCircumference?: number;
@@ -88,8 +94,8 @@ export interface Problem {
   encounterId?: string;
   icd10Code: string;
   problemName: string;
-  status: 'active' | 'inactive' | 'resolved' | 'chronic';
-  severity: 'mild' | 'moderate' | 'severe';
+  status: "active" | "inactive" | "resolved" | "chronic";
+  severity: "mild" | "moderate" | "severe";
   onsetDate: Date;
   resolvedDate?: Date;
   notes?: string;
@@ -102,11 +108,11 @@ export interface Allergy {
   id: string;
   patientId: string;
   allergen: string;
-  allergenType: 'medication' | 'food' | 'environmental' | 'other';
+  allergenType: "medication" | "food" | "environmental" | "other";
   reaction: string[];
-  severity: 'mild' | 'moderate' | 'severe' | 'life-threatening';
+  severity: "mild" | "moderate" | "severe" | "life-threatening";
   onsetDate?: Date;
-  status: 'active' | 'inactive' | 'resolved';
+  status: "active" | "inactive" | "resolved";
   verifiedBy?: string;
   notes?: string;
   createdAt: Date;
@@ -127,7 +133,7 @@ export interface Medication {
   endDate?: Date;
   prescribedBy: string;
   indication?: string;
-  status: 'active' | 'discontinued' | 'completed' | 'on-hold';
+  status: "active" | "discontinued" | "completed" | "on-hold";
   refills?: number;
   quantity?: number;
   instructions?: string;
@@ -140,12 +146,18 @@ export interface Order {
   id: string;
   encounterId: string;
   patientId: string;
-  orderType: 'lab' | 'imaging' | 'procedure' | 'medication' | 'referral' | 'dme';
+  orderType:
+    | "lab"
+    | "imaging"
+    | "procedure"
+    | "medication"
+    | "referral"
+    | "dme";
   orderName: string;
   cptCode?: string;
   icd10Codes: string[];
-  priority: 'routine' | 'urgent' | 'stat';
-  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
+  priority: "routine" | "urgent" | "stat";
+  status: "pending" | "in-progress" | "completed" | "cancelled";
   orderedBy: string;
   orderedAt: Date;
   scheduledDate?: Date;
@@ -161,7 +173,7 @@ export interface Order {
 export interface ClinicalTemplate {
   id: string;
   name: string;
-  type: 'note' | 'order-set' | 'assessment';
+  type: "note" | "order-set" | "assessment";
   specialty?: string;
   content: string;
   sections: TemplateSection[];
@@ -184,7 +196,7 @@ export interface ESignature {
   timestamp: Date;
   ipAddress: string;
   signature: string; // Base64 encoded signature
-  method: 'password' | 'pin' | 'biometric' | 'token';
+  method: "password" | "pin" | "biometric" | "token";
 }
 
 export interface ClinicalDashboardStats {
@@ -201,7 +213,7 @@ export interface CreateEncounterRequest {
   patientId: string;
   providerId: string;
   facilityId: string;
-  encounterType: Encounter['encounterType'];
+  encounterType: Encounter["encounterType"];
   chiefComplaint: string;
   encounterDate: string;
   startTime: string;
@@ -211,7 +223,7 @@ export interface CreateEncounterRequest {
 
 export interface UpdateEncounterRequest {
   chiefComplaint?: string;
-  status?: Encounter['status'];
+  status?: Encounter["status"];
   endTime?: string;
   icd10Codes?: string[];
   cptCodes?: string[];
@@ -221,7 +233,7 @@ export interface CreateNoteRequest {
   encounterId: string;
   patientId: string;
   providerId: string;
-  noteType: ClinicalNote['noteType'];
+  noteType: ClinicalNote["noteType"];
   template?: string;
   subjective?: string;
   objective?: string;
@@ -242,16 +254,16 @@ export interface CreateVitalsRequest {
   encounterId: string;
   patientId: string;
   temperature?: number;
-  temperatureUnit: 'F' | 'C';
+  temperatureUnit: "F" | "C";
   pulse?: number;
   respiratoryRate?: number;
   bloodPressureSystolic?: number;
   bloodPressureDiastolic?: number;
   oxygenSaturation?: number;
   weight?: number;
-  weightUnit: 'lbs' | 'kg';
+  weightUnit: "lbs" | "kg";
   height?: number;
-  heightUnit: 'in' | 'cm';
+  heightUnit: "in" | "cm";
   painLevel?: number;
   notes?: string;
 }
@@ -261,7 +273,7 @@ export interface CreateProblemRequest {
   encounterId?: string;
   icd10Code: string;
   problemName: string;
-  severity: Problem['severity'];
+  severity: Problem["severity"];
   onsetDate: string;
   notes?: string;
 }
@@ -269,9 +281,9 @@ export interface CreateProblemRequest {
 export interface CreateAllergyRequest {
   patientId: string;
   allergen: string;
-  allergenType: Allergy['allergenType'];
+  allergenType: Allergy["allergenType"];
   reaction: string[];
-  severity: Allergy['severity'];
+  severity: Allergy["severity"];
   onsetDate?: string;
   notes?: string;
 }
@@ -297,11 +309,11 @@ export interface CreateMedicationRequest {
 export interface CreateOrderRequest {
   encounterId: string;
   patientId: string;
-  orderType: Order['orderType'];
+  orderType: Order["orderType"];
   orderName: string;
   cptCode?: string;
   icd10Codes: string[];
-  priority: Order['priority'];
+  priority: Order["priority"];
   scheduledDate?: string;
   instructions?: string;
 }

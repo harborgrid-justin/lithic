@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import SecurityDashboard from '@/components/admin/SecurityDashboard';
-import SessionManager from '@/components/admin/SessionManager';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SecurityDashboard from "@/components/admin/SecurityDashboard";
+import SessionManager from "@/components/admin/SessionManager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function SecurityPage() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Security Center</h1>
-        <p className="text-muted-foreground">Monitor and manage security settings</p>
+        <p className="text-muted-foreground">
+          Monitor and manage security settings
+        </p>
       </div>
 
       <Tabs defaultValue="dashboard" className="w-full">

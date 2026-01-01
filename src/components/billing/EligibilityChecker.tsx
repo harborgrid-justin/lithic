@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { EligibilityResponse } from '@/types/billing';
-import { CheckCircle, XCircle, Search, AlertCircle } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { useState } from "react";
+import { EligibilityResponse } from "@/types/billing";
+import { CheckCircle, XCircle, Search, AlertCircle } from "lucide-react";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface EligibilityCheckerProps {
   patientId?: string;
   onCheck?: (patientId: string, insuranceId: string) => void;
 }
 
-export default function EligibilityChecker({ patientId: initialPatientId, onCheck }: EligibilityCheckerProps) {
-  const [patientId, setPatientId] = useState(initialPatientId || '');
-  const [insuranceId, setInsuranceId] = useState('');
+export default function EligibilityChecker({
+  patientId: initialPatientId,
+  onCheck,
+}: EligibilityCheckerProps) {
+  const [patientId, setPatientId] = useState(initialPatientId || "");
+  const [insuranceId, setInsuranceId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<EligibilityResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -24,21 +27,21 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
     setResult(null);
 
     try {
-      const response = await fetch('/api/billing/eligibility', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/billing/eligibility", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ patientId, insuranceId }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to check eligibility');
+        throw new Error("Failed to check eligibility");
       }
 
       const data = await response.json();
       setResult(data);
       onCheck?.(patientId, insuranceId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +51,9 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
     <div className="space-y-6">
       {/* Search Form */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold mb-4">Check Insurance Eligibility</h3>
+        <h3 className="text-lg font-semibold mb-4">
+          Check Insurance Eligibility
+        </h3>
         <form onSubmit={handleCheck} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -82,7 +87,7 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
             className="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Search className="w-5 h-5" />
-            {isLoading ? 'Checking...' : 'Check Eligibility'}
+            {isLoading ? "Checking..." : "Check Eligibility"}
           </button>
         </form>
       </div>
@@ -105,8 +110,8 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
           <div
             className={`rounded-lg border p-6 ${
               result.isEligible
-                ? 'bg-green-50 border-green-200'
-                : 'bg-red-50 border-red-200'
+                ? "bg-green-50 border-green-200"
+                : "bg-red-50 border-red-200"
             }`}
           >
             <div className="flex items-center gap-3">
@@ -117,7 +122,7 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
               )}
               <div>
                 <h3 className="text-xl font-bold">
-                  {result.isEligible ? 'Eligible' : 'Not Eligible'}
+                  {result.isEligible ? "Eligible" : "Not Eligible"}
                 </h3>
                 <p className="text-sm text-gray-600">
                   Checked on {formatDate(result.checkedAt)}
@@ -135,13 +140,17 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
                   {result.effectiveDate && (
                     <div>
                       <p className="text-sm text-gray-500">Effective Date</p>
-                      <p className="font-medium">{formatDate(result.effectiveDate)}</p>
+                      <p className="font-medium">
+                        {formatDate(result.effectiveDate)}
+                      </p>
                     </div>
                   )}
                   {result.terminationDate && (
                     <div>
                       <p className="text-sm text-gray-500">Termination Date</p>
-                      <p className="font-medium">{formatDate(result.terminationDate)}</p>
+                      <p className="font-medium">
+                        {formatDate(result.terminationDate)}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -169,7 +178,9 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
                   )}
                   {result.deductibleRemaining !== undefined && (
                     <div>
-                      <p className="text-sm text-gray-500">Deductible Remaining</p>
+                      <p className="text-sm text-gray-500">
+                        Deductible Remaining
+                      </p>
                       <p className="text-lg font-bold text-orange-600">
                         {formatCurrency(result.deductibleRemaining)}
                       </p>
@@ -202,7 +213,9 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
                         <div className="grid grid-cols-3 gap-4 text-sm">
                           <div>
                             <p className="text-gray-500">Coverage Level</p>
-                            <p className="font-medium">{benefit.coverageLevel}</p>
+                            <p className="font-medium">
+                              {benefit.coverageLevel}
+                            </p>
                           </div>
                           {benefit.inNetworkCoverage !== undefined && (
                             <div>
@@ -223,7 +236,7 @@ export default function EligibilityChecker({ patientId: initialPatientId, onChec
                         </div>
                         {benefit.limitations && (
                           <p className="mt-2 text-sm text-gray-600">
-                            <span className="font-medium">Limitations:</span>{' '}
+                            <span className="font-medium">Limitations:</span>{" "}
                             {benefit.limitations}
                           </p>
                         )}

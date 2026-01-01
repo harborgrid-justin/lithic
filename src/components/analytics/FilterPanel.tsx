@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { FilterConfig } from '@/services/analytics.service';
-import { DateRangePicker } from './DateRangePicker';
-import { X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from "react";
+import { FilterConfig } from "@/services/analytics.service";
+import { DateRangePicker } from "./DateRangePicker";
+import { X, Filter, ChevronDown, ChevronUp } from "lucide-react";
 
 interface FilterPanelProps {
   filters: FilterConfig;
@@ -22,22 +22,27 @@ export function FilterPanel({
   filters,
   onChange,
   availableFilters = {},
-  className = '',
+  className = "",
   collapsible = false,
 }: FilterPanelProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleDateRangeChange = (dateRange: NonNullable<FilterConfig['dateRange']>) => {
+  const handleDateRangeChange = (
+    dateRange: NonNullable<FilterConfig["dateRange"]>,
+  ) => {
     onChange({
       ...filters,
       dateRange,
     });
   };
 
-  const handleMultiSelectChange = (field: keyof FilterConfig, value: string) => {
+  const handleMultiSelectChange = (
+    field: keyof FilterConfig,
+    value: string,
+  ) => {
     const currentValues = (filters[field] as string[]) || [];
     const newValues = currentValues.includes(value)
-      ? currentValues.filter(v => v !== value)
+      ? currentValues.filter((v) => v !== value)
       : [...currentValues, value];
 
     onChange({
@@ -68,7 +73,9 @@ export function FilterPanel({
 
   if (collapsible && isCollapsed) {
     return (
-      <div className={`bg-white rounded-lg border border-gray-200 ${className}`}>
+      <div
+        className={`bg-white rounded-lg border border-gray-200 ${className}`}
+      >
         <button
           onClick={() => setIsCollapsed(false)}
           className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
@@ -132,100 +139,118 @@ export function FilterPanel({
         )}
 
         {/* Departments */}
-        {availableFilters.departments && availableFilters.departments.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Departments
-              </label>
-              {filters.departments && filters.departments.length > 0 && (
-                <button
-                  onClick={() => handleClearFilter('departments')}
-                  className="text-xs text-gray-500 hover:text-gray-700"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            <div className="space-y-2 max-h-40 overflow-y-auto">
-              {availableFilters.departments.map((dept) => (
-                <label key={dept} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filters.departments?.includes(dept) || false}
-                    onChange={() => handleMultiSelectChange('departments', dept)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">{dept}</span>
+        {availableFilters.departments &&
+          availableFilters.departments.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Departments
                 </label>
-              ))}
+                {filters.departments && filters.departments.length > 0 && (
+                  <button
+                    onClick={() => handleClearFilter("departments")}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {availableFilters.departments.map((dept) => (
+                  <label
+                    key={dept}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.departments?.includes(dept) || false}
+                      onChange={() =>
+                        handleMultiSelectChange("departments", dept)
+                      }
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">{dept}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Providers */}
-        {availableFilters.providers && availableFilters.providers.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Providers
-              </label>
-              {filters.providers && filters.providers.length > 0 && (
-                <button
-                  onClick={() => handleClearFilter('providers')}
-                  className="text-xs text-gray-500 hover:text-gray-700"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            <div className="space-y-2 max-h-40 overflow-y-auto">
-              {availableFilters.providers.map((provider) => (
-                <label key={provider} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filters.providers?.includes(provider) || false}
-                    onChange={() => handleMultiSelectChange('providers', provider)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">{provider}</span>
+        {availableFilters.providers &&
+          availableFilters.providers.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Providers
                 </label>
-              ))}
+                {filters.providers && filters.providers.length > 0 && (
+                  <button
+                    onClick={() => handleClearFilter("providers")}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {availableFilters.providers.map((provider) => (
+                  <label
+                    key={provider}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.providers?.includes(provider) || false}
+                      onChange={() =>
+                        handleMultiSelectChange("providers", provider)
+                      }
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">{provider}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Locations */}
-        {availableFilters.locations && availableFilters.locations.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Locations
-              </label>
-              {filters.locations && filters.locations.length > 0 && (
-                <button
-                  onClick={() => handleClearFilter('locations')}
-                  className="text-xs text-gray-500 hover:text-gray-700"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            <div className="space-y-2 max-h-40 overflow-y-auto">
-              {availableFilters.locations.map((location) => (
-                <label key={location} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filters.locations?.includes(location) || false}
-                    onChange={() => handleMultiSelectChange('locations', location)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">{location}</span>
+        {availableFilters.locations &&
+          availableFilters.locations.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Locations
                 </label>
-              ))}
+                {filters.locations && filters.locations.length > 0 && (
+                  <button
+                    onClick={() => handleClearFilter("locations")}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {availableFilters.locations.map((location) => (
+                  <label
+                    key={location}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.locations?.includes(location) || false}
+                      onChange={() =>
+                        handleMultiSelectChange("locations", location)
+                      }
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">{location}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Payors */}
         {availableFilters.payors && availableFilters.payors.length > 0 && (
@@ -236,7 +261,7 @@ export function FilterPanel({
               </label>
               {filters.payors && filters.payors.length > 0 && (
                 <button
-                  onClick={() => handleClearFilter('payors')}
+                  onClick={() => handleClearFilter("payors")}
                   className="text-xs text-gray-500 hover:text-gray-700"
                 >
                   Clear
@@ -245,11 +270,14 @@ export function FilterPanel({
             </div>
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {availableFilters.payors.map((payor) => (
-                <label key={payor} className="flex items-center gap-2 cursor-pointer">
+                <label
+                  key={payor}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <input
                     type="checkbox"
                     checked={filters.payors?.includes(payor) || false}
-                    onChange={() => handleMultiSelectChange('payors', payor)}
+                    onChange={() => handleMultiSelectChange("payors", payor)}
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700">{payor}</span>

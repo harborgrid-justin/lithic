@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * UserForm Component
@@ -14,7 +14,7 @@ export class UserForm {
     container: HTMLElement,
     userId?: string,
     onSave?: () => void,
-    onCancel?: () => void
+    onCancel?: () => void,
   ) {
     this.container = container;
     this.userId = userId;
@@ -41,12 +41,12 @@ export class UserForm {
       const rolesResponse = await adminService.getRoles();
       roles = rolesResponse.roles;
     } catch (error: any) {
-      this.showError('Failed to load roles');
+      this.showError("Failed to load roles");
     }
 
     this.container.innerHTML = `
       <div class="user-form">
-        <h2>${isEdit ? 'Edit User' : 'Create New User'}</h2>
+        <h2>${isEdit ? "Edit User" : "Create New User"}</h2>
 
         <form id="user-form" class="form">
           <div class="form-group">
@@ -55,13 +55,15 @@ export class UserForm {
               type="email"
               id="email"
               class="input"
-              value="${userData.email || ''}"
-              ${isEdit ? 'disabled' : ''}
+              value="${userData.email || ""}"
+              ${isEdit ? "disabled" : ""}
               required
             />
           </div>
 
-          ${!isEdit ? `
+          ${
+            !isEdit
+              ? `
             <div class="form-group">
               <label for="password">Password *</label>
               <input
@@ -73,7 +75,9 @@ export class UserForm {
               />
               <small class="form-hint">Minimum 12 characters with uppercase, lowercase, number, and special character</small>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
 
           <div class="form-group">
             <label for="firstName">First Name *</label>
@@ -81,7 +85,7 @@ export class UserForm {
               type="text"
               id="firstName"
               class="input"
-              value="${userData.firstName || ''}"
+              value="${userData.firstName || ""}"
               required
             />
           </div>
@@ -92,7 +96,7 @@ export class UserForm {
               type="text"
               id="lastName"
               class="input"
-              value="${userData.lastName || ''}"
+              value="${userData.lastName || ""}"
               required
             />
           </div>
@@ -100,24 +104,28 @@ export class UserForm {
           <div class="form-group">
             <label>Roles</label>
             <div id="roles-checkboxes" class="checkbox-group">
-              ${roles.map((role) => `
+              ${roles
+                .map(
+                  (role) => `
                 <label class="checkbox-label">
                   <input
                     type="checkbox"
                     name="roles"
                     value="${role.name}"
-                    ${userData.roles?.includes(role.name) ? 'checked' : ''}
+                    ${userData.roles?.includes(role.name) ? "checked" : ""}
                   />
                   <span>${role.name}</span>
                   <small>${role.description}</small>
                 </label>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </div>
           </div>
 
           <div class="form-actions">
             <button type="submit" class="btn btn--primary">
-              ${isEdit ? 'Update User' : 'Create User'}
+              ${isEdit ? "Update User" : "Create User"}
             </button>
             <button type="button" id="cancel-btn" class="btn btn--secondary">
               Cancel
@@ -133,15 +141,15 @@ export class UserForm {
   }
 
   private attachEventListeners(): void {
-    const form = document.getElementById('user-form') as HTMLFormElement;
-    const cancelBtn = document.getElementById('cancel-btn');
+    const form = document.getElementById("user-form") as HTMLFormElement;
+    const cancelBtn = document.getElementById("cancel-btn");
 
-    form?.addEventListener('submit', async (e) => {
+    form?.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.handleSubmit();
     });
 
-    cancelBtn?.addEventListener('click', () => {
+    cancelBtn?.addEventListener("click", () => {
       if (this.onCancel) {
         this.onCancel();
       }
@@ -149,14 +157,14 @@ export class UserForm {
   }
 
   private async handleSubmit(): Promise<void> {
-    const form = document.getElementById('user-form') as HTMLFormElement;
+    const form = document.getElementById("user-form") as HTMLFormElement;
     const formData = new FormData(form);
 
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const firstName = formData.get('firstName') as string;
-    const lastName = formData.get('lastName') as string;
-    const roles = formData.getAll('roles') as string[];
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const roles = formData.getAll("roles") as string[];
 
     try {
       if (this.userId) {
@@ -188,10 +196,10 @@ export class UserForm {
   }
 
   private showFormError(message: string): void {
-    const errorDiv = document.getElementById('form-error');
+    const errorDiv = document.getElementById("form-error");
     if (errorDiv) {
       errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
+      errorDiv.style.display = "block";
     }
   }
 
@@ -204,6 +212,6 @@ export class UserForm {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

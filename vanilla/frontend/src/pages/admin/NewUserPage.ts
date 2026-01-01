@@ -1,4 +1,4 @@
-import { UserForm } from '../../components/admin/UserForm';
+import { UserForm } from "../../components/admin/UserForm";
 
 /**
  * NewUserPage
@@ -26,7 +26,7 @@ export class NewUserPage {
       </div>
     `;
 
-    const formContainer = document.getElementById('user-form-container');
+    const formContainer = document.getElementById("user-form-container");
     if (formContainer) {
       this.userForm = new UserForm(
         formContainer,
@@ -34,15 +34,15 @@ export class NewUserPage {
         () => {
           // On save
           if (this.onNavigate) {
-            this.onNavigate('users');
+            this.onNavigate("users");
           }
         },
         () => {
           // On cancel
           if (this.onNavigate) {
-            this.onNavigate('users');
+            this.onNavigate("users");
           }
-        }
+        },
       );
       await this.userForm.render();
     }
@@ -50,6 +50,6 @@ export class NewUserPage {
 
   destroy(): void {
     this.userForm?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

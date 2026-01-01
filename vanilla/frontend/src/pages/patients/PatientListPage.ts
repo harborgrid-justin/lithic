@@ -2,10 +2,10 @@
  * PatientListPage - Main patient list view
  */
 
-import { PatientList } from '../../components/patients/PatientList';
-import { PatientSearch } from '../../components/patients/PatientSearch';
-import PatientService from '../../services/PatientService';
-import { Patient } from '../../types/Patient';
+import { PatientList } from "../../components/patients/PatientList";
+import { PatientSearch } from "../../components/patients/PatientSearch";
+import PatientService from "../../services/PatientService";
+import { Patient } from "../../types/Patient";
 
 export class PatientListPage {
   private patientList: PatientList;
@@ -15,10 +15,10 @@ export class PatientListPage {
 
   constructor() {
     this.initializePage();
-    this.patientSearch = new PatientSearch('searchContainer', (patients) => {
+    this.patientSearch = new PatientSearch("searchContainer", (patients) => {
       this.patientList.setPatients(patients);
     });
-    this.patientList = new PatientList('patientListContainer', (patient) => {
+    this.patientList = new PatientList("patientListContainer", (patient) => {
       this.navigateToPatient(patient);
     });
     this.loadPatients();
@@ -76,18 +76,18 @@ export class PatientListPage {
    * Attach page-level event listeners
    */
   private attachPageEventListeners(): void {
-    const newPatientBtn = document.getElementById('newPatientBtn');
+    const newPatientBtn = document.getElementById("newPatientBtn");
     if (newPatientBtn) {
-      newPatientBtn.addEventListener('click', () => {
-        window.location.href = '/patients/new';
+      newPatientBtn.addEventListener("click", () => {
+        window.location.href = "/patients/new";
       });
     }
 
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
+    const prevBtn = document.getElementById("prevPage");
+    const nextBtn = document.getElementById("nextPage");
 
     if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
+      prevBtn.addEventListener("click", () => {
         if (this.currentPage > 0) {
           this.currentPage--;
           this.loadPatients();
@@ -96,7 +96,7 @@ export class PatientListPage {
     }
 
     if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
+      nextBtn.addEventListener("click", () => {
         this.currentPage++;
         this.loadPatients();
       });
@@ -109,7 +109,10 @@ export class PatientListPage {
   private async loadPatients(): Promise<void> {
     try {
       const offset = this.currentPage * this.pageSize;
-      const response = await PatientService.getAllPatients(this.pageSize, offset);
+      const response = await PatientService.getAllPatients(
+        this.pageSize,
+        offset,
+      );
 
       if (response.success && response.data) {
         this.patientList.setPatients(response.data);
@@ -117,8 +120,8 @@ export class PatientListPage {
         this.updateStats(response.data);
       }
     } catch (error) {
-      console.error('Failed to load patients:', error);
-      alert('Failed to load patients. Please try again.');
+      console.error("Failed to load patients:", error);
+      alert("Failed to load patients. Please try again.");
     }
   }
 
@@ -128,9 +131,9 @@ export class PatientListPage {
   private updatePagination(pagination?: any): void {
     if (!pagination) return;
 
-    const pageInfo = document.getElementById('pageInfo');
-    const prevBtn = document.getElementById('prevPage') as HTMLButtonElement;
-    const nextBtn = document.getElementById('nextPage') as HTMLButtonElement;
+    const pageInfo = document.getElementById("pageInfo");
+    const prevBtn = document.getElementById("prevPage") as HTMLButtonElement;
+    const nextBtn = document.getElementById("nextPage") as HTMLButtonElement;
 
     if (pageInfo) {
       pageInfo.textContent = `Page ${this.currentPage + 1}`;
@@ -149,15 +152,15 @@ export class PatientListPage {
    * Update stats
    */
   private updateStats(patients: Patient[]): void {
-    const totalEl = document.getElementById('totalPatients');
-    const activeEl = document.getElementById('activePatients');
+    const totalEl = document.getElementById("totalPatients");
+    const activeEl = document.getElementById("activePatients");
 
     if (totalEl) {
       totalEl.textContent = patients.length.toString();
     }
 
     if (activeEl) {
-      const activeCount = patients.filter(p => p.status === 'active').length;
+      const activeCount = patients.filter((p) => p.status === "active").length;
       activeEl.textContent = activeCount.toString();
     }
   }
@@ -171,6 +174,6 @@ export class PatientListPage {
 }
 
 // Initialize page
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   new PatientListPage();
 });

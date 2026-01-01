@@ -1,33 +1,35 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { VitalSigns } from '@/types/clinical'
-import { getVitals } from '@/services/clinical.service'
-import { VitalsPanel } from '@/components/clinical/VitalsPanel'
-import { VitalsChart } from '@/components/clinical/VitalsChart'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
+import { useEffect, useState } from "react";
+import { VitalSigns } from "@/types/clinical";
+import { getVitals } from "@/services/clinical.service";
+import { VitalsPanel } from "@/components/clinical/VitalsPanel";
+import { VitalsChart } from "@/components/clinical/VitalsChart";
+import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export default function VitalsPage() {
-  const [vitals, setVitals] = useState<VitalSigns[]>([])
-  const [loading, setLoading] = useState(true)
-  const [chartMetric, setChartMetric] = useState<'bloodPressure' | 'heartRate' | 'weight' | 'temperature'>('bloodPressure')
+  const [vitals, setVitals] = useState<VitalSigns[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [chartMetric, setChartMetric] = useState<
+    "bloodPressure" | "heartRate" | "weight" | "temperature"
+  >("bloodPressure");
 
   useEffect(() => {
-    loadVitals()
-  }, [])
+    loadVitals();
+  }, []);
 
   const loadVitals = async () => {
     try {
       // In production, pass actual patient ID
-      const data = await getVitals('P001')
-      setVitals(data)
+      const data = await getVitals("P001");
+      setVitals(data);
     } catch (error) {
-      console.error('Failed to load vitals:', error)
+      console.error("Failed to load vitals:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -36,7 +38,7 @@ export default function VitalsPage() {
           <p>Loading vitals...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -44,7 +46,9 @@ export default function VitalsPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Vital Signs</h1>
-          <p className="text-gray-600 mt-1">Track and monitor patient vital signs</p>
+          <p className="text-gray-600 mt-1">
+            Track and monitor patient vital signs
+          </p>
         </div>
 
         <VitalsPanel vitals={vitals} />
@@ -65,9 +69,11 @@ export default function VitalsPage() {
             </Select>
           </div>
 
-          {vitals.length > 1 && <VitalsChart vitals={vitals} metric={chartMetric} />}
+          {vitals.length > 1 && (
+            <VitalsChart vitals={vitals} metric={chartMetric} />
+          )}
         </div>
       </div>
     </div>
-  )
+  );
 }

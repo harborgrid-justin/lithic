@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { Patient } from '@/types/patient';
-import { patientService } from '@/services/patient.service';
-import { PatientDemographics } from '@/components/patients/PatientDemographics';
-import { ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { Patient } from "@/types/patient";
+import { patientService } from "@/services/patient.service";
+import { PatientDemographics } from "@/components/patients/PatientDemographics";
+import { ArrowLeft } from "lucide-react";
 
 export default function PatientDemographicsPage() {
   const params = useParams();
@@ -24,14 +24,16 @@ export default function PatientDemographicsPage() {
       const data = await patientService.getPatient(patientId);
       setPatient(data);
     } catch (error) {
-      console.error('Failed to load patient:', error);
+      console.error("Failed to load patient:", error);
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">Loading...</div>
+    );
   }
 
   if (!patient) {
@@ -42,7 +44,7 @@ export default function PatientDemographicsPage() {
     <div className="space-y-6">
       <div>
         <Link
-          href={'/patients/' + patient.id}
+          href={"/patients/" + patient.id}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Download, FileText, Table, FileSpreadsheet } from 'lucide-react';
-import { ExportOptions as ExportOptionsType } from '@/services/reporting.service';
+import { useState } from "react";
+import { Download, FileText, Table, FileSpreadsheet } from "lucide-react";
+import { ExportOptions as ExportOptionsType } from "@/services/reporting.service";
 
 interface ExportOptionsProps {
   onExport: (options: ExportOptionsType) => void;
@@ -10,10 +10,16 @@ interface ExportOptionsProps {
   className?: string;
 }
 
-export function ExportOptions({ onExport, loading = false, className = '' }: ExportOptionsProps) {
-  const [format, setFormat] = useState<ExportOptionsType['format']>('pdf');
-  const [orientation, setOrientation] = useState<ExportOptionsType['orientation']>('portrait');
-  const [pageSize, setPageSize] = useState<ExportOptionsType['pageSize']>('letter');
+export function ExportOptions({
+  onExport,
+  loading = false,
+  className = "",
+}: ExportOptionsProps) {
+  const [format, setFormat] = useState<ExportOptionsType["format"]>("pdf");
+  const [orientation, setOrientation] =
+    useState<ExportOptionsType["orientation"]>("portrait");
+  const [pageSize, setPageSize] =
+    useState<ExportOptionsType["pageSize"]>("letter");
   const [includeCharts, setIncludeCharts] = useState(true);
   const [includeSummary, setIncludeSummary] = useState(true);
   const [includeRawData, setIncludeRawData] = useState(false);
@@ -22,8 +28,8 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
   const handleExport = () => {
     const options: ExportOptionsType = {
       format,
-      orientation: format === 'pdf' ? orientation : undefined,
-      pageSize: format === 'pdf' ? pageSize : undefined,
+      orientation: format === "pdf" ? orientation : undefined,
+      pageSize: format === "pdf" ? pageSize : undefined,
       includeCharts,
       includeSummary,
       includeRawData,
@@ -33,13 +39,30 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
   };
 
   const formatOptions = [
-    { id: 'pdf', label: 'PDF', icon: <FileText className="w-5 h-5" />, description: 'Portable Document Format' },
-    { id: 'excel', label: 'Excel', icon: <FileSpreadsheet className="w-5 h-5" />, description: 'Microsoft Excel Workbook' },
-    { id: 'csv', label: 'CSV', icon: <Table className="w-5 h-5" />, description: 'Comma-Separated Values' },
+    {
+      id: "pdf",
+      label: "PDF",
+      icon: <FileText className="w-5 h-5" />,
+      description: "Portable Document Format",
+    },
+    {
+      id: "excel",
+      label: "Excel",
+      icon: <FileSpreadsheet className="w-5 h-5" />,
+      description: "Microsoft Excel Workbook",
+    },
+    {
+      id: "csv",
+      label: "CSV",
+      icon: <Table className="w-5 h-5" />,
+      description: "Comma-Separated Values",
+    },
   ];
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+    <div
+      className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}
+    >
       <div className="flex items-center gap-2 mb-4">
         <Download className="w-5 h-5 text-blue-600" />
         <h3 className="text-lg font-semibold text-gray-900">Export Options</h3>
@@ -55,26 +78,34 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
             {formatOptions.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setFormat(option.id as ExportOptionsType['format'])}
+                onClick={() =>
+                  setFormat(option.id as ExportOptionsType["format"])
+                }
                 className={`flex items-start gap-3 p-3 border-2 rounded-lg transition-all text-left ${
                   format === option.id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <div className={`flex-shrink-0 ${format === option.id ? 'text-blue-600' : 'text-gray-400'}`}>
+                <div
+                  className={`flex-shrink-0 ${format === option.id ? "text-blue-600" : "text-gray-400"}`}
+                >
                   {option.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-gray-900">{option.label}</div>
-                  <div className="text-xs text-gray-500">{option.description}</div>
+                  <div className="font-medium text-gray-900">
+                    {option.label}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {option.description}
+                  </div>
                 </div>
                 <div className="flex-shrink-0">
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                       format === option.id
-                        ? 'border-blue-500 bg-blue-500'
-                        : 'border-gray-300'
+                        ? "border-blue-500 bg-blue-500"
+                        : "border-gray-300"
                     }`}
                   >
                     {format === option.id && (
@@ -88,7 +119,7 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
         </div>
 
         {/* PDF-specific options */}
-        {format === 'pdf' && (
+        {format === "pdf" && (
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -96,21 +127,21 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => setOrientation('portrait')}
+                  onClick={() => setOrientation("portrait")}
                   className={`px-4 py-2 border-2 rounded-lg font-medium transition-colors ${
-                    orientation === 'portrait'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                    orientation === "portrait"
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-200 text-gray-700 hover:border-gray-300"
                   }`}
                 >
                   Portrait
                 </button>
                 <button
-                  onClick={() => setOrientation('landscape')}
+                  onClick={() => setOrientation("landscape")}
                   className={`px-4 py-2 border-2 rounded-lg font-medium transition-colors ${
-                    orientation === 'landscape'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                    orientation === "landscape"
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-200 text-gray-700 hover:border-gray-300"
                   }`}
                 >
                   Landscape
@@ -124,7 +155,9 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
               </label>
               <select
                 value={pageSize}
-                onChange={(e) => setPageSize(e.target.value as ExportOptionsType['pageSize'])}
+                onChange={(e) =>
+                  setPageSize(e.target.value as ExportOptionsType["pageSize"])
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="letter">Letter (8.5&quot; × 11&quot;)</option>
@@ -149,7 +182,9 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
                 onChange={(e) => setIncludeCharts(e.target.checked)}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="text-sm text-gray-700">Charts and visualizations</span>
+              <span className="text-sm text-gray-700">
+                Charts and visualizations
+              </span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -178,7 +213,7 @@ export function ExportOptions({ onExport, loading = false, className = '' }: Exp
             onClick={() => setShowAdvanced(!showAdvanced)}
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
           >
-            {showAdvanced ? 'Hide' : 'Show'} Advanced Options
+            {showAdvanced ? "Hide" : "Show"} Advanced Options
           </button>
           {showAdvanced && (
             <div className="mt-3 p-3 bg-gray-50 rounded-lg space-y-3">

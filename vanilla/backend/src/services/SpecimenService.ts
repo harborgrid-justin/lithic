@@ -32,38 +32,48 @@ export interface Specimen {
 }
 
 export type SpecimenType =
-  | 'blood-serum'
-  | 'blood-plasma'
-  | 'blood-whole'
-  | 'urine'
-  | 'stool'
-  | 'csf'
-  | 'sputum'
-  | 'swab-throat'
-  | 'swab-nasal'
-  | 'swab-wound'
-  | 'tissue'
-  | 'bone-marrow'
-  | 'synovial-fluid'
-  | 'pleural-fluid'
-  | 'peritoneal-fluid'
-  | 'amniotic-fluid'
-  | 'saliva'
-  | 'other';
+  | "blood-serum"
+  | "blood-plasma"
+  | "blood-whole"
+  | "urine"
+  | "stool"
+  | "csf"
+  | "sputum"
+  | "swab-throat"
+  | "swab-nasal"
+  | "swab-wound"
+  | "tissue"
+  | "bone-marrow"
+  | "synovial-fluid"
+  | "pleural-fluid"
+  | "peritoneal-fluid"
+  | "amniotic-fluid"
+  | "saliva"
+  | "other";
 
 export type SpecimenStatus =
-  | 'collected'
-  | 'in-transit'
-  | 'received'
-  | 'processing'
-  | 'tested'
-  | 'stored'
-  | 'rejected'
-  | 'disposed';
+  | "collected"
+  | "in-transit"
+  | "received"
+  | "processing"
+  | "tested"
+  | "stored"
+  | "rejected"
+  | "disposed";
 
 export interface QualityIssue {
-  type: 'hemolysis' | 'lipemia' | 'icterus' | 'clotted' | 'insufficient-volume' | 'contamination' | 'mislabeled' | 'expired' | 'damaged' | 'other';
-  severity: 'minor' | 'moderate' | 'severe';
+  type:
+    | "hemolysis"
+    | "lipemia"
+    | "icterus"
+    | "clotted"
+    | "insufficient-volume"
+    | "contamination"
+    | "mislabeled"
+    | "expired"
+    | "damaged"
+    | "other";
+  severity: "minor" | "moderate" | "severe";
   description: string;
   detectedBy: string;
   detectedAt: Date;
@@ -72,7 +82,15 @@ export interface QualityIssue {
 export interface SpecimenTrackingEvent {
   id: string;
   specimenId: string;
-  eventType: 'collected' | 'received' | 'processing-started' | 'testing-started' | 'testing-completed' | 'stored' | 'rejected' | 'disposed';
+  eventType:
+    | "collected"
+    | "received"
+    | "processing-started"
+    | "testing-started"
+    | "testing-completed"
+    | "stored"
+    | "rejected"
+    | "disposed";
   timestamp: Date;
   performedBy: string;
   location: string;
@@ -99,33 +117,38 @@ export class SpecimenService {
    */
   private getSpecimenTypePrefix(specimenType: SpecimenType): string {
     const prefixes: Record<SpecimenType, string> = {
-      'blood-serum': 'BS',
-      'blood-plasma': 'BP',
-      'blood-whole': 'BW',
-      'urine': 'UR',
-      'stool': 'ST',
-      'csf': 'CF',
-      'sputum': 'SP',
-      'swab-throat': 'TH',
-      'swab-nasal': 'NS',
-      'swab-wound': 'WD',
-      'tissue': 'TS',
-      'bone-marrow': 'BM',
-      'synovial-fluid': 'SF',
-      'pleural-fluid': 'PF',
-      'peritoneal-fluid': 'PT',
-      'amniotic-fluid': 'AF',
-      'saliva': 'SL',
-      'other': 'OT'
+      "blood-serum": "BS",
+      "blood-plasma": "BP",
+      "blood-whole": "BW",
+      urine: "UR",
+      stool: "ST",
+      csf: "CF",
+      sputum: "SP",
+      "swab-throat": "TH",
+      "swab-nasal": "NS",
+      "swab-wound": "WD",
+      tissue: "TS",
+      "bone-marrow": "BM",
+      "synovial-fluid": "SF",
+      "pleural-fluid": "PF",
+      "peritoneal-fluid": "PT",
+      "amniotic-fluid": "AF",
+      saliva: "SL",
+      other: "OT",
     };
 
-    return prefixes[specimenType] || 'XX';
+    return prefixes[specimenType] || "XX";
   }
 
   /**
    * Create new specimen
    */
-  async createSpecimen(data: Omit<Specimen, 'id' | 'specimenNumber' | 'barcode' | 'status' | 'createdAt' | 'updatedAt'>): Promise<Specimen> {
+  async createSpecimen(
+    data: Omit<
+      Specimen,
+      "id" | "specimenNumber" | "barcode" | "status" | "createdAt" | "updatedAt"
+    >,
+  ): Promise<Specimen> {
     const id = `SPEC-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const specimenNumber = `SN${Date.now()}`;
     const barcode = this.generateBarcode(data.specimenType);
@@ -135,9 +158,9 @@ export class SpecimenService {
       id,
       specimenNumber,
       barcode,
-      status: 'collected',
+      status: "collected",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.specimens.set(id, specimen);
@@ -145,10 +168,10 @@ export class SpecimenService {
     // Add tracking event
     await this.addTrackingEvent({
       specimenId: id,
-      eventType: 'collected',
+      eventType: "collected",
       performedBy: data.collectedBy,
-      location: data.collectionSite || 'Unknown',
-      timestamp: data.collectionDateTime
+      location: data.collectionSite || "Unknown",
+      timestamp: data.collectionDateTime,
     });
 
     return specimen;
@@ -157,25 +180,28 @@ export class SpecimenService {
   /**
    * Receive specimen in laboratory
    */
-  async receiveSpecimen(specimenId: string, receivedBy: string): Promise<Specimen> {
+  async receiveSpecimen(
+    specimenId: string,
+    receivedBy: string,
+  ): Promise<Specimen> {
     const specimen = this.specimens.get(specimenId);
     if (!specimen) {
-      throw new Error('Specimen not found');
+      throw new Error("Specimen not found");
     }
 
     specimen.receivedDateTime = new Date();
     specimen.receivedBy = receivedBy;
-    specimen.status = 'received';
+    specimen.status = "received";
     specimen.updatedAt = new Date();
 
     this.specimens.set(specimenId, specimen);
 
     await this.addTrackingEvent({
       specimenId,
-      eventType: 'received',
+      eventType: "received",
       performedBy: receivedBy,
-      location: 'Laboratory Reception',
-      timestamp: new Date()
+      location: "Laboratory Reception",
+      timestamp: new Date(),
     });
 
     return specimen;
@@ -184,10 +210,15 @@ export class SpecimenService {
   /**
    * Update specimen status
    */
-  async updateStatus(specimenId: string, status: SpecimenStatus, performedBy: string, notes?: string): Promise<Specimen> {
+  async updateStatus(
+    specimenId: string,
+    status: SpecimenStatus,
+    performedBy: string,
+    notes?: string,
+  ): Promise<Specimen> {
     const specimen = this.specimens.get(specimenId);
     if (!specimen) {
-      throw new Error('Specimen not found');
+      throw new Error("Specimen not found");
     }
 
     specimen.status = status;
@@ -195,24 +226,27 @@ export class SpecimenService {
 
     this.specimens.set(specimenId, specimen);
 
-    const eventTypeMap: Record<SpecimenStatus, SpecimenTrackingEvent['eventType']> = {
-      'collected': 'collected',
-      'in-transit': 'collected',
-      'received': 'received',
-      'processing': 'processing-started',
-      'tested': 'testing-completed',
-      'stored': 'stored',
-      'rejected': 'rejected',
-      'disposed': 'disposed'
+    const eventTypeMap: Record<
+      SpecimenStatus,
+      SpecimenTrackingEvent["eventType"]
+    > = {
+      collected: "collected",
+      "in-transit": "collected",
+      received: "received",
+      processing: "processing-started",
+      tested: "testing-completed",
+      stored: "stored",
+      rejected: "rejected",
+      disposed: "disposed",
     };
 
     await this.addTrackingEvent({
       specimenId,
       eventType: eventTypeMap[status],
       performedBy,
-      location: 'Laboratory',
+      location: "Laboratory",
       timestamp: new Date(),
-      notes
+      notes,
     });
 
     return specimen;
@@ -221,10 +255,13 @@ export class SpecimenService {
   /**
    * Add quality issue to specimen
    */
-  async addQualityIssue(specimenId: string, issue: Omit<QualityIssue, 'detectedAt'>): Promise<Specimen> {
+  async addQualityIssue(
+    specimenId: string,
+    issue: Omit<QualityIssue, "detectedAt">,
+  ): Promise<Specimen> {
     const specimen = this.specimens.get(specimenId);
     if (!specimen) {
-      throw new Error('Specimen not found');
+      throw new Error("Specimen not found");
     }
 
     if (!specimen.qualityIssues) {
@@ -233,12 +270,12 @@ export class SpecimenService {
 
     specimen.qualityIssues.push({
       ...issue,
-      detectedAt: new Date()
+      detectedAt: new Date(),
     });
 
     // Auto-reject if severe issue
-    if (issue.severity === 'severe') {
-      specimen.status = 'rejected';
+    if (issue.severity === "severe") {
+      specimen.status = "rejected";
       specimen.rejectionReason = issue.description;
     }
 
@@ -251,13 +288,17 @@ export class SpecimenService {
   /**
    * Reject specimen
    */
-  async rejectSpecimen(specimenId: string, reason: string, rejectedBy: string): Promise<Specimen> {
+  async rejectSpecimen(
+    specimenId: string,
+    reason: string,
+    rejectedBy: string,
+  ): Promise<Specimen> {
     const specimen = this.specimens.get(specimenId);
     if (!specimen) {
-      throw new Error('Specimen not found');
+      throw new Error("Specimen not found");
     }
 
-    specimen.status = 'rejected';
+    specimen.status = "rejected";
     specimen.rejectionReason = reason;
     specimen.updatedAt = new Date();
 
@@ -265,11 +306,11 @@ export class SpecimenService {
 
     await this.addTrackingEvent({
       specimenId,
-      eventType: 'rejected',
+      eventType: "rejected",
       performedBy: rejectedBy,
-      location: 'Laboratory',
+      location: "Laboratory",
       timestamp: new Date(),
-      notes: reason
+      notes: reason,
     });
 
     return specimen;
@@ -278,12 +319,14 @@ export class SpecimenService {
   /**
    * Add tracking event
    */
-  private async addTrackingEvent(event: Omit<SpecimenTrackingEvent, 'id'>): Promise<SpecimenTrackingEvent> {
+  private async addTrackingEvent(
+    event: Omit<SpecimenTrackingEvent, "id">,
+  ): Promise<SpecimenTrackingEvent> {
     const id = `TRK-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     const trackingEvent: SpecimenTrackingEvent = {
       ...event,
-      id
+      id,
     };
 
     const events = this.trackingEvents.get(event.specimenId) || [];
@@ -304,27 +347,35 @@ export class SpecimenService {
    * Get specimen by barcode
    */
   async getSpecimenByBarcode(barcode: string): Promise<Specimen | undefined> {
-    return Array.from(this.specimens.values()).find(s => s.barcode === barcode);
+    return Array.from(this.specimens.values()).find(
+      (s) => s.barcode === barcode,
+    );
   }
 
   /**
    * Get specimens for order
    */
   async getSpecimensForOrder(orderId: string): Promise<Specimen[]> {
-    return Array.from(this.specimens.values()).filter(s => s.orderId === orderId);
+    return Array.from(this.specimens.values()).filter(
+      (s) => s.orderId === orderId,
+    );
   }
 
   /**
    * Get specimens for patient
    */
   async getSpecimensForPatient(patientId: string): Promise<Specimen[]> {
-    return Array.from(this.specimens.values()).filter(s => s.patientId === patientId);
+    return Array.from(this.specimens.values()).filter(
+      (s) => s.patientId === patientId,
+    );
   }
 
   /**
    * Get tracking history
    */
-  async getTrackingHistory(specimenId: string): Promise<SpecimenTrackingEvent[]> {
+  async getTrackingHistory(
+    specimenId: string,
+  ): Promise<SpecimenTrackingEvent[]> {
     return this.trackingEvents.get(specimenId) || [];
   }
 
@@ -332,7 +383,9 @@ export class SpecimenService {
    * Get specimens by status
    */
   async getSpecimensByStatus(status: SpecimenStatus): Promise<Specimen[]> {
-    return Array.from(this.specimens.values()).filter(s => s.status === status);
+    return Array.from(this.specimens.values()).filter(
+      (s) => s.status === status,
+    );
   }
 
   /**
@@ -341,28 +394,32 @@ export class SpecimenService {
   validateForTesting(specimen: Specimen): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (specimen.status === 'rejected') {
-      errors.push('Specimen has been rejected');
+    if (specimen.status === "rejected") {
+      errors.push("Specimen has been rejected");
     }
 
-    if (specimen.status === 'disposed') {
-      errors.push('Specimen has been disposed');
+    if (specimen.status === "disposed") {
+      errors.push("Specimen has been disposed");
     }
 
     if (specimen.qualityIssues && specimen.qualityIssues.length > 0) {
-      const severeIssues = specimen.qualityIssues.filter(i => i.severity === 'severe');
+      const severeIssues = specimen.qualityIssues.filter(
+        (i) => i.severity === "severe",
+      );
       if (severeIssues.length > 0) {
-        errors.push(`Severe quality issues: ${severeIssues.map(i => i.type).join(', ')}`);
+        errors.push(
+          `Severe quality issues: ${severeIssues.map((i) => i.type).join(", ")}`,
+        );
       }
     }
 
     if (!specimen.receivedDateTime) {
-      errors.push('Specimen not yet received');
+      errors.push("Specimen not yet received");
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }

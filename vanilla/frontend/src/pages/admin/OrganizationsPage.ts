@@ -1,5 +1,5 @@
-import { OrganizationSettings } from '../../components/admin/OrganizationSettings';
-import adminService from '../../services/AdminService';
+import { OrganizationSettings } from "../../components/admin/OrganizationSettings";
+import adminService from "../../services/AdminService";
 
 /**
  * OrganizationsPage
@@ -8,7 +8,7 @@ import adminService from '../../services/AdminService';
 export class OrganizationsPage {
   private container: HTMLElement;
   private organizationSettings: OrganizationSettings | null = null;
-  private organizationId: string = '';
+  private organizationId: string = "";
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -31,11 +31,13 @@ export class OrganizationsPage {
         </div>
       `;
 
-      const settingsContainer = document.getElementById('organization-settings-container');
+      const settingsContainer = document.getElementById(
+        "organization-settings-container",
+      );
       if (settingsContainer) {
         this.organizationSettings = new OrganizationSettings(
           settingsContainer,
-          this.organizationId
+          this.organizationId,
         );
         await this.organizationSettings.render();
       }
@@ -54,6 +56,6 @@ export class OrganizationsPage {
 
   destroy(): void {
     this.organizationSettings?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -3,26 +3,29 @@
  * Validate webhook payloads and signatures
  */
 
-import { z } from 'zod';
-import crypto from 'crypto';
+import { z } from "zod";
+import crypto from "crypto";
 
 /**
  * Validate webhook URL
  */
-export function validateWebhookUrl(url: string): { valid: boolean; error?: string } {
+export function validateWebhookUrl(url: string): {
+  valid: boolean;
+  error?: string;
+} {
   try {
     const parsed = new URL(url);
 
     // Only allow HTTPS in production
-    if (process.env.NODE_ENV === 'production' && parsed.protocol !== 'https:') {
+    if (process.env.NODE_ENV === "production" && parsed.protocol !== "https:") {
       return {
         valid: false,
-        error: 'Webhook URLs must use HTTPS in production',
+        error: "Webhook URLs must use HTTPS in production",
       };
     }
 
     // Disallow localhost/private IPs in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       const hostname = parsed.hostname.toLowerCase();
 
       const privatePatterns = [
@@ -36,10 +39,10 @@ export function validateWebhookUrl(url: string): { valid: boolean; error?: strin
         /^fe80:/,
       ];
 
-      if (privatePatterns.some(pattern => pattern.test(hostname))) {
+      if (privatePatterns.some((pattern) => pattern.test(hostname))) {
         return {
           valid: false,
-          error: 'Private/localhost URLs are not allowed in production',
+          error: "Private/localhost URLs are not allowed in production",
         };
       }
     }
@@ -48,7 +51,7 @@ export function validateWebhookUrl(url: string): { valid: boolean; error?: strin
   } catch (error) {
     return {
       valid: false,
-      error: 'Invalid URL format',
+      error: "Invalid URL format",
     };
   }
 }
@@ -56,20 +59,24 @@ export function validateWebhookUrl(url: string): { valid: boolean; error?: strin
 /**
  * Validate webhook event type
  */
-export function validateEventType(eventType: string): { valid: boolean; error?: string } {
+export function validateEventType(eventType: string): {
+  valid: boolean;
+  error?: string;
+} {
   if (!eventType || eventType.trim().length === 0) {
     return {
       valid: false,
-      error: 'Event type cannot be empty',
+      error: "Event type cannot be empty",
     };
   }
 
   // Event type should follow pattern: resource.action
   const pattern = /^[a-z_]+\.[a-z_]+$/;
-  if (!pattern.test(eventType) && eventType !== '*') {
+  if (!pattern.test(eventType) && eventType !== "*") {
     return {
       valid: false,
-      error: 'Event type must follow pattern: resource.action (e.g., patient.created) or be "*"',
+      error:
+        'Event type must follow pattern: resource.action (e.g., patient.created) or be "*"',
     };
   }
 
@@ -79,11 +86,14 @@ export function validateEventType(eventType: string): { valid: boolean; error?: 
 /**
  * Validate webhook secret
  */
-export function validateSecret(secret: string): { valid: boolean; error?: string } {
+export function validateSecret(secret: string): {
+  valid: boolean;
+  error?: string;
+} {
   if (!secret || secret.length < 32) {
     return {
       valid: false,
-      error: 'Secret must be at least 32 characters long',
+      error: "Secret must be at least 32 characters long",
     };
   }
 
@@ -94,29 +104,36 @@ export function validateSecret(secret: string): { valid: boolean; error?: string
  * Generate a secure webhook secret
  */
 export function generateWebhookSecret(): string {
-  return crypto.randomBytes(32).toString('hex');
+  return crypto.randomBytes(32).toString("hex");
 }
 
 /**
  * Webhook registration schema
  */
 export const WebhookRegistrationSchema = z.object({
-  url: z.string().url().refine(
-    url => validateWebhookUrl(url).valid,
-    url => ({ message: validateWebhookUrl(url).error || 'Invalid URL' })
-  ),
-  events: z.array(z.string()).min(1).refine(
-    events => events.every(e => validateEventType(e).valid),
-    { message: 'Invalid event type format' }
-  ),
+  url: z
+    .string()
+    .url()
+    .refine(
+      (url) => validateWebhookUrl(url).valid,
+      (url) => ({ message: validateWebhookUrl(url).error || "Invalid URL" }),
+    ),
+  events: z
+    .array(z.string())
+    .min(1)
+    .refine((events) => events.every((e) => validateEventType(e).valid), {
+      message: "Invalid event type format",
+    }),
   secret: z.string().min(32).optional(),
   description: z.string().optional(),
   headers: z.record(z.string()).optional(),
-  retryPolicy: z.object({
-    maxRetries: z.number().min(0).max(10).default(3),
-    backoffMultiplier: z.number().min(1).max(10).default(2),
-    initialDelay: z.number().min(100).max(60000).default(1000),
-  }).optional(),
+  retryPolicy: z
+    .object({
+      maxRetries: z.number().min(0).max(10).default(3),
+      backoffMultiplier: z.number().min(1).max(10).default(2),
+      initialDelay: z.number().min(100).max(60000).default(1000),
+    })
+    .optional(),
 });
 
 export type WebhookRegistration = z.infer<typeof WebhookRegistrationSchema>;
@@ -125,22 +142,31 @@ export type WebhookRegistration = z.infer<typeof WebhookRegistrationSchema>;
  * Webhook update schema
  */
 export const WebhookUpdateSchema = z.object({
-  url: z.string().url().refine(
-    url => validateWebhookUrl(url).valid,
-    url => ({ message: validateWebhookUrl(url).error || 'Invalid URL' })
-  ).optional(),
-  events: z.array(z.string()).min(1).refine(
-    events => events.every(e => validateEventType(e).valid),
-    { message: 'Invalid event type format' }
-  ).optional(),
+  url: z
+    .string()
+    .url()
+    .refine(
+      (url) => validateWebhookUrl(url).valid,
+      (url) => ({ message: validateWebhookUrl(url).error || "Invalid URL" }),
+    )
+    .optional(),
+  events: z
+    .array(z.string())
+    .min(1)
+    .refine((events) => events.every((e) => validateEventType(e).valid), {
+      message: "Invalid event type format",
+    })
+    .optional(),
   active: z.boolean().optional(),
   description: z.string().optional(),
   headers: z.record(z.string()).optional(),
-  retryPolicy: z.object({
-    maxRetries: z.number().min(0).max(10),
-    backoffMultiplier: z.number().min(1).max(10),
-    initialDelay: z.number().min(100).max(60000),
-  }).optional(),
+  retryPolicy: z
+    .object({
+      maxRetries: z.number().min(0).max(10),
+      backoffMultiplier: z.number().min(1).max(10),
+      initialDelay: z.number().min(100).max(60000),
+    })
+    .optional(),
 });
 
 export type WebhookUpdate = z.infer<typeof WebhookUpdateSchema>;
@@ -163,7 +189,7 @@ export function verifyWebhookSignature(params: {
     if (isNaN(timestampMs)) {
       return {
         valid: false,
-        error: 'Invalid timestamp format',
+        error: "Invalid timestamp format",
       };
     }
 
@@ -171,40 +197,40 @@ export function verifyWebhookSignature(params: {
     if (age > maxAge) {
       return {
         valid: false,
-        error: 'Webhook timestamp too old',
+        error: "Webhook timestamp too old",
       };
     }
 
     if (age < -60) {
       return {
         valid: false,
-        error: 'Webhook timestamp is in the future',
+        error: "Webhook timestamp is in the future",
       };
     }
   }
 
   // Verify signature
   const expectedSignature = crypto
-    .createHmac('sha256', secret)
+    .createHmac("sha256", secret)
     .update(payload)
-    .digest('hex');
+    .digest("hex");
 
   try {
     const isValid = crypto.timingSafeEqual(
       Buffer.from(signature),
-      Buffer.from(expectedSignature)
+      Buffer.from(expectedSignature),
     );
 
     if (!isValid) {
       return {
         valid: false,
-        error: 'Invalid signature',
+        error: "Invalid signature",
       };
     }
   } catch (error) {
     return {
       valid: false,
-      error: 'Signature verification failed',
+      error: "Signature verification failed",
     };
   }
 
@@ -218,24 +244,29 @@ export async function testWebhookEndpoint(params: {
   url: string;
   secret: string;
   timeout?: number;
-}): Promise<{ success: boolean; status?: number; error?: string; latency?: number }> {
+}): Promise<{
+  success: boolean;
+  status?: number;
+  error?: string;
+  latency?: number;
+}> {
   const { url, secret, timeout = 10000 } = params;
 
   const testPayload = {
     id: crypto.randomUUID(),
-    type: 'webhook.test',
+    type: "webhook.test",
     timestamp: new Date().toISOString(),
     data: {
       test: true,
-      message: 'This is a test webhook delivery',
+      message: "This is a test webhook delivery",
     },
   };
 
   const payload = JSON.stringify(testPayload);
   const signature = crypto
-    .createHmac('sha256', secret)
+    .createHmac("sha256", secret)
     .update(payload)
-    .digest('hex');
+    .digest("hex");
 
   const startTime = Date.now();
 
@@ -244,12 +275,12 @@ export async function testWebhookEndpoint(params: {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Webhook-Signature': signature,
-        'X-Webhook-Test': 'true',
-        'X-Webhook-Timestamp': testPayload.timestamp,
+        "Content-Type": "application/json",
+        "X-Webhook-Signature": signature,
+        "X-Webhook-Test": "true",
+        "X-Webhook-Timestamp": testPayload.timestamp,
       },
       body: payload,
       signal: controller.signal,
@@ -277,10 +308,10 @@ export async function testWebhookEndpoint(params: {
     const latency = Date.now() - startTime;
 
     if (error instanceof Error) {
-      if (error.name === 'AbortError') {
+      if (error.name === "AbortError") {
         return {
           success: false,
-          error: 'Request timeout',
+          error: "Request timeout",
           latency,
         };
       }
@@ -294,7 +325,7 @@ export async function testWebhookEndpoint(params: {
 
     return {
       success: false,
-      error: 'Unknown error',
+      error: "Unknown error",
       latency,
     };
   }
@@ -321,7 +352,7 @@ export class WebhookRateLimiter {
     const deliveries = this.deliveries.get(webhookId) || [];
 
     // Remove old deliveries outside the window
-    const recent = deliveries.filter(time => now - time < this.window);
+    const recent = deliveries.filter((time) => now - time < this.window);
     this.deliveries.set(webhookId, recent);
 
     return recent.length < this.limit;
@@ -342,7 +373,7 @@ export class WebhookRateLimiter {
   getRemaining(webhookId: string): number {
     const now = Date.now();
     const deliveries = this.deliveries.get(webhookId) || [];
-    const recent = deliveries.filter(time => now - time < this.window);
+    const recent = deliveries.filter((time) => now - time < this.window);
     return Math.max(0, this.limit - recent.length);
   }
 
@@ -359,7 +390,7 @@ export class WebhookRateLimiter {
   cleanup(): void {
     const now = Date.now();
     for (const [webhookId, deliveries] of this.deliveries.entries()) {
-      const recent = deliveries.filter(time => now - time < this.window);
+      const recent = deliveries.filter((time) => now - time < this.window);
       if (recent.length === 0) {
         this.deliveries.delete(webhookId);
       } else {
@@ -373,22 +404,29 @@ export class WebhookRateLimiter {
  * Sanitize webhook payload for logging
  */
 export function sanitizePayload(payload: any): any {
-  const sensitive = ['password', 'token', 'secret', 'apiKey', 'ssn', 'creditCard'];
+  const sensitive = [
+    "password",
+    "token",
+    "secret",
+    "apiKey",
+    "ssn",
+    "creditCard",
+  ];
 
-  if (typeof payload !== 'object' || payload === null) {
+  if (typeof payload !== "object" || payload === null) {
     return payload;
   }
 
   if (Array.isArray(payload)) {
-    return payload.map(item => sanitizePayload(item));
+    return payload.map((item) => sanitizePayload(item));
   }
 
   const sanitized: any = {};
   for (const [key, value] of Object.entries(payload)) {
     const lowerKey = key.toLowerCase();
-    if (sensitive.some(s => lowerKey.includes(s.toLowerCase()))) {
-      sanitized[key] = '[REDACTED]';
-    } else if (typeof value === 'object' && value !== null) {
+    if (sensitive.some((s) => lowerKey.includes(s.toLowerCase()))) {
+      sanitized[key] = "[REDACTED]";
+    } else if (typeof value === "object" && value !== null) {
       sanitized[key] = sanitizePayload(value);
     } else {
       sanitized[key] = value;
@@ -401,12 +439,15 @@ export function sanitizePayload(payload: any): any {
 /**
  * Validate webhook payload size
  */
-export function validatePayloadSize(payload: string, maxSizeBytes: number = 1048576): {
+export function validatePayloadSize(
+  payload: string,
+  maxSizeBytes: number = 1048576,
+): {
   valid: boolean;
   error?: string;
   size: number;
 } {
-  const size = Buffer.byteLength(payload, 'utf8');
+  const size = Buffer.byteLength(payload, "utf8");
 
   if (size > maxSizeBytes) {
     return {

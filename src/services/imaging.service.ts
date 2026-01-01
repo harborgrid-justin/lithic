@@ -15,8 +15,14 @@ export interface ImagingOrder {
   procedureCode: string;
   clinicalIndication: string;
   orderingPhysician: string;
-  priority: 'ROUTINE' | 'URGENT' | 'STAT' | 'EMERGENCY';
-  status: 'PENDING' | 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'REPORTED';
+  priority: "ROUTINE" | "URGENT" | "STAT" | "EMERGENCY";
+  status:
+    | "PENDING"
+    | "SCHEDULED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "CANCELLED"
+    | "REPORTED";
   scheduledDate?: string;
   completedDate?: string;
   accessionNumber?: string;
@@ -25,7 +31,7 @@ export interface ImagingOrder {
   contrast?: boolean;
   transportRequired?: boolean;
   isolationPrecautions?: string;
-  pregnancyStatus?: 'UNKNOWN' | 'POSITIVE' | 'NEGATIVE';
+  pregnancyStatus?: "UNKNOWN" | "POSITIVE" | "NEGATIVE";
   creatinine?: number;
   gfr?: number;
   allergies?: string[];
@@ -41,7 +47,7 @@ export interface ImagingStudy {
   patientName: string;
   patientMRN: string;
   patientDOB: string;
-  patientSex: 'M' | 'F' | 'O';
+  patientSex: "M" | "F" | "O";
   studyDate: string;
   studyTime: string;
   studyDescription: string;
@@ -55,10 +61,16 @@ export interface ImagingStudy {
   institutionName: string;
   stationName?: string;
   seriesList: Series[];
-  status: 'ACQUIRED' | 'QUALITY_CHECK' | 'READY_FOR_REVIEW' | 'IN_REVIEW' | 'REPORTED' | 'FINALIZED';
+  status:
+    | "ACQUIRED"
+    | "QUALITY_CHECK"
+    | "READY_FOR_REVIEW"
+    | "IN_REVIEW"
+    | "REPORTED"
+    | "FINALIZED";
   reportId?: string;
-  reportStatus?: 'DRAFT' | 'PRELIMINARY' | 'FINAL';
-  pacsStatus: 'UPLOADING' | 'STORED' | 'ARCHIVED' | 'ERROR';
+  reportStatus?: "DRAFT" | "PRELIMINARY" | "FINAL";
+  pacsStatus: "UPLOADING" | "STORED" | "ARCHIVED" | "ERROR";
   fileSize: number;
   thumbnailUrl?: string;
   createdAt: string;
@@ -99,7 +111,7 @@ export interface RadiologyReport {
   reportDate: string;
   radiologist: string;
   radiologistId: string;
-  status: 'DRAFT' | 'PRELIMINARY' | 'FINAL' | 'AMENDED' | 'CORRECTED';
+  status: "DRAFT" | "PRELIMINARY" | "FINAL" | "AMENDED" | "CORRECTED";
   studyDescription: string;
   technique?: string;
   comparison?: string;
@@ -133,18 +145,24 @@ export interface WorklistItem {
   patientName: string;
   patientMRN: string;
   patientDOB: string;
-  patientSex: 'M' | 'F' | 'O';
+  patientSex: "M" | "F" | "O";
   modality: string;
   procedure: string;
   scheduledDate: string;
   scheduledTime: string;
-  status: 'SCHEDULED' | 'CHECKED_IN' | 'IN_PROGRESS' | 'COMPLETED' | 'NO_SHOW' | 'CANCELLED';
-  priority: 'ROUTINE' | 'URGENT' | 'STAT' | 'EMERGENCY';
+  status:
+    | "SCHEDULED"
+    | "CHECKED_IN"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "NO_SHOW"
+    | "CANCELLED";
+  priority: "ROUTINE" | "URGENT" | "STAT" | "EMERGENCY";
   location: string;
   technologist?: string;
   notes?: string;
   contrast?: boolean;
-  pregnancyStatus?: 'UNKNOWN' | 'POSITIVE' | 'NEGATIVE';
+  pregnancyStatus?: "UNKNOWN" | "POSITIVE" | "NEGATIVE";
   transportRequired?: boolean;
   isolationPrecautions?: string;
 }
@@ -152,7 +170,18 @@ export interface WorklistItem {
 export interface Modality {
   id: string;
   name: string;
-  type: 'CR' | 'CT' | 'MR' | 'US' | 'XA' | 'DX' | 'MG' | 'NM' | 'PT' | 'RF' | 'OTHER';
+  type:
+    | "CR"
+    | "CT"
+    | "MR"
+    | "US"
+    | "XA"
+    | "DX"
+    | "MG"
+    | "NM"
+    | "PT"
+    | "RF"
+    | "OTHER";
   manufacturer: string;
   model: string;
   serialNumber: string;
@@ -160,7 +189,7 @@ export interface Modality {
   ipAddress: string;
   port: number;
   location: string;
-  status: 'ONLINE' | 'OFFLINE' | 'MAINTENANCE' | 'ERROR';
+  status: "ONLINE" | "OFFLINE" | "MAINTENANCE" | "ERROR";
   lastHeartbeat?: string;
   studyCount?: number;
   installedDate: string;
@@ -174,7 +203,7 @@ export interface ImageAnnotation {
   studyId: string;
   seriesId: string;
   instanceId: string;
-  type: 'ARROW' | 'RECTANGLE' | 'CIRCLE' | 'POLYGON' | 'TEXT' | 'MEASUREMENT';
+  type: "ARROW" | "RECTANGLE" | "CIRCLE" | "POLYGON" | "TEXT" | "MEASUREMENT";
   coordinates: number[][];
   text?: string;
   color: string;
@@ -189,7 +218,7 @@ export interface Measurement {
   studyId: string;
   seriesId: string;
   instanceId: string;
-  type: 'LENGTH' | 'AREA' | 'VOLUME' | 'ANGLE' | 'HU' | 'SUV';
+  type: "LENGTH" | "AREA" | "VOLUME" | "ANGLE" | "HU" | "SUV";
   value: number;
   unit: string;
   coordinates: number[][];
@@ -200,7 +229,7 @@ export interface Measurement {
 }
 
 class ImagingService {
-  private baseUrl = '/api/imaging';
+  private baseUrl = "/api/imaging";
 
   // Imaging Orders
   async getOrders(filters?: {
@@ -218,43 +247,46 @@ class ImagingService {
       });
     }
     const response = await fetch(`${this.baseUrl}/orders?${params}`);
-    if (!response.ok) throw new Error('Failed to fetch orders');
+    if (!response.ok) throw new Error("Failed to fetch orders");
     return response.json();
   }
 
   async getOrder(id: string): Promise<ImagingOrder> {
     const response = await fetch(`${this.baseUrl}/orders/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch order');
+    if (!response.ok) throw new Error("Failed to fetch order");
     return response.json();
   }
 
   async createOrder(order: Partial<ImagingOrder>): Promise<ImagingOrder> {
     const response = await fetch(`${this.baseUrl}/orders`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(order),
     });
-    if (!response.ok) throw new Error('Failed to create order');
+    if (!response.ok) throw new Error("Failed to create order");
     return response.json();
   }
 
-  async updateOrder(id: string, updates: Partial<ImagingOrder>): Promise<ImagingOrder> {
+  async updateOrder(
+    id: string,
+    updates: Partial<ImagingOrder>,
+  ): Promise<ImagingOrder> {
     const response = await fetch(`${this.baseUrl}/orders/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    if (!response.ok) throw new Error('Failed to update order');
+    if (!response.ok) throw new Error("Failed to update order");
     return response.json();
   }
 
   async cancelOrder(id: string, reason: string): Promise<void> {
     const response = await fetch(`${this.baseUrl}/orders/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reason }),
     });
-    if (!response.ok) throw new Error('Failed to cancel order');
+    if (!response.ok) throw new Error("Failed to cancel order");
   }
 
   // Studies
@@ -273,25 +305,27 @@ class ImagingService {
       });
     }
     const response = await fetch(`${this.baseUrl}/studies?${params}`);
-    if (!response.ok) throw new Error('Failed to fetch studies');
+    if (!response.ok) throw new Error("Failed to fetch studies");
     return response.json();
   }
 
   async getStudy(id: string): Promise<ImagingStudy> {
     const response = await fetch(`${this.baseUrl}/studies/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch study');
+    if (!response.ok) throw new Error("Failed to fetch study");
     return response.json();
   }
 
   async getStudyByAccession(accessionNumber: string): Promise<ImagingStudy> {
-    const response = await fetch(`${this.baseUrl}/studies?accessionNumber=${accessionNumber}`);
-    if (!response.ok) throw new Error('Failed to fetch study');
+    const response = await fetch(
+      `${this.baseUrl}/studies?accessionNumber=${accessionNumber}`,
+    );
+    if (!response.ok) throw new Error("Failed to fetch study");
     const studies = await response.json();
     return studies[0];
   }
 
   async compareStudies(studyIds: string[]): Promise<ImagingStudy[]> {
-    const studies = await Promise.all(studyIds.map(id => this.getStudy(id)));
+    const studies = await Promise.all(studyIds.map((id) => this.getStudy(id)));
     return studies;
   }
 
@@ -311,51 +345,62 @@ class ImagingService {
       });
     }
     const response = await fetch(`${this.baseUrl}/reports?${params}`);
-    if (!response.ok) throw new Error('Failed to fetch reports');
+    if (!response.ok) throw new Error("Failed to fetch reports");
     return response.json();
   }
 
   async getReport(id: string): Promise<RadiologyReport> {
     const response = await fetch(`${this.baseUrl}/reports/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch report');
+    if (!response.ok) throw new Error("Failed to fetch report");
     return response.json();
   }
 
-  async createReport(report: Partial<RadiologyReport>): Promise<RadiologyReport> {
+  async createReport(
+    report: Partial<RadiologyReport>,
+  ): Promise<RadiologyReport> {
     const response = await fetch(`${this.baseUrl}/reports`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(report),
     });
-    if (!response.ok) throw new Error('Failed to create report');
+    if (!response.ok) throw new Error("Failed to create report");
     return response.json();
   }
 
-  async updateReport(id: string, updates: Partial<RadiologyReport>): Promise<RadiologyReport> {
+  async updateReport(
+    id: string,
+    updates: Partial<RadiologyReport>,
+  ): Promise<RadiologyReport> {
     const response = await fetch(`${this.baseUrl}/reports/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    if (!response.ok) throw new Error('Failed to update report');
+    if (!response.ok) throw new Error("Failed to update report");
     return response.json();
   }
 
   async signReport(id: string): Promise<RadiologyReport> {
     const response = await fetch(`${this.baseUrl}/reports/${id}/sign`, {
-      method: 'POST',
+      method: "POST",
     });
-    if (!response.ok) throw new Error('Failed to sign report');
+    if (!response.ok) throw new Error("Failed to sign report");
     return response.json();
   }
 
-  async addAddendum(reportId: string, content: string): Promise<RadiologyReport> {
-    const response = await fetch(`${this.baseUrl}/reports/${reportId}/addendum`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
-    });
-    if (!response.ok) throw new Error('Failed to add addendum');
+  async addAddendum(
+    reportId: string,
+    content: string,
+  ): Promise<RadiologyReport> {
+    const response = await fetch(
+      `${this.baseUrl}/reports/${reportId}/addendum`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      },
+    );
+    if (!response.ok) throw new Error("Failed to add addendum");
     return response.json();
   }
 
@@ -373,30 +418,33 @@ class ImagingService {
       });
     }
     const response = await fetch(`${this.baseUrl}/worklist?${params}`);
-    if (!response.ok) throw new Error('Failed to fetch worklist');
+    if (!response.ok) throw new Error("Failed to fetch worklist");
     return response.json();
   }
 
-  async updateWorklistItem(id: string, updates: Partial<WorklistItem>): Promise<WorklistItem> {
+  async updateWorklistItem(
+    id: string,
+    updates: Partial<WorklistItem>,
+  ): Promise<WorklistItem> {
     const response = await fetch(`${this.baseUrl}/worklist/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    if (!response.ok) throw new Error('Failed to update worklist item');
+    if (!response.ok) throw new Error("Failed to update worklist item");
     return response.json();
   }
 
   // Template Management
   async getReportTemplates(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/templates`);
-    if (!response.ok) throw new Error('Failed to fetch templates');
+    if (!response.ok) throw new Error("Failed to fetch templates");
     return response.json();
   }
 
   async getReportTemplate(id: string): Promise<any> {
     const response = await fetch(`${this.baseUrl}/templates/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch template');
+    if (!response.ok) throw new Error("Failed to fetch template");
     return response.json();
   }
 }

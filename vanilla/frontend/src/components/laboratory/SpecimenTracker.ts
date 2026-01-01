@@ -20,7 +20,7 @@ export class SpecimenTracker {
 
   private render(): void {
     if (!this.specimen) {
-      this.container.innerHTML = '<p>No specimen selected</p>';
+      this.container.innerHTML = "<p>No specimen selected</p>";
       return;
     }
 
@@ -49,44 +49,64 @@ export class SpecimenTracker {
             <span class="label">Collected:</span>
             <span class="value">${this.formatDateTime(this.specimen.collectionDateTime)} by ${this.specimen.collectedBy}</span>
           </div>
-          ${this.specimen.receivedDateTime ? `
+          ${
+            this.specimen.receivedDateTime
+              ? `
             <div class="detail-row">
               <span class="label">Received:</span>
               <span class="value">${this.formatDateTime(this.specimen.receivedDateTime)} by ${this.specimen.receivedBy}</span>
             </div>
-          ` : ''}
-          ${this.specimen.volume ? `
+          `
+              : ""
+          }
+          ${
+            this.specimen.volume
+              ? `
             <div class="detail-row">
               <span class="label">Volume:</span>
               <span class="value">${this.specimen.volume} ${this.specimen.volumeUnit}</span>
             </div>
-          ` : ''}
-          ${this.specimen.temperature ? `
+          `
+              : ""
+          }
+          ${
+            this.specimen.temperature
+              ? `
             <div class="detail-row">
               <span class="label">Temperature:</span>
               <span class="value">${this.specimen.temperature}°C</span>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
 
-        ${this.specimen.qualityIssues && this.specimen.qualityIssues.length > 0 ? `
+        ${
+          this.specimen.qualityIssues && this.specimen.qualityIssues.length > 0
+            ? `
           <div class="quality-issues">
             <h4>Quality Issues</h4>
-            ${this.specimen.qualityIssues.map((issue: any) => this.renderQualityIssue(issue)).join('')}
+            ${this.specimen.qualityIssues.map((issue: any) => this.renderQualityIssue(issue)).join("")}
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${this.specimen.status === 'rejected' ? `
+        ${
+          this.specimen.status === "rejected"
+            ? `
           <div class="rejection-info">
             <h4>Rejection Information</h4>
             <p>${this.specimen.rejectionReason}</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div class="tracking-timeline">
           <h4>Tracking History</h4>
           <div class="timeline">
-            ${this.trackingHistory.map(event => this.renderTimelineEvent(event)).join('')}
+            ${this.trackingHistory.map((event) => this.renderTimelineEvent(event)).join("")}
           </div>
         </div>
       </div>
@@ -121,7 +141,7 @@ export class SpecimenTracker {
           <div class="event-details">
             <div>Location: ${event.location}</div>
             <div>Performed by: ${event.performedBy}</div>
-            ${event.notes ? `<div>Notes: ${event.notes}</div>` : ''}
+            ${event.notes ? `<div>Notes: ${event.notes}</div>` : ""}
           </div>
         </div>
       </div>
@@ -129,33 +149,45 @@ export class SpecimenTracker {
   }
 
   private formatStatus(status: string): string {
-    return status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return status
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatSpecimenType(type: string): string {
-    return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return type
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatIssueType(type: string): string {
-    return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return type
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatEventType(type: string): string {
-    return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return type
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   private formatDateTime(date: Date | string): string {
     const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

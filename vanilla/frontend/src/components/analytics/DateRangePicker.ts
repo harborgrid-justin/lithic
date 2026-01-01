@@ -20,11 +20,11 @@ export class DateRangePicker {
   private currentRange: DateRange;
 
   private defaultPresets = [
-    { label: 'Last 7 Days', days: 7 },
-    { label: 'Last 30 Days', days: 30 },
-    { label: 'Last 90 Days', days: 90 },
-    { label: 'Last 12 Months', days: 365 },
-    { label: 'Year to Date', days: -1 },
+    { label: "Last 7 Days", days: 7 },
+    { label: "Last 30 Days", days: 30 },
+    { label: "Last 90 Days", days: 90 },
+    { label: "Last 12 Months", days: 365 },
+    { label: "Year to Date", days: -1 },
   ];
 
   constructor(container: HTMLElement, config: DateRangePickerConfig) {
@@ -46,10 +46,10 @@ export class DateRangePicker {
   }
 
   private render(): void {
-    this.container.innerHTML = '';
-    this.container.className = 'date-range-picker';
+    this.container.innerHTML = "";
+    this.container.className = "date-range-picker";
 
-    const picker = document.createElement('div');
+    const picker = document.createElement("div");
     picker.style.cssText = `
       display: flex;
       gap: 12px;
@@ -71,7 +71,7 @@ export class DateRangePicker {
   }
 
   private createDateInputs(): HTMLElement {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     container.style.cssText = `
       display: flex;
       gap: 8px;
@@ -79,8 +79,8 @@ export class DateRangePicker {
     `;
 
     // Start date
-    const startInput = document.createElement('input');
-    startInput.type = 'date';
+    const startInput = document.createElement("input");
+    startInput.type = "date";
     startInput.value = this.formatDate(this.currentRange.start);
     startInput.style.cssText = `
       padding: 8px 12px;
@@ -89,20 +89,20 @@ export class DateRangePicker {
       font-size: 14px;
     `;
 
-    startInput.addEventListener('change', (e) => {
+    startInput.addEventListener("change", (e) => {
       const target = e.target as HTMLInputElement;
       this.currentRange.start = new Date(target.value);
       this.config.onChange(this.currentRange);
     });
 
     // Separator
-    const separator = document.createElement('span');
-    separator.textContent = '—';
-    separator.style.color = '#666';
+    const separator = document.createElement("span");
+    separator.textContent = "—";
+    separator.style.color = "#666";
 
     // End date
-    const endInput = document.createElement('input');
-    endInput.type = 'date';
+    const endInput = document.createElement("input");
+    endInput.type = "date";
     endInput.value = this.formatDate(this.currentRange.end);
     endInput.style.cssText = `
       padding: 8px 12px;
@@ -111,7 +111,7 @@ export class DateRangePicker {
       font-size: 14px;
     `;
 
-    endInput.addEventListener('change', (e) => {
+    endInput.addEventListener("change", (e) => {
       const target = e.target as HTMLInputElement;
       this.currentRange.end = new Date(target.value);
       this.config.onChange(this.currentRange);
@@ -125,7 +125,7 @@ export class DateRangePicker {
   }
 
   private createPresets(): HTMLElement {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     container.style.cssText = `
       display: flex;
       gap: 8px;
@@ -133,7 +133,7 @@ export class DateRangePicker {
     `;
 
     this.config.presets!.forEach((preset) => {
-      const btn = document.createElement('button');
+      const btn = document.createElement("button");
       btn.textContent = preset.label;
       btn.style.cssText = `
         padding: 6px 12px;
@@ -146,16 +146,16 @@ export class DateRangePicker {
         transition: all 0.2s;
       `;
 
-      btn.addEventListener('click', () => this.applyPreset(preset.days));
+      btn.addEventListener("click", () => this.applyPreset(preset.days));
 
-      btn.addEventListener('mouseenter', () => {
-        btn.style.backgroundColor = '#f8f9fa';
-        btn.style.borderColor = '#4a90e2';
+      btn.addEventListener("mouseenter", () => {
+        btn.style.backgroundColor = "#f8f9fa";
+        btn.style.borderColor = "#4a90e2";
       });
 
-      btn.addEventListener('mouseleave', () => {
-        btn.style.backgroundColor = 'white';
-        btn.style.borderColor = '#dee2e6';
+      btn.addEventListener("mouseleave", () => {
+        btn.style.backgroundColor = "white";
+        btn.style.borderColor = "#dee2e6";
       });
 
       container.appendChild(btn);
@@ -181,7 +181,7 @@ export class DateRangePicker {
   }
 
   private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   }
 
   public getRange(): DateRange {

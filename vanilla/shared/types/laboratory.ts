@@ -1,38 +1,38 @@
 // Laboratory Management Types
 
 export enum OrderPriority {
-  STAT = 'STAT',
-  URGENT = 'URGENT',
-  ROUTINE = 'ROUTINE',
+  STAT = "STAT",
+  URGENT = "URGENT",
+  ROUTINE = "ROUTINE",
 }
 
 export enum LabOrderStatus {
-  PENDING = 'PENDING',
-  COLLECTED = 'COLLECTED',
-  RECEIVED = 'RECEIVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
+  PENDING = "PENDING",
+  COLLECTED = "COLLECTED",
+  RECEIVED = "RECEIVED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
 }
 
 export enum ResultStatus {
-  PRELIMINARY = 'PRELIMINARY',
-  FINAL = 'FINAL',
-  CORRECTED = 'CORRECTED',
-  CANCELLED = 'CANCELLED',
+  PRELIMINARY = "PRELIMINARY",
+  FINAL = "FINAL",
+  CORRECTED = "CORRECTED",
+  CANCELLED = "CANCELLED",
 }
 
 export enum SpecimenType {
-  BLOOD = 'BLOOD',
-  URINE = 'URINE',
-  SERUM = 'SERUM',
-  PLASMA = 'PLASMA',
-  CSF = 'CSF',
-  TISSUE = 'TISSUE',
-  SWAB = 'SWAB',
-  SPUTUM = 'SPUTUM',
-  STOOL = 'STOOL',
-  OTHER = 'OTHER',
+  BLOOD = "BLOOD",
+  URINE = "URINE",
+  SERUM = "SERUM",
+  PLASMA = "PLASMA",
+  CSF = "CSF",
+  TISSUE = "TISSUE",
+  SWAB = "SWAB",
+  SPUTUM = "SPUTUM",
+  STOOL = "STOOL",
+  OTHER = "OTHER",
 }
 
 export interface LabOrder {
@@ -209,7 +209,7 @@ export interface QualityControl {
   controlLevel: string;
   expectedValue: string;
   actualValue: string;
-  result: 'PASS' | 'FAIL';
+  result: "PASS" | "FAIL";
   performedAt: string;
   performedBy: string;
   comments?: string;
@@ -217,7 +217,7 @@ export interface QualityControl {
 
 export interface LabInterface {
   id: string;
-  interfaceType: 'HL7' | 'ASTM' | 'FHIR';
+  interfaceType: "HL7" | "ASTM" | "FHIR";
   instrumentId: string;
   instrumentName: string;
   isActive: boolean;

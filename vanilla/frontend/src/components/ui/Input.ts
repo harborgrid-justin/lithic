@@ -3,11 +3,20 @@
  * Input Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date' | 'time';
+  type?:
+    | "text"
+    | "email"
+    | "password"
+    | "number"
+    | "tel"
+    | "url"
+    | "search"
+    | "date"
+    | "time";
   label?: string;
   placeholder?: string;
   value?: string;
@@ -19,7 +28,7 @@ export interface InputProps {
   error?: string;
   helperText?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
   autoComplete?: string;
   maxLength?: number;
   minLength?: number;
@@ -41,7 +50,7 @@ export class Input extends Component<InputProps, InputState> {
 
   constructor(props: InputProps) {
     super(props, {
-      value: props.value || '',
+      value: props.value || "",
       focused: false,
       error: props.error || null,
     });
@@ -53,52 +62,52 @@ export class Input extends Component<InputProps, InputState> {
   }
 
   protected createElement(): HTMLElement {
-    return createElement('div', {
+    return createElement("div", {
       className: this.getClassName(),
     });
   }
 
   protected getClassName(): string {
-    const classes = ['input-wrapper'];
+    const classes = ["input-wrapper"];
 
     if (this.state.focused) {
-      classes.push('input-focused');
+      classes.push("input-focused");
     }
 
     if (this.state.error) {
-      classes.push('input-error');
+      classes.push("input-error");
     }
 
     if (this.props.disabled) {
-      classes.push('input-disabled');
+      classes.push("input-disabled");
     }
 
     if (this.props.icon) {
-      classes.push(`input-with-icon-${this.props.iconPosition || 'left'}`);
+      classes.push(`input-with-icon-${this.props.iconPosition || "left"}`);
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
     // Clear content
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
     // Add label
     if (this.props.label) {
-      const label = createElement('label', {
-        className: 'input-label',
+      const label = createElement("label", {
+        className: "input-label",
         textContent: this.props.label,
         attributes: {
-          for: this.props.id || this.props.name || '',
+          for: this.props.id || this.props.name || "",
         },
       });
 
       if (this.props.required) {
-        const required = createElement('span', {
-          className: 'input-required',
-          textContent: ' *',
+        const required = createElement("span", {
+          className: "input-required",
+          textContent: " *",
         });
         label.appendChild(required);
       }
@@ -107,31 +116,37 @@ export class Input extends Component<InputProps, InputState> {
     }
 
     // Create input container
-    const inputContainer = createElement('div', {
-      className: 'input-container',
+    const inputContainer = createElement("div", {
+      className: "input-container",
     });
 
     // Add icon (left)
-    if (this.props.icon && this.props.iconPosition !== 'right') {
-      const icon = createElement('span', {
-        className: 'input-icon input-icon-left',
+    if (this.props.icon && this.props.iconPosition !== "right") {
+      const icon = createElement("span", {
+        className: "input-icon input-icon-left",
         innerHTML: this.props.icon,
       });
       inputContainer.appendChild(icon);
     }
 
     // Create input element
-    this.inputElement = createElement('input', {
-      className: 'input-field',
+    this.inputElement = createElement("input", {
+      className: "input-field",
       attributes: {
-        type: this.props.type || 'text',
-        placeholder: this.props.placeholder || '',
+        type: this.props.type || "text",
+        placeholder: this.props.placeholder || "",
         value: this.state.value,
-        name: this.props.name || '',
-        id: this.props.id || this.props.name || '',
-        ...(this.props.autoComplete && { autocomplete: this.props.autoComplete }),
-        ...(this.props.maxLength && { maxlength: String(this.props.maxLength) }),
-        ...(this.props.minLength && { minlength: String(this.props.minLength) }),
+        name: this.props.name || "",
+        id: this.props.id || this.props.name || "",
+        ...(this.props.autoComplete && {
+          autocomplete: this.props.autoComplete,
+        }),
+        ...(this.props.maxLength && {
+          maxlength: String(this.props.maxLength),
+        }),
+        ...(this.props.minLength && {
+          minlength: String(this.props.minLength),
+        }),
         ...(this.props.pattern && { pattern: this.props.pattern }),
       },
     }) as HTMLInputElement;
@@ -151,9 +166,9 @@ export class Input extends Component<InputProps, InputState> {
     inputContainer.appendChild(this.inputElement);
 
     // Add icon (right)
-    if (this.props.icon && this.props.iconPosition === 'right') {
-      const icon = createElement('span', {
-        className: 'input-icon input-icon-right',
+    if (this.props.icon && this.props.iconPosition === "right") {
+      const icon = createElement("span", {
+        className: "input-icon input-icon-right",
         innerHTML: this.props.icon,
       });
       inputContainer.appendChild(icon);
@@ -163,14 +178,14 @@ export class Input extends Component<InputProps, InputState> {
 
     // Add helper text or error
     if (this.state.error) {
-      const error = createElement('div', {
-        className: 'input-error-text',
+      const error = createElement("div", {
+        className: "input-error-text",
         textContent: this.state.error,
       });
       this.element.appendChild(error);
     } else if (this.props.helperText) {
-      const helper = createElement('div', {
-        className: 'input-helper-text',
+      const helper = createElement("div", {
+        className: "input-helper-text",
         textContent: this.props.helperText,
       });
       this.element.appendChild(helper);
@@ -179,19 +194,19 @@ export class Input extends Component<InputProps, InputState> {
 
   protected onMount(): void {
     if (this.inputElement) {
-      this.inputElement.addEventListener('change', this.handleChange);
-      this.inputElement.addEventListener('input', this.handleInput);
-      this.inputElement.addEventListener('focus', this.handleFocus);
-      this.inputElement.addEventListener('blur', this.handleBlur);
+      this.inputElement.addEventListener("change", this.handleChange);
+      this.inputElement.addEventListener("input", this.handleInput);
+      this.inputElement.addEventListener("focus", this.handleFocus);
+      this.inputElement.addEventListener("blur", this.handleBlur);
     }
   }
 
   protected onUnmount(): void {
     if (this.inputElement) {
-      this.inputElement.removeEventListener('change', this.handleChange);
-      this.inputElement.removeEventListener('input', this.handleInput);
-      this.inputElement.removeEventListener('focus', this.handleFocus);
-      this.inputElement.removeEventListener('blur', this.handleBlur);
+      this.inputElement.removeEventListener("change", this.handleChange);
+      this.inputElement.removeEventListener("input", this.handleInput);
+      this.inputElement.removeEventListener("focus", this.handleFocus);
+      this.inputElement.removeEventListener("blur", this.handleBlur);
     }
   }
 
@@ -252,7 +267,7 @@ export class Input extends Component<InputProps, InputState> {
   }
 
   public clear(): void {
-    this.setValue('');
+    this.setValue("");
   }
 }
 

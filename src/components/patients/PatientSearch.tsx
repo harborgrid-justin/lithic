@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { Patient, PatientSearchParams } from '@/types/patient';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, X } from 'lucide-react';
+import { useState } from "react";
+import { Patient, PatientSearchParams } from "@/types/patient";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, X } from "lucide-react";
 
 interface PatientSearchProps {
   onSearch: (params: PatientSearchParams) => void;
@@ -14,35 +14,38 @@ interface PatientSearchProps {
 
 export function PatientSearch({ onSearch, onReset }: PatientSearchProps) {
   const [params, setParams] = useState<PatientSearchParams>({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    phone: '',
-    email: '',
-    mrn: '',
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    phone: "",
+    email: "",
+    mrn: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Filter out empty values
-    const filteredParams = Object.entries(params).reduce((acc, [key, value]) => {
-      if (value) {
-        acc[key as keyof PatientSearchParams] = value;
-      }
-      return acc;
-    }, {} as PatientSearchParams);
-    
+    const filteredParams = Object.entries(params).reduce(
+      (acc, [key, value]) => {
+        if (value) {
+          acc[key as keyof PatientSearchParams] = value;
+        }
+        return acc;
+      },
+      {} as PatientSearchParams,
+    );
+
     onSearch(filteredParams);
   };
 
   const handleReset = () => {
     setParams({
-      firstName: '',
-      lastName: '',
-      dateOfBirth: '',
-      phone: '',
-      email: '',
-      mrn: '',
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      phone: "",
+      email: "",
+      mrn: "",
     });
     onReset?.();
   };
@@ -61,7 +64,9 @@ export function PatientSearch({ onSearch, onReset }: PatientSearchProps) {
               </label>
               <Input
                 value={params.firstName}
-                onChange={(e) => setParams({ ...params, firstName: e.target.value })}
+                onChange={(e) =>
+                  setParams({ ...params, firstName: e.target.value })
+                }
                 placeholder="Enter first name"
               />
             </div>
@@ -71,7 +76,9 @@ export function PatientSearch({ onSearch, onReset }: PatientSearchProps) {
               </label>
               <Input
                 value={params.lastName}
-                onChange={(e) => setParams({ ...params, lastName: e.target.value })}
+                onChange={(e) =>
+                  setParams({ ...params, lastName: e.target.value })
+                }
                 placeholder="Enter last name"
               />
             </div>
@@ -82,7 +89,9 @@ export function PatientSearch({ onSearch, onReset }: PatientSearchProps) {
               <Input
                 type="date"
                 value={params.dateOfBirth}
-                onChange={(e) => setParams({ ...params, dateOfBirth: e.target.value })}
+                onChange={(e) =>
+                  setParams({ ...params, dateOfBirth: e.target.value })
+                }
               />
             </div>
             <div>
@@ -101,7 +110,9 @@ export function PatientSearch({ onSearch, onReset }: PatientSearchProps) {
               </label>
               <Input
                 value={params.phone}
-                onChange={(e) => setParams({ ...params, phone: e.target.value })}
+                onChange={(e) =>
+                  setParams({ ...params, phone: e.target.value })
+                }
                 placeholder="Enter phone number"
               />
             </div>
@@ -112,7 +123,9 @@ export function PatientSearch({ onSearch, onReset }: PatientSearchProps) {
               <Input
                 type="email"
                 value={params.email}
-                onChange={(e) => setParams({ ...params, email: e.target.value })}
+                onChange={(e) =>
+                  setParams({ ...params, email: e.target.value })
+                }
                 placeholder="Enter email"
               />
             </div>

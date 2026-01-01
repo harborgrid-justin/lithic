@@ -3,7 +3,7 @@
  * Drug information display component
  */
 
-import type { Medication } from '../../services/PharmacyService';
+import type { Medication } from "../../services/PharmacyService";
 
 export class DrugInfo {
   private container: HTMLElement;
@@ -16,7 +16,7 @@ export class DrugInfo {
 
   render(): void {
     if (!this.medication) {
-      this.container.innerHTML = '<div>No medication selected</div>';
+      this.container.innerHTML = "<div>No medication selected</div>";
       return;
     }
 
@@ -38,10 +38,14 @@ export class DrugInfo {
           <dd>${med.manufacturer}</dd>
           <dt>Therapeutic Class:</dt>
           <dd>${med.therapeuticClass}</dd>
-          ${med.isControlled ? `
+          ${
+            med.isControlled
+              ? `
             <dt>DEA Schedule:</dt>
             <dd class="controlled">Schedule ${med.deaSchedule}</dd>
-          ` : ''}
+          `
+              : ""
+          }
           <dt>Formulary Status:</dt>
           <dd>${med.formularyStatus}</dd>
           <dt>Unit Price:</dt>

@@ -1,16 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import AppointmentForm from '@/components/scheduling/AppointmentForm';
-import ConflictResolver from '@/components/scheduling/ConflictResolver';
-import { schedulingService } from '@/services/scheduling.service';
-import type { Provider, Patient, Resource, ScheduleConflict, TimeSlot } from '@/types/scheduling';
-import type { AppointmentInput } from '@/lib/validators';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import AppointmentForm from "@/components/scheduling/AppointmentForm";
+import ConflictResolver from "@/components/scheduling/ConflictResolver";
+import { schedulingService } from "@/services/scheduling.service";
+import type {
+  Provider,
+  Patient,
+  Resource,
+  ScheduleConflict,
+  TimeSlot,
+} from "@/types/scheduling";
+import type { AppointmentInput } from "@/lib/validators";
+import { toast } from "sonner";
+
+export const dynamic = "force-dynamic";
 
 export default function NewAppointmentPage() {
   const router = useRouter();
@@ -28,8 +36,8 @@ export default function NewAppointmentPage() {
   } | null>(null);
 
   // Get query params
-  const date = searchParams.get('date');
-  const time = searchParams.get('time');
+  const date = searchParams.get("date");
+  const time = searchParams.get("time");
 
   useEffect(() => {
     loadData();
@@ -39,7 +47,7 @@ export default function NewAppointmentPage() {
     try {
       const [providersData, patientsData, resourcesData] = await Promise.all([
         schedulingService.getProviders(),
-        schedulingService.searchPatients(''),
+        schedulingService.searchPatients(""),
         schedulingService.getResources(),
       ]);
 
@@ -47,7 +55,7 @@ export default function NewAppointmentPage() {
       setPatients(patientsData);
       setResources(resourcesData);
     } catch (error) {
-      toast.error('Failed to load form data');
+      toast.error("Failed to load form data");
       console.error(error);
     }
   };
@@ -59,7 +67,7 @@ export default function NewAppointmentPage() {
       const conflict = await schedulingService.checkConflicts(
         data.providerId,
         data.startTime,
-        data.duration
+        data.duration,
       );
 
       if (conflict) {
@@ -75,10 +83,10 @@ export default function NewAppointmentPage() {
 
       // Create appointment
       await schedulingService.createAppointment(data);
-      toast.success('Appointment created successfully');
-      router.push('/scheduling/appointments');
+      toast.success("Appointment created successfully");
+      router.push("/scheduling/appointments");
     } catch (error) {
-      toast.error('Failed to create appointment');
+      toast.error("Failed to create appointment");
       console.error(error);
     } finally {
       setLoading(false);
@@ -89,12 +97,12 @@ export default function NewAppointmentPage() {
     setShowConflictResolver(false);
     // Update the form with the new time slot
     // This would require passing the slot back to the form
-    toast.info('Please submit the form again with the selected time');
+    toast.info("Please submit the form again with the selected time");
   };
 
   const defaultValues: Partial<AppointmentInput> = {};
   if (date && time) {
-    const [hours, minutes] = time.split(':');
+    const [hours, minutes] = time.split(":");
     const startTime = new Date(date);
     startTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     defaultValues.startTime = startTime.toISOString().slice(0, 16);
@@ -107,13 +115,15 @@ export default function NewAppointmentPage() {
         <Button
           variant="outline"
           size="icon"
-          onClick={() => router.push('/scheduling/appointments')}
+          onClick={() => router.push("/scheduling/appointments")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-3xl font-bold">New Appointment</h1>
-          <p className="text-gray-600 mt-1">Schedule a new patient appointment</p>
+          <p className="text-gray-600 mt-1">
+            Schedule a new patient appointment
+          </p>
         </div>
       </div>
 
@@ -138,7 +148,7 @@ export default function NewAppointmentPage() {
                 resources={resources}
                 defaultValues={defaultValues}
                 onSubmit={handleSubmit}
-                onCancel={() => router.push('/scheduling/appointments')}
+                onCancel={() => router.push("/scheduling/appointments")}
                 loading={loading}
               />
             </CardContent>

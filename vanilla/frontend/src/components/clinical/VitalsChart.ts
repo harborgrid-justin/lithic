@@ -2,7 +2,7 @@
 export class VitalsChart {
   private container: HTMLElement;
   private vitals: any[] = [];
-  private vitalType: string = 'temperature';
+  private vitalType: string = "temperature";
 
   constructor(containerId: string) {
     const element = document.getElementById(containerId);
@@ -10,7 +10,7 @@ export class VitalsChart {
     this.container = element;
   }
 
-  setVitals(vitals: any[], vitalType: string = 'temperature'): void {
+  setVitals(vitals: any[], vitalType: string = "temperature"): void {
     this.vitals = vitals;
     this.vitalType = vitalType;
     this.render();
@@ -18,7 +18,8 @@ export class VitalsChart {
 
   private render(): void {
     if (this.vitals.length === 0) {
-      this.container.innerHTML = '<div class="empty-state">No vital signs data</div>';
+      this.container.innerHTML =
+        '<div class="empty-state">No vital signs data</div>';
       return;
     }
 
@@ -30,11 +31,11 @@ export class VitalsChart {
         <div class="chart-controls">
           <label>View:</label>
           <select id="vital-type-select">
-            <option value="temperature" ${this.vitalType === 'temperature' ? 'selected' : ''}>Temperature</option>
-            <option value="pulse" ${this.vitalType === 'pulse' ? 'selected' : ''}>Pulse</option>
-            <option value="bloodPressure" ${this.vitalType === 'bloodPressure' ? 'selected' : ''}>Blood Pressure</option>
-            <option value="oxygenSaturation" ${this.vitalType === 'oxygenSaturation' ? 'selected' : ''}>O2 Saturation</option>
-            <option value="weight" ${this.vitalType === 'weight' ? 'selected' : ''}>Weight</option>
+            <option value="temperature" ${this.vitalType === "temperature" ? "selected" : ""}>Temperature</option>
+            <option value="pulse" ${this.vitalType === "pulse" ? "selected" : ""}>Pulse</option>
+            <option value="bloodPressure" ${this.vitalType === "bloodPressure" ? "selected" : ""}>Blood Pressure</option>
+            <option value="oxygenSaturation" ${this.vitalType === "oxygenSaturation" ? "selected" : ""}>O2 Saturation</option>
+            <option value="weight" ${this.vitalType === "weight" ? "selected" : ""}>Weight</option>
           </select>
         </div>
         ${chartHTML}
@@ -51,15 +52,17 @@ export class VitalsChart {
       return '<div class="empty-state">No data for selected vital type</div>';
     }
 
-    const max = Math.max(...data.map(d => d.value));
-    const min = Math.min(...data.map(d => d.value));
+    const max = Math.max(...data.map((d) => d.value));
+    const min = Math.min(...data.map((d) => d.value));
     const range = max - min || 1;
 
-    const points = data.map((d, i) => {
-      const x = (i / (data.length - 1)) * 100;
-      const y = 100 - ((d.value - min) / range) * 80;
-      return `${x},${y}`;
-    }).join(' ');
+    const points = data
+      .map((d, i) => {
+        const x = (i / (data.length - 1)) * 100;
+        const y = 100 - ((d.value - min) / range) * 80;
+        return `${x},${y}`;
+      })
+      .join(" ");
 
     return `
       <div class="chart-container">
@@ -80,11 +83,13 @@ export class VitalsChart {
           />
 
           <!-- Data points -->
-          ${data.map((d, i) => {
-            const x = (i / (data.length - 1)) * 100;
-            const y = 100 - ((d.value - min) / range) * 80;
-            return `<circle cx="${x}" cy="${y}" r="1" fill="#2563eb" class="data-point" data-value="${d.value}" data-date="${d.date}"/>`;
-          }).join('')}
+          ${data
+            .map((d, i) => {
+              const x = (i / (data.length - 1)) * 100;
+              const y = 100 - ((d.value - min) / range) * 80;
+              return `<circle cx="${x}" cy="${y}" r="1" fill="#2563eb" class="data-point" data-value="${d.value}" data-date="${d.date}"/>`;
+            })
+            .join("")}
         </svg>
         <div class="chart-labels">
           <span class="label-max">${max.toFixed(1)}</span>
@@ -96,7 +101,7 @@ export class VitalsChart {
 
   private renderLegend(): string {
     const latestVital = this.vitals[0];
-    if (!latestVital) return '';
+    if (!latestVital) return "";
 
     const date = new Date(latestVital.recordedAt).toLocaleString();
     const value = this.getVitalValue(latestVital);
@@ -110,23 +115,26 @@ export class VitalsChart {
   }
 
   private getChartData(): Array<{ date: string; value: number }> {
-    return this.vitals.map(vital => ({
-      date: vital.recordedAt,
-      value: this.getVitalNumericValue(vital),
-    })).filter(d => d.value !== null).reverse();
+    return this.vitals
+      .map((vital) => ({
+        date: vital.recordedAt,
+        value: this.getVitalNumericValue(vital),
+      }))
+      .filter((d) => d.value !== null)
+      .reverse();
   }
 
   private getVitalNumericValue(vital: any): number {
     switch (this.vitalType) {
-      case 'temperature':
+      case "temperature":
         return vital.temperature || 0;
-      case 'pulse':
+      case "pulse":
         return vital.pulse || 0;
-      case 'bloodPressure':
+      case "bloodPressure":
         return vital.bloodPressureSystolic || 0;
-      case 'oxygenSaturation':
+      case "oxygenSaturation":
         return vital.oxygenSaturation || 0;
-      case 'weight':
+      case "weight":
         return vital.weight || 0;
       default:
         return 0;
@@ -135,31 +143,33 @@ export class VitalsChart {
 
   private getVitalValue(vital: any): string {
     switch (this.vitalType) {
-      case 'temperature':
+      case "temperature":
         return `${vital.temperature} °${vital.temperatureUnit}`;
-      case 'pulse':
+      case "pulse":
         return `${vital.pulse} bpm`;
-      case 'bloodPressure':
+      case "bloodPressure":
         return `${vital.bloodPressureSystolic}/${vital.bloodPressureDiastolic} mmHg`;
-      case 'oxygenSaturation':
+      case "oxygenSaturation":
         return `${vital.oxygenSaturation}%`;
-      case 'weight':
+      case "weight":
         return `${vital.weight} ${vital.weightUnit}`;
       default:
-        return 'N/A';
+        return "N/A";
     }
   }
 
   private attachEventListeners(): void {
-    const select = this.container.querySelector('#vital-type-select') as HTMLSelectElement;
-    select?.addEventListener('change', (e) => {
+    const select = this.container.querySelector(
+      "#vital-type-select",
+    ) as HTMLSelectElement;
+    select?.addEventListener("change", (e) => {
       this.vitalType = (e.target as HTMLSelectElement).value;
       this.render();
     });
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import ReferenceRanges from '@/components/laboratory/ReferenceRanges';
+import React from "react";
+import ReferenceRanges from "@/components/laboratory/ReferenceRanges";
 
 export default function ReferencePage() {
   return (

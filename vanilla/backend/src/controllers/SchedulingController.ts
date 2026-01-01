@@ -6,13 +6,19 @@
  * routes, services, and business logic.
  */
 
-import { Request, Response } from 'express';
-import type { Appointment } from '../routes/scheduling/appointments';
-import type { Provider } from '../routes/scheduling/providers';
-import type { Resource, ResourceBooking } from '../routes/scheduling/resources';
-import type { WaitlistEntry, WaitlistMatch } from '../routes/scheduling/waitlist';
-import type { RecurringAppointment } from '../routes/scheduling/recurring';
-import type { ProviderAvailability, TimeSlot } from '../routes/scheduling/availability';
+import { Request, Response } from "express";
+import type { Appointment } from "../routes/scheduling/appointments";
+import type { Provider } from "../routes/scheduling/providers";
+import type { Resource, ResourceBooking } from "../routes/scheduling/resources";
+import type {
+  WaitlistEntry,
+  WaitlistMatch,
+} from "../routes/scheduling/waitlist";
+import type { RecurringAppointment } from "../routes/scheduling/recurring";
+import type {
+  ProviderAvailability,
+  TimeSlot,
+} from "../routes/scheduling/availability";
 
 export class SchedulingController {
   /**
@@ -30,46 +36,46 @@ export class SchedulingController {
           inProgress: 0,
           completed: 0,
           noShows: 0,
-          cancelled: 0
+          cancelled: 0,
         },
         week: {
           totalAppointments: 0,
           scheduled: 0,
           completed: 0,
-          utilizationRate: 0
+          utilizationRate: 0,
         },
         waitlist: {
           active: 0,
           urgent: 0,
-          notified: 0
+          notified: 0,
         },
         resources: {
           total: 0,
           available: 0,
           inUse: 0,
-          maintenance: 0
+          maintenance: 0,
         },
         providers: {
           total: 0,
           active: 0,
-          availableToday: 0
+          availableToday: 0,
         },
         upcoming: {
           next24Hours: 0,
           needingConfirmation: 0,
-          needingInsuranceVerification: 0
-        }
+          needingInsuranceVerification: 0,
+        },
       };
 
       res.json({
         success: true,
-        data: stats
+        data: stats,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch dashboard statistics',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to fetch dashboard statistics",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -79,12 +85,18 @@ export class SchedulingController {
    */
   static async getCalendarData(req: Request, res: Response): Promise<void> {
     try {
-      const { providerId, facilityId, startDate, endDate, view = 'week' } = req.query;
+      const {
+        providerId,
+        facilityId,
+        startDate,
+        endDate,
+        view = "week",
+      } = req.query;
 
       if (!startDate || !endDate) {
         res.status(400).json({
           success: false,
-          error: 'Start date and end date are required'
+          error: "Start date and end date are required",
         });
         return;
       }
@@ -99,17 +111,22 @@ export class SchedulingController {
       const blockedTimes: any[] = [];
 
       // Organize data by date for calendar view
-      const calendarData = organizeCalendarData(appointments, availability, blockedTimes, view as string);
+      const calendarData = organizeCalendarData(
+        appointments,
+        availability,
+        blockedTimes,
+        view as string,
+      );
 
       res.json({
         success: true,
-        data: calendarData
+        data: calendarData,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch calendar data',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to fetch calendar data",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -119,12 +136,18 @@ export class SchedulingController {
    */
   static async checkConflicts(req: Request, res: Response): Promise<void> {
     try {
-      const { providerId, resourceIds, startTime, endTime, excludeAppointmentId } = req.body;
+      const {
+        providerId,
+        resourceIds,
+        startTime,
+        endTime,
+        excludeAppointmentId,
+      } = req.body;
 
       if (!providerId || !startTime || !endTime) {
         res.status(400).json({
           success: false,
-          error: 'Provider ID, start time, and end time are required'
+          error: "Provider ID, start time, and end time are required",
         });
         return;
       }
@@ -145,13 +168,13 @@ export class SchedulingController {
       res.json({
         success: true,
         hasConflicts: conflicts.length > 0,
-        conflicts
+        conflicts,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to check conflicts',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to check conflicts",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -159,9 +182,16 @@ export class SchedulingController {
   /**
    * Auto-schedule waitlist entries
    */
-  static async autoScheduleWaitlist(req: Request, res: Response): Promise<void> {
+  static async autoScheduleWaitlist(
+    req: Request,
+    res: Response,
+  ): Promise<void> {
     try {
-      const { maxEntries = 10, notifyPatients = true, autoBook = false } = req.body;
+      const {
+        maxEntries = 10,
+        notifyPatients = true,
+        autoBook = false,
+      } = req.body;
 
       // Fetch active waitlist entries
       const waitlistEntries: WaitlistEntry[] = [];
@@ -177,7 +207,7 @@ export class SchedulingController {
         matched: 0,
         notified: 0,
         booked: 0,
-        failed: 0
+        failed: 0,
       };
 
       // TODO: Implement auto-scheduling logic
@@ -186,14 +216,14 @@ export class SchedulingController {
         success: true,
         data: {
           processed,
-          matches: matches.slice(0, parseInt(maxEntries as string))
-        }
+          matches: matches.slice(0, parseInt(maxEntries as string)),
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to auto-schedule waitlist',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to auto-schedule waitlist",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -203,7 +233,12 @@ export class SchedulingController {
    */
   static async optimizeSchedules(req: Request, res: Response): Promise<void> {
     try {
-      const { providerId, startDate, endDate, strategy = 'fill-gaps' } = req.body;
+      const {
+        providerId,
+        startDate,
+        endDate,
+        strategy = "fill-gaps",
+      } = req.body;
 
       // Strategies:
       // - fill-gaps: Fill gaps in existing schedule
@@ -216,20 +251,20 @@ export class SchedulingController {
         strategy,
         suggestions: [] as any[],
         potentialTimesSaved: 0,
-        utilizationImprovement: 0
+        utilizationImprovement: 0,
       };
 
       // TODO: Implement schedule optimization logic
 
       res.json({
         success: true,
-        data: optimization
+        data: optimization,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to optimize schedules',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to optimize schedules",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -244,46 +279,46 @@ export class SchedulingController {
       if (!operation || !appointmentIds || !Array.isArray(appointmentIds)) {
         res.status(400).json({
           success: false,
-          error: 'Operation and appointment IDs array are required'
+          error: "Operation and appointment IDs array are required",
         });
         return;
       }
 
       const results = {
         successful: [] as string[],
-        failed: [] as { id: string; error: string }[]
+        failed: [] as { id: string; error: string }[],
       };
 
       // Process each appointment
       for (const appointmentId of appointmentIds) {
         try {
           switch (operation) {
-            case 'cancel':
+            case "cancel":
               // TODO: Cancel appointment
               results.successful.push(appointmentId);
               break;
-            case 'confirm':
+            case "confirm":
               // TODO: Confirm appointment
               results.successful.push(appointmentId);
               break;
-            case 'reschedule':
+            case "reschedule":
               // TODO: Reschedule appointment
               results.successful.push(appointmentId);
               break;
-            case 'update':
+            case "update":
               // TODO: Update appointment
               results.successful.push(appointmentId);
               break;
             default:
               results.failed.push({
                 id: appointmentId,
-                error: `Unknown operation: ${operation}`
+                error: `Unknown operation: ${operation}`,
               });
           }
         } catch (error) {
           results.failed.push({
             id: appointmentId,
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -291,13 +326,13 @@ export class SchedulingController {
       res.json({
         success: true,
         data: results,
-        message: `${results.successful.length} successful, ${results.failed.length} failed`
+        message: `${results.successful.length} successful, ${results.failed.length} failed`,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to perform batch operations',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to perform batch operations",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -322,28 +357,28 @@ export class SchedulingController {
         breakCompliance: {
           recommended: 0,
           actual: 0,
-          compliance: 0
+          compliance: 0,
         },
         patientVolume: {
           newPatients: 0,
           returningPatients: 0,
-          ratio: 0
+          ratio: 0,
         },
         appointmentTypes: {} as Record<string, number>,
-        recommendations: [] as string[]
+        recommendations: [] as string[],
       };
 
       // TODO: Implement workload analysis
 
       res.json({
         success: true,
-        data: analysis
+        data: analysis,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to analyze workload',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to analyze workload",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -359,13 +394,13 @@ export class SchedulingController {
         facilityId,
         startDate,
         endDate,
-        format = 'json'
+        format = "json",
       } = req.query;
 
       if (!reportType || !startDate || !endDate) {
         res.status(400).json({
           success: false,
-          error: 'Report type, start date, and end date are required'
+          error: "Report type, start date, and end date are required",
         });
         return;
       }
@@ -373,35 +408,50 @@ export class SchedulingController {
       let report: any = {};
 
       switch (reportType) {
-        case 'utilization':
-          report = await generateUtilizationReport(providerId as string, startDate as string, endDate as string);
+        case "utilization":
+          report = await generateUtilizationReport(
+            providerId as string,
+            startDate as string,
+            endDate as string,
+          );
           break;
-        case 'no-shows':
-          report = await generateNoShowReport(providerId as string, startDate as string, endDate as string);
+        case "no-shows":
+          report = await generateNoShowReport(
+            providerId as string,
+            startDate as string,
+            endDate as string,
+          );
           break;
-        case 'waitlist':
-          report = await generateWaitlistReport(startDate as string, endDate as string);
+        case "waitlist":
+          report = await generateWaitlistReport(
+            startDate as string,
+            endDate as string,
+          );
           break;
-        case 'resources':
-          report = await generateResourceReport(facilityId as string, startDate as string, endDate as string);
+        case "resources":
+          report = await generateResourceReport(
+            facilityId as string,
+            startDate as string,
+            endDate as string,
+          );
           break;
         default:
           res.status(400).json({
             success: false,
-            error: `Unknown report type: ${reportType}`
+            error: `Unknown report type: ${reportType}`,
           });
           return;
       }
 
       res.json({
         success: true,
-        data: report
+        data: report,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to generate report',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to generate report",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -417,14 +467,14 @@ export class SchedulingController {
         appointmentType,
         duration,
         preferredDates,
-        preferredTimes
+        preferredTimes,
       } = req.body;
 
       // Use AI/ML algorithms to suggest optimal appointment times
       const suggestions = {
         recommended: [] as TimeSlot[],
         reasons: {} as Record<string, string[]>,
-        alternatives: [] as TimeSlot[]
+        alternatives: [] as TimeSlot[],
       };
 
       // Factors to consider:
@@ -438,13 +488,13 @@ export class SchedulingController {
 
       res.json({
         success: true,
-        data: suggestions
+        data: suggestions,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to generate smart suggestions',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to generate smart suggestions",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -456,7 +506,7 @@ function organizeCalendarData(
   appointments: Appointment[],
   availability: ProviderAvailability[],
   blockedTimes: any[],
-  view: string
+  view: string,
 ): any {
   // Organize data based on view type (day, week, month)
   const data: any = {
@@ -464,7 +514,7 @@ function organizeCalendarData(
     dates: [],
     appointments: [],
     availability: [],
-    blockedTimes: []
+    blockedTimes: [],
   };
 
   // TODO: Implement calendar data organization
@@ -472,22 +522,30 @@ function organizeCalendarData(
   return data;
 }
 
-async function generateUtilizationReport(providerId: string, startDate: string, endDate: string): Promise<any> {
+async function generateUtilizationReport(
+  providerId: string,
+  startDate: string,
+  endDate: string,
+): Promise<any> {
   return {
-    type: 'utilization',
+    type: "utilization",
     providerId,
     period: { startDate, endDate },
     totalSlots: 0,
     bookedSlots: 0,
     utilizationRate: 0,
     revenue: 0,
-    byDay: []
+    byDay: [],
   };
 }
 
-async function generateNoShowReport(providerId: string, startDate: string, endDate: string): Promise<any> {
+async function generateNoShowReport(
+  providerId: string,
+  startDate: string,
+  endDate: string,
+): Promise<any> {
   return {
-    type: 'no-shows',
+    type: "no-shows",
     providerId,
     period: { startDate, endDate },
     totalAppointments: 0,
@@ -495,31 +553,38 @@ async function generateNoShowReport(providerId: string, startDate: string, endDa
     noShowRate: 0,
     patternsByDay: {},
     patternsByTime: {},
-    topPatients: []
+    topPatients: [],
   };
 }
 
-async function generateWaitlistReport(startDate: string, endDate: string): Promise<any> {
+async function generateWaitlistReport(
+  startDate: string,
+  endDate: string,
+): Promise<any> {
   return {
-    type: 'waitlist',
+    type: "waitlist",
     period: { startDate, endDate },
     totalEntries: 0,
     converted: 0,
     conversionRate: 0,
     averageWaitTime: 0,
-    bySpecialty: {}
+    bySpecialty: {},
   };
 }
 
-async function generateResourceReport(facilityId: string, startDate: string, endDate: string): Promise<any> {
+async function generateResourceReport(
+  facilityId: string,
+  startDate: string,
+  endDate: string,
+): Promise<any> {
   return {
-    type: 'resources',
+    type: "resources",
     facilityId,
     period: { startDate, endDate },
     resources: [],
     utilizationRate: 0,
     maintenanceHours: 0,
-    downtime: 0
+    downtime: 0,
   };
 }
 

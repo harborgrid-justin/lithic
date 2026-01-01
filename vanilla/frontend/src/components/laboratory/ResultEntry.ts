@@ -8,7 +8,10 @@ export class ResultEntry {
   private onSubmit?: (resultData: any) => void;
   private test: any;
 
-  constructor(container: HTMLElement, options: { onSubmit?: (resultData: any) => void } = {}) {
+  constructor(
+    container: HTMLElement,
+    options: { onSubmit?: (resultData: any) => void } = {},
+  ) {
     this.container = container;
     this.onSubmit = options.onSubmit;
   }
@@ -20,7 +23,7 @@ export class ResultEntry {
 
   private render(): void {
     if (!this.test) {
-      this.container.innerHTML = '<p>No test selected</p>';
+      this.container.innerHTML = "<p>No test selected</p>";
       return;
     }
 
@@ -93,18 +96,20 @@ export class ResultEntry {
   }
 
   private attachEventListeners(): void {
-    const form = this.container.querySelector('#resultEntryForm') as HTMLFormElement;
-    const cancelBtn = this.container.querySelector('#cancelBtn');
+    const form = this.container.querySelector(
+      "#resultEntryForm",
+    ) as HTMLFormElement;
+    const cancelBtn = this.container.querySelector("#cancelBtn");
 
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         this.handleSubmit(form);
       });
     }
 
     if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
+      cancelBtn.addEventListener("click", () => {
         form?.reset();
       });
     }
@@ -113,24 +118,24 @@ export class ResultEntry {
   private handleSubmit(form: HTMLFormElement): void {
     const formData = new FormData(form);
 
-    const value = formData.get('value') as string;
-    const valueType = formData.get('valueType') as string;
+    const value = formData.get("value") as string;
+    const valueType = formData.get("valueType") as string;
 
     const resultData: any = {
       orderId: this.test.orderId,
       testId: this.test.id,
       loincCode: this.test.loincCode,
       testName: this.test.testName,
-      value: valueType === 'numeric' ? parseFloat(value) : value,
+      value: valueType === "numeric" ? parseFloat(value) : value,
       valueType,
-      unit: formData.get('unit') || undefined,
-      status: formData.get('status'),
-      performedBy: formData.get('performedBy'),
-      instrument: formData.get('instrument') || undefined,
-      method: formData.get('method') || undefined,
-      comments: formData.get('comments') || undefined,
+      unit: formData.get("unit") || undefined,
+      status: formData.get("status"),
+      performedBy: formData.get("performedBy"),
+      instrument: formData.get("instrument") || undefined,
+      method: formData.get("method") || undefined,
+      comments: formData.get("comments") || undefined,
       performedDateTime: new Date(),
-      critical: false
+      critical: false,
     };
 
     if (this.onSubmit) {
@@ -140,6 +145,6 @@ export class ResultEntry {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -1,5 +1,5 @@
-import { ImagingService } from '../services/ImagingService';
-import { DicomService } from '../services/DicomService';
+import { ImagingService } from "../services/ImagingService";
+import { DicomService } from "../services/DicomService";
 
 export interface User {
   id: string;
@@ -32,7 +32,7 @@ export class ImagingController {
   async createOrder(orderData: any, user: User) {
     const order = {
       ...orderData,
-      status: 'PENDING',
+      status: "PENDING",
       createdBy: user.id,
       createdAt: new Date().toISOString(),
     };
@@ -50,24 +50,29 @@ export class ImagingController {
 
   async cancelOrder(orderId: string, user: User) {
     return await this.imagingService.updateOrder(orderId, {
-      status: 'CANCELLED',
+      status: "CANCELLED",
       cancelledBy: user.id,
       cancelledAt: new Date().toISOString(),
     });
   }
 
-  async scheduleOrder(orderId: string, scheduledDateTime: string, modalityId: string, user: User) {
+  async scheduleOrder(
+    orderId: string,
+    scheduledDateTime: string,
+    modalityId: string,
+    user: User,
+  ) {
     return await this.imagingService.scheduleOrder(orderId, {
       scheduledDateTime,
       modalityId,
-      status: 'SCHEDULED',
+      status: "SCHEDULED",
       scheduledBy: user.id,
     });
   }
 
   async startOrder(orderId: string, user: User) {
     return await this.imagingService.updateOrder(orderId, {
-      status: 'IN_PROGRESS',
+      status: "IN_PROGRESS",
       startedBy: user.id,
       startedAt: new Date().toISOString(),
     });
@@ -75,7 +80,7 @@ export class ImagingController {
 
   async completeOrder(orderId: string, user: User) {
     return await this.imagingService.updateOrder(orderId, {
-      status: 'COMPLETED',
+      status: "COMPLETED",
       completedBy: user.id,
       completedAt: new Date().toISOString(),
     });
@@ -102,7 +107,7 @@ export class ImagingController {
       ...studyData,
       createdBy: user.id,
       createdAt: new Date().toISOString(),
-      readingStatus: 'UNREAD',
+      readingStatus: "UNREAD",
     };
     return await this.imagingService.createStudy(study);
   }
@@ -120,8 +125,14 @@ export class ImagingController {
     return await this.imagingService.getStudySeries(studyInstanceUID);
   }
 
-  async getSeriesInstances(studyInstanceUID: string, seriesInstanceUID: string) {
-    return await this.imagingService.getSeriesInstances(studyInstanceUID, seriesInstanceUID);
+  async getSeriesInstances(
+    studyInstanceUID: string,
+    seriesInstanceUID: string,
+  ) {
+    return await this.imagingService.getSeriesInstances(
+      studyInstanceUID,
+      seriesInstanceUID,
+    );
   }
 
   async getStudyMetadata(studyInstanceUID: string) {
@@ -129,7 +140,10 @@ export class ImagingController {
   }
 
   async compareStudies(currentStudyUID: string, compareStudyUIDs: string[]) {
-    return await this.imagingService.compareStudies(currentStudyUID, compareStudyUIDs);
+    return await this.imagingService.compareStudies(
+      currentStudyUID,
+      compareStudyUIDs,
+    );
   }
 
   async getPriorStudies(studyInstanceUID: string, limit: number = 5) {
@@ -140,8 +154,16 @@ export class ImagingController {
     return await this.imagingService.archiveStudy(studyInstanceUID, user.id);
   }
 
-  async createStudyShareLink(studyInstanceUID: string, expiresIn: number, user: User) {
-    return await this.imagingService.generateShareLink(studyInstanceUID, expiresIn, user.id);
+  async createStudyShareLink(
+    studyInstanceUID: string,
+    expiresIn: number,
+    user: User,
+  ) {
+    return await this.imagingService.generateShareLink(
+      studyInstanceUID,
+      expiresIn,
+      user.id,
+    );
   }
 
   // ============================================
@@ -165,7 +187,7 @@ export class ImagingController {
       ...reportData,
       radiologistId: user.id,
       radiologistName: user.name,
-      status: 'DRAFT',
+      status: "DRAFT",
       createdAt: new Date().toISOString(),
       version: 1,
     };
@@ -183,7 +205,7 @@ export class ImagingController {
 
   async signReport(reportId: string, signature: string, user: User) {
     return await this.imagingService.signReport(reportId, {
-      status: 'FINAL',
+      status: "FINAL",
       signedBy: user.id,
       signedByName: user.name,
       signedAt: new Date().toISOString(),
@@ -191,7 +213,12 @@ export class ImagingController {
     });
   }
 
-  async addReportAddendum(reportId: string, addendumText: string, reason: string, user: User) {
+  async addReportAddendum(
+    reportId: string,
+    addendumText: string,
+    reason: string,
+    user: User,
+  ) {
     return await this.imagingService.addAddendum(reportId, {
       addendumText,
       reason,
@@ -206,7 +233,7 @@ export class ImagingController {
     correctedFindings: string,
     correctedImpression: string,
     correctionReason: string,
-    user: User
+    user: User,
   ) {
     return await this.imagingService.correctReport(reportId, {
       correctedFindings,
@@ -215,7 +242,7 @@ export class ImagingController {
       correctedBy: user.id,
       correctedByName: user.name,
       correctedAt: new Date().toISOString(),
-      status: 'CORRECTED',
+      status: "CORRECTED",
     });
   }
 
@@ -231,7 +258,7 @@ export class ImagingController {
     reportId: string,
     notifyTo: string,
     notificationMethod: string,
-    user: User
+    user: User,
   ) {
     return await this.imagingService.sendCriticalResultNotification(reportId, {
       notifyTo,
@@ -245,7 +272,12 @@ export class ImagingController {
     return await this.imagingService.getReportTemplates(modality);
   }
 
-  async saveVoiceDictation(reportId: string, transcription: string, audioUrl: string, user: User) {
+  async saveVoiceDictation(
+    reportId: string,
+    transcription: string,
+    audioUrl: string,
+    user: User,
+  ) {
     return await this.imagingService.saveVoiceDictation(reportId, {
       transcription,
       audioUrl,
@@ -269,7 +301,7 @@ export class ImagingController {
   async createWorklistItem(itemData: any, user: User) {
     const item = {
       ...itemData,
-      status: 'SCHEDULED',
+      status: "SCHEDULED",
       createdBy: user.id,
       createdAt: new Date().toISOString(),
     };
@@ -287,15 +319,19 @@ export class ImagingController {
 
   async startWorklistItem(itemId: string, user: User) {
     return await this.imagingService.updateWorklistItem(itemId, {
-      status: 'IN_PROGRESS',
+      status: "IN_PROGRESS",
       startedBy: user.id,
       startedAt: new Date().toISOString(),
     });
   }
 
-  async completeWorklistItem(itemId: string, completionNotes: string, user: User) {
+  async completeWorklistItem(
+    itemId: string,
+    completionNotes: string,
+    user: User,
+  ) {
     return await this.imagingService.updateWorklistItem(itemId, {
-      status: 'COMPLETED',
+      status: "COMPLETED",
       completedBy: user.id,
       completedAt: new Date().toISOString(),
       completionNotes,
@@ -304,7 +340,7 @@ export class ImagingController {
 
   async cancelWorklistItem(itemId: string, reason: string, user: User) {
     return await this.imagingService.updateWorklistItem(itemId, {
-      status: 'CANCELLED',
+      status: "CANCELLED",
       cancelledBy: user.id,
       cancelledAt: new Date().toISOString(),
       cancellationReason: reason,
@@ -312,7 +348,7 @@ export class ImagingController {
   }
 
   async getTodayWorklist(modality?: string) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     return await this.imagingService.getWorklist({
       scheduledDate: today,
       modality,
@@ -322,7 +358,7 @@ export class ImagingController {
   async getTechnicianWorklist(technicianId: string) {
     return await this.imagingService.getWorklist({
       technicianId,
-      status: ['SCHEDULED', 'IN_PROGRESS'],
+      status: ["SCHEDULED", "IN_PROGRESS"],
     });
   }
 
@@ -333,15 +369,15 @@ export class ImagingController {
   async assignWorklistItem(
     itemId: string,
     assigneeId: string,
-    assigneeType: 'TECHNICIAN' | 'RADIOLOGIST',
-    user: User
+    assigneeType: "TECHNICIAN" | "RADIOLOGIST",
+    user: User,
   ) {
     const updateData: any = {
       assignedBy: user.id,
       assignedAt: new Date().toISOString(),
     };
 
-    if (assigneeType === 'TECHNICIAN') {
+    if (assigneeType === "TECHNICIAN") {
       updateData.technicianId = assigneeId;
     } else {
       updateData.radiologistId = assigneeId;
@@ -354,7 +390,15 @@ export class ImagingController {
     return await this.imagingService.getWorklistStatistics(filters);
   }
 
-  async bulkScheduleOrders(orderIds: string[], schedulingRules: any, user: User) {
-    return await this.imagingService.bulkScheduleOrders(orderIds, schedulingRules, user.id);
+  async bulkScheduleOrders(
+    orderIds: string[],
+    schedulingRules: any,
+    user: User,
+  ) {
+    return await this.imagingService.bulkScheduleOrders(
+      orderIds,
+      schedulingRules,
+      user.id,
+    );
   }
 }

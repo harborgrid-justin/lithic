@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { Trash2, Edit, GripVertical, Maximize2 } from 'lucide-react';
-import { Widget, LayoutItem } from '@/services/analytics.service';
+import { useState, useCallback } from "react";
+import { Trash2, Edit, GripVertical, Maximize2 } from "lucide-react";
+import { Widget, LayoutItem } from "@/services/analytics.service";
 
 interface DashboardGridProps {
   widgets: Widget[];
@@ -29,51 +29,61 @@ export function DashboardGrid({
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [currentLayout, setCurrentLayout] = useState<LayoutItem[]>(layout);
 
-  const handleDragStart = useCallback((widgetId: string, e: React.DragEvent) => {
-    if (!editable) return;
-    setIsDragging(true);
-    setDraggedItem(widgetId);
-    e.dataTransfer.effectAllowed = 'move';
-  }, [editable]);
+  const handleDragStart = useCallback(
+    (widgetId: string, e: React.DragEvent) => {
+      if (!editable) return;
+      setIsDragging(true);
+      setDraggedItem(widgetId);
+      e.dataTransfer.effectAllowed = "move";
+    },
+    [editable],
+  );
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
     setDraggedItem(null);
   }, []);
 
-  const handleDrop = useCallback((targetWidgetId: string, e: React.DragEvent) => {
-    e.preventDefault();
-    if (!draggedItem || !editable || draggedItem === targetWidgetId) return;
+  const handleDrop = useCallback(
+    (targetWidgetId: string, e: React.DragEvent) => {
+      e.preventDefault();
+      if (!draggedItem || !editable || draggedItem === targetWidgetId) return;
 
-    const newLayout = [...currentLayout];
-    const draggedIndex = newLayout.findIndex(item => item.widgetId === draggedItem);
-    const targetIndex = newLayout.findIndex(item => item.widgetId === targetWidgetId);
+      const newLayout = [...currentLayout];
+      const draggedIndex = newLayout.findIndex(
+        (item) => item.widgetId === draggedItem,
+      );
+      const targetIndex = newLayout.findIndex(
+        (item) => item.widgetId === targetWidgetId,
+      );
 
-    if (draggedIndex !== -1 && targetIndex !== -1) {
-      // Swap positions
-      const temp = { ...newLayout[draggedIndex] };
-      newLayout[draggedIndex] = {
-        ...newLayout[draggedIndex],
-        x: newLayout[targetIndex].x,
-        y: newLayout[targetIndex].y,
-      };
-      newLayout[targetIndex] = {
-        ...newLayout[targetIndex],
-        x: temp.x,
-        y: temp.y,
-      };
+      if (draggedIndex !== -1 && targetIndex !== -1) {
+        // Swap positions
+        const temp = { ...newLayout[draggedIndex] };
+        newLayout[draggedIndex] = {
+          ...newLayout[draggedIndex],
+          x: newLayout[targetIndex].x,
+          y: newLayout[targetIndex].y,
+        };
+        newLayout[targetIndex] = {
+          ...newLayout[targetIndex],
+          x: temp.x,
+          y: temp.y,
+        };
 
-      setCurrentLayout(newLayout);
-      onLayoutChange?.(newLayout);
-    }
+        setCurrentLayout(newLayout);
+        onLayoutChange?.(newLayout);
+      }
 
-    setIsDragging(false);
-    setDraggedItem(null);
-  }, [draggedItem, editable, currentLayout, onLayoutChange]);
+      setIsDragging(false);
+      setDraggedItem(null);
+    },
+    [draggedItem, editable, currentLayout, onLayoutChange],
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.dropEffect = "move";
   }, []);
 
   const getGridPosition = (item: LayoutItem): React.CSSProperties => {
@@ -89,7 +99,7 @@ export function DashboardGrid({
   };
 
   const getWidget = (widgetId: string) => {
-    return widgets.find(w => w.id === widgetId);
+    return widgets.find((w) => w.id === widgetId);
   };
 
   return (
@@ -103,7 +113,7 @@ export function DashboardGrid({
             key={widget.id}
             style={getGridPosition(layoutItem)}
             className={`relative ${
-              isDragging && draggedItem === widget.id ? 'opacity-50' : ''
+              isDragging && draggedItem === widget.id ? "opacity-50" : ""
             }`}
             draggable={editable}
             onDragStart={(e) => handleDragStart(widget.id, e)}
@@ -116,9 +126,7 @@ export function DashboardGrid({
               <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   {editable && (
-                    <GripVertical
-                      className="w-5 h-5 text-gray-400 cursor-move flex-shrink-0"
-                    />
+                    <GripVertical className="w-5 h-5 text-gray-400 cursor-move flex-shrink-0" />
                   )}
                   <h3 className="font-semibold text-gray-900 truncate">
                     {widget.title}
@@ -176,8 +184,8 @@ export function DashboardGrid({
             <p className="text-lg font-medium">No widgets added</p>
             <p className="text-sm mt-1">
               {editable
-                ? 'Add widgets from the library to get started'
-                : 'This dashboard is empty'}
+                ? "Add widgets from the library to get started"
+                : "This dashboard is empty"}
             </p>
           </div>
         </div>

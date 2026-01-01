@@ -1,21 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { DollarSign, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { FilterConfig, MetricData, analyticsService } from '@/services/analytics.service';
-import { KPICard } from '@/components/analytics/KPICard';
-import { TrendAnalysis } from '@/components/analytics/TrendAnalysis';
-import { FilterPanel } from '@/components/analytics/FilterPanel';
+import { useState, useEffect } from "react";
+import { DollarSign, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import {
+  FilterConfig,
+  MetricData,
+  analyticsService,
+} from "@/services/analytics.service";
+import { KPICard } from "@/components/analytics/KPICard";
+import { TrendAnalysis } from "@/components/analytics/TrendAnalysis";
+import { FilterPanel } from "@/components/analytics/FilterPanel";
 
 export default function FinancialMetricsPage() {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<MetricData[]>([]);
   const [filters, setFilters] = useState<FilterConfig>({
     dateRange: {
-      start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0],
-      preset: 'quarter',
+      start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      end: new Date().toISOString().split("T")[0],
+      preset: "quarter",
     },
   });
 
@@ -29,7 +35,7 @@ export default function FinancialMetricsPage() {
       const data = await analyticsService.getFinancialMetrics(filters);
       setMetrics(data);
     } catch (error) {
-      console.error('Failed to load financial metrics:', error);
+      console.error("Failed to load financial metrics:", error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +58,9 @@ export default function FinancialMetricsPage() {
               <DollarSign className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Financial Performance</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Financial Performance
+              </h1>
               <p className="text-gray-500 mt-1">
                 Revenue cycle, accounts receivable, and collection metrics
               </p>
@@ -69,9 +77,21 @@ export default function FinancialMetricsPage() {
               filters={filters}
               onChange={setFilters}
               availableFilters={{
-                departments: ['Cardiology', 'Oncology', 'Emergency', 'Surgery', 'ICU'],
-                locations: ['Main Campus', 'North Clinic', 'South Clinic'],
-                payors: ['Medicare', 'Medicaid', 'Blue Cross', 'Aetna', 'UnitedHealth'],
+                departments: [
+                  "Cardiology",
+                  "Oncology",
+                  "Emergency",
+                  "Surgery",
+                  "ICU",
+                ],
+                locations: ["Main Campus", "North Clinic", "South Clinic"],
+                payors: [
+                  "Medicare",
+                  "Medicaid",
+                  "Blue Cross",
+                  "Aetna",
+                  "UnitedHealth",
+                ],
               }}
             />
           </div>
@@ -86,7 +106,9 @@ export default function FinancialMetricsPage() {
               <>
                 {/* KPI Cards */}
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Key Financial Indicators</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Key Financial Indicators
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {metrics.map((metric) => (
                       <KPICard key={metric.id} metric={metric} />

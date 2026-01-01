@@ -1,14 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Plus, Layout, Edit, Trash2, Share2, ArrowLeft } from 'lucide-react';
-import { Dashboard, analyticsService } from '@/services/analytics.service';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Plus, Layout, Edit, Trash2, Share2, ArrowLeft } from "lucide-react";
+import { Dashboard, analyticsService } from "@/services/analytics.service";
 
 export default function DashboardsPage() {
   const [dashboards, setDashboards] = useState<Dashboard[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'quality' | 'financial' | 'operational' | 'population' | 'custom'>('all');
+  const [filter, setFilter] = useState<
+    "all" | "quality" | "financial" | "operational" | "population" | "custom"
+  >("all");
 
   useEffect(() => {
     loadDashboards();
@@ -18,35 +20,35 @@ export default function DashboardsPage() {
     setLoading(true);
     try {
       const data = await analyticsService.getDashboards(
-        filter !== 'all' ? { type: filter } : undefined
+        filter !== "all" ? { type: filter } : undefined,
       );
       setDashboards(data);
     } catch (error) {
-      console.error('Failed to load dashboards:', error);
+      console.error("Failed to load dashboards:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this dashboard?')) return;
+    if (!confirm("Are you sure you want to delete this dashboard?")) return;
 
     try {
       await analyticsService.deleteDashboard(id);
-      setDashboards(dashboards.filter(d => d.id !== id));
+      setDashboards(dashboards.filter((d) => d.id !== id));
     } catch (error) {
-      console.error('Failed to delete dashboard:', error);
-      alert('Failed to delete dashboard');
+      console.error("Failed to delete dashboard:", error);
+      alert("Failed to delete dashboard");
     }
   };
 
   const filterOptions = [
-    { value: 'all', label: 'All Dashboards' },
-    { value: 'quality', label: 'Quality' },
-    { value: 'financial', label: 'Financial' },
-    { value: 'operational', label: 'Operational' },
-    { value: 'population', label: 'Population Health' },
-    { value: 'custom', label: 'Custom' },
+    { value: "all", label: "All Dashboards" },
+    { value: "quality", label: "Quality" },
+    { value: "financial", label: "Financial" },
+    { value: "operational", label: "Operational" },
+    { value: "population", label: "Population Health" },
+    { value: "custom", label: "Custom" },
   ];
 
   return (
@@ -93,8 +95,8 @@ export default function DashboardsPage() {
               onClick={() => setFilter(option.value as typeof filter)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === option.value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
               }`}
             >
               {option.label}
@@ -110,7 +112,9 @@ export default function DashboardsPage() {
         ) : dashboards.length === 0 ? (
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
             <Layout className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No dashboards found</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No dashboards found
+            </h3>
             <p className="text-gray-500 mb-6">
               Get started by creating your first dashboard
             </p>
@@ -129,7 +133,10 @@ export default function DashboardsPage() {
                 key={dashboard.id}
                 className="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow"
               >
-                <Link href={`/analytics/dashboards/${dashboard.id}`} className="block p-6">
+                <Link
+                  href={`/analytics/dashboards/${dashboard.id}`}
+                  className="block p-6"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Layout className="w-5 h-5 text-blue-600" />
@@ -138,7 +145,10 @@ export default function DashboardsPage() {
                       </span>
                     </div>
                     {dashboard.shared && (
-                      <Share2 className="w-4 h-4 text-gray-400" title="Shared" />
+                      <Share2
+                        className="w-4 h-4 text-gray-400"
+                        title="Shared"
+                      />
                     )}
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -151,7 +161,9 @@ export default function DashboardsPage() {
                   )}
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span>{dashboard.widgets.length} widgets</span>
-                    <span>{new Date(dashboard.updatedAt).toLocaleDateString()}</span>
+                    <span>
+                      {new Date(dashboard.updatedAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </Link>
                 <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">

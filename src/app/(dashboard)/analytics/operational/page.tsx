@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Building2, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { FilterConfig, MetricData, analyticsService } from '@/services/analytics.service';
-import { KPICard } from '@/components/analytics/KPICard';
-import { TrendAnalysis } from '@/components/analytics/TrendAnalysis';
-import { Benchmarking } from '@/components/analytics/Benchmarking';
-import { FilterPanel } from '@/components/analytics/FilterPanel';
+import { useState, useEffect } from "react";
+import { Building2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import {
+  FilterConfig,
+  MetricData,
+  analyticsService,
+} from "@/services/analytics.service";
+import { KPICard } from "@/components/analytics/KPICard";
+import { TrendAnalysis } from "@/components/analytics/TrendAnalysis";
+import { Benchmarking } from "@/components/analytics/Benchmarking";
+import { FilterPanel } from "@/components/analytics/FilterPanel";
 
 export default function OperationalMetricsPage() {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<MetricData[]>([]);
   const [filters, setFilters] = useState<FilterConfig>({
     dateRange: {
-      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0],
-      preset: 'month',
+      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      end: new Date().toISOString().split("T")[0],
+      preset: "month",
     },
   });
 
@@ -30,7 +36,7 @@ export default function OperationalMetricsPage() {
       const data = await analyticsService.getOperationalMetrics(filters);
       setMetrics(data);
     } catch (error) {
-      console.error('Failed to load operational metrics:', error);
+      console.error("Failed to load operational metrics:", error);
     } finally {
       setLoading(false);
     }
@@ -53,7 +59,9 @@ export default function OperationalMetricsPage() {
               <Building2 className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Operational Efficiency</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Operational Efficiency
+              </h1>
               <p className="text-gray-500 mt-1">
                 Volume, capacity utilization, and throughput metrics
               </p>
@@ -70,8 +78,21 @@ export default function OperationalMetricsPage() {
               filters={filters}
               onChange={setFilters}
               availableFilters={{
-                departments: ['Cardiology', 'Oncology', 'Emergency', 'Surgery', 'ICU', 'Medical', 'Surgical'],
-                locations: ['Main Campus', 'North Clinic', 'South Clinic', 'West Medical Center'],
+                departments: [
+                  "Cardiology",
+                  "Oncology",
+                  "Emergency",
+                  "Surgery",
+                  "ICU",
+                  "Medical",
+                  "Surgical",
+                ],
+                locations: [
+                  "Main Campus",
+                  "North Clinic",
+                  "South Clinic",
+                  "West Medical Center",
+                ],
               }}
             />
           </div>
@@ -86,7 +107,9 @@ export default function OperationalMetricsPage() {
               <>
                 {/* KPI Cards */}
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Key Operational Indicators</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Key Operational Indicators
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {metrics.map((metric) => (
                       <KPICard key={metric.id} metric={metric} />

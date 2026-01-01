@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { SuperBill as SuperBillType } from '@/types/billing';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { FileText, User, Calendar, DollarSign, Printer } from 'lucide-react';
+import { SuperBill as SuperBillType } from "@/types/billing";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { FileText, User, Calendar, DollarSign, Printer } from "lucide-react";
 
 interface SuperBillProps {
   superBill: SuperBillType;
@@ -10,7 +10,11 @@ interface SuperBillProps {
   onConvertToClaim?: () => void;
 }
 
-export default function SuperBill({ superBill, onPrint, onConvertToClaim }: SuperBillProps) {
+export default function SuperBill({
+  superBill,
+  onPrint,
+  onConvertToClaim,
+}: SuperBillProps) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -25,7 +29,9 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
           </div>
           <div className="text-right">
             <p className="text-primary-100 text-sm">Date of Service</p>
-            <p className="text-xl font-semibold">{formatDate(superBill.dateOfService)}</p>
+            <p className="text-xl font-semibold">
+              {formatDate(superBill.dateOfService)}
+            </p>
           </div>
         </div>
       </div>
@@ -58,7 +64,9 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
           </div>
           <div>
             <p className="text-sm text-gray-500">Provider Name</p>
-            <p className="font-medium text-gray-900">{superBill.providerName}</p>
+            <p className="font-medium text-gray-900">
+              {superBill.providerName}
+            </p>
           </div>
         </div>
       </div>
@@ -75,7 +83,9 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
               <code className="px-2 py-1 bg-white border border-green-300 rounded text-sm font-mono font-semibold text-green-700">
                 {dx.code}
               </code>
-              <span className="flex-1 text-sm text-gray-900">{dx.description}</span>
+              <span className="flex-1 text-sm text-gray-900">
+                {dx.description}
+              </span>
               {dx.isPrimary && (
                 <span className="px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded">
                   PRIMARY
@@ -124,9 +134,11 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
                   {procedure.description}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-600">
-                  {procedure.modifiers?.join(', ') || '-'}
+                  {procedure.modifiers?.join(", ") || "-"}
                 </td>
-                <td className="px-4 py-3 text-sm text-right">{procedure.quantity}</td>
+                <td className="px-4 py-3 text-sm text-right">
+                  {procedure.quantity}
+                </td>
                 <td className="px-4 py-3 text-sm text-right">
                   {formatCurrency(procedure.fee)}
                 </td>
@@ -144,7 +156,9 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
         <div className="flex justify-between items-center max-w-md ml-auto">
           <div className="flex items-center gap-2">
             <DollarSign className="w-6 h-6 text-primary-600" />
-            <span className="text-lg font-semibold text-gray-900">Total Charges:</span>
+            <span className="text-lg font-semibold text-gray-900">
+              Total Charges:
+            </span>
           </div>
           <span className="text-2xl font-bold text-primary-600">
             {formatCurrency(superBill.totalCharges)}
@@ -156,7 +170,9 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
       {superBill.notes && (
         <div className="p-6 border-t border-gray-200">
           <h3 className="text-lg font-semibold mb-2">Notes</h3>
-          <p className="text-sm text-gray-700 whitespace-pre-wrap">{superBill.notes}</p>
+          <p className="text-sm text-gray-700 whitespace-pre-wrap">
+            {superBill.notes}
+          </p>
         </div>
       )}
 
@@ -166,10 +182,12 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
           <div>
             <span className="text-sm text-gray-500">Status: </span>
             <span className="font-semibold text-gray-900 capitalize">
-              {superBill.status.replace('_', ' ')}
+              {superBill.status.replace("_", " ")}
             </span>
           </div>
-          <p className="text-xs text-gray-500">Created: {formatDate(superBill.createdAt)}</p>
+          <p className="text-xs text-gray-500">
+            Created: {formatDate(superBill.createdAt)}
+          </p>
         </div>
       </div>
 
@@ -184,7 +202,7 @@ export default function SuperBill({ superBill, onPrint, onConvertToClaim }: Supe
             Print
           </button>
         )}
-        {onConvertToClaim && superBill.status === 'completed' && (
+        {onConvertToClaim && superBill.status === "completed" && (
           <button
             onClick={onConvertToClaim}
             className="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"

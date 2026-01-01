@@ -1,5 +1,5 @@
-import { SecurityDashboard } from '../../components/admin/SecurityDashboard';
-import { ComplianceReport } from '../../components/admin/ComplianceReport';
+import { SecurityDashboard } from "../../components/admin/SecurityDashboard";
+import { ComplianceReport } from "../../components/admin/ComplianceReport";
 
 /**
  * SecurityPage
@@ -31,14 +31,18 @@ export class SecurityPage {
     `;
 
     // Render security dashboard
-    const dashboardContainer = document.getElementById('security-dashboard-container');
+    const dashboardContainer = document.getElementById(
+      "security-dashboard-container",
+    );
     if (dashboardContainer) {
       this.securityDashboard = new SecurityDashboard(dashboardContainer);
       await this.securityDashboard.render();
     }
 
     // Render compliance report
-    const reportContainer = document.getElementById('compliance-report-container');
+    const reportContainer = document.getElementById(
+      "compliance-report-container",
+    );
     if (reportContainer) {
       this.complianceReport = new ComplianceReport(reportContainer);
       await this.complianceReport.render();
@@ -48,6 +52,6 @@ export class SecurityPage {
   destroy(): void {
     this.securityDashboard?.destroy();
     this.complianceReport?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

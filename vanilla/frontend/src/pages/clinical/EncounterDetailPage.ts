@@ -1,8 +1,8 @@
 // Encounter Detail Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import VitalsPanel from '../../components/clinical/VitalsPanel';
-import OrdersPanel from '../../components/clinical/OrdersPanel';
-import ClinicalNote from '../../components/clinical/ClinicalNote';
+import ClinicalService from "../../services/ClinicalService";
+import VitalsPanel from "../../components/clinical/VitalsPanel";
+import OrdersPanel from "../../components/clinical/OrdersPanel";
+import ClinicalNote from "../../components/clinical/ClinicalNote";
 
 export class EncounterDetailPage {
   private container: HTMLElement;
@@ -25,21 +25,26 @@ export class EncounterDetailPage {
 
   private async loadEncounter(): Promise<void> {
     try {
-      const summary = await ClinicalService.getEncounterSummary(this.encounterId);
+      const summary = await ClinicalService.getEncounterSummary(
+        this.encounterId,
+      );
       this.encounter = summary.encounter;
     } catch (error) {
-      console.error('Error loading encounter:', error);
+      console.error("Error loading encounter:", error);
       throw error;
     }
   }
 
   private async render(): Promise<void> {
     if (!this.encounter) {
-      this.container.innerHTML = '<div class="error-message">Encounter not found</div>';
+      this.container.innerHTML =
+        '<div class="error-message">Encounter not found</div>';
       return;
     }
 
-    const encounterDate = new Date(this.encounter.encounterDate).toLocaleDateString();
+    const encounterDate = new Date(
+      this.encounter.encounterDate,
+    ).toLocaleDateString();
     const startTime = new Date(this.encounter.startTime).toLocaleTimeString();
 
     this.container.innerHTML = `
@@ -108,29 +113,40 @@ export class EncounterDetailPage {
   }
 
   private renderActionButtons(): string {
-    if (this.encounter.status === 'scheduled') {
+    if (this.encounter.status === "scheduled") {
       return '<button class="btn btn-primary" id="start-encounter-btn">Start Encounter</button>';
-    } else if (this.encounter.status === 'in-progress') {
+    } else if (this.encounter.status === "in-progress") {
       return '<button class="btn btn-success" id="complete-encounter-btn">Complete Encounter</button>';
-    } else if (this.encounter.status === 'completed' && !this.encounter.signedAt) {
+    } else if (
+      this.encounter.status === "completed" &&
+      !this.encounter.signedAt
+    ) {
       return '<button class="btn btn-primary" id="sign-encounter-btn">Sign Encounter</button>';
     }
-    return '';
+    return "";
   }
 
   private async loadEncounterData(): Promise<void> {
     try {
-      const summary = await ClinicalService.getEncounterSummary(this.encounterId);
+      const summary = await ClinicalService.getEncounterSummary(
+        this.encounterId,
+      );
 
       // Load vitals
-      this.vitalsPanel = new VitalsPanel('vitals-panel-container', async (data) => {
-        await this.recordVitals(data);
-      });
+      this.vitalsPanel = new VitalsPanel(
+        "vitals-panel-container",
+        async (data) => {
+          await this.recordVitals(data);
+        },
+      );
 
       // Load orders
-      this.ordersPanel = new OrdersPanel('orders-panel-container', async (orderId) => {
-        await this.signOrder(orderId);
-      });
+      this.ordersPanel = new OrdersPanel(
+        "orders-panel-container",
+        async (orderId) => {
+          await this.signOrder(orderId);
+        },
+      );
 
       if (summary.orders) {
         this.ordersPanel.setOrders(summary.orders);
@@ -146,12 +162,12 @@ export class EncounterDetailPage {
         this.displayDiagnoses(this.encounter.icd10Codes);
       }
     } catch (error) {
-      console.error('Error loading encounter data:', error);
+      console.error("Error loading encounter data:", error);
     }
   }
 
   private displayNotes(notes: any[]): void {
-    const notesList = document.getElementById('notes-list');
+    const notesList = document.getElementById("notes-list");
     if (!notesList) return;
 
     if (notes.length === 0) {
@@ -159,7 +175,9 @@ export class EncounterDetailPage {
       return;
     }
 
-    notesList.innerHTML = notes.map(note => `
+    notesList.innerHTML = notes
+      .map(
+        (note) => `
       <div class="note-item">
         <div class="note-header">
           <strong>${note.noteType}</strong>
@@ -168,23 +186,30 @@ export class EncounterDetailPage {
         <div class="note-date">${new Date(note.createdAt).toLocaleString()}</div>
         <button class="btn btn-sm view-note-btn" data-note-id="${note.id}">View</button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private displayDiagnoses(icd10Codes: string[]): void {
-    const diagnosesList = document.getElementById('diagnoses-list');
+    const diagnosesList = document.getElementById("diagnoses-list");
     if (!diagnosesList) return;
 
     if (icd10Codes.length === 0) {
-      diagnosesList.innerHTML = '<div class="empty-state">No diagnoses recorded</div>';
+      diagnosesList.innerHTML =
+        '<div class="empty-state">No diagnoses recorded</div>';
       return;
     }
 
-    diagnosesList.innerHTML = icd10Codes.map(code => `
+    diagnosesList.innerHTML = icd10Codes
+      .map(
+        (code) => `
       <div class="diagnosis-item">
         <span class="diagnosis-code">${code}</span>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private async recordVitals(data: any): Promise<void> {
@@ -193,86 +218,86 @@ export class EncounterDetailPage {
       data.patientId = this.encounter.patientId;
 
       await ClinicalService.recordVitals(data);
-      alert('Vitals recorded successfully');
+      alert("Vitals recorded successfully");
       this.vitalsPanel?.reset();
     } catch (error) {
-      console.error('Error recording vitals:', error);
-      alert('Failed to record vitals');
+      console.error("Error recording vitals:", error);
+      alert("Failed to record vitals");
     }
   }
 
   private async signOrder(orderId: string): Promise<void> {
-    const password = prompt('Enter password to sign order:');
+    const password = prompt("Enter password to sign order:");
     if (!password) return;
 
     try {
       await ClinicalService.signOrder(orderId, {
-        userId: 'current-user',
+        userId: "current-user",
         password,
       });
-      alert('Order signed successfully');
+      alert("Order signed successfully");
       await this.loadEncounterData();
     } catch (error) {
-      console.error('Error signing order:', error);
-      alert('Failed to sign order');
+      console.error("Error signing order:", error);
+      alert("Failed to sign order");
     }
   }
 
   private attachEventListeners(): void {
     // Tab switching
-    const tabButtons = this.container.querySelectorAll('.tab-btn');
-    tabButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        const tab = (e.target as HTMLElement).getAttribute('data-tab');
-        this.switchTab(tab || '');
+    const tabButtons = this.container.querySelectorAll(".tab-btn");
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const tab = (e.target as HTMLElement).getAttribute("data-tab");
+        this.switchTab(tab || "");
       });
     });
 
     // Action buttons
-    const backBtn = document.getElementById('back-btn');
-    backBtn?.addEventListener('click', () => {
+    const backBtn = document.getElementById("back-btn");
+    backBtn?.addEventListener("click", () => {
       window.history.back();
     });
 
-    const startBtn = document.getElementById('start-encounter-btn');
-    startBtn?.addEventListener('click', async () => {
+    const startBtn = document.getElementById("start-encounter-btn");
+    startBtn?.addEventListener("click", async () => {
       await this.startEncounter();
     });
 
-    const completeBtn = document.getElementById('complete-encounter-btn');
-    completeBtn?.addEventListener('click', async () => {
+    const completeBtn = document.getElementById("complete-encounter-btn");
+    completeBtn?.addEventListener("click", async () => {
       await this.completeEncounter();
     });
 
-    const signBtn = document.getElementById('sign-encounter-btn');
-    signBtn?.addEventListener('click', async () => {
+    const signBtn = document.getElementById("sign-encounter-btn");
+    signBtn?.addEventListener("click", async () => {
       await this.signEncounter();
     });
 
-    const newNoteBtn = document.getElementById('new-note-btn');
-    newNoteBtn?.addEventListener('click', () => {
+    const newNoteBtn = document.getElementById("new-note-btn");
+    newNoteBtn?.addEventListener("click", () => {
       window.location.href = `/clinical/notes/new?encounterId=${this.encounterId}`;
     });
   }
 
   private switchTab(tab: string): void {
     // Update active tab button
-    const tabButtons = this.container.querySelectorAll('.tab-btn');
-    tabButtons.forEach(btn => {
-      if (btn.getAttribute('data-tab') === tab) {
-        btn.classList.add('active');
+    const tabButtons = this.container.querySelectorAll(".tab-btn");
+    tabButtons.forEach((btn) => {
+      if (btn.getAttribute("data-tab") === tab) {
+        btn.classList.add("active");
       } else {
-        btn.classList.remove('active');
+        btn.classList.remove("active");
       }
     });
 
     // Update active tab panel
-    const tabPanels = this.container.querySelectorAll('.tab-panel');
-    tabPanels.forEach(panel => {
-      if (panel.getAttribute('data-panel') === tab) {
-        panel.classList.add('active');
+    const tabPanels = this.container.querySelectorAll(".tab-panel");
+    tabPanels.forEach((panel) => {
+      if (panel.getAttribute("data-panel") === tab) {
+        panel.classList.add("active");
       } else {
-        panel.classList.remove('active');
+        panel.classList.remove("active");
       }
     });
   }
@@ -283,8 +308,8 @@ export class EncounterDetailPage {
       await this.loadEncounter();
       await this.render();
     } catch (error) {
-      console.error('Error starting encounter:', error);
-      alert('Failed to start encounter');
+      console.error("Error starting encounter:", error);
+      alert("Failed to start encounter");
     }
   }
 
@@ -294,32 +319,32 @@ export class EncounterDetailPage {
       await this.loadEncounter();
       await this.render();
     } catch (error) {
-      console.error('Error completing encounter:', error);
-      alert('Failed to complete encounter');
+      console.error("Error completing encounter:", error);
+      alert("Failed to complete encounter");
     }
   }
 
   private async signEncounter(): Promise<void> {
-    const password = prompt('Enter password to sign encounter:');
+    const password = prompt("Enter password to sign encounter:");
     if (!password) return;
 
     try {
       await ClinicalService.signEncounter(this.encounterId, {
-        userId: 'current-user',
+        userId: "current-user",
         password,
       });
       await this.loadEncounter();
       await this.render();
     } catch (error) {
-      console.error('Error signing encounter:', error);
-      alert('Failed to sign encounter');
+      console.error("Error signing encounter:", error);
+      alert("Failed to sign encounter");
     }
   }
 
   destroy(): void {
     this.vitalsPanel?.destroy();
     this.ordersPanel?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

@@ -1,16 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import toast from "react-hot-toast";
 
 const userSchema = z.object({
   email: z.string().email(),
@@ -21,14 +27,14 @@ const userSchema = z.object({
   title: z.string().optional(),
   npi: z.string().optional(),
   roleId: z.string().optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED', 'PENDING']).optional(),
+  status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "PENDING"]).optional(),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
 
 interface UserFormProps {
   user?: any;
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
 }
 
 export default function UserForm({ user, mode }: UserFormProps) {
@@ -43,19 +49,21 @@ export default function UserForm({ user, mode }: UserFormProps) {
     setValue,
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
-    defaultValues: user ? {
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phone: user.phone || '',
-      title: user.title || '',
-      npi: user.npi || '',
-      status: user.status,
-    } : {},
+    defaultValues: user
+      ? {
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone || "",
+          title: user.title || "",
+          npi: user.npi || "",
+          status: user.status,
+        }
+      : {},
   });
 
   useEffect(() => {
-    fetch('/api/admin/roles')
+    fetch("/api/admin/roles")
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -68,25 +76,28 @@ export default function UserForm({ user, mode }: UserFormProps) {
   const onSubmit = async (data: UserFormData) => {
     setLoading(true);
     try {
-      const url = mode === 'create' ? '/api/admin/users' : `/api/admin/users/${user.id}`;
-      const method = mode === 'create' ? 'POST' : 'PATCH';
+      const url =
+        mode === "create" ? "/api/admin/users" : `/api/admin/users/${user.id}`;
+      const method = mode === "create" ? "POST" : "PATCH";
 
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        toast.success(`User ${mode === 'create' ? 'created' : 'updated'} successfully`);
-        router.push('/admin/users');
+        toast.success(
+          `User ${mode === "create" ? "created" : "updated"} successfully`,
+        );
+        router.push("/admin/users");
       } else {
-        toast.error(result.error || 'Operation failed');
+        toast.error(result.error || "Operation failed");
       }
     } catch (error) {
-      toast.error('Operation failed');
+      toast.error("Operation failed");
     } finally {
       setLoading(false);
     }
@@ -104,11 +115,13 @@ export default function UserForm({ user, mode }: UserFormProps) {
               <Label htmlFor="firstName">First Name *</Label>
               <Input
                 id="firstName"
-                {...register('firstName')}
+                {...register("firstName")}
                 placeholder="John"
               />
               {errors.firstName && (
-                <p className="text-sm text-red-600">{errors.firstName.message}</p>
+                <p className="text-sm text-red-600">
+                  {errors.firstName.message}
+                </p>
               )}
             </div>
 
@@ -116,11 +129,13 @@ export default function UserForm({ user, mode }: UserFormProps) {
               <Label htmlFor="lastName">Last Name *</Label>
               <Input
                 id="lastName"
-                {...register('lastName')}
+                {...register("lastName")}
                 placeholder="Doe"
               />
               {errors.lastName && (
-                <p className="text-sm text-red-600">{errors.lastName.message}</p>
+                <p className="text-sm text-red-600">
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
           </div>
@@ -130,7 +145,7 @@ export default function UserForm({ user, mode }: UserFormProps) {
             <Input
               id="email"
               type="email"
-              {...register('email')}
+              {...register("email")}
               placeholder="john.doe@example.com"
             />
             {errors.email && (
@@ -138,17 +153,19 @@ export default function UserForm({ user, mode }: UserFormProps) {
             )}
           </div>
 
-          {mode === 'create' && (
+          {mode === "create" && (
             <div className="space-y-2">
               <Label htmlFor="password">Password *</Label>
               <Input
                 id="password"
                 type="password"
-                {...register('password')}
+                {...register("password")}
                 placeholder="Min 12 characters"
               />
               {errors.password && (
-                <p className="text-sm text-red-600">{errors.password.message}</p>
+                <p className="text-sm text-red-600">
+                  {errors.password.message}
+                </p>
               )}
             </div>
           )}
@@ -158,7 +175,7 @@ export default function UserForm({ user, mode }: UserFormProps) {
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
-                {...register('phone')}
+                {...register("phone")}
                 placeholder="+1 (555) 123-4567"
               />
             </div>
@@ -167,7 +184,7 @@ export default function UserForm({ user, mode }: UserFormProps) {
               <Label htmlFor="title">Title</Label>
               <Input
                 id="title"
-                {...register('title')}
+                {...register("title")}
                 placeholder="e.g., MD, RN, PA"
               />
             </div>
@@ -177,17 +194,17 @@ export default function UserForm({ user, mode }: UserFormProps) {
             <Label htmlFor="npi">NPI Number</Label>
             <Input
               id="npi"
-              {...register('npi')}
+              {...register("npi")}
               placeholder="National Provider Identifier"
             />
           </div>
 
-          {mode === 'edit' && (
+          {mode === "edit" && (
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
                 defaultValue={user?.status}
-                onValueChange={(value) => setValue('status', value as any)}
+                onValueChange={(value) => setValue("status", value as any)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -209,7 +226,11 @@ export default function UserForm({ user, mode }: UserFormProps) {
           Cancel
         </Button>
         <Button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : mode === 'create' ? 'Create User' : 'Update User'}
+          {loading
+            ? "Saving..."
+            : mode === "create"
+              ? "Create User"
+              : "Update User"}
         </Button>
       </div>
     </form>

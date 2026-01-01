@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { PatientDocument } from '@/types/patient';
-import { patientService } from '@/services/patient.service';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { formatDate } from '@/lib/utils';
-import { ArrowLeft, Plus, FileText, Download, Eye } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { PatientDocument } from "@/types/patient";
+import { patientService } from "@/services/patient.service";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils";
+import { ArrowLeft, Plus, FileText, Download, Eye } from "lucide-react";
 
 export default function PatientDocumentsPage() {
   const params = useParams();
@@ -27,7 +27,7 @@ export default function PatientDocumentsPage() {
       const data = await patientService.getPatientDocuments(patientId);
       setDocuments(data);
     } catch (error) {
-      console.error('Failed to load documents:', error);
+      console.error("Failed to load documents:", error);
     } finally {
       setLoading(false);
     }
@@ -38,22 +38,24 @@ export default function PatientDocumentsPage() {
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">Loading...</div>
+    );
   }
 
   return (
     <div className="space-y-6">
       <div>
         <Link
-          href={'/patients/' + patientId}
+          href={"/patients/" + patientId}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
@@ -88,7 +90,9 @@ export default function PatientDocumentsPage() {
                     <div>
                       <h3 className="font-medium text-gray-900">{doc.name}</h3>
                       {doc.description && (
-                        <p className="text-sm text-gray-500 mt-1">{doc.description}</p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {doc.description}
+                        </p>
                       )}
                       <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                         <span>{formatFileSize(doc.fileSize)}</span>

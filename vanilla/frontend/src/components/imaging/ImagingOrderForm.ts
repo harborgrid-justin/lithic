@@ -137,22 +137,24 @@ export class ImagingOrderForm {
   }
 
   private attachEventListeners(container: HTMLElement) {
-    const form = container.querySelector('#order-form') as HTMLFormElement;
+    const form = container.querySelector("#order-form") as HTMLFormElement;
 
-    form?.addEventListener('submit', async (e) => {
+    form?.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.handleSubmit(form);
     });
 
     const cancelBtn = container.querySelector('[data-action="cancel"]');
-    cancelBtn?.addEventListener('click', () => {
-      window.location.href = '#/imaging/orders';
+    cancelBtn?.addEventListener("click", () => {
+      window.location.href = "#/imaging/orders";
     });
 
-    const searchPatientBtn = container.querySelector('[data-action="search-patient"]');
-    searchPatientBtn?.addEventListener('click', () => {
+    const searchPatientBtn = container.querySelector(
+      '[data-action="search-patient"]',
+    );
+    searchPatientBtn?.addEventListener("click", () => {
       // TODO: Implement patient search dialog
-      alert('Patient search dialog');
+      alert("Patient search dialog");
     });
   }
 
@@ -161,10 +163,14 @@ export class ImagingOrderForm {
     const data: any = {};
 
     formData.forEach((value, key) => {
-      if (key === 'icdCodes') {
-        data[key] = value.toString().split(',').map(s => s.trim()).filter(s => s);
-      } else if (key === 'contrast' || key === 'transportRequired') {
-        data[key] = formData.get(key) === 'on';
+      if (key === "icdCodes") {
+        data[key] = value
+          .toString()
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s);
+      } else if (key === "contrast" || key === "transportRequired") {
+        data[key] = formData.get(key) === "on";
       } else {
         data[key] = value;
       }

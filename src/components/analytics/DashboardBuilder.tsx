@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Save, X, Layout, Settings } from 'lucide-react';
-import { Dashboard, Widget, LayoutItem } from '@/services/analytics.service';
-import { DashboardGrid } from './DashboardGrid';
-import { WidgetLibrary } from './WidgetLibrary';
+import { useState } from "react";
+import { Save, X, Layout, Settings } from "lucide-react";
+import { Dashboard, Widget, LayoutItem } from "@/services/analytics.service";
+import { DashboardGrid } from "./DashboardGrid";
+import { WidgetLibrary } from "./WidgetLibrary";
 
 interface DashboardBuilderProps {
   dashboard?: Dashboard;
@@ -19,9 +19,11 @@ export function DashboardBuilder({
   onCancel,
   renderWidget,
 }: DashboardBuilderProps) {
-  const [name, setName] = useState(dashboard?.name || '');
-  const [description, setDescription] = useState(dashboard?.description || '');
-  const [type, setType] = useState<Dashboard['type']>(dashboard?.type || 'custom');
+  const [name, setName] = useState(dashboard?.name || "");
+  const [description, setDescription] = useState(dashboard?.description || "");
+  const [type, setType] = useState<Dashboard["type"]>(
+    dashboard?.type || "custom",
+  );
   const [shared, setShared] = useState(dashboard?.shared || false);
   const [widgets, setWidgets] = useState<Widget[]>(dashboard?.widgets || []);
   const [layout, setLayout] = useState<LayoutItem[]>(dashboard?.layout || []);
@@ -34,20 +36,23 @@ export function DashboardBuilder({
       type: template.type,
       title: template.name,
       description: template.description,
-      dataSource: 'default',
+      dataSource: "default",
       config: template.defaultConfig,
     };
 
     // Find next available position in grid
-    const maxY = layout.reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    const maxY = layout.reduce(
+      (max, item) => Math.max(max, item.y + item.h),
+      0,
+    );
 
     const newLayoutItem: LayoutItem = {
       widgetId: newWidget.id,
       x: 0,
       y: maxY,
-      w: template.type === 'kpi' ? 3 : 6,
-      h: template.type === 'kpi' ? 1 : 2,
-      minW: template.type === 'kpi' ? 2 : 3,
+      w: template.type === "kpi" ? 3 : 6,
+      h: template.type === "kpi" ? 1 : 2,
+      minW: template.type === "kpi" ? 2 : 3,
       minH: 1,
     };
 
@@ -57,13 +62,13 @@ export function DashboardBuilder({
   };
 
   const handleRemoveWidget = (widgetId: string) => {
-    setWidgets(widgets.filter(w => w.id !== widgetId));
-    setLayout(layout.filter(l => l.widgetId !== widgetId));
+    setWidgets(widgets.filter((w) => w.id !== widgetId));
+    setLayout(layout.filter((l) => l.widgetId !== widgetId));
   };
 
   const handleEditWidget = (widget: Widget) => {
     // In a real implementation, this would open a widget configuration modal
-    console.log('Edit widget:', widget);
+    console.log("Edit widget:", widget);
   };
 
   const handleLayoutChange = (newLayout: LayoutItem[]) => {
@@ -72,7 +77,7 @@ export function DashboardBuilder({
 
   const handleSave = () => {
     if (!name.trim()) {
-      alert('Please enter a dashboard name');
+      alert("Please enter a dashboard name");
       return;
     }
 
@@ -83,7 +88,7 @@ export function DashboardBuilder({
       widgets,
       layout,
       shared,
-      createdBy: 'current-user', // In real app, get from auth
+      createdBy: "current-user", // In real app, get from auth
     };
 
     if (dashboard) {
@@ -103,7 +108,7 @@ export function DashboardBuilder({
               <Layout className="w-6 h-6 text-blue-600" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  {dashboard ? 'Edit Dashboard' : 'Create Dashboard'}
+                  {dashboard ? "Edit Dashboard" : "Create Dashboard"}
                 </h1>
                 <p className="text-sm text-gray-500">
                   Build and customize your analytics dashboard
@@ -149,7 +154,9 @@ export function DashboardBuilder({
             {/* Settings Panel */}
             {showSettings && (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Dashboard Settings</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  Dashboard Settings
+                </h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -183,7 +190,9 @@ export function DashboardBuilder({
                     </label>
                     <select
                       value={type}
-                      onChange={(e) => setType(e.target.value as Dashboard['type'])}
+                      onChange={(e) =>
+                        setType(e.target.value as Dashboard["type"])
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="custom">Custom</option>
@@ -214,7 +223,7 @@ export function DashboardBuilder({
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  {name || 'Untitled Dashboard'}
+                  {name || "Untitled Dashboard"}
                 </h2>
                 {description && (
                   <p className="text-sm text-gray-500 mt-1">{description}</p>
@@ -239,7 +248,7 @@ export function DashboardBuilder({
               <div className="sticky top-24">
                 <WidgetLibrary
                   onAddWidget={handleAddWidget}
-                  category={type !== 'custom' ? type : undefined}
+                  category={type !== "custom" ? type : undefined}
                 />
               </div>
             </div>

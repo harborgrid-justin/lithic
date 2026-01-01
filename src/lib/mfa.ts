@@ -1,7 +1,7 @@
-import * as OTPAuth from 'otpauth';
-import { prisma } from './db';
-import { encrypt, decrypt, generateSecureString } from './encryption';
-import { logAudit } from './audit';
+import * as OTPAuth from "otpauth";
+import { prisma } from "./db";
+import { encrypt, decrypt, generateSecureString } from "./encryption";
+import { logAudit } from "./audit";
 
 /**
  * Generate TOTP secret for a user
@@ -17,14 +17,14 @@ export async function generateMFASecret(userId: string): Promise<{
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   // Generate TOTP secret
   const totp = new OTPAuth.TOTP({
-    issuer: 'Lithic',
+    issuer: "Lithic",
     label: user.email,
-    algorithm: 'SHA1',
+    algorithm: "SHA1",
     digits: 6,
     period: 30,
   });
@@ -36,7 +36,7 @@ export async function generateMFASecret(userId: string): Promise<{
 
   // Generate backup codes
   const backupCodes = Array.from({ length: 10 }, () =>
-    generateSecureString(8, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+    generateSecureString(8, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),
   );
 
   // Encrypt and store secret and backup codes
@@ -61,29 +61,32 @@ export async function generateMFASecret(userId: string): Promise<{
 /**
  * Enable MFA for a user
  */
-export async function enableMFA(userId: string, verificationCode: string): Promise<boolean> {
+export async function enableMFA(
+  userId: string,
+  verificationCode: string,
+): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { mfaSecret: true, mfaEnabled: true, organizationId: true },
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   if (user.mfaEnabled) {
-    throw new Error('MFA is already enabled');
+    throw new Error("MFA is already enabled");
   }
 
   if (!user.mfaSecret) {
-    throw new Error('MFA secret not generated. Call generateMFASecret first.');
+    throw new Error("MFA secret not generated. Call generateMFASecret first.");
   }
 
   // Verify the code
   const isValid = await verifyTOTP(userId, verificationCode);
 
   if (!isValid) {
-    throw new Error('Invalid verification code');
+    throw new Error("Invalid verification code");
   }
 
   // Enable MFA
@@ -95,10 +98,10 @@ export async function enableMFA(userId: string, verificationCode: string): Promi
   // Log MFA enabled
   await logAudit({
     userId,
-    action: 'MFA_ENABLED',
-    resource: 'User',
+    action: "MFA_ENABLED",
+    resource: "User",
     resourceId: userId,
-    description: 'User enabled multi-factor authentication',
+    description: "User enabled multi-factor authentication",
     organizationId: user.organizationId,
   });
 
@@ -108,25 +111,28 @@ export async function enableMFA(userId: string, verificationCode: string): Promi
 /**
  * Disable MFA for a user
  */
-export async function disableMFA(userId: string, verificationCode?: string): Promise<boolean> {
+export async function disableMFA(
+  userId: string,
+  verificationCode?: string,
+): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { mfaEnabled: true, organizationId: true },
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   if (!user.mfaEnabled) {
-    throw new Error('MFA is not enabled');
+    throw new Error("MFA is not enabled");
   }
 
   // If verification code is provided, verify it
   if (verificationCode) {
     const isValid = await verifyTOTP(userId, verificationCode);
     if (!isValid) {
-      throw new Error('Invalid verification code');
+      throw new Error("Invalid verification code");
     }
   }
 
@@ -143,10 +149,10 @@ export async function disableMFA(userId: string, verificationCode?: string): Pro
   // Log MFA disabled
   await logAudit({
     userId,
-    action: 'MFA_DISABLED',
-    resource: 'User',
+    action: "MFA_DISABLED",
+    resource: "User",
     resourceId: userId,
-    description: 'User disabled multi-factor authentication',
+    description: "User disabled multi-factor authentication",
     organizationId: user.organizationId,
   });
 
@@ -156,7 +162,10 @@ export async function disableMFA(userId: string, verificationCode?: string): Pro
 /**
  * Verify TOTP code
  */
-export async function verifyTOTP(userId: string, code: string): Promise<boolean> {
+export async function verifyTOTP(
+  userId: string,
+  code: string,
+): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { mfaSecret: true, mfaBackupCodes: true },
@@ -173,7 +182,7 @@ export async function verifyTOTP(userId: string, code: string): Promise<boolean>
     // Create TOTP instance
     const totp = new OTPAuth.TOTP({
       secret: OTPAuth.Secret.fromBase32(secret),
-      algorithm: 'SHA1',
+      algorithm: "SHA1",
       digits: 6,
       period: 30,
     });
@@ -191,7 +200,7 @@ export async function verifyTOTP(userId: string, code: string): Promise<boolean>
     // If TOTP fails, check backup codes
     return await verifyBackupCode(userId, code);
   } catch (error) {
-    console.error('TOTP verification error:', error);
+    console.error("TOTP verification error:", error);
     return false;
   }
 }
@@ -199,7 +208,10 @@ export async function verifyTOTP(userId: string, code: string): Promise<boolean>
 /**
  * Verify backup code
  */
-async function verifyBackupCode(userId: string, code: string): Promise<boolean> {
+async function verifyBackupCode(
+  userId: string,
+  code: string,
+): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { mfaBackupCodes: true },
@@ -217,7 +229,9 @@ async function verifyBackupCode(userId: string, code: string): Promise<boolean> 
 
       if (backupCode === code.toUpperCase()) {
         // Remove used backup code
-        const updatedBackupCodes = user.mfaBackupCodes.filter((_, index) => index !== i);
+        const updatedBackupCodes = user.mfaBackupCodes.filter(
+          (_, index) => index !== i,
+        );
 
         await prisma.user.update({
           where: { id: userId },
@@ -240,7 +254,7 @@ async function verifyBackupCode(userId: string, code: string): Promise<boolean> 
  */
 export async function regenerateBackupCodes(
   userId: string,
-  verificationCode: string
+  verificationCode: string,
 ): Promise<string[]> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -248,18 +262,18 @@ export async function regenerateBackupCodes(
   });
 
   if (!user || !user.mfaEnabled) {
-    throw new Error('MFA is not enabled');
+    throw new Error("MFA is not enabled");
   }
 
   // Verify TOTP code
   const isValid = await verifyTOTP(userId, verificationCode);
   if (!isValid) {
-    throw new Error('Invalid verification code');
+    throw new Error("Invalid verification code");
   }
 
   // Generate new backup codes
   const backupCodes = Array.from({ length: 10 }, () =>
-    generateSecureString(8, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+    generateSecureString(8, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),
   );
 
   // Encrypt backup codes
@@ -303,7 +317,7 @@ export async function getMFAStatus(userId: string): Promise<{
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   return {
@@ -316,7 +330,10 @@ export async function getMFAStatus(userId: string): Promise<{
 /**
  * Verify MFA setup (for testing purposes)
  */
-export async function verifyMFASetup(userId: string, code: string): Promise<boolean> {
+export async function verifyMFASetup(
+  userId: string,
+  code: string,
+): Promise<boolean> {
   return await verifyTOTP(userId, code);
 }
 
@@ -326,7 +343,7 @@ export async function verifyMFASetup(userId: string, code: string): Promise<bool
 export async function forceDisableMFA(
   userId: string,
   adminId: string,
-  reason: string
+  reason: string,
 ): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -334,7 +351,7 @@ export async function forceDisableMFA(
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   // Disable MFA
@@ -350,8 +367,8 @@ export async function forceDisableMFA(
   // Log admin action
   await logAudit({
     userId: adminId,
-    action: 'MFA_DISABLED',
-    resource: 'User',
+    action: "MFA_DISABLED",
+    resource: "User",
     resourceId: userId,
     description: `Admin force-disabled MFA for user: ${reason}`,
     metadata: { targetUserId: userId, reason },
@@ -381,14 +398,17 @@ export async function isMFARequired(organizationId: string): Promise<boolean> {
 /**
  * Enforce MFA for organization
  */
-export async function enforceMFA(organizationId: string, required: boolean): Promise<void> {
+export async function enforceMFA(
+  organizationId: string,
+  required: boolean,
+): Promise<void> {
   const organization = await prisma.organization.findUnique({
     where: { id: organizationId },
     select: { settings: true },
   });
 
   if (!organization) {
-    throw new Error('Organization not found');
+    throw new Error("Organization not found");
   }
 
   const settings = (organization.settings as any) || {};

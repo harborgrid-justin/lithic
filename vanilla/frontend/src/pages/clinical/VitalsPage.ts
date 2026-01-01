@@ -1,7 +1,7 @@
 // Vitals Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import VitalsPanel from '../../components/clinical/VitalsPanel';
-import VitalsChart from '../../components/clinical/VitalsChart';
+import ClinicalService from "../../services/ClinicalService";
+import VitalsPanel from "../../components/clinical/VitalsPanel";
+import VitalsChart from "../../components/clinical/VitalsChart";
 
 export class VitalsPage {
   private container: HTMLElement;
@@ -48,34 +48,41 @@ export class VitalsPage {
       </div>
     `;
 
-    this.vitalsPanel = new VitalsPanel('vitals-panel-container', async (data) => {
-      await this.recordVitals(data);
-    });
+    this.vitalsPanel = new VitalsPanel(
+      "vitals-panel-container",
+      async (data) => {
+        await this.recordVitals(data);
+      },
+    );
 
-    this.vitalsChart = new VitalsChart('vitals-chart-container');
+    this.vitalsChart = new VitalsChart("vitals-chart-container");
 
     this.attachEventListeners();
   }
 
   private async loadVitals(): Promise<void> {
     try {
-      const vitals = await ClinicalService.getVitalsByPatient(this.patientId, 20);
+      const vitals = await ClinicalService.getVitalsByPatient(
+        this.patientId,
+        20,
+      );
 
       if (vitals.length > 0) {
         this.vitalsChart?.setVitals(vitals);
         this.displayVitalsTable(vitals);
       }
     } catch (error) {
-      console.error('Error loading vitals:', error);
+      console.error("Error loading vitals:", error);
     }
   }
 
   private displayVitalsTable(vitals: any[]): void {
-    const tableContainer = document.getElementById('vitals-table-container');
+    const tableContainer = document.getElementById("vitals-table-container");
     if (!tableContainer) return;
 
     if (vitals.length === 0) {
-      tableContainer.innerHTML = '<div class="empty-state">No vital signs recorded</div>';
+      tableContainer.innerHTML =
+        '<div class="empty-state">No vital signs recorded</div>';
       return;
     }
 
@@ -95,7 +102,7 @@ export class VitalsPage {
           </tr>
         </thead>
         <tbody>
-          ${vitals.map(vital => this.renderVitalRow(vital)).join('')}
+          ${vitals.map((vital) => this.renderVitalRow(vital)).join("")}
         </tbody>
       </table>
     `;
@@ -109,16 +116,18 @@ export class VitalsPage {
     return `
       <tr>
         <td>${date}</td>
-        <td>${vital.temperature ? `${vital.temperature}°${vital.temperatureUnit}` : '-'}</td>
-        <td>${vital.pulse || '-'}</td>
-        <td>${vital.respiratoryRate || '-'}</td>
-        <td>${vital.bloodPressureSystolic && vital.bloodPressureDiastolic
-          ? `${vital.bloodPressureSystolic}/${vital.bloodPressureDiastolic}`
-          : '-'}</td>
-        <td>${vital.oxygenSaturation ? `${vital.oxygenSaturation}%` : '-'}</td>
-        <td>${vital.weight ? `${vital.weight} ${vital.weightUnit}` : '-'}</td>
-        <td>${vital.bmi || '-'}</td>
-        <td>${vital.painLevel !== undefined ? `${vital.painLevel}/10` : '-'}</td>
+        <td>${vital.temperature ? `${vital.temperature}°${vital.temperatureUnit}` : "-"}</td>
+        <td>${vital.pulse || "-"}</td>
+        <td>${vital.respiratoryRate || "-"}</td>
+        <td>${
+          vital.bloodPressureSystolic && vital.bloodPressureDiastolic
+            ? `${vital.bloodPressureSystolic}/${vital.bloodPressureDiastolic}`
+            : "-"
+        }</td>
+        <td>${vital.oxygenSaturation ? `${vital.oxygenSaturation}%` : "-"}</td>
+        <td>${vital.weight ? `${vital.weight} ${vital.weightUnit}` : "-"}</td>
+        <td>${vital.bmi || "-"}</td>
+        <td>${vital.painLevel !== undefined ? `${vital.painLevel}/10` : "-"}</td>
       </tr>
     `;
   }
@@ -131,18 +140,18 @@ export class VitalsPage {
       }
 
       await ClinicalService.recordVitals(data);
-      alert('Vitals recorded successfully');
+      alert("Vitals recorded successfully");
       this.vitalsPanel?.reset();
       await this.loadVitals();
     } catch (error) {
-      console.error('Error recording vitals:', error);
-      alert('Failed to record vitals');
+      console.error("Error recording vitals:", error);
+      alert("Failed to record vitals");
     }
   }
 
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('back-btn');
-    backBtn?.addEventListener('click', () => {
+    const backBtn = document.getElementById("back-btn");
+    backBtn?.addEventListener("click", () => {
       window.history.back();
     });
   }
@@ -150,7 +159,7 @@ export class VitalsPage {
   destroy(): void {
     this.vitalsPanel?.destroy();
     this.vitalsChart?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

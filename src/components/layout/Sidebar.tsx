@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -11,16 +11,16 @@ import {
   Activity,
   Building2,
   UserCog,
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface NavItem {
-  title: string
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  badge?: string
-  disabled?: boolean
+  title: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  disabled?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -66,10 +66,10 @@ const navItems: NavItem[] = [
     href: "/settings",
     icon: Settings,
   },
-]
+];
 
 export function Sidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <aside className="fixed left-0 top-16 z-30 h-[calc(100vh-4rem)] w-64 border-r bg-background">
@@ -77,9 +77,10 @@ export function Sidebar() {
         <div className="flex-1 overflow-auto py-4">
           <nav className="grid gap-1 px-3">
             {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href || pathname?.startsWith(item.href + "/")
-              
+              const Icon = item.icon;
+              const isActive =
+                pathname === item.href || pathname?.startsWith(item.href + "/");
+
               return (
                 <Link
                   key={item.href}
@@ -89,7 +90,7 @@ export function Sidebar() {
                     isActive
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                    item.disabled && "cursor-not-allowed opacity-50"
+                    item.disabled && "cursor-not-allowed opacity-50",
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -103,7 +104,7 @@ export function Sidebar() {
                     </Badge>
                   )}
                 </Link>
-              )
+              );
             })}
           </nav>
         </div>
@@ -125,5 +126,5 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
-  )
+  );
 }

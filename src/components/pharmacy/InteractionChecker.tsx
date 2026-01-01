@@ -3,10 +3,13 @@
  * Display drug-drug interaction warnings
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { pharmacyService, type DrugInteraction } from '@/services/pharmacy.service';
+import { useEffect, useState } from "react";
+import {
+  pharmacyService,
+  type DrugInteraction,
+} from "@/services/pharmacy.service";
 
 interface InteractionCheckerProps {
   drugIds: string[];
@@ -32,29 +35,31 @@ export function InteractionChecker({ drugIds }: InteractionCheckerProps) {
       const data = await pharmacyService.checkInteractions(drugIds);
       setInteractions(data);
     } catch (error) {
-      console.error('Failed to check interactions:', error);
+      console.error("Failed to check interactions:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getSeverityColor = (severity: DrugInteraction['severity']) => {
+  const getSeverityColor = (severity: DrugInteraction["severity"]) => {
     switch (severity) {
-      case 'contraindicated':
-        return 'bg-red-50 border-red-300 text-red-900';
-      case 'major':
-        return 'bg-orange-50 border-orange-300 text-orange-900';
-      case 'moderate':
-        return 'bg-yellow-50 border-yellow-300 text-yellow-900';
-      case 'minor':
-        return 'bg-blue-50 border-blue-300 text-blue-900';
+      case "contraindicated":
+        return "bg-red-50 border-red-300 text-red-900";
+      case "major":
+        return "bg-orange-50 border-orange-300 text-orange-900";
+      case "moderate":
+        return "bg-yellow-50 border-yellow-300 text-yellow-900";
+      case "minor":
+        return "bg-blue-50 border-blue-300 text-blue-900";
       default:
-        return 'bg-gray-50 border-gray-300 text-gray-900';
+        return "bg-gray-50 border-gray-300 text-gray-900";
     }
   };
 
   if (loading) {
-    return <div className="text-sm text-gray-500">Checking interactions...</div>;
+    return (
+      <div className="text-sm text-gray-500">Checking interactions...</div>
+    );
   }
 
   if (interactions.length === 0) {
@@ -70,7 +75,8 @@ export function InteractionChecker({ drugIds }: InteractionCheckerProps) {
   return (
     <div className="space-y-3">
       <div className="text-sm font-medium text-gray-900">
-        {interactions.length} Interaction{interactions.length !== 1 ? 's' : ''} Found
+        {interactions.length} Interaction{interactions.length !== 1 ? "s" : ""}{" "}
+        Found
       </div>
 
       {interactions.map((interaction) => (

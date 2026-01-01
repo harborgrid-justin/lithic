@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response } from "express";
 
 const router = Router();
 
@@ -39,7 +39,7 @@ export interface Provider {
     issueDate: Date;
     expirationDate?: Date;
   }[];
-  status: 'active' | 'inactive' | 'on-leave' | 'retired';
+  status: "active" | "inactive" | "on-leave" | "retired";
   defaultAppointmentDuration: number; // minutes
   appointmentTypes: {
     type: string;
@@ -63,7 +63,7 @@ export interface ProviderSearchParams {
   facilityId?: string;
   acceptingNewPatients?: boolean;
   language?: string;
-  status?: Provider['status'];
+  status?: Provider["status"];
   limit?: number;
   offset?: number;
 }
@@ -81,7 +81,7 @@ export interface ProviderStats {
 }
 
 // GET /api/scheduling/providers - Get all providers
-router.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const {
       query,
@@ -90,8 +90,8 @@ router.get('/', async (req: Request, res: Response) => {
       acceptingNewPatients,
       language,
       status,
-      limit = '50',
-      offset = '0'
+      limit = "50",
+      offset = "0",
     } = req.query;
 
     // TODO: Implement database query
@@ -103,20 +103,20 @@ router.get('/', async (req: Request, res: Response) => {
       pagination: {
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
-        total: 0
-      }
+        total: 0,
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch providers',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch providers",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/providers/:id - Get provider by ID
-router.get('/:id', async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -126,33 +126,38 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (!provider) {
       return res.status(404).json({
         success: false,
-        error: 'Provider not found'
+        error: "Provider not found",
       });
     }
 
     res.json({
       success: true,
-      data: provider
+      data: provider,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch provider',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch provider",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/providers - Create new provider
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const providerData = req.body;
 
     // Validate required fields
-    if (!providerData.npi || !providerData.firstName || !providerData.lastName || !providerData.specialty) {
+    if (
+      !providerData.npi ||
+      !providerData.firstName ||
+      !providerData.lastName ||
+      !providerData.specialty
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: npi, firstName, lastName, specialty'
+        error: "Missing required fields: npi, firstName, lastName, specialty",
       });
     }
 
@@ -162,40 +167,40 @@ router.post('/', async (req: Request, res: Response) => {
     const newProvider: Provider = {
       id: `prov-${Date.now()}`,
       ...providerData,
-      fullName: `${providerData.firstName} ${providerData.lastName}, ${providerData.title || 'MD'}`,
-      status: providerData.status || 'active',
+      fullName: `${providerData.firstName} ${providerData.lastName}, ${providerData.title || "MD"}`,
+      status: providerData.status || "active",
       acceptingNewPatients: providerData.acceptingNewPatients ?? true,
       defaultAppointmentDuration: providerData.defaultAppointmentDuration || 30,
       appointmentTypes: providerData.appointmentTypes || [
-        { type: 'consultation', duration: 30 },
-        { type: 'follow-up', duration: 15 }
+        { type: "consultation", duration: 30 },
+        { type: "follow-up", duration: 15 },
       ],
       schedulingPreferences: providerData.schedulingPreferences || {
         allowDoubleBooking: false,
         allowOnlineBooking: true,
-        requiresApproval: false
+        requiresApproval: false,
       },
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // TODO: Save to database
 
     res.status(201).json({
       success: true,
-      data: newProvider
+      data: newProvider,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to create provider',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to create provider",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // PUT /api/scheduling/providers/:id - Update provider
-router.put('/:id', async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -206,7 +211,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     if (!existingProvider) {
       return res.status(404).json({
         success: false,
-        error: 'Provider not found'
+        error: "Provider not found",
       });
     }
 
@@ -215,26 +220,26 @@ router.put('/:id', async (req: Request, res: Response) => {
       ...existingProvider,
       ...updateData,
       fullName: `${updateData.firstName || existingProvider.firstName} ${updateData.lastName || existingProvider.lastName}, ${updateData.title || existingProvider.title}`,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // TODO: Save to database
 
     res.json({
       success: true,
-      data: updatedProvider
+      data: updatedProvider,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to update provider',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to update provider",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // DELETE /api/scheduling/providers/:id - Deactivate provider
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -244,7 +249,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     if (!existingProvider) {
       return res.status(404).json({
         success: false,
-        error: 'Provider not found'
+        error: "Provider not found",
       });
     }
 
@@ -254,9 +259,9 @@ router.delete('/:id', async (req: Request, res: Response) => {
     // Deactivate provider
     const deactivatedProvider: Provider = {
       ...existingProvider,
-      status: 'inactive',
+      status: "inactive",
       acceptingNewPatients: false,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // TODO: Save to database
@@ -264,19 +269,19 @@ router.delete('/:id', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: deactivatedProvider,
-      message: 'Provider deactivated successfully'
+      message: "Provider deactivated successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to deactivate provider',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to deactivate provider",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/providers/:id/schedule - Get provider's schedule
-router.get('/:id/schedule', async (req: Request, res: Response) => {
+router.get("/:id/schedule", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { startDate, endDate } = req.query;
@@ -284,7 +289,7 @@ router.get('/:id/schedule', async (req: Request, res: Response) => {
     if (!startDate || !endDate) {
       return res.status(400).json({
         success: false,
-        error: 'Start date and end date are required'
+        error: "Start date and end date are required",
       });
     }
 
@@ -295,24 +300,24 @@ router.get('/:id/schedule', async (req: Request, res: Response) => {
       endDate,
       appointments: [],
       blockedTimes: [],
-      workingHours: []
+      workingHours: [],
     };
 
     res.json({
       success: true,
-      data: schedule
+      data: schedule,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch provider schedule',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch provider schedule",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/providers/:id/stats - Get provider statistics
-router.get('/:id/stats', async (req: Request, res: Response) => {
+router.get("/:id/stats", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { startDate, endDate } = req.query;
@@ -325,24 +330,24 @@ router.get('/:id/stats', async (req: Request, res: Response) => {
       cancelledAppointments: 0,
       noShowAppointments: 0,
       averageAppointmentDuration: 30,
-      utilizationRate: 0
+      utilizationRate: 0,
     };
 
     res.json({
       success: true,
-      data: stats
+      data: stats,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch provider statistics',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch provider statistics",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/providers/specialty/:specialty - Get providers by specialty
-router.get('/specialty/:specialty', async (req: Request, res: Response) => {
+router.get("/specialty/:specialty", async (req: Request, res: Response) => {
   try {
     const { specialty } = req.params;
     const { facilityId, acceptingNewPatients } = req.query;
@@ -352,19 +357,19 @@ router.get('/specialty/:specialty', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      data: providers
+      data: providers,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch providers by specialty',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch providers by specialty",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // PUT /api/scheduling/providers/:id/preferences - Update scheduling preferences
-router.put('/:id/preferences', async (req: Request, res: Response) => {
+router.put("/:id/preferences", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const preferences = req.body;
@@ -375,7 +380,7 @@ router.put('/:id/preferences', async (req: Request, res: Response) => {
     if (!existingProvider) {
       return res.status(404).json({
         success: false,
-        error: 'Provider not found'
+        error: "Provider not found",
       });
     }
 
@@ -384,9 +389,9 @@ router.put('/:id/preferences', async (req: Request, res: Response) => {
       ...existingProvider,
       schedulingPreferences: {
         ...existingProvider.schedulingPreferences,
-        ...preferences
+        ...preferences,
       },
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // TODO: Save to database
@@ -394,19 +399,19 @@ router.put('/:id/preferences', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: updatedProvider,
-      message: 'Scheduling preferences updated successfully'
+      message: "Scheduling preferences updated successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to update scheduling preferences',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to update scheduling preferences",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/providers/search/advanced - Advanced provider search
-router.get('/search/advanced', async (req: Request, res: Response) => {
+router.get("/search/advanced", async (req: Request, res: Response) => {
   try {
     const {
       name,
@@ -417,7 +422,7 @@ router.get('/search/advanced', async (req: Request, res: Response) => {
       acceptingNewPatients,
       hasAvailability,
       availabilityDate,
-      status = 'active'
+      status = "active",
     } = req.query;
 
     // TODO: Implement advanced search logic
@@ -435,14 +440,14 @@ router.get('/search/advanced', async (req: Request, res: Response) => {
         acceptingNewPatients,
         hasAvailability,
         availabilityDate,
-        status
-      }
+        status,
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to perform advanced search',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to perform advanced search",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });

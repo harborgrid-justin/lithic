@@ -2,7 +2,7 @@
  * API Service - Fetch wrapper for backend communication
  */
 
-import { storage } from './storage';
+import { storage } from "./storage";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -37,14 +37,17 @@ class ApiService {
   private timeout: number = 30000; // 30 seconds
 
   constructor() {
-    this.baseUrl = process.env.API_URL || 'http://localhost:3000/api/v1';
+    this.baseUrl = process.env.API_URL || "http://localhost:3000/api/v1";
   }
 
   /**
    * GET request
    */
-  async get<T>(endpoint: string, options?: RequestOptions): Promise<ApiResponse<T>> {
-    return this.request<T>('GET', endpoint, undefined, options);
+  async get<T>(
+    endpoint: string,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>("GET", endpoint, undefined, options);
   }
 
   /**
@@ -53,9 +56,9 @@ class ApiService {
   async post<T>(
     endpoint: string,
     data?: any,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
-    return this.request<T>('POST', endpoint, data, options);
+    return this.request<T>("POST", endpoint, data, options);
   }
 
   /**
@@ -64,9 +67,9 @@ class ApiService {
   async put<T>(
     endpoint: string,
     data?: any,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
-    return this.request<T>('PUT', endpoint, data, options);
+    return this.request<T>("PUT", endpoint, data, options);
   }
 
   /**
@@ -75,16 +78,19 @@ class ApiService {
   async patch<T>(
     endpoint: string,
     data?: any,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
-    return this.request<T>('PATCH', endpoint, data, options);
+    return this.request<T>("PATCH", endpoint, data, options);
   }
 
   /**
    * DELETE request
    */
-  async delete<T>(endpoint: string, options?: RequestOptions): Promise<ApiResponse<T>> {
-    return this.request<T>('DELETE', endpoint, undefined, options);
+  async delete<T>(
+    endpoint: string,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>("DELETE", endpoint, undefined, options);
   }
 
   /**
@@ -94,7 +100,7 @@ class ApiService {
     method: string,
     endpoint: string,
     data?: any,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
     try {
       const url = this.buildUrl(endpoint, options?.params);
@@ -103,11 +109,11 @@ class ApiService {
       const config: RequestInit = {
         method,
         headers,
-        credentials: 'include',
+        credentials: "include",
         ...options,
       };
 
-      if (data && ['POST', 'PUT', 'PATCH'].includes(method)) {
+      if (data && ["POST", "PUT", "PATCH"].includes(method)) {
         config.body = JSON.stringify(data);
       }
 
@@ -136,12 +142,15 @@ class ApiService {
 
     if (params) {
       const queryString = new URLSearchParams(
-        Object.entries(params).reduce((acc, [key, value]) => {
-          if (value !== undefined && value !== null) {
-            acc[key] = String(value);
-          }
-          return acc;
-        }, {} as Record<string, string>)
+        Object.entries(params).reduce(
+          (acc, [key, value]) => {
+            if (value !== undefined && value !== null) {
+              acc[key] = String(value);
+            }
+            return acc;
+          },
+          {} as Record<string, string>,
+        ),
       ).toString();
 
       if (queryString) {
@@ -157,14 +166,14 @@ class ApiService {
    */
   private buildHeaders(skipAuth?: boolean): Headers {
     const headers = new Headers({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      "Content-Type": "application/json",
+      Accept: "application/json",
     });
 
     if (!skipAuth) {
-      const token = storage.getLocal<string>('auth_token');
+      const token = storage.getLocal<string>("auth_token");
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
       }
     }
 
@@ -175,14 +184,16 @@ class ApiService {
    * Handle response
    */
   private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
-    const contentType = response.headers.get('Content-Type');
-    const isJson = contentType?.includes('application/json');
+    const contentType = response.headers.get("Content-Type");
+    const isJson = contentType?.includes("application/json");
 
     if (!response.ok) {
-      const error: any = isJson ? await response.json() : { message: response.statusText };
+      const error: any = isJson
+        ? await response.json()
+        : { message: response.statusText };
 
       throw {
-        message: error.message || 'Request failed',
+        message: error.message || "Request failed",
         statusCode: response.status,
         errors: error.errors,
       } as ApiError;
@@ -214,9 +225,9 @@ class ApiService {
    * Handle errors
    */
   private handleError(error: any): ApiError {
-    if (error.name === 'AbortError') {
+    if (error.name === "AbortError") {
       return {
-        message: 'Request timeout',
+        message: "Request timeout",
         statusCode: 408,
       };
     }
@@ -226,7 +237,7 @@ class ApiService {
     }
 
     return {
-      message: error.message || 'Network error',
+      message: error.message || "Network error",
       statusCode: 0,
     };
   }

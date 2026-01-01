@@ -3,7 +3,7 @@
  * Agent 8: Imaging
  */
 
-import type { BaseEntity } from './index';
+import type { BaseEntity } from "./index";
 
 // ============================================================================
 // Imaging Order Types
@@ -41,47 +41,47 @@ export interface ImagingOrder extends BaseEntity {
 }
 
 export enum ImagingPriority {
-  ROUTINE = 'ROUTINE',
-  URGENT = 'URGENT',
-  STAT = 'STAT',
-  ASAP = 'ASAP',
+  ROUTINE = "ROUTINE",
+  URGENT = "URGENT",
+  STAT = "STAT",
+  ASAP = "ASAP",
 }
 
 export enum ImagingOrderStatus {
-  ORDERED = 'ORDERED',
-  SCHEDULED = 'SCHEDULED',
-  ARRIVED = 'ARRIVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  PRELIMINARY_REPORT = 'PRELIMINARY_REPORT',
-  FINAL_REPORT = 'FINAL_REPORT',
-  AMENDED = 'AMENDED',
-  CANCELLED = 'CANCELLED',
+  ORDERED = "ORDERED",
+  SCHEDULED = "SCHEDULED",
+  ARRIVED = "ARRIVED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  PRELIMINARY_REPORT = "PRELIMINARY_REPORT",
+  FINAL_REPORT = "FINAL_REPORT",
+  AMENDED = "AMENDED",
+  CANCELLED = "CANCELLED",
 }
 
 export enum ImagingModality {
-  CR = 'CR',
-  CT = 'CT',
-  MR = 'MR',
-  US = 'US',
-  XA = 'XA',
-  RF = 'RF',
-  DX = 'DX',
-  MG = 'MG',
-  NM = 'NM',
-  PT = 'PT',
-  PET_CT = 'PET_CT',
-  SPECT = 'SPECT',
-  DEXA = 'DEXA',
-  FLUORO = 'FLUORO',
-  OTHER = 'OTHER',
+  CR = "CR",
+  CT = "CT",
+  MR = "MR",
+  US = "US",
+  XA = "XA",
+  RF = "RF",
+  DX = "DX",
+  MG = "MG",
+  NM = "NM",
+  PT = "PT",
+  PET_CT = "PET_CT",
+  SPECT = "SPECT",
+  DEXA = "DEXA",
+  FLUORO = "FLUORO",
+  OTHER = "OTHER",
 }
 
 export enum Laterality {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-  BILATERAL = 'BILATERAL',
-  UNILATERAL = 'UNILATERAL',
+  LEFT = "LEFT",
+  RIGHT = "RIGHT",
+  BILATERAL = "BILATERAL",
+  UNILATERAL = "UNILATERAL",
 }
 
 // ============================================================================
@@ -115,11 +115,11 @@ export interface ImagingStudy extends BaseEntity {
 }
 
 export enum StudyStatus {
-  RECEIVED = 'RECEIVED',
-  PROCESSING = 'PROCESSING',
-  AVAILABLE = 'AVAILABLE',
-  ARCHIVED = 'ARCHIVED',
-  ERROR = 'ERROR',
+  RECEIVED = "RECEIVED",
+  PROCESSING = "PROCESSING",
+  AVAILABLE = "AVAILABLE",
+  ARCHIVED = "ARCHIVED",
+  ERROR = "ERROR",
 }
 
 export interface DicomSeries extends BaseEntity {
@@ -185,18 +185,18 @@ export interface ImagingReport extends BaseEntity {
 }
 
 export enum ReportType {
-  PRELIMINARY = 'PRELIMINARY',
-  FINAL = 'FINAL',
-  ADDENDUM = 'ADDENDUM',
-  CORRECTION = 'CORRECTION',
+  PRELIMINARY = "PRELIMINARY",
+  FINAL = "FINAL",
+  ADDENDUM = "ADDENDUM",
+  CORRECTION = "CORRECTION",
 }
 
 export enum ReportStatus {
-  DRAFT = 'DRAFT',
-  PRELIMINARY = 'PRELIMINARY',
-  FINAL = 'FINAL',
-  AMENDED = 'AMENDED',
-  SIGNED = 'SIGNED',
+  DRAFT = "DRAFT",
+  PRELIMINARY = "PRELIMINARY",
+  FINAL = "FINAL",
+  AMENDED = "AMENDED",
+  SIGNED = "SIGNED",
 }
 
 export interface ReportAddendum extends BaseEntity {
@@ -259,24 +259,24 @@ export interface CriticalFinding extends BaseEntity {
 }
 
 export enum FindingSeverity {
-  URGENT = 'URGENT',
-  CRITICAL = 'CRITICAL',
-  EMERGENCY = 'EMERGENCY',
+  URGENT = "URGENT",
+  CRITICAL = "CRITICAL",
+  EMERGENCY = "EMERGENCY",
 }
 
 export enum NotificationMethod {
-  PHONE = 'PHONE',
-  FAX = 'FAX',
-  EMAIL = 'EMAIL',
-  IN_PERSON = 'IN_PERSON',
-  EMR_MESSAGE = 'EMR_MESSAGE',
+  PHONE = "PHONE",
+  FAX = "FAX",
+  EMAIL = "EMAIL",
+  IN_PERSON = "IN_PERSON",
+  EMR_MESSAGE = "EMR_MESSAGE",
 }
 
 export enum FindingStatus {
-  NEW = 'NEW',
-  NOTIFIED = 'NOTIFIED',
-  ACKNOWLEDGED = 'ACKNOWLEDGED',
-  RESOLVED = 'RESOLVED',
+  NEW = "NEW",
+  NOTIFIED = "NOTIFIED",
+  ACKNOWLEDGED = "ACKNOWLEDGED",
+  RESOLVED = "RESOLVED",
 }
 
 // ============================================================================
@@ -303,23 +303,23 @@ export interface PACSConfiguration extends BaseEntity {
 }
 
 export enum PACSType {
-  LOCAL = 'LOCAL',
-  CLOUD = 'CLOUD',
-  VENDOR = 'VENDOR',
-  VNA = 'VNA',
+  LOCAL = "LOCAL",
+  CLOUD = "CLOUD",
+  VENDOR = "VENDOR",
+  VNA = "VNA",
 }
 
 export enum DicomProtocol {
-  DIMSE = 'DIMSE',
-  DICOMWEB = 'DICOMWEB',
-  HL7_FHIR = 'HL7_FHIR',
+  DIMSE = "DIMSE",
+  DICOMWEB = "DICOMWEB",
+  HL7_FHIR = "HL7_FHIR",
 }
 
 export enum ConnectionStatus {
-  CONNECTED = 'CONNECTED',
-  DISCONNECTED = 'DISCONNECTED',
-  ERROR = 'ERROR',
-  TESTING = 'TESTING',
+  CONNECTED = "CONNECTED",
+  DISCONNECTED = "DISCONNECTED",
+  ERROR = "ERROR",
+  TESTING = "TESTING",
 }
 
 export interface DicomWorklistItem {
@@ -341,10 +341,10 @@ export interface DicomWorklistItem {
 }
 
 export enum WorklistStatus {
-  SCHEDULED = 'SCHEDULED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  DISCONTINUED = 'DISCONTINUED',
+  SCHEDULED = "SCHEDULED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  DISCONTINUED = "DISCONTINUED",
 }
 
 // ============================================================================
@@ -371,10 +371,10 @@ export interface Modality extends BaseEntity {
 }
 
 export enum ModalityStatus {
-  OPERATIONAL = 'OPERATIONAL',
-  MAINTENANCE = 'MAINTENANCE',
-  OUT_OF_SERVICE = 'OUT_OF_SERVICE',
-  RETIRED = 'RETIRED',
+  OPERATIONAL = "OPERATIONAL",
+  MAINTENANCE = "MAINTENANCE",
+  OUT_OF_SERVICE = "OUT_OF_SERVICE",
+  RETIRED = "RETIRED",
 }
 
 // ============================================================================
@@ -399,11 +399,11 @@ export interface ImageShare extends BaseEntity {
 }
 
 export enum ShareType {
-  EXTERNAL_PROVIDER = 'EXTERNAL_PROVIDER',
-  PATIENT = 'PATIENT',
-  REFERRING_PHYSICIAN = 'REFERRING_PHYSICIAN',
-  CONSULTATION = 'CONSULTATION',
-  LEGAL = 'LEGAL',
+  EXTERNAL_PROVIDER = "EXTERNAL_PROVIDER",
+  PATIENT = "PATIENT",
+  REFERRING_PHYSICIAN = "REFERRING_PHYSICIAN",
+  CONSULTATION = "CONSULTATION",
+  LEGAL = "LEGAL",
 }
 
 // ============================================================================

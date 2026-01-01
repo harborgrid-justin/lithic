@@ -1,5 +1,5 @@
-import { ImagingService } from '../../services/ImagingService';
-import { RadiologyWorklist } from '../../components/imaging/RadiologyWorklist';
+import { ImagingService } from "../../services/ImagingService";
+import { RadiologyWorklist } from "../../components/imaging/RadiologyWorklist";
 
 export class WorklistPage {
   private container: HTMLElement;
@@ -14,10 +14,10 @@ export class WorklistPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'worklist-page';
+    const wrapper = document.createElement("div");
+    wrapper.className = "worklist-page";
     wrapper.innerHTML = `
       <div class="page-header">
         <h1>Radiology Worklist</h1>
@@ -31,7 +31,7 @@ export class WorklistPage {
         <div class="filters-group">
           <div class="filter-item">
             <label>Date</label>
-            <input type="date" id="filter-date" class="form-input" value="${new Date().toISOString().split('T')[0]}">
+            <input type="date" id="filter-date" class="form-input" value="${new Date().toISOString().split("T")[0]}">
           </div>
 
           <div class="filter-item">
@@ -120,58 +120,80 @@ export class WorklistPage {
 
   private attachEventListeners() {
     const refreshBtn = this.container.querySelector('[data-action="refresh"]');
-    refreshBtn?.addEventListener('click', () => {
+    refreshBtn?.addEventListener("click", () => {
       this.loadWorklist();
       this.loadStatistics();
     });
 
-    const bulkScheduleBtn = this.container.querySelector('[data-action="bulk-schedule"]');
-    bulkScheduleBtn?.addEventListener('click', () => this.showBulkScheduleDialog());
+    const bulkScheduleBtn = this.container.querySelector(
+      '[data-action="bulk-schedule"]',
+    );
+    bulkScheduleBtn?.addEventListener("click", () =>
+      this.showBulkScheduleDialog(),
+    );
 
-    const applyFiltersBtn = this.container.querySelector('[data-action="apply-filters"]');
-    applyFiltersBtn?.addEventListener('click', () => this.applyFilters());
+    const applyFiltersBtn = this.container.querySelector(
+      '[data-action="apply-filters"]',
+    );
+    applyFiltersBtn?.addEventListener("click", () => this.applyFilters());
 
-    const clearFiltersBtn = this.container.querySelector('[data-action="clear-filters"]');
-    clearFiltersBtn?.addEventListener('click', () => this.clearFilters());
+    const clearFiltersBtn = this.container.querySelector(
+      '[data-action="clear-filters"]',
+    );
+    clearFiltersBtn?.addEventListener("click", () => this.clearFilters());
   }
 
   private async loadWorklist() {
     try {
-      const worklistContainer = document.getElementById('worklist-container');
+      const worklistContainer = document.getElementById("worklist-container");
       if (!worklistContainer) return;
 
-      const worklist = await this.imagingService.getWorklist(this.currentFilters);
+      const worklist = await this.imagingService.getWorklist(
+        this.currentFilters,
+      );
       this.worklist.render(worklistContainer, this.currentFilters);
     } catch (error) {
-      console.error('Error loading worklist:', error);
-      this.showError('Failed to load worklist');
+      console.error("Error loading worklist:", error);
+      this.showError("Failed to load worklist");
     }
   }
 
   private async loadStatistics() {
     try {
-      const stats = await this.imagingService.getWorklistStats(this.currentFilters);
+      const stats = await this.imagingService.getWorklistStats(
+        this.currentFilters,
+      );
 
-      const scheduled = document.getElementById('stat-scheduled');
-      const inProgress = document.getElementById('stat-in-progress');
-      const completed = document.getElementById('stat-completed');
-      const waiting = document.getElementById('stat-waiting');
+      const scheduled = document.getElementById("stat-scheduled");
+      const inProgress = document.getElementById("stat-in-progress");
+      const completed = document.getElementById("stat-completed");
+      const waiting = document.getElementById("stat-waiting");
 
-      if (scheduled) scheduled.textContent = stats.scheduled?.toString() || '0';
-      if (inProgress) inProgress.textContent = stats.inProgress?.toString() || '0';
-      if (completed) completed.textContent = stats.completed?.toString() || '0';
-      if (waiting) waiting.textContent = stats.avgWaitTime || '0 min';
+      if (scheduled) scheduled.textContent = stats.scheduled?.toString() || "0";
+      if (inProgress)
+        inProgress.textContent = stats.inProgress?.toString() || "0";
+      if (completed) completed.textContent = stats.completed?.toString() || "0";
+      if (waiting) waiting.textContent = stats.avgWaitTime || "0 min";
     } catch (error) {
-      console.error('Error loading statistics:', error);
+      console.error("Error loading statistics:", error);
     }
   }
 
   private applyFilters() {
-    const date = (document.getElementById('filter-date') as HTMLInputElement)?.value;
-    const modality = (document.getElementById('filter-modality') as HTMLSelectElement)?.value;
-    const status = (document.getElementById('filter-status') as HTMLSelectElement)?.value;
-    const priority = (document.getElementById('filter-priority') as HTMLSelectElement)?.value;
-    const station = (document.getElementById('filter-station') as HTMLSelectElement)?.value;
+    const date = (document.getElementById("filter-date") as HTMLInputElement)
+      ?.value;
+    const modality = (
+      document.getElementById("filter-modality") as HTMLSelectElement
+    )?.value;
+    const status = (
+      document.getElementById("filter-status") as HTMLSelectElement
+    )?.value;
+    const priority = (
+      document.getElementById("filter-priority") as HTMLSelectElement
+    )?.value;
+    const station = (
+      document.getElementById("filter-station") as HTMLSelectElement
+    )?.value;
 
     this.currentFilters = {
       ...(date && { scheduledDate: date }),
@@ -186,11 +208,14 @@ export class WorklistPage {
   }
 
   private clearFilters() {
-    (document.getElementById('filter-date') as HTMLInputElement).value = new Date().toISOString().split('T')[0];
-    (document.getElementById('filter-modality') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-status') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-priority') as HTMLSelectElement).value = '';
-    (document.getElementById('filter-station') as HTMLSelectElement).value = '';
+    (document.getElementById("filter-date") as HTMLInputElement).value =
+      new Date().toISOString().split("T")[0];
+    (document.getElementById("filter-modality") as HTMLSelectElement).value =
+      "";
+    (document.getElementById("filter-status") as HTMLSelectElement).value = "";
+    (document.getElementById("filter-priority") as HTMLSelectElement).value =
+      "";
+    (document.getElementById("filter-station") as HTMLSelectElement).value = "";
 
     this.currentFilters = {};
     this.loadWorklist();
@@ -199,7 +224,7 @@ export class WorklistPage {
 
   private showBulkScheduleDialog() {
     // TODO: Implement bulk scheduling dialog
-    alert('Bulk scheduling dialog');
+    alert("Bulk scheduling dialog");
   }
 
   private showError(message: string) {
@@ -207,6 +232,6 @@ export class WorklistPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

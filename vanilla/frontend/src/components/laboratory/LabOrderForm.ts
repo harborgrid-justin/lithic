@@ -8,7 +8,10 @@ export class LabOrderForm {
   private onSubmit?: (orderData: any) => void;
   private panels: any[] = [];
 
-  constructor(container: HTMLElement, options: { onSubmit?: (orderData: any) => void } = {}) {
+  constructor(
+    container: HTMLElement,
+    options: { onSubmit?: (orderData: any) => void } = {},
+  ) {
     this.container = container;
     this.onSubmit = options.onSubmit;
   }
@@ -77,9 +80,13 @@ export class LabOrderForm {
                 <label for="panelSelect">Select Panel</label>
                 <select id="panelSelect" name="panelSelect">
                   <option value="">-- Custom Order --</option>
-                  ${this.panels.map(panel => `
+                  ${this.panels
+                    .map(
+                      (panel) => `
                     <option value="${panel.id}">${panel.name}</option>
-                  `).join('')}
+                  `,
+                    )
+                    .join("")}
                 </select>
               </div>
             </div>
@@ -113,10 +120,14 @@ export class LabOrderForm {
   }
 
   private setDefaultDateTime(): void {
-    const dateTimeInput = this.container.querySelector('#orderDateTime') as HTMLInputElement;
+    const dateTimeInput = this.container.querySelector(
+      "#orderDateTime",
+    ) as HTMLInputElement;
     if (dateTimeInput) {
       const now = new Date();
-      const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+      const localDateTime = new Date(
+        now.getTime() - now.getTimezoneOffset() * 60000,
+      )
         .toISOString()
         .slice(0, 16);
       dateTimeInput.value = localDateTime;
@@ -124,18 +135,20 @@ export class LabOrderForm {
   }
 
   private attachEventListeners(): void {
-    const form = this.container.querySelector('#labOrderForm') as HTMLFormElement;
-    const cancelBtn = this.container.querySelector('#cancelBtn');
+    const form = this.container.querySelector(
+      "#labOrderForm",
+    ) as HTMLFormElement;
+    const cancelBtn = this.container.querySelector("#cancelBtn");
 
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         this.handleSubmit(form);
       });
     }
 
     if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
+      cancelBtn.addEventListener("click", () => {
         form?.reset();
         this.setDefaultDateTime();
       });
@@ -145,16 +158,16 @@ export class LabOrderForm {
   private handleSubmit(form: HTMLFormElement): void {
     const formData = new FormData(form);
     const orderData: any = {
-      patientId: formData.get('patientId'),
-      patientName: formData.get('patientName'),
-      patientMRN: formData.get('patientMRN'),
-      orderingProviderId: formData.get('orderingProviderId'),
-      orderingProviderName: formData.get('orderingProviderName'),
-      priority: formData.get('priority'),
-      orderDateTime: new Date(formData.get('orderDateTime') as string),
-      clinicalInfo: formData.get('clinicalInfo') || undefined,
-      diagnosis: formData.get('diagnosis') || undefined,
-      tests: []
+      patientId: formData.get("patientId"),
+      patientName: formData.get("patientName"),
+      patientMRN: formData.get("patientMRN"),
+      orderingProviderId: formData.get("orderingProviderId"),
+      orderingProviderName: formData.get("orderingProviderName"),
+      priority: formData.get("priority"),
+      orderDateTime: new Date(formData.get("orderDateTime") as string),
+      clinicalInfo: formData.get("clinicalInfo") || undefined,
+      diagnosis: formData.get("diagnosis") || undefined,
+      tests: [],
     };
 
     if (this.onSubmit) {
@@ -163,6 +176,6 @@ export class LabOrderForm {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Insurance } from '@/types/patient';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { formatDate } from '@/lib/utils';
-import { Shield, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Insurance } from "@/types/patient";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils";
+import { Shield, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
 interface InsuranceCardProps {
   insurance: Insurance;
@@ -13,18 +13,22 @@ interface InsuranceCardProps {
   onEdit?: (insurance: Insurance) => void;
 }
 
-export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProps) {
+export function InsuranceCard({
+  insurance,
+  onVerify,
+  onEdit,
+}: InsuranceCardProps) {
   const typeColors = {
-    primary: 'default' as const,
-    secondary: 'secondary' as const,
-    tertiary: 'outline' as const,
+    primary: "default" as const,
+    secondary: "secondary" as const,
+    tertiary: "outline" as const,
   };
 
   const statusColors = {
-    active: 'success' as const,
-    inactive: 'secondary' as const,
-    pending: 'warning' as const,
-    expired: 'danger' as const,
+    active: "success" as const,
+    inactive: "secondary" as const,
+    pending: "warning" as const,
+    expired: "danger" as const,
   };
 
   return (
@@ -36,9 +40,7 @@ export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProp
             <CardTitle className="text-lg">{insurance.provider}</CardTitle>
           </div>
           <div className="flex gap-2">
-            <Badge variant={typeColors[insurance.type]}>
-              {insurance.type}
-            </Badge>
+            <Badge variant={typeColors[insurance.type]}>{insurance.type}</Badge>
             <Badge variant={statusColors[insurance.status]}>
               {insurance.status}
             </Badge>
@@ -49,11 +51,15 @@ export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProp
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-sm text-gray-500">Policy Number</label>
-            <div className="font-medium font-mono">{insurance.policyNumber}</div>
+            <div className="font-medium font-mono">
+              {insurance.policyNumber}
+            </div>
           </div>
           <div>
             <label className="text-sm text-gray-500">Group Number</label>
-            <div className="font-medium font-mono">{insurance.groupNumber || 'N/A'}</div>
+            <div className="font-medium font-mono">
+              {insurance.groupNumber || "N/A"}
+            </div>
           </div>
           <div>
             <label className="text-sm text-gray-500">Subscriber ID</label>
@@ -65,11 +71,15 @@ export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProp
           </div>
           <div>
             <label className="text-sm text-gray-500">Relationship</label>
-            <div className="font-medium capitalize">{insurance.subscriberRelationship}</div>
+            <div className="font-medium capitalize">
+              {insurance.subscriberRelationship}
+            </div>
           </div>
           <div>
             <label className="text-sm text-gray-500">Effective Date</label>
-            <div className="font-medium">{formatDate(insurance.effectiveDate)}</div>
+            <div className="font-medium">
+              {formatDate(insurance.effectiveDate)}
+            </div>
           </div>
         </div>
 
@@ -83,13 +93,19 @@ export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProp
               {insurance.deductible !== undefined && (
                 <div>
                   <label className="text-sm text-gray-500">Deductible</label>
-                  <div className="font-medium font-mono">${insurance.deductible}</div>
+                  <div className="font-medium font-mono">
+                    ${insurance.deductible}
+                  </div>
                 </div>
               )}
               {insurance.outOfPocketMax !== undefined && (
                 <div>
-                  <label className="text-sm text-gray-500">Out of Pocket Max</label>
-                  <div className="font-medium font-mono">${insurance.outOfPocketMax}</div>
+                  <label className="text-sm text-gray-500">
+                    Out of Pocket Max
+                  </label>
+                  <div className="font-medium font-mono">
+                    ${insurance.outOfPocketMax}
+                  </div>
                 </div>
               )}
             </div>
@@ -103,7 +119,9 @@ export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProp
                 <>
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span className="text-sm text-gray-600">
-                    Verified {insurance.lastVerified && 'on ' + formatDate(insurance.lastVerified)}
+                    Verified{" "}
+                    {insurance.lastVerified &&
+                      "on " + formatDate(insurance.lastVerified)}
                   </span>
                 </>
               ) : (
@@ -141,14 +159,15 @@ export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProp
               <div className="flex justify-between">
                 <span className="text-gray-600">Coverage Active:</span>
                 <span className="font-medium">
-                  {insurance.eligibilityResponse.coverageActive ? 'Yes' : 'No'}
+                  {insurance.eligibilityResponse.coverageActive ? "Yes" : "No"}
                 </span>
               </div>
               {insurance.eligibilityResponse.deductibleMet !== undefined && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Deductible Met:</span>
                   <span className="font-medium">
-                    ${insurance.eligibilityResponse.deductibleMet} / ${insurance.eligibilityResponse.deductible}
+                    ${insurance.eligibilityResponse.deductibleMet} / $
+                    {insurance.eligibilityResponse.deductible}
                   </span>
                 </div>
               )}
@@ -156,7 +175,8 @@ export function InsuranceCard({ insurance, onVerify, onEdit }: InsuranceCardProp
                 <div className="flex justify-between">
                   <span className="text-gray-600">Out of Pocket Met:</span>
                   <span className="font-medium">
-                    ${insurance.eligibilityResponse.outOfPocketMet} / ${insurance.eligibilityResponse.outOfPocketMax}
+                    ${insurance.eligibilityResponse.outOfPocketMet} / $
+                    {insurance.eligibilityResponse.outOfPocketMax}
                   </span>
                 </div>
               )}

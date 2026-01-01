@@ -3,9 +3,9 @@
  * Calendar Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
-import { formatDate } from '../../utils/format';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
+import { formatDate } from "../../utils/format";
 
 export interface CalendarProps {
   selectedDate?: Date;
@@ -29,11 +29,11 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
   }
 
   protected getClassName(): string {
-    return 'calendar';
+    return "calendar";
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
 
     const header = this.createHeader();
@@ -47,29 +47,29 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
   }
 
   private createHeader(): HTMLElement {
-    const header = createElement('div', {
-      className: 'calendar-header',
+    const header = createElement("div", {
+      className: "calendar-header",
     });
 
-    const prevBtn = createElement('button', {
-      className: 'calendar-nav-btn',
-      innerHTML: '‹',
+    const prevBtn = createElement("button", {
+      className: "calendar-nav-btn",
+      innerHTML: "‹",
       events: {
         click: () => this.changeMonth(-1),
       },
     });
 
-    const title = createElement('div', {
-      className: 'calendar-title',
+    const title = createElement("div", {
+      className: "calendar-title",
       textContent: formatDate(this.state.currentMonth, {
-        year: 'numeric',
-        month: 'long',
+        year: "numeric",
+        month: "long",
       }),
     });
 
-    const nextBtn = createElement('button', {
-      className: 'calendar-nav-btn',
-      innerHTML: '›',
+    const nextBtn = createElement("button", {
+      className: "calendar-nav-btn",
+      innerHTML: "›",
       events: {
         click: () => this.changeMonth(1),
       },
@@ -83,15 +83,15 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
   }
 
   private createWeekdays(): HTMLElement {
-    const weekdays = createElement('div', {
-      className: 'calendar-weekdays',
+    const weekdays = createElement("div", {
+      className: "calendar-weekdays",
     });
 
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     days.forEach((day) => {
-      const dayEl = createElement('div', {
-        className: 'calendar-weekday',
+      const dayEl = createElement("div", {
+        className: "calendar-weekday",
         textContent: day,
       });
       weekdays.appendChild(dayEl);
@@ -101,8 +101,8 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
   }
 
   private createDays(): HTMLElement {
-    const daysContainer = createElement('div', {
-      className: 'calendar-days',
+    const daysContainer = createElement("div", {
+      className: "calendar-days",
     });
 
     const year = this.state.currentMonth.getFullYear();
@@ -116,8 +116,8 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
 
     // Previous month days
     for (let i = 0; i < startDay; i++) {
-      const day = createElement('div', {
-        className: 'calendar-day calendar-day-other',
+      const day = createElement("div", {
+        className: "calendar-day calendar-day-other",
       });
       daysContainer.appendChild(day);
     }
@@ -133,20 +133,20 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
   }
 
   private createDay(date: Date): HTMLElement {
-    const classes = ['calendar-day'];
+    const classes = ["calendar-day"];
 
-    const isSelected = this.state.selectedDate &&
-      this.isSameDay(date, this.state.selectedDate);
+    const isSelected =
+      this.state.selectedDate && this.isSameDay(date, this.state.selectedDate);
 
     const isToday = this.isSameDay(date, new Date());
     const isDisabled = this.isDateDisabled(date);
 
-    if (isSelected) classes.push('calendar-day-selected');
-    if (isToday) classes.push('calendar-day-today');
-    if (isDisabled) classes.push('calendar-day-disabled');
+    if (isSelected) classes.push("calendar-day-selected");
+    if (isToday) classes.push("calendar-day-today");
+    if (isDisabled) classes.push("calendar-day-disabled");
 
-    const day = createElement('div', {
-      className: classes.join(' '),
+    const day = createElement("div", {
+      className: classes.join(" "),
       textContent: String(date.getDate()),
       events: {
         click: () => !isDisabled && this.handleDateClick(date),

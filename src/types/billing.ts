@@ -3,7 +3,7 @@
  * Agent 5: Billing
  */
 
-import type { BaseEntity } from './index';
+import type { BaseEntity } from "./index";
 
 // ============================================================================
 // Claim Types
@@ -44,31 +44,31 @@ export interface Claim extends BaseEntity {
 }
 
 export enum ClaimType {
-  PROFESSIONAL = 'PROFESSIONAL',
-  INSTITUTIONAL = 'INSTITUTIONAL',
-  DENTAL = 'DENTAL',
-  VISION = 'VISION',
-  PHARMACY = 'PHARMACY',
+  PROFESSIONAL = "PROFESSIONAL",
+  INSTITUTIONAL = "INSTITUTIONAL",
+  DENTAL = "DENTAL",
+  VISION = "VISION",
+  PHARMACY = "PHARMACY",
 }
 
 export enum FormType {
-  CMS_1500 = 'CMS_1500',
-  UB_04 = 'UB_04',
-  ADA_2019 = 'ADA_2019',
+  CMS_1500 = "CMS_1500",
+  UB_04 = "UB_04",
+  ADA_2019 = "ADA_2019",
 }
 
 export enum ClaimStatus {
-  DRAFT = 'DRAFT',
-  READY_TO_SUBMIT = 'READY_TO_SUBMIT',
-  SUBMITTED = 'SUBMITTED',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-  PENDING = 'PENDING',
-  PARTIALLY_PAID = 'PARTIALLY_PAID',
-  PAID = 'PAID',
-  DENIED = 'DENIED',
-  APPEALED = 'APPEALED',
-  VOIDED = 'VOIDED',
+  DRAFT = "DRAFT",
+  READY_TO_SUBMIT = "READY_TO_SUBMIT",
+  SUBMITTED = "SUBMITTED",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+  PENDING = "PENDING",
+  PARTIALLY_PAID = "PARTIALLY_PAID",
+  PAID = "PAID",
+  DENIED = "DENIED",
+  APPEALED = "APPEALED",
+  VOIDED = "VOIDED",
 }
 
 export interface ClaimNote extends BaseEntity {
@@ -79,12 +79,12 @@ export interface ClaimNote extends BaseEntity {
 }
 
 export enum NoteType {
-  GENERAL = 'GENERAL',
-  SUBMISSION = 'SUBMISSION',
-  FOLLOW_UP = 'FOLLOW_UP',
-  DENIAL = 'DENIAL',
-  APPEAL = 'APPEAL',
-  PAYMENT = 'PAYMENT',
+  GENERAL = "GENERAL",
+  SUBMISSION = "SUBMISSION",
+  FOLLOW_UP = "FOLLOW_UP",
+  DENIAL = "DENIAL",
+  APPEAL = "APPEAL",
+  PAYMENT = "PAYMENT",
 }
 
 // ============================================================================
@@ -114,14 +114,14 @@ export interface Charge extends BaseEntity {
 }
 
 export enum ChargeStatus {
-  DRAFT = 'DRAFT',
-  POSTED = 'POSTED',
-  SUBMITTED = 'SUBMITTED',
-  PAID = 'PAID',
-  PARTIALLY_PAID = 'PARTIALLY_PAID',
-  DENIED = 'DENIED',
-  ADJUSTED = 'ADJUSTED',
-  VOIDED = 'VOIDED',
+  DRAFT = "DRAFT",
+  POSTED = "POSTED",
+  SUBMITTED = "SUBMITTED",
+  PAID = "PAID",
+  PARTIALLY_PAID = "PARTIALLY_PAID",
+  DENIED = "DENIED",
+  ADJUSTED = "ADJUSTED",
+  VOIDED = "VOIDED",
 }
 
 // ============================================================================
@@ -150,29 +150,29 @@ export interface Payment extends BaseEntity {
 }
 
 export enum PaymentType {
-  INSURANCE = 'INSURANCE',
-  PATIENT = 'PATIENT',
-  REFUND = 'REFUND',
-  ADJUSTMENT = 'ADJUSTMENT',
+  INSURANCE = "INSURANCE",
+  PATIENT = "PATIENT",
+  REFUND = "REFUND",
+  ADJUSTMENT = "ADJUSTMENT",
 }
 
 export enum PaymentSource {
-  INSURANCE = 'INSURANCE',
-  PATIENT = 'PATIENT',
-  GUARANTOR = 'GUARANTOR',
-  THIRD_PARTY = 'THIRD_PARTY',
+  INSURANCE = "INSURANCE",
+  PATIENT = "PATIENT",
+  GUARANTOR = "GUARANTOR",
+  THIRD_PARTY = "THIRD_PARTY",
 }
 
 export enum PaymentMethod {
-  CASH = 'CASH',
-  CHECK = 'CHECK',
-  CREDIT_CARD = 'CREDIT_CARD',
-  DEBIT_CARD = 'DEBIT_CARD',
-  ACH = 'ACH',
-  WIRE_TRANSFER = 'WIRE_TRANSFER',
-  MONEY_ORDER = 'MONEY_ORDER',
-  ELECTRONIC = 'ELECTRONIC',
-  OTHER = 'OTHER',
+  CASH = "CASH",
+  CHECK = "CHECK",
+  CREDIT_CARD = "CREDIT_CARD",
+  DEBIT_CARD = "DEBIT_CARD",
+  ACH = "ACH",
+  WIRE_TRANSFER = "WIRE_TRANSFER",
+  MONEY_ORDER = "MONEY_ORDER",
+  ELECTRONIC = "ELECTRONIC",
+  OTHER = "OTHER",
 }
 
 export interface PaymentApplication extends BaseEntity {
@@ -203,14 +203,14 @@ export interface Adjustment extends BaseEntity {
 }
 
 export enum AdjustmentType {
-  CONTRACTUAL = 'CONTRACTUAL',
-  WRITE_OFF = 'WRITE_OFF',
-  COURTESY = 'COURTESY',
-  BAD_DEBT = 'BAD_DEBT',
-  CHARITY = 'CHARITY',
-  CORRECTION = 'CORRECTION',
-  REFUND = 'REFUND',
-  OTHER = 'OTHER',
+  CONTRACTUAL = "CONTRACTUAL",
+  WRITE_OFF = "WRITE_OFF",
+  COURTESY = "COURTESY",
+  BAD_DEBT = "BAD_DEBT",
+  CHARITY = "CHARITY",
+  CORRECTION = "CORRECTION",
+  REFUND = "REFUND",
+  OTHER = "OTHER",
 }
 
 // ============================================================================
@@ -233,24 +233,24 @@ export interface Denial extends BaseEntity {
 }
 
 export enum DenialCategory {
-  REGISTRATION = 'REGISTRATION',
-  ELIGIBILITY = 'ELIGIBILITY',
-  AUTHORIZATION = 'AUTHORIZATION',
-  CODING = 'CODING',
-  MEDICAL_NECESSITY = 'MEDICAL_NECESSITY',
-  TIMELY_FILING = 'TIMELY_FILING',
-  DUPLICATE = 'DUPLICATE',
-  COORDINATION_OF_BENEFITS = 'COORDINATION_OF_BENEFITS',
-  OTHER = 'OTHER',
+  REGISTRATION = "REGISTRATION",
+  ELIGIBILITY = "ELIGIBILITY",
+  AUTHORIZATION = "AUTHORIZATION",
+  CODING = "CODING",
+  MEDICAL_NECESSITY = "MEDICAL_NECESSITY",
+  TIMELY_FILING = "TIMELY_FILING",
+  DUPLICATE = "DUPLICATE",
+  COORDINATION_OF_BENEFITS = "COORDINATION_OF_BENEFITS",
+  OTHER = "OTHER",
 }
 
 export enum DenialStatus {
-  NEW = 'NEW',
-  WORKING = 'WORKING',
-  APPEALED = 'APPEALED',
-  RESUBMITTED = 'RESUBMITTED',
-  RESOLVED = 'RESOLVED',
-  WRITTEN_OFF = 'WRITTEN_OFF',
+  NEW = "NEW",
+  WORKING = "WORKING",
+  APPEALED = "APPEALED",
+  RESUBMITTED = "RESUBMITTED",
+  RESOLVED = "RESOLVED",
+  WRITTEN_OFF = "WRITTEN_OFF",
 }
 
 export interface Appeal extends BaseEntity {
@@ -270,25 +270,25 @@ export interface Appeal extends BaseEntity {
 }
 
 export enum AppealLevel {
-  FIRST = 'FIRST',
-  SECOND = 'SECOND',
-  THIRD = 'THIRD',
-  EXTERNAL = 'EXTERNAL',
+  FIRST = "FIRST",
+  SECOND = "SECOND",
+  THIRD = "THIRD",
+  EXTERNAL = "EXTERNAL",
 }
 
 export enum AppealStatus {
-  DRAFT = 'DRAFT',
-  SUBMITTED = 'SUBMITTED',
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-  WITHDRAWN = 'WITHDRAWN',
+  DRAFT = "DRAFT",
+  SUBMITTED = "SUBMITTED",
+  PENDING = "PENDING",
+  COMPLETED = "COMPLETED",
+  WITHDRAWN = "WITHDRAWN",
 }
 
 export enum AppealOutcome {
-  APPROVED = 'APPROVED',
-  PARTIALLY_APPROVED = 'PARTIALLY_APPROVED',
-  DENIED = 'DENIED',
-  PENDING_MORE_INFO = 'PENDING_MORE_INFO',
+  APPROVED = "APPROVED",
+  PARTIALLY_APPROVED = "PARTIALLY_APPROVED",
+  DENIED = "DENIED",
+  PENDING_MORE_INFO = "PENDING_MORE_INFO",
 }
 
 // ============================================================================
@@ -318,24 +318,24 @@ export interface Invoice extends BaseEntity {
 }
 
 export enum InvoiceStatus {
-  DRAFT = 'DRAFT',
-  OPEN = 'OPEN',
-  PARTIALLY_PAID = 'PARTIALLY_PAID',
-  PAID = 'PAID',
-  OVERDUE = 'OVERDUE',
-  IN_COLLECTIONS = 'IN_COLLECTIONS',
-  WRITTEN_OFF = 'WRITTEN_OFF',
-  VOIDED = 'VOIDED',
+  DRAFT = "DRAFT",
+  OPEN = "OPEN",
+  PARTIALLY_PAID = "PARTIALLY_PAID",
+  PAID = "PAID",
+  OVERDUE = "OVERDUE",
+  IN_COLLECTIONS = "IN_COLLECTIONS",
+  WRITTEN_OFF = "WRITTEN_OFF",
+  VOIDED = "VOIDED",
 }
 
 export enum CollectionStatus {
-  CURRENT = 'CURRENT',
-  DAYS_30 = 'DAYS_30',
-  DAYS_60 = 'DAYS_60',
-  DAYS_90 = 'DAYS_90',
-  DAYS_120_PLUS = 'DAYS_120_PLUS',
-  COLLECTIONS = 'COLLECTIONS',
-  BAD_DEBT = 'BAD_DEBT',
+  CURRENT = "CURRENT",
+  DAYS_30 = "DAYS_30",
+  DAYS_60 = "DAYS_60",
+  DAYS_90 = "DAYS_90",
+  DAYS_120_PLUS = "DAYS_120_PLUS",
+  COLLECTIONS = "COLLECTIONS",
+  BAD_DEBT = "BAD_DEBT",
 }
 
 export interface PaymentPlan extends BaseEntity {
@@ -355,17 +355,17 @@ export interface PaymentPlan extends BaseEntity {
 }
 
 export enum PaymentFrequency {
-  WEEKLY = 'WEEKLY',
-  BI_WEEKLY = 'BI_WEEKLY',
-  MONTHLY = 'MONTHLY',
-  QUARTERLY = 'QUARTERLY',
+  WEEKLY = "WEEKLY",
+  BI_WEEKLY = "BI_WEEKLY",
+  MONTHLY = "MONTHLY",
+  QUARTERLY = "QUARTERLY",
 }
 
 export enum PaymentPlanStatus {
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
-  DEFAULTED = 'DEFAULTED',
-  CANCELLED = 'CANCELLED',
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  DEFAULTED = "DEFAULTED",
+  CANCELLED = "CANCELLED",
 }
 
 export interface PaymentInstallment {
@@ -379,11 +379,11 @@ export interface PaymentInstallment {
 }
 
 export enum InstallmentStatus {
-  PENDING = 'PENDING',
-  PAID = 'PAID',
-  PARTIALLY_PAID = 'PARTIALLY_PAID',
-  OVERDUE = 'OVERDUE',
-  MISSED = 'MISSED',
+  PENDING = "PENDING",
+  PAID = "PAID",
+  PARTIALLY_PAID = "PARTIALLY_PAID",
+  OVERDUE = "OVERDUE",
+  MISSED = "MISSED",
 }
 
 // ============================================================================
@@ -415,16 +415,16 @@ export interface InsuranceVerification extends BaseEntity {
 }
 
 export enum VerificationStatus {
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-  PENDING = 'PENDING',
+  SUCCESS = "SUCCESS",
+  FAILED = "FAILED",
+  PENDING = "PENDING",
 }
 
 export enum EligibilityStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  TERMINATED = 'TERMINATED',
-  UNKNOWN = 'UNKNOWN',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  TERMINATED = "TERMINATED",
+  UNKNOWN = "UNKNOWN",
 }
 
 // ============================================================================
@@ -468,7 +468,7 @@ export interface CreateClaimDto {
   serviceDate: Date;
   billingProvider: string;
   renderingProvider: string;
-  charges: Omit<Charge, keyof BaseEntity | 'claimId'>[];
+  charges: Omit<Charge, keyof BaseEntity | "claimId">[];
   primaryDiagnosis: string;
   secondaryDiagnoses?: string[];
   priorAuthNumber?: string;

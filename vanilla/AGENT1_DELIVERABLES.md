@@ -15,7 +15,9 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 ### Location: `/home/user/lithic/vanilla/backend/`
 
 ### 1. Express Application Setup
+
 **File**: `/home/user/lithic/vanilla/backend/src/app.ts`
+
 - Complete Express.js server configuration
 - Security middleware (Helmet, CORS)
 - Compression and cookie parsing
@@ -26,6 +28,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 ### 2. Middleware Layer
 
 #### Authentication (`/src/middleware/auth.ts`)
+
 - JWT token verification and generation
 - Role-based access control (RBAC)
 - Permission-based authorization
@@ -34,6 +37,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 - Optional authentication middleware
 
 #### Error Handling (`/src/middleware/errorHandler.ts`)
+
 - Global error handler
 - Custom error classes (ValidationError, UnauthorizedError, etc.)
 - 404 handler
@@ -42,6 +46,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 - Unhandled rejection/exception handlers
 
 #### Request Validation (`/src/middleware/validator.ts`)
+
 - Joi-based validation schemas
 - Body, query, and params validation
 - Pre-built schemas for common patterns
@@ -49,6 +54,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 - User, patient, and appointment schemas
 
 #### Rate Limiting (`/src/middleware/rateLimiter.ts`)
+
 - General API rate limiter
 - Strict auth endpoint limiter (5 attempts/15min)
 - Password reset limiter (3 attempts/hour)
@@ -56,6 +62,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 - Sensitive operation limiter
 
 #### Audit Logging (`/src/middleware/audit.ts`)
+
 - HIPAA-compliant audit trails
 - PHI access logging
 - Authentication event logging
@@ -66,6 +73,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 ### 3. Utility Functions
 
 #### Logging (`/src/utils/logger.ts`)
+
 - Winston-based logging
 - File rotation (5MB max, 5 files)
 - Separate error log
@@ -74,6 +82,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 - Environment-based log levels
 
 #### Cryptography (`/src/utils/crypto.ts`)
+
 - AES-256-CBC encryption for PHI
 - bcrypt password hashing (12 rounds)
 - Secure token generation
@@ -83,6 +92,7 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 - Password strength validation
 
 #### Response Utilities (`/src/utils/response.ts`)
+
 - Standardized API responses
 - Success/error helpers
 - Pagination support
@@ -102,7 +112,9 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 ### Location: `/home/user/lithic/vanilla/frontend/`
 
 ### 1. Main Application
+
 **File**: `/home/user/lithic/vanilla/frontend/src/app.ts`
+
 - Application entry point
 - Routing system (login, register, dashboard)
 - Authentication state management
@@ -110,9 +122,11 @@ Built a complete enterprise healthcare infrastructure using **vanilla TypeScript
 - Layout integration
 
 ### 2. Base Component System
+
 **File**: `/home/user/lithic/vanilla/frontend/src/components/base/Component.ts`
 
 Custom component architecture providing:
+
 - Lifecycle methods (onMount, onUnmount, onPropsUpdate, onStateUpdate)
 - Props and state management
 - Component mounting/unmounting
@@ -127,6 +141,7 @@ Custom component architecture providing:
 All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 
 #### Button (`Button.ts`)
+
 - Multiple variants (primary, secondary, success, danger, warning, ghost)
 - Sizes (sm, md, lg)
 - Loading and disabled states
@@ -135,6 +150,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Type-safe click handlers
 
 #### Input (`Input.ts`)
+
 - Multiple input types (text, email, password, number, tel, etc.)
 - Label and helper text
 - Error state with validation
@@ -144,6 +160,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Auto-complete support
 
 #### Card (`Card.ts`)
+
 - Title and subtitle
 - Action buttons
 - Customizable padding
@@ -152,6 +169,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Dynamic content
 
 #### Modal (`Modal.ts`)
+
 - Multiple sizes (sm, md, lg, xl, full)
 - Header with close button
 - Body and footer sections
@@ -161,6 +179,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Smooth animations
 
 #### Table (`Table.ts`)
+
 - Column configuration
 - Sortable columns
 - Custom cell rendering
@@ -170,6 +189,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Loading state
 
 #### DataTable (`DataTable.ts`)
+
 - Extends Table with search
 - Pagination support
 - Client-side filtering
@@ -177,6 +197,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Navigation controls
 
 #### Tabs (`Tabs.ts`)
+
 - Multiple tab support
 - Active tab management
 - Disabled tabs
@@ -184,6 +205,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Accessible (ARIA attributes)
 
 #### Toast (`Toast.ts`)
+
 - Multiple types (success, error, warning, info)
 - Auto-dismiss with configurable duration
 - Position options (8 positions)
@@ -191,6 +213,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Global toast manager
 
 #### Dropdown (`Dropdown.ts`)
+
 - Option list with labels/values
 - Searchable variant
 - Disabled options
@@ -198,11 +221,13 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Click-outside to close
 
 #### Badge (`Badge.ts`)
+
 - Multiple variants (default, primary, success, danger, warning, info)
 - Sizes (sm, md, lg)
 - Rounded and outlined options
 
 #### Calendar (`Calendar.ts`)
+
 - Month navigation
 - Date selection
 - Min/max date constraints
@@ -211,6 +236,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 - Accessible weekday labels
 
 #### Form (`Form.ts`)
+
 - Dynamic field generation
 - Built-in validation
 - Submit/cancel actions
@@ -224,6 +250,7 @@ All components at `/home/user/lithic/vanilla/frontend/src/components/ui/`:
 Located at `/home/user/lithic/vanilla/frontend/src/components/layout/`:
 
 #### Header (`Header.ts`)
+
 - Logo and title
 - Menu toggle button
 - User information display
@@ -231,6 +258,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/components/layout/`:
 - Responsive design
 
 #### Sidebar (`Sidebar.ts`)
+
 - Navigation menu
 - Icon support
 - Active item highlighting
@@ -238,11 +266,13 @@ Located at `/home/user/lithic/vanilla/frontend/src/components/layout/`:
 - Click navigation
 
 #### Footer (`Footer.ts`)
+
 - Copyright notice
 - Link list
 - Configurable content
 
 #### Layout (`Layout.ts`)
+
 - Full page layout system
 - Header integration
 - Sidebar integration
@@ -256,6 +286,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/components/layout/`:
 Located at `/home/user/lithic/vanilla/frontend/src/services/`:
 
 #### API Service (`api.ts`)
+
 - Fetch API wrapper
 - GET, POST, PUT, PATCH, DELETE methods
 - Query parameter builder
@@ -266,6 +297,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/services/`:
 - Standardized response format
 
 #### Auth Service (`auth.ts`)
+
 - Login/logout
 - Registration
 - Token management
@@ -278,6 +310,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/services/`:
 - Auto token refresh
 
 #### Storage Service (`storage.ts`)
+
 - localStorage wrapper
 - sessionStorage wrapper
 - TTL support
@@ -291,7 +324,9 @@ Located at `/home/user/lithic/vanilla/frontend/src/services/`:
 Located at `/home/user/lithic/vanilla/frontend/src/utils/`:
 
 #### DOM Utilities (`dom.ts`)
+
 30+ DOM manipulation functions:
+
 - Element creation with options
 - Query selectors
 - Class manipulation
@@ -304,7 +339,9 @@ Located at `/home/user/lithic/vanilla/frontend/src/utils/`:
 - HTML sanitization
 
 #### Formatting (`format.ts`)
+
 20+ formatting functions:
+
 - Date/time formatting
 - Relative time (e.g., "2 hours ago")
 - Currency formatting
@@ -318,7 +355,9 @@ Located at `/home/user/lithic/vanilla/frontend/src/utils/`:
 - Duration formatting
 
 #### Validation (`validation.ts`)
+
 Comprehensive validation library:
+
 - Email validation
 - Password strength validation (HIPAA-compliant)
 - Phone number validation
@@ -337,6 +376,7 @@ Comprehensive validation library:
 Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 
 #### LoginPage (`LoginPage.ts`)
+
 - Email/password form
 - Field validation
 - Error handling
@@ -346,6 +386,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 - Auto-redirect on success
 
 #### RegisterPage (`RegisterPage.ts`)
+
 - Multi-field registration form
 - Password confirmation
 - Role selection
@@ -355,6 +396,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 - Auto-redirect on success
 
 #### DashboardPage (`DashboardPage.ts`)
+
 - Welcome header
 - Stats grid (4 KPI cards)
 - Recent appointments table
@@ -364,6 +406,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 - Mock data demonstration
 
 ### 8. Styling
+
 **File**: `/home/user/lithic/vanilla/frontend/src/styles/main.css`
 
 - CSS custom properties (variables)
@@ -377,6 +420,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 ### 9. Build Configuration
 
 #### Webpack (`webpack.config.js`)
+
 - Development and production modes
 - TypeScript compilation (ts-loader)
 - CSS handling
@@ -387,6 +431,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 - Proxy to backend API
 
 #### TypeScript (`tsconfig.json`)
+
 - Strict type checking
 - ES2020 target
 - DOM types
@@ -394,6 +439,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 - Path aliases support
 
 #### Package (`package.json`)
+
 - Dev server with HMR
 - Production build
 - Type checking
@@ -404,6 +450,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 ## Key Features
 
 ### Backend
+
 ✅ HIPAA-compliant audit logging
 ✅ JWT authentication with refresh tokens
 ✅ Role-based access control
@@ -419,6 +466,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 ✅ Password strength requirements
 
 ### Frontend
+
 ✅ Custom component-based architecture
 ✅ 14 production-ready UI components
 ✅ Type-safe service layer
@@ -438,12 +486,14 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 ## File Count
 
 **Backend**: 11 core files
+
 - 1 app setup
 - 5 middleware modules
 - 3 utility modules
 - 2 configuration files
 
 **Frontend**: 40+ core files
+
 - 1 main app
 - 1 base component class
 - 14 UI components
@@ -461,6 +511,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 ## Technology Stack
 
 ### Backend
+
 - **Runtime**: Node.js 20+
 - **Framework**: Express.js 4
 - **Language**: TypeScript 5
@@ -471,6 +522,7 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 - **Rate Limiting**: express-rate-limit 7
 
 ### Frontend
+
 - **Language**: TypeScript 5 (100% vanilla)
 - **Bundler**: Webpack 5
 - **Dev Server**: webpack-dev-server (HMR)
@@ -481,21 +533,25 @@ Located at `/home/user/lithic/vanilla/frontend/src/pages/`:
 ## Running the Application
 
 ### Backend
+
 ```bash
 cd /home/user/lithic/vanilla/backend
 npm install
 npm run dev  # Development with hot reload
 npm run build && npm start  # Production
 ```
+
 Backend runs on: `http://localhost:3000`
 
 ### Frontend
+
 ```bash
 cd /home/user/lithic/vanilla/frontend
 npm install
 npm run dev  # Development with HMR
 npm run build  # Production build
 ```
+
 Frontend runs on: `http://localhost:8080`
 
 ---
@@ -503,10 +559,12 @@ Frontend runs on: `http://localhost:8080`
 ## API Endpoints
 
 ### Health
+
 - `GET /health` - Server health check
 - `GET /api/v1` - API version info
 
 ### Authentication (Ready for implementation)
+
 - `POST /api/v1/auth/login`
 - `POST /api/v1/auth/register`
 - `POST /api/v1/auth/logout`
@@ -522,6 +580,7 @@ Frontend runs on: `http://localhost:8080`
 ## Security Features
 
 ### HIPAA Compliance
+
 ✅ All PHI access logged to audit logs
 ✅ Data encryption at rest (AES-256)
 ✅ Session timeouts (30 minutes)
@@ -531,6 +590,7 @@ Frontend runs on: `http://localhost:8080`
 ✅ Sensitive data masking in logs
 
 ### Authentication
+
 ✅ JWT-based authentication
 ✅ Refresh token rotation
 ✅ bcrypt password hashing (12 rounds)

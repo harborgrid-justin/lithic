@@ -4,14 +4,14 @@
  * Worker implementations for processing various job types
  */
 
-import { queueProcessor, Job } from './processor';
-import { JobType } from './jobs';
-import { logger } from '../utils/logger';
-import { defaultFHIRClient } from '../integrations/fhir/client';
-import { surescriptsClient } from '../integrations/external/surescripts';
-import { clearinghouseClient } from '../integrations/external/clearinghouse';
-import { eligibilityClient } from '../integrations/external/eligibility';
-import { triggerWebhook } from '../integrations/webhooks/manager';
+import { queueProcessor, Job } from "./processor";
+import { JobType } from "./jobs";
+import { logger } from "../utils/logger";
+import { defaultFHIRClient } from "../integrations/fhir/client";
+import { surescriptsClient } from "../integrations/external/surescripts";
+import { clearinghouseClient } from "../integrations/external/clearinghouse";
+import { eligibilityClient } from "../integrations/external/eligibility";
+import { triggerWebhook } from "../integrations/webhooks/manager";
 
 /**
  * Register all job workers
@@ -23,36 +23,63 @@ export function registerAllWorkers(): void {
   queueProcessor.registerHandler(JobType.PATIENT_MERGE, patientMergeWorker);
 
   // Clinical workers
-  queueProcessor.registerHandler(JobType.RESULT_NOTIFICATION, resultNotificationWorker);
-  queueProcessor.registerHandler(JobType.LAB_ORDER_SUBMIT, labOrderSubmitWorker);
-  queueProcessor.registerHandler(JobType.IMAGING_ORDER_SUBMIT, imagingOrderSubmitWorker);
+  queueProcessor.registerHandler(
+    JobType.RESULT_NOTIFICATION,
+    resultNotificationWorker,
+  );
+  queueProcessor.registerHandler(
+    JobType.LAB_ORDER_SUBMIT,
+    labOrderSubmitWorker,
+  );
+  queueProcessor.registerHandler(
+    JobType.IMAGING_ORDER_SUBMIT,
+    imagingOrderSubmitWorker,
+  );
 
   // Billing workers
   queueProcessor.registerHandler(JobType.CLAIM_SUBMIT, claimSubmitWorker);
-  queueProcessor.registerHandler(JobType.CLAIM_STATUS_CHECK, claimStatusCheckWorker);
-  queueProcessor.registerHandler(JobType.ELIGIBILITY_CHECK, eligibilityCheckWorker);
+  queueProcessor.registerHandler(
+    JobType.CLAIM_STATUS_CHECK,
+    claimStatusCheckWorker,
+  );
+  queueProcessor.registerHandler(
+    JobType.ELIGIBILITY_CHECK,
+    eligibilityCheckWorker,
+  );
   queueProcessor.registerHandler(JobType.ERA_PROCESS, eraProcessWorker);
 
   // Prescription workers
-  queueProcessor.registerHandler(JobType.PRESCRIPTION_SEND, prescriptionSendWorker);
-  queueProcessor.registerHandler(JobType.PRESCRIPTION_STATUS, prescriptionStatusWorker);
+  queueProcessor.registerHandler(
+    JobType.PRESCRIPTION_SEND,
+    prescriptionSendWorker,
+  );
+  queueProcessor.registerHandler(
+    JobType.PRESCRIPTION_STATUS,
+    prescriptionStatusWorker,
+  );
 
   // Integration workers
   queueProcessor.registerHandler(JobType.FHIR_SYNC, fhirSyncWorker);
   queueProcessor.registerHandler(JobType.HL7_SEND, hl7SendWorker);
-  queueProcessor.registerHandler(JobType.WEBHOOK_DELIVERY, webhookDeliveryWorker);
+  queueProcessor.registerHandler(
+    JobType.WEBHOOK_DELIVERY,
+    webhookDeliveryWorker,
+  );
 
   // Analytics workers
   queueProcessor.registerHandler(JobType.REPORT_GENERATE, reportGenerateWorker);
   queueProcessor.registerHandler(JobType.DATA_EXPORT, dataExportWorker);
-  queueProcessor.registerHandler(JobType.ANALYTICS_UPDATE, analyticsUpdateWorker);
+  queueProcessor.registerHandler(
+    JobType.ANALYTICS_UPDATE,
+    analyticsUpdateWorker,
+  );
 
   // Maintenance workers
   queueProcessor.registerHandler(JobType.AUDIT_LOG_ARCHIVE, auditArchiveWorker);
   queueProcessor.registerHandler(JobType.DATA_CLEANUP, dataCleanupWorker);
   queueProcessor.registerHandler(JobType.BACKUP, backupWorker);
 
-  logger.info('All job workers registered');
+  logger.info("All job workers registered");
 }
 
 /**
@@ -61,7 +88,7 @@ export function registerAllWorkers(): void {
 async function patientSyncWorker(job: Job): Promise<any> {
   const { patientId, source, destination } = job.data;
 
-  logger.info('Processing patient sync', { patientId, source, destination });
+  logger.info("Processing patient sync", { patientId, source, destination });
 
   // Fetch patient from source
   // Transform to destination format
@@ -81,7 +108,7 @@ async function patientSyncWorker(job: Job): Promise<any> {
 async function patientExportWorker(job: Job): Promise<any> {
   const { patientId, format, destination } = job.data;
 
-  logger.info('Processing patient export', { patientId, format });
+  logger.info("Processing patient export", { patientId, format });
 
   // Fetch patient data
   // Format data
@@ -102,7 +129,7 @@ async function patientExportWorker(job: Job): Promise<any> {
 async function patientMergeWorker(job: Job): Promise<any> {
   const { sourcePatientId, targetPatientId } = job.data;
 
-  logger.info('Processing patient merge', { sourcePatientId, targetPatientId });
+  logger.info("Processing patient merge", { sourcePatientId, targetPatientId });
 
   // Merge patient records
   // Update references
@@ -123,7 +150,7 @@ async function patientMergeWorker(job: Job): Promise<any> {
 async function resultNotificationWorker(job: Job): Promise<any> {
   const { resultId, patientId, providerId, resultType, critical } = job.data;
 
-  logger.info('Processing result notification', {
+  logger.info("Processing result notification", {
     resultId,
     resultType,
     critical,
@@ -134,7 +161,7 @@ async function resultNotificationWorker(job: Job): Promise<any> {
   // Send notifications
   // Trigger webhook if configured
 
-  await triggerWebhook('result.available', {
+  await triggerWebhook("result.available", {
     resultId,
     patientId,
     providerId,
@@ -155,7 +182,7 @@ async function resultNotificationWorker(job: Job): Promise<any> {
 async function labOrderSubmitWorker(job: Job): Promise<any> {
   const { orderId, patientId, tests, priority } = job.data;
 
-  logger.info('Processing lab order submission', { orderId, priority });
+  logger.info("Processing lab order submission", { orderId, priority });
 
   // Format lab order
   // Send to lab system via HL7 or API
@@ -176,7 +203,7 @@ async function labOrderSubmitWorker(job: Job): Promise<any> {
 async function imagingOrderSubmitWorker(job: Job): Promise<any> {
   const { orderId, patientId, modality, priority } = job.data;
 
-  logger.info('Processing imaging order submission', { orderId, modality });
+  logger.info("Processing imaging order submission", { orderId, modality });
 
   // Format imaging order
   // Send to PACS/RIS
@@ -197,14 +224,14 @@ async function imagingOrderSubmitWorker(job: Job): Promise<any> {
 async function claimSubmitWorker(job: Job): Promise<any> {
   const { claimId, patientId, providerId, payerId, totalCharges } = job.data;
 
-  logger.info('Processing claim submission', { claimId, totalCharges });
+  logger.info("Processing claim submission", { claimId, totalCharges });
 
   try {
     // Submit claim to clearinghouse
     const result = await clearinghouseClient.submitClaim(job.data);
 
     // Trigger webhook
-    await triggerWebhook('billing.claim.submitted', {
+    await triggerWebhook("billing.claim.submitted", {
       claimId,
       submissionId: result.submissionId,
       status: result.status,
@@ -217,7 +244,7 @@ async function claimSubmitWorker(job: Job): Promise<any> {
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    logger.error('Claim submission failed', { claimId, error: error.message });
+    logger.error("Claim submission failed", { claimId, error: error.message });
     throw error;
   }
 }
@@ -228,7 +255,7 @@ async function claimSubmitWorker(job: Job): Promise<any> {
 async function claimStatusCheckWorker(job: Job): Promise<any> {
   const { claimId } = job.data;
 
-  logger.info('Checking claim status', { claimId });
+  logger.info("Checking claim status", { claimId });
 
   try {
     const status = await clearinghouseClient.getClaimStatus(claimId);
@@ -239,7 +266,10 @@ async function claimStatusCheckWorker(job: Job): Promise<any> {
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    logger.error('Claim status check failed', { claimId, error: error.message });
+    logger.error("Claim status check failed", {
+      claimId,
+      error: error.message,
+    });
     throw error;
   }
 }
@@ -250,7 +280,7 @@ async function claimStatusCheckWorker(job: Job): Promise<any> {
 async function eligibilityCheckWorker(job: Job): Promise<any> {
   const { patientId, payerId, memberId, serviceDate } = job.data;
 
-  logger.info('Processing eligibility check', { patientId, payerId });
+  logger.info("Processing eligibility check", { patientId, payerId });
 
   try {
     const result = await eligibilityClient.verifyEligibility(job.data);
@@ -263,7 +293,10 @@ async function eligibilityCheckWorker(job: Job): Promise<any> {
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    logger.error('Eligibility check failed', { patientId, error: error.message });
+    logger.error("Eligibility check failed", {
+      patientId,
+      error: error.message,
+    });
     throw error;
   }
 }
@@ -274,7 +307,7 @@ async function eligibilityCheckWorker(job: Job): Promise<any> {
 async function eraProcessWorker(job: Job): Promise<any> {
   const { remittanceId } = job.data;
 
-  logger.info('Processing ERA', { remittanceId });
+  logger.info("Processing ERA", { remittanceId });
 
   try {
     const era = await clearinghouseClient.getRemittanceAdvice(remittanceId);
@@ -284,7 +317,7 @@ async function eraProcessWorker(job: Job): Promise<any> {
     // Post to accounting
     // Return result
 
-    await triggerWebhook('billing.payment.received', {
+    await triggerWebhook("billing.payment.received", {
       remittanceId,
       paymentAmount: era.paymentAmount,
       claimsCount: era.claims.length,
@@ -298,7 +331,10 @@ async function eraProcessWorker(job: Job): Promise<any> {
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    logger.error('ERA processing failed', { remittanceId, error: error.message });
+    logger.error("ERA processing failed", {
+      remittanceId,
+      error: error.message,
+    });
     throw error;
   }
 }
@@ -309,12 +345,12 @@ async function eraProcessWorker(job: Job): Promise<any> {
 async function prescriptionSendWorker(job: Job): Promise<any> {
   const { prescriptionId, patientId, pharmacyNCPDP, urgent } = job.data;
 
-  logger.info('Processing prescription send', { prescriptionId, urgent });
+  logger.info("Processing prescription send", { prescriptionId, urgent });
 
   try {
     const result = await surescriptsClient.sendNewPrescription(job.data);
 
-    await triggerWebhook('prescription.created', {
+    await triggerWebhook("prescription.created", {
       prescriptionId,
       messageId: result.messageId,
       status: result.status,
@@ -327,7 +363,10 @@ async function prescriptionSendWorker(job: Job): Promise<any> {
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    logger.error('Prescription send failed', { prescriptionId, error: error.message });
+    logger.error("Prescription send failed", {
+      prescriptionId,
+      error: error.message,
+    });
     throw error;
   }
 }
@@ -338,10 +377,11 @@ async function prescriptionSendWorker(job: Job): Promise<any> {
 async function prescriptionStatusWorker(job: Job): Promise<any> {
   const { prescriptionId } = job.data;
 
-  logger.info('Checking prescription status', { prescriptionId });
+  logger.info("Checking prescription status", { prescriptionId });
 
   try {
-    const status = await surescriptsClient.getPrescriptionStatus(prescriptionId);
+    const status =
+      await surescriptsClient.getPrescriptionStatus(prescriptionId);
 
     return {
       prescriptionId,
@@ -350,7 +390,7 @@ async function prescriptionStatusWorker(job: Job): Promise<any> {
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    logger.error('Prescription status check failed', {
+    logger.error("Prescription status check failed", {
       prescriptionId,
       error: error.message,
     });
@@ -364,22 +404,26 @@ async function prescriptionStatusWorker(job: Job): Promise<any> {
 async function fhirSyncWorker(job: Job): Promise<any> {
   const { resourceType, resourceId, operation, destination } = job.data;
 
-  logger.info('Processing FHIR sync', { resourceType, resourceId, operation });
+  logger.info("Processing FHIR sync", { resourceType, resourceId, operation });
 
   try {
     let result;
 
-    if (operation === 'create' || operation === 'update') {
+    if (operation === "create" || operation === "update") {
       // Fetch resource
       const resource = await defaultFHIRClient.read(resourceType, resourceId);
 
       // Send to destination
-      if (operation === 'create') {
+      if (operation === "create") {
         result = await defaultFHIRClient.create(resourceType, resource);
       } else {
-        result = await defaultFHIRClient.update(resourceType, resourceId, resource);
+        result = await defaultFHIRClient.update(
+          resourceType,
+          resourceId,
+          resource,
+        );
       }
-    } else if (operation === 'delete') {
+    } else if (operation === "delete") {
       result = await defaultFHIRClient.delete(resourceType, resourceId);
     }
 
@@ -391,7 +435,7 @@ async function fhirSyncWorker(job: Job): Promise<any> {
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    logger.error('FHIR sync failed', {
+    logger.error("FHIR sync failed", {
       resourceType,
       resourceId,
       error: error.message,
@@ -406,7 +450,7 @@ async function fhirSyncWorker(job: Job): Promise<any> {
 async function hl7SendWorker(job: Job): Promise<any> {
   const { messageType, message, destination } = job.data;
 
-  logger.info('Processing HL7 send', { messageType, destination });
+  logger.info("Processing HL7 send", { messageType, destination });
 
   // Parse message
   // Send to destination
@@ -426,7 +470,7 @@ async function hl7SendWorker(job: Job): Promise<any> {
 async function webhookDeliveryWorker(job: Job): Promise<any> {
   const { event, payload, url } = job.data;
 
-  logger.info('Processing webhook delivery', { event, url });
+  logger.info("Processing webhook delivery", { event, url });
 
   // Deliver webhook
   // This is typically handled by the webhook manager
@@ -445,7 +489,7 @@ async function webhookDeliveryWorker(job: Job): Promise<any> {
 async function reportGenerateWorker(job: Job): Promise<any> {
   const { reportType, parameters, format, requestedBy } = job.data;
 
-  logger.info('Processing report generation', { reportType, format });
+  logger.info("Processing report generation", { reportType, format });
 
   // Fetch data based on parameters
   // Generate report in requested format
@@ -467,7 +511,7 @@ async function reportGenerateWorker(job: Job): Promise<any> {
 async function dataExportWorker(job: Job): Promise<any> {
   const { dataType, filters, format, destination } = job.data;
 
-  logger.info('Processing data export', { dataType, format });
+  logger.info("Processing data export", { dataType, format });
 
   // Fetch data based on filters
   // Format data
@@ -488,7 +532,7 @@ async function dataExportWorker(job: Job): Promise<any> {
 async function analyticsUpdateWorker(job: Job): Promise<any> {
   const { metricType, period } = job.data;
 
-  logger.info('Processing analytics update', { metricType, period });
+  logger.info("Processing analytics update", { metricType, period });
 
   // Calculate metrics
   // Update analytics database
@@ -507,7 +551,7 @@ async function analyticsUpdateWorker(job: Job): Promise<any> {
 async function auditArchiveWorker(job: Job): Promise<any> {
   const { startDate, endDate, destination } = job.data;
 
-  logger.info('Processing audit archive', { startDate, endDate });
+  logger.info("Processing audit archive", { startDate, endDate });
 
   // Fetch audit logs
   // Compress and archive
@@ -529,7 +573,7 @@ async function auditArchiveWorker(job: Job): Promise<any> {
 async function dataCleanupWorker(job: Job): Promise<any> {
   const { dataType, olderThan, dryRun } = job.data;
 
-  logger.info('Processing data cleanup', { dataType, olderThan, dryRun });
+  logger.info("Processing data cleanup", { dataType, olderThan, dryRun });
 
   // Identify data to clean
   // If not dry run, delete data
@@ -549,7 +593,7 @@ async function dataCleanupWorker(job: Job): Promise<any> {
 async function backupWorker(job: Job): Promise<any> {
   const { backupType, destination, encrypt } = job.data;
 
-  logger.info('Processing backup', { backupType, encrypt });
+  logger.info("Processing backup", { backupType, encrypt });
 
   // Create backup
   // Encrypt if requested
@@ -560,7 +604,7 @@ async function backupWorker(job: Job): Promise<any> {
   return {
     backupType,
     encrypted: encrypt,
-    backed up: true,
+    backedUp: true,
     timestamp: new Date().toISOString(),
   };
 }

@@ -2,9 +2,9 @@
  * PatientHistoryPage - View patient history and audit log
  */
 
-import { PatientTimeline } from '../../components/patients/PatientTimeline';
-import PatientService from '../../services/PatientService';
-import { Patient } from '../../types/Patient';
+import { PatientTimeline } from "../../components/patients/PatientTimeline";
+import PatientService from "../../services/PatientService";
+import { Patient } from "../../types/Patient";
 
 export class PatientHistoryPage {
   private patientId: string;
@@ -13,7 +13,7 @@ export class PatientHistoryPage {
 
   constructor(patientId: string) {
     this.patientId = patientId;
-    this.timeline = new PatientTimeline('timelineContainer', patientId);
+    this.timeline = new PatientTimeline("timelineContainer", patientId);
     this.loadPatient();
   }
 
@@ -29,12 +29,12 @@ export class PatientHistoryPage {
         this.initializePage();
         await this.timeline.load();
       } else {
-        throw new Error(response.error || 'Patient not found');
+        throw new Error(response.error || "Patient not found");
       }
     } catch (error) {
-      console.error('Failed to load patient:', error);
-      alert('Failed to load patient. Please try again.');
-      window.location.href = '/patients';
+      console.error("Failed to load patient:", error);
+      alert("Failed to load patient. Please try again.");
+      window.location.href = "/patients";
     }
   }
 
@@ -88,12 +88,16 @@ export class PatientHistoryPage {
                 </div>
               </div>
 
-              ${this.patient.mergedInto ? `
+              ${
+                this.patient.mergedInto
+                  ? `
                 <div class="merge-notice">
                   <strong>⚠️ This patient record has been merged</strong>
                   <p>Merged into patient: ${this.patient.mergedInto}</p>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </div>
 
@@ -105,7 +109,7 @@ export class PatientHistoryPage {
     `;
 
     // Re-initialize timeline with new container
-    this.timeline = new PatientTimeline('timelineContainer', this.patientId);
+    this.timeline = new PatientTimeline("timelineContainer", this.patientId);
     this.timeline.load();
 
     this.attachEventListeners();
@@ -115,24 +119,24 @@ export class PatientHistoryPage {
    * Attach event listeners
    */
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('backBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const exportBtn = document.getElementById('exportBtn');
+    const backBtn = document.getElementById("backBtn");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const exportBtn = document.getElementById("exportBtn");
 
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
+      backBtn.addEventListener("click", () => {
         window.location.href = `/patients/${this.patientId}`;
       });
     }
 
     if (refreshBtn) {
-      refreshBtn.addEventListener('click', async () => {
+      refreshBtn.addEventListener("click", async () => {
         await this.timeline.refresh();
       });
     }
 
     if (exportBtn) {
-      exportBtn.addEventListener('click', () => {
+      exportBtn.addEventListener("click", () => {
         this.exportHistory();
       });
     }
@@ -159,29 +163,29 @@ export class PatientHistoryPage {
         };
 
         const blob = new Blob([JSON.stringify(data, null, 2)], {
-          type: 'application/json',
+          type: "application/json",
         });
 
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `patient-history-${this.patient.mrn}-${Date.now()}.json`;
         a.click();
 
         URL.revokeObjectURL(url);
 
-        alert('History exported successfully');
+        alert("History exported successfully");
       }
     } catch (error) {
-      console.error('Failed to export history:', error);
-      alert('Failed to export history. Please try again.');
+      console.error("Failed to export history:", error);
+      alert("Failed to export history. Please try again.");
     }
   }
 }
 
 // Initialize page
-document.addEventListener('DOMContentLoaded', () => {
-  const pathParts = window.location.pathname.split('/');
+document.addEventListener("DOMContentLoaded", () => {
+  const pathParts = window.location.pathname.split("/");
   const patientId = pathParts[2];
 
   if (patientId) {

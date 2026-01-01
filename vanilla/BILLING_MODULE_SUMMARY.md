@@ -1,11 +1,13 @@
 # Lithic Vanilla - Billing & Revenue Cycle Module
 
 ## Overview
+
 Complete Billing & Revenue Cycle Management system built with Express (backend) and Vanilla TypeScript (frontend). NO React, NO Next.js.
 
 ## Features Implemented
 
 ### Core Capabilities
+
 - ✅ Claims Management (EDI 837)
 - ✅ Electronic Remittance Advice (EDI 835/ERA)
 - ✅ Payment Posting & Reconciliation
@@ -17,6 +19,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - ✅ Revenue Analytics
 
 ### EDI Support
+
 - **EDI 837** - Claims submission (Professional/Institutional)
 - **EDI 835** - Electronic Remittance Advice processing
 - Automatic payment posting from ERA files
@@ -24,6 +27,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Batch claim submission
 
 ### Medical Coding
+
 - CPT code search and validation
 - ICD-10 diagnosis code lookup
 - NCCI edits checking
@@ -37,6 +41,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ## Backend Structure
 
 ### Routes (6 files)
+
 ```
 /home/user/lithic/vanilla/backend/src/routes/billing/
 ├── claims.ts          # Claim CRUD, submission, status checking, appeals
@@ -48,6 +53,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ```
 
 ### Controllers (2 files)
+
 ```
 /home/user/lithic/vanilla/backend/src/controllers/
 ├── BillingController.ts   # Handles payments, invoices, eligibility, coding, ERA
@@ -55,6 +61,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ```
 
 ### Services (3 files)
+
 ```
 /home/user/lithic/vanilla/backend/src/services/
 ├── BillingService.ts   # Business logic for billing operations
@@ -67,6 +74,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ## Frontend Structure
 
 ### Pages (10 files)
+
 ```
 /home/user/lithic/vanilla/frontend/src/pages/billing/
 ├── BillingDashboardPage.ts   # Main dashboard with KPIs and charts
@@ -82,6 +90,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ```
 
 ### Components (10 files)
+
 ```
 /home/user/lithic/vanilla/frontend/src/components/billing/
 ├── ClaimsList.ts          # Reusable claims table component
@@ -97,6 +106,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ```
 
 ### Services (1 file)
+
 ```
 /home/user/lithic/vanilla/frontend/src/services/
 └── BillingService.ts      # API client for all billing endpoints
@@ -107,6 +117,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ## API Endpoints
 
 ### Claims
+
 - `GET    /api/billing/claims` - List claims with filters
 - `GET    /api/billing/claims/:id` - Get claim details
 - `POST   /api/billing/claims` - Create new claim
@@ -121,6 +132,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - `GET    /api/billing/claims/stats/summary` - Claims statistics
 
 ### Payments
+
 - `GET    /api/billing/payments` - List payments
 - `POST   /api/billing/payments` - Create payment
 - `POST   /api/billing/payments/post` - Post payment to claim
@@ -131,6 +143,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - `DELETE /api/billing/payments/:id` - Void payment
 
 ### Invoices
+
 - `GET    /api/billing/invoices` - List invoices
 - `POST   /api/billing/invoices` - Create invoice
 - `POST   /api/billing/invoices/generate` - Generate from claim
@@ -140,6 +153,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - `GET    /api/billing/invoices/overdue/list` - Get overdue invoices
 
 ### Eligibility
+
 - `POST   /api/billing/eligibility/check` - Check eligibility
 - `POST   /api/billing/eligibility/verify` - Verify benefits
 - `POST   /api/billing/eligibility/estimate` - Estimate patient responsibility
@@ -147,6 +161,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - `GET    /api/billing/eligibility/patient/:id` - Get history
 
 ### Coding
+
 - `GET    /api/billing/coding/cpt/search` - Search CPT codes
 - `GET    /api/billing/coding/cpt/:code` - Get CPT details
 - `GET    /api/billing/coding/icd/search` - Search ICD codes
@@ -160,6 +175,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - `POST   /api/billing/coding/audit` - Audit coding
 
 ### ERA (Electronic Remittance Advice)
+
 - `POST   /api/billing/era/upload` - Upload EDI 835 file
 - `GET    /api/billing/era` - List ERA files
 - `GET    /api/billing/era/:id` - Get ERA details
@@ -177,6 +193,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ## Key Features
 
 ### 1. Claims Management
+
 - Complete claim lifecycle tracking
 - Draft, ready, submitted, paid, denied statuses
 - Line-item detail with CPT codes
@@ -186,6 +203,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Claims history and audit trail
 
 ### 2. EDI 837 Generation
+
 - Professional (837P) and Institutional (837I) formats
 - ISA/GS/ST segment generation
 - Proper formatting and delimiters
@@ -193,6 +211,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Validation before transmission
 
 ### 3. EDI 835 Processing
+
 - Parse ERA files
 - Extract payment information
 - Identify adjustments and denials
@@ -201,6 +220,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Denial reason code lookup
 
 ### 4. Payment Posting
+
 - Manual payment entry
 - ERA automatic posting
 - Adjustment tracking (CO, PR, OA groups)
@@ -209,6 +229,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Refund processing
 
 ### 5. Medical Coding
+
 - CPT code search by keyword/code
 - ICD-10 diagnosis lookup
 - Code validation
@@ -218,6 +239,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Code suggestion engine
 
 ### 6. Eligibility Verification
+
 - Real-time eligibility checks
 - Benefit verification
 - Deductible/copay/coinsurance tracking
@@ -226,6 +248,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Batch eligibility processing
 
 ### 7. Revenue Analytics
+
 - A/R aging (0-30, 31-60, 61-90, 90+ days)
 - Collection rate tracking
 - Denial rate analysis
@@ -234,6 +257,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - Days to payment analysis
 
 ### 8. Denial Management
+
 - Denial tracking by reason code
 - Appeal workflow
 - Deadline management
@@ -245,6 +269,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ## Technology Stack
 
 ### Backend
+
 - **Runtime:** Node.js with Express
 - **Language:** TypeScript
 - **Architecture:** MVC (Routes → Controllers → Services)
@@ -253,6 +278,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - **Validation:** Request validation middleware
 
 ### Frontend
+
 - **Language:** Vanilla TypeScript (NO frameworks)
 - **DOM Manipulation:** Pure JavaScript
 - **Routing:** Hash-based routing
@@ -261,6 +287,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - **Styling:** CSS (not included in this implementation)
 
 ### Data Models
+
 - Claims (professional/institutional)
 - Payments (insurance/patient)
 - Invoices
@@ -288,6 +315,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ## Production Readiness Checklist
 
 ### Completed ✅
+
 - [x] RESTful API design
 - [x] Authentication/authorization
 - [x] Input validation
@@ -301,6 +329,7 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 - [x] Revenue reporting
 
 ### Additional Considerations 🔧
+
 - [ ] Database integration (PostgreSQL/MySQL)
 - [ ] EDI library integration (node-x12 or similar)
 - [ ] Payer API integrations
@@ -322,25 +351,26 @@ Complete Billing & Revenue Cycle Management system built with Express (backend) 
 ## Usage Examples
 
 ### Create and Submit Claim
+
 ```typescript
 // Frontend
 const billingService = new BillingService();
 
 // Create claim
 const claim = await billingService.createClaim({
-  patientId: 'PAT001',
-  providerId: 'PROV001',
-  payerId: 'PAY001',
-  serviceDate: '2025-12-01',
-  diagnosisCodes: ['I10', 'E11.9'],
+  patientId: "PAT001",
+  providerId: "PROV001",
+  payerId: "PAY001",
+  serviceDate: "2025-12-01",
+  diagnosisCodes: ["I10", "E11.9"],
   lineItems: [
     {
-      procedureCode: '99213',
-      charge: 150.00,
+      procedureCode: "99213",
+      charge: 150.0,
       units: 1,
-      diagnosisPointers: ['A']
-    }
-  ]
+      diagnosisPointers: ["A"],
+    },
+  ],
 });
 
 // Submit claim (generates EDI 837)
@@ -348,27 +378,29 @@ await billingService.submitClaim(claim.id);
 ```
 
 ### Upload and Process ERA
+
 ```typescript
 // Upload ERA file
-const file = document.getElementById('eraFile').files[0];
+const file = document.getElementById("eraFile").files[0];
 const era = await billingService.uploadERA(file);
 
 // Auto-post payments
 await billingService.autoPostERA(era.id, {
-  autoResolveAdjustments: true
+  autoResolveAdjustments: true,
 });
 ```
 
 ### Check Eligibility
+
 ```typescript
 const result = await billingService.checkEligibility({
-  patientId: 'PAT001',
-  insuranceId: 'INS001',
-  serviceDate: '2025-12-01'
+  patientId: "PAT001",
+  insuranceId: "INS001",
+  serviceDate: "2025-12-01",
 });
 
-console.log('Deductible remaining:', result.deductible.individualRemaining);
-console.log('Copay:', result.copay.primaryCare);
+console.log("Deductible remaining:", result.deductible.individualRemaining);
+console.log("Copay:", result.copay.primaryCare);
 ```
 
 ---
@@ -376,6 +408,7 @@ console.log('Copay:', result.copay.primaryCare);
 ## Compliance & Standards
 
 ### Healthcare Standards
+
 - **HIPAA:** Patient data protection
 - **EDI X12:** Version 5010 (837/835)
 - **CPT:** Current Procedural Terminology
@@ -385,6 +418,7 @@ console.log('Copay:', result.copay.primaryCare);
 - **UB-04:** Institutional claim form
 
 ### Coding Standards
+
 - TypeScript strict mode
 - ESLint configuration
 - RESTful API conventions
@@ -427,6 +461,7 @@ console.log('Copay:', result.copay.primaryCare);
 ## Support & Documentation
 
 For questions or issues:
+
 - Review API endpoint documentation above
 - Check service method implementations
 - Refer to healthcare billing standards (HIPAA, X12)

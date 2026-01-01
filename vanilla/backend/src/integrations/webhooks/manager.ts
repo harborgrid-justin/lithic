@@ -5,29 +5,29 @@
  * signature verification, and delivery tracking
  */
 
-import axios, { AxiosError } from 'axios';
-import crypto from 'crypto';
-import { logger } from '../../utils/logger';
+import axios, { AxiosError } from "axios";
+import crypto from "crypto";
+import { logger } from "../../utils/logger";
 
 // Webhook Event Types
 export type WebhookEventType =
-  | 'patient.created'
-  | 'patient.updated'
-  | 'patient.deleted'
-  | 'appointment.created'
-  | 'appointment.updated'
-  | 'appointment.cancelled'
-  | 'order.created'
-  | 'order.completed'
-  | 'result.available'
-  | 'prescription.created'
-  | 'prescription.filled'
-  | 'encounter.created'
-  | 'encounter.completed'
-  | 'document.created'
-  | 'billing.claim.created'
-  | 'billing.claim.submitted'
-  | 'billing.payment.received';
+  | "patient.created"
+  | "patient.updated"
+  | "patient.deleted"
+  | "appointment.created"
+  | "appointment.updated"
+  | "appointment.cancelled"
+  | "order.created"
+  | "order.completed"
+  | "result.available"
+  | "prescription.created"
+  | "prescription.filled"
+  | "encounter.created"
+  | "encounter.completed"
+  | "document.created"
+  | "billing.claim.created"
+  | "billing.claim.submitted"
+  | "billing.payment.received";
 
 // Webhook Subscription
 export interface WebhookSubscription {
@@ -61,7 +61,7 @@ export interface WebhookDelivery {
   event: WebhookEventType;
   payload: WebhookPayload;
   attempt: number;
-  status: 'pending' | 'success' | 'failed' | 'retrying';
+  status: "pending" | "success" | "failed" | "retrying";
   statusCode?: number;
   response?: any;
   error?: string;
@@ -91,15 +91,17 @@ export class WebhookManager {
       maxRetries: config.maxRetries || 3,
       retryDelay: config.retryDelay || 1000,
       timeout: config.timeout || 10000,
-      signatureHeader: config.signatureHeader || 'X-Webhook-Signature',
-      timestampHeader: config.timestampHeader || 'X-Webhook-Timestamp',
+      signatureHeader: config.signatureHeader || "X-Webhook-Signature",
+      timestampHeader: config.timestampHeader || "X-Webhook-Timestamp",
     };
   }
 
   /**
    * Register a webhook subscription
    */
-  subscribe(subscription: Omit<WebhookSubscription, 'id' | 'createdAt' | 'updatedAt'>): WebhookSubscription {
+  subscribe(
+    subscription: Omit<WebhookSubscription, "id" | "createdAt" | "updatedAt">,
+  ): WebhookSubscription {
     const id = crypto.randomUUID();
     const now = new Date();
 
@@ -112,7 +114,7 @@ export class WebhookManager {
 
     this.subscriptions.set(id, newSubscription);
 
-    logger.info('Webhook subscription created', {
+    logger.info("Webhook subscription created", {
       id,
       url: subscription.url,
       events: subscription.events,
@@ -128,7 +130,7 @@ export class WebhookManager {
     const deleted = this.subscriptions.delete(subscriptionId);
 
     if (deleted) {
-      logger.info('Webhook subscription deleted', { subscriptionId });
+      logger.info("Webhook subscription deleted", { subscriptionId });
     }
 
     return deleted;
@@ -153,7 +155,7 @@ export class WebhookManager {
    */
   getSubscriptionsForEvent(event: WebhookEventType): WebhookSubscription[] {
     return Array.from(this.subscriptions.values()).filter(
-      (sub) => sub.active && sub.events.includes(event)
+      (sub) => sub.active && sub.events.includes(event),
     );
   }
 
@@ -162,7 +164,9 @@ export class WebhookManager {
    */
   updateSubscription(
     subscriptionId: string,
-    updates: Partial<Omit<WebhookSubscription, 'id' | 'createdAt' | 'updatedAt'>>
+    updates: Partial<
+      Omit<WebhookSubscription, "id" | "createdAt" | "updatedAt">
+    >,
   ): WebhookSubscription | undefined {
     const subscription = this.subscriptions.get(subscriptionId);
 
@@ -178,7 +182,7 @@ export class WebhookManager {
 
     this.subscriptions.set(subscriptionId, updated);
 
-    logger.info('Webhook subscription updated', { subscriptionId });
+    logger.info("Webhook subscription updated", { subscriptionId });
 
     return updated;
   }
@@ -186,7 +190,11 @@ export class WebhookManager {
   /**
    * Trigger webhook event
    */
-  async trigger(event: WebhookEventType, data: any, metadata?: Record<string, any>): Promise<void> {
+  async trigger(
+    event: WebhookEventType,
+    data: any,
+    metadata?: Record<string, any>,
+  ): Promise<void> {
     const payload: WebhookPayload = {
       id: crypto.randomUUID(),
       event,
@@ -197,7 +205,7 @@ export class WebhookManager {
 
     const subscriptions = this.getSubscriptionsForEvent(event);
 
-    logger.info('Triggering webhook event', {
+    logger.info("Triggering webhook event", {
       event,
       payloadId: payload.id,
       subscriptionCount: subscriptions.length,
@@ -205,7 +213,7 @@ export class WebhookManager {
 
     // Send to all subscriptions
     await Promise.allSettled(
-      subscriptions.map((subscription) => this.deliver(subscription, payload))
+      subscriptions.map((subscription) => this.deliver(subscription, payload)),
     );
   }
 
@@ -215,7 +223,7 @@ export class WebhookManager {
   private async deliver(
     subscription: WebhookSubscription,
     payload: WebhookPayload,
-    attempt: number = 1
+    attempt: number = 1,
   ): Promise<WebhookDelivery> {
     const deliveryId = crypto.randomUUID();
 
@@ -227,7 +235,7 @@ export class WebhookManager {
       event: payload.event,
       payload,
       attempt,
-      status: 'pending',
+      status: "pending",
       createdAt: new Date(),
     };
 
@@ -240,12 +248,12 @@ export class WebhookManager {
 
       // Prepare headers
       const headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         [this.config.signatureHeader]: signature,
         [this.config.timestampHeader]: timestamp,
-        'X-Webhook-Event': payload.event,
-        'X-Webhook-ID': payload.id,
-        'X-Webhook-Delivery-ID': deliveryId,
+        "X-Webhook-Event": payload.event,
+        "X-Webhook-ID": payload.id,
+        "X-Webhook-Delivery-ID": deliveryId,
         ...subscription.headers,
       };
 
@@ -256,14 +264,14 @@ export class WebhookManager {
       });
 
       // Update delivery status
-      delivery.status = 'success';
+      delivery.status = "success";
       delivery.statusCode = response.status;
       delivery.response = response.data;
       delivery.deliveredAt = new Date();
 
       this.deliveries.set(deliveryId, delivery);
 
-      logger.info('Webhook delivered successfully', {
+      logger.info("Webhook delivered successfully", {
         deliveryId,
         subscriptionId: subscription.id,
         event: payload.event,
@@ -275,13 +283,13 @@ export class WebhookManager {
     } catch (error: any) {
       const axiosError = error as AxiosError;
 
-      delivery.status = 'failed';
+      delivery.status = "failed";
       delivery.statusCode = axiosError.response?.status;
       delivery.error = axiosError.message;
 
       this.deliveries.set(deliveryId, delivery);
 
-      logger.error('Webhook delivery failed', {
+      logger.error("Webhook delivery failed", {
         deliveryId,
         subscriptionId: subscription.id,
         event: payload.event,
@@ -293,10 +301,10 @@ export class WebhookManager {
       // Retry if attempts remaining
       const maxRetries = subscription.retryAttempts || this.config.maxRetries;
       if (attempt < maxRetries) {
-        delivery.status = 'retrying';
+        delivery.status = "retrying";
         this.deliveries.set(deliveryId, delivery);
 
-        logger.info('Retrying webhook delivery', {
+        logger.info("Retrying webhook delivery", {
           deliveryId,
           attempt: attempt + 1,
           maxRetries,
@@ -319,19 +327,23 @@ export class WebhookManager {
   generateSignature(payload: WebhookPayload, secret: string): string {
     const payloadString = JSON.stringify(payload);
     return crypto
-      .createHmac('sha256', secret)
+      .createHmac("sha256", secret)
       .update(payloadString)
-      .digest('hex');
+      .digest("hex");
   }
 
   /**
    * Verify webhook signature
    */
-  verifySignature(payload: WebhookPayload, signature: string, secret: string): boolean {
+  verifySignature(
+    payload: WebhookPayload,
+    signature: string,
+    secret: string,
+  ): boolean {
     const expectedSignature = this.generateSignature(payload, secret);
     return crypto.timingSafeEqual(
       Buffer.from(signature),
-      Buffer.from(expectedSignature)
+      Buffer.from(expectedSignature),
     );
   }
 
@@ -347,7 +359,7 @@ export class WebhookManager {
    */
   getDeliveriesForSubscription(subscriptionId: string): WebhookDelivery[] {
     return Array.from(this.deliveries.values()).filter(
-      (delivery) => delivery.subscriptionId === subscriptionId
+      (delivery) => delivery.subscriptionId === subscriptionId,
     );
   }
 
@@ -356,7 +368,7 @@ export class WebhookManager {
    */
   getDeliveriesForPayload(payloadId: string): WebhookDelivery[] {
     return Array.from(this.deliveries.values()).filter(
-      (delivery) => delivery.payloadId === payloadId
+      (delivery) => delivery.payloadId === payloadId,
     );
   }
 
@@ -375,14 +387,15 @@ export class WebhookManager {
 
     const stats = {
       total: deliveries.length,
-      success: deliveries.filter((d) => d.status === 'success').length,
-      failed: deliveries.filter((d) => d.status === 'failed').length,
-      pending: deliveries.filter((d) => d.status === 'pending').length,
-      retrying: deliveries.filter((d) => d.status === 'retrying').length,
+      success: deliveries.filter((d) => d.status === "success").length,
+      failed: deliveries.filter((d) => d.status === "failed").length,
+      pending: deliveries.filter((d) => d.status === "pending").length,
+      retrying: deliveries.filter((d) => d.status === "retrying").length,
       successRate: 0,
     };
 
-    stats.successRate = stats.total > 0 ? (stats.success / stats.total) * 100 : 0;
+    stats.successRate =
+      stats.total > 0 ? (stats.success / stats.total) * 100 : 0;
 
     return stats;
   }
@@ -400,7 +413,7 @@ export class WebhookManager {
       }
     }
 
-    logger.info('Cleared old webhook deliveries', { count: cleared });
+    logger.info("Cleared old webhook deliveries", { count: cleared });
 
     return cleared;
   }
@@ -424,7 +437,7 @@ export const webhookManager = new WebhookManager();
 export async function triggerWebhook(
   event: WebhookEventType,
   data: any,
-  metadata?: Record<string, any>
+  metadata?: Record<string, any>,
 ): Promise<void> {
   return webhookManager.trigger(event, data, metadata);
 }

@@ -11,8 +11,8 @@ import {
   ReportType,
   ReportFormat,
   ReportSection,
-} from '../models/Analytics';
-import { AnalyticsService } from './AnalyticsService';
+} from "../models/Analytics";
+import { AnalyticsService } from "./AnalyticsService";
 
 export class ReportingService {
   private reports: Map<string, ReportConfig> = new Map();
@@ -27,7 +27,10 @@ export class ReportingService {
 
   // ==================== Report Configuration ====================
 
-  async getReports(filters?: { type?: ReportType; createdBy?: string }): Promise<ReportConfig[]> {
+  async getReports(filters?: {
+    type?: ReportType;
+    createdBy?: string;
+  }): Promise<ReportConfig[]> {
     let reports = Array.from(this.reports.values());
 
     if (filters?.type) {
@@ -38,7 +41,9 @@ export class ReportingService {
       reports = reports.filter((r) => r.createdBy === filters.createdBy);
     }
 
-    return reports.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+    return reports.sort(
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
+    );
   }
 
   async getReport(id: string): Promise<ReportConfig | null> {
@@ -46,10 +51,10 @@ export class ReportingService {
   }
 
   async createReport(
-    data: Omit<ReportConfig, 'id' | 'createdAt' | 'updatedAt'>,
-    userId: string
+    data: Omit<ReportConfig, "id" | "createdAt" | "updatedAt">,
+    userId: string,
   ): Promise<ReportConfig> {
-    const id = this.generateId('rpt');
+    const id = this.generateId("rpt");
     const now = new Date();
 
     const report: ReportConfig = {
@@ -65,11 +70,15 @@ export class ReportingService {
     return report;
   }
 
-  async updateReport(id: string, updates: Partial<ReportConfig>, userId: string): Promise<ReportConfig> {
+  async updateReport(
+    id: string,
+    updates: Partial<ReportConfig>,
+    userId: string,
+  ): Promise<ReportConfig> {
     const report = this.reports.get(id);
 
     if (!report) {
-      throw new Error('Report not found');
+      throw new Error("Report not found");
     }
 
     const updated: ReportConfig = {
@@ -87,7 +96,7 @@ export class ReportingService {
   async deleteReport(id: string): Promise<void> {
     // Also delete associated scheduled reports
     const scheduledReports = Array.from(this.scheduled.values()).filter(
-      (s) => s.reportConfigId === id
+      (s) => s.reportConfigId === id,
     );
 
     scheduledReports.forEach((s) => this.scheduled.delete(s.id));
@@ -97,14 +106,18 @@ export class ReportingService {
 
   // ==================== Report Generation ====================
 
-  async generateReport(reportId: string, userId: string, parameters?: Record<string, any>): Promise<ReportInstance> {
+  async generateReport(
+    reportId: string,
+    userId: string,
+    parameters?: Record<string, any>,
+  ): Promise<ReportInstance> {
     const config = this.reports.get(reportId);
 
     if (!config) {
-      throw new Error('Report configuration not found');
+      throw new Error("Report configuration not found");
     }
 
-    const instanceId = this.generateId('inst');
+    const instanceId = this.generateId("inst");
     const now = new Date();
 
     // Create instance
@@ -112,11 +125,11 @@ export class ReportingService {
       id: instanceId,
       configId: reportId,
       name: config.name,
-      status: 'running',
+      status: "running",
       startedAt: now,
       generatedBy: userId,
       parameters: parameters || {},
-      version: '1.0',
+      version: "1.0",
       createdAt: now,
     };
 
@@ -126,11 +139,11 @@ export class ReportingService {
     this.executeReportGeneration(instanceId, config).catch((error) => {
       const failed = this.instances.get(instanceId);
       if (failed) {
-        failed.status = 'failed';
+        failed.status = "failed";
         failed.completedAt = new Date();
         failed.error = {
           message: error.message,
-          code: 'GENERATION_FAILED',
+          code: "GENERATION_FAILED",
         };
         this.instances.set(instanceId, failed);
       }
@@ -139,7 +152,10 @@ export class ReportingService {
     return instance;
   }
 
-  private async executeReportGeneration(instanceId: string, config: ReportConfig): Promise<void> {
+  private async executeReportGeneration(
+    instanceId: string,
+    config: ReportConfig,
+  ): Promise<void> {
     const instance = this.instances.get(instanceId);
     if (!instance) return;
 
@@ -151,7 +167,10 @@ export class ReportingService {
       const metricsData = await this.fetchReportData(config);
 
       // Generate sections
-      const sectionsData = await this.generateSections(config.sections, metricsData);
+      const sectionsData = await this.generateSections(
+        config.sections,
+        metricsData,
+      );
 
       // Format output
       const outputFile = await this.formatReport(config, sectionsData);
@@ -159,7 +178,7 @@ export class ReportingService {
       const duration = Date.now() - startTime;
 
       // Update instance
-      instance.status = 'completed';
+      instance.status = "completed";
       instance.completedAt = new Date();
       instance.duration = duration;
       instance.fileUrl = outputFile.url;
@@ -172,7 +191,9 @@ export class ReportingService {
     }
   }
 
-  private async fetchReportData(config: ReportConfig): Promise<Map<string, any>> {
+  private async fetchReportData(
+    config: ReportConfig,
+  ): Promise<Map<string, any>> {
     const data = new Map<string, any>();
 
     // Fetch each metric
@@ -183,7 +204,7 @@ export class ReportingService {
         data.set(metricId, {
           metric,
           value: Math.random() * 100,
-          trend: Math.random() > 0.5 ? 'up' : 'down',
+          trend: Math.random() > 0.5 ? "up" : "down",
         });
       }
     }
@@ -193,7 +214,7 @@ export class ReportingService {
 
   private async generateSections(
     sections: ReportSection[],
-    metricsData: Map<string, any>
+    metricsData: Map<string, any>,
   ): Promise<Map<string, any>> {
     const sectionsData = new Map<string, any>();
 
@@ -203,20 +224,24 @@ export class ReportingService {
         generatedAt: new Date(),
       };
 
-      if (section.type === 'metrics_grid' && section.content?.metrics) {
+      if (section.type === "metrics_grid" && section.content?.metrics) {
         sectionData.values = section.content.metrics.map((metricId) => {
           return metricsData.get(metricId);
         });
       }
 
-      if (section.type === 'chart' && section.content?.chartConfig) {
+      if (section.type === "chart" && section.content?.chartConfig) {
         // Generate chart data
-        sectionData.chartData = await this.analyticsService.getWidgetData(section.content.chartConfig);
+        sectionData.chartData = await this.analyticsService.getWidgetData(
+          section.content.chartConfig,
+        );
       }
 
-      if (section.type === 'table' && section.content?.columns) {
+      if (section.type === "table" && section.content?.columns) {
         // Generate table data
-        sectionData.tableData = this.generateSampleTableData(section.content.columns);
+        sectionData.tableData = this.generateSampleTableData(
+          section.content.columns,
+        );
       }
 
       sectionsData.set(section.id, sectionData);
@@ -240,7 +265,7 @@ export class ReportingService {
 
   private async formatReport(
     config: ReportConfig,
-    sectionsData: Map<string, any>
+    sectionsData: Map<string, any>,
   ): Promise<{ url: string; size: number; recordCount: number }> {
     // In production, this would generate actual files (PDF, Excel, etc.)
     // For now, return simulated file info
@@ -257,7 +282,7 @@ export class ReportingService {
     const recordCount = sectionsData.size * 10;
 
     return {
-      url: `/api/reports/download/${this.generateId('file')}`,
+      url: `/api/reports/download/${this.generateId("file")}`,
       size: fileSize,
       recordCount,
     };
@@ -265,7 +290,10 @@ export class ReportingService {
 
   // ==================== Report Instances ====================
 
-  async getReportInstances(reportId?: string, userId?: string): Promise<ReportInstance[]> {
+  async getReportInstances(
+    reportId?: string,
+    userId?: string,
+  ): Promise<ReportInstance[]> {
     let instances = Array.from(this.instances.values());
 
     if (reportId) {
@@ -276,7 +304,9 @@ export class ReportingService {
       instances = instances.filter((i) => i.generatedBy === userId);
     }
 
-    return instances.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return instances.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
   }
 
   async getReportInstance(id: string): Promise<ReportInstance | null> {
@@ -305,10 +335,10 @@ export class ReportingService {
   }
 
   async createScheduledReport(
-    data: Omit<ScheduledReport, 'id' | 'createdAt' | 'updatedAt' | 'runs'>,
-    userId: string
+    data: Omit<ScheduledReport, "id" | "createdAt" | "updatedAt" | "runs">,
+    userId: string,
   ): Promise<ScheduledReport> {
-    const id = this.generateId('sched');
+    const id = this.generateId("sched");
     const now = new Date();
 
     const scheduled: ScheduledReport = {
@@ -326,12 +356,12 @@ export class ReportingService {
 
   async updateScheduledReport(
     id: string,
-    updates: Partial<ScheduledReport>
+    updates: Partial<ScheduledReport>,
   ): Promise<ScheduledReport> {
     const scheduled = this.scheduled.get(id);
 
     if (!scheduled) {
-      throw new Error('Scheduled report not found');
+      throw new Error("Scheduled report not found");
     }
 
     const updated: ScheduledReport = {
@@ -349,7 +379,10 @@ export class ReportingService {
     this.scheduled.delete(id);
   }
 
-  async toggleScheduledReport(id: string, isActive: boolean): Promise<ScheduledReport> {
+  async toggleScheduledReport(
+    id: string,
+    isActive: boolean,
+  ): Promise<ScheduledReport> {
     return this.updateScheduledReport(id, { isActive });
   }
 
@@ -357,18 +390,22 @@ export class ReportingService {
     const scheduled = this.scheduled.get(id);
 
     if (!scheduled) {
-      throw new Error('Scheduled report not found');
+      throw new Error("Scheduled report not found");
     }
 
     if (!scheduled.isActive) {
-      throw new Error('Scheduled report is inactive');
+      throw new Error("Scheduled report is inactive");
     }
 
     // Generate the report
-    const instance = await this.generateReport(scheduled.reportConfigId, 'system', {
-      scheduled: true,
-      scheduleId: id,
-    });
+    const instance = await this.generateReport(
+      scheduled.reportConfigId,
+      "system",
+      {
+        scheduled: true,
+        scheduleId: id,
+      },
+    );
 
     // Update schedule
     scheduled.lastRun = new Date();
@@ -384,21 +421,21 @@ export class ReportingService {
     return instance;
   }
 
-  private calculateNextRun(schedule: ScheduledReport['schedule']): Date {
+  private calculateNextRun(schedule: ScheduledReport["schedule"]): Date {
     const now = new Date();
-    const [hours, minutes] = schedule.time.split(':').map(Number);
+    const [hours, minutes] = schedule.time.split(":").map(Number);
 
     const next = new Date(now);
     next.setHours(hours, minutes, 0, 0);
 
     switch (schedule.frequency) {
-      case 'daily':
+      case "daily":
         if (next <= now) {
           next.setDate(next.getDate() + 1);
         }
         break;
 
-      case 'weekly':
+      case "weekly":
         if (schedule.dayOfWeek !== undefined) {
           const currentDay = next.getDay();
           const targetDay = schedule.dayOfWeek;
@@ -412,7 +449,7 @@ export class ReportingService {
         }
         break;
 
-      case 'monthly':
+      case "monthly":
         if (schedule.dayOfMonth) {
           next.setDate(schedule.dayOfMonth);
           if (next <= now) {
@@ -421,14 +458,14 @@ export class ReportingService {
         }
         break;
 
-      case 'quarterly':
+      case "quarterly":
         const currentQuarter = Math.floor(next.getMonth() / 3);
         const nextQuarterMonth = (currentQuarter + 1) * 3;
         next.setMonth(nextQuarterMonth);
         next.setDate(1);
         break;
 
-      case 'yearly':
+      case "yearly":
         next.setMonth(0, 1);
         if (next <= now) {
           next.setFullYear(next.getFullYear() + 1);
@@ -441,23 +478,25 @@ export class ReportingService {
 
   // ==================== Report Builder Helper Methods ====================
 
-  async validateReportConfig(config: Partial<ReportConfig>): Promise<{ valid: boolean; errors: string[] }> {
+  async validateReportConfig(
+    config: Partial<ReportConfig>,
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
     if (!config.name) {
-      errors.push('Report name is required');
+      errors.push("Report name is required");
     }
 
     if (!config.type) {
-      errors.push('Report type is required');
+      errors.push("Report type is required");
     }
 
     if (!config.metrics || config.metrics.length === 0) {
-      errors.push('At least one metric is required');
+      errors.push("At least one metric is required");
     }
 
     if (!config.format) {
-      errors.push('Report format is required');
+      errors.push("Report format is required");
     }
 
     if (config.sections && config.sections.length > 0) {
@@ -480,46 +519,46 @@ export class ReportingService {
   async getReportTemplates(): Promise<Partial<ReportConfig>[]> {
     return [
       {
-        name: 'Monthly Quality Dashboard',
-        type: 'quality_measures',
-        format: 'pdf',
+        name: "Monthly Quality Dashboard",
+        type: "quality_measures",
+        format: "pdf",
         sections: [
           {
-            id: 'summary',
-            title: 'Executive Summary',
+            id: "summary",
+            title: "Executive Summary",
             order: 1,
-            type: 'text',
+            type: "text",
           },
           {
-            id: 'measures',
-            title: 'Quality Measures',
+            id: "measures",
+            title: "Quality Measures",
             order: 2,
-            type: 'metrics_grid',
+            type: "metrics_grid",
           },
           {
-            id: 'trends',
-            title: 'Trends',
+            id: "trends",
+            title: "Trends",
             order: 3,
-            type: 'chart',
+            type: "chart",
           },
         ],
       },
       {
-        name: 'Financial Performance Report',
-        type: 'financial_summary',
-        format: 'excel',
+        name: "Financial Performance Report",
+        type: "financial_summary",
+        format: "excel",
         sections: [
           {
-            id: 'revenue',
-            title: 'Revenue Analysis',
+            id: "revenue",
+            title: "Revenue Analysis",
             order: 1,
-            type: 'chart',
+            type: "chart",
           },
           {
-            id: 'details',
-            title: 'Detailed Breakdown',
+            id: "details",
+            title: "Detailed Breakdown",
             order: 2,
-            type: 'table',
+            type: "table",
           },
         ],
       },
@@ -534,11 +573,11 @@ export class ReportingService {
 
   private initializeDefaultReports(): void {
     const monthlyQuality: ReportConfig = {
-      id: 'rpt_monthly_quality',
-      name: 'Monthly Quality Measures Report',
-      description: 'Comprehensive quality metrics and HEDIS measures',
-      type: 'quality_measures',
-      metrics: ['metric_patient_sat'],
+      id: "rpt_monthly_quality",
+      name: "Monthly Quality Measures Report",
+      description: "Comprehensive quality metrics and HEDIS measures",
+      type: "quality_measures",
+      metrics: ["metric_patient_sat"],
       filters: {
         dateRange: {
           start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
@@ -547,26 +586,26 @@ export class ReportingService {
       },
       sections: [
         {
-          id: 'sec_summary',
-          title: 'Executive Summary',
+          id: "sec_summary",
+          title: "Executive Summary",
           order: 1,
-          type: 'summary',
+          type: "summary",
         },
         {
-          id: 'sec_measures',
-          title: 'Quality Measures',
+          id: "sec_measures",
+          title: "Quality Measures",
           order: 2,
-          type: 'metrics_grid',
+          type: "metrics_grid",
           content: {
-            metrics: ['metric_patient_sat'],
+            metrics: ["metric_patient_sat"],
           },
         },
       ],
-      format: 'pdf',
+      format: "pdf",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'system',
-      updatedBy: 'system',
+      createdBy: "system",
+      updatedBy: "system",
     };
 
     this.reports.set(monthlyQuality.id, monthlyQuality);

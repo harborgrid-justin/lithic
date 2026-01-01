@@ -10,7 +10,7 @@ export interface QualityMeasure {
   rate: number;
   target: number;
   benchmark?: number;
-  status: 'compliant' | 'non_compliant' | 'at_risk';
+  status: "compliant" | "non_compliant" | "at_risk";
   numerator: number;
   denominator: number;
 }
@@ -26,9 +26,9 @@ export class QualityMetrics {
   }
 
   private render(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const grid = document.createElement('div');
+    const grid = document.createElement("div");
     grid.style.cssText = `
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -44,7 +44,7 @@ export class QualityMetrics {
   }
 
   private createMeasureCard(measure: QualityMeasure): HTMLElement {
-    const card = document.createElement('div');
+    const card = document.createElement("div");
     card.style.cssText = `
       background: white;
       border-radius: 8px;
@@ -54,31 +54,31 @@ export class QualityMetrics {
     `;
 
     // Header
-    const header = document.createElement('div');
-    header.style.cssText = 'margin-bottom: 12px;';
+    const header = document.createElement("div");
+    header.style.cssText = "margin-bottom: 12px;";
 
-    const code = document.createElement('div');
+    const code = document.createElement("div");
     code.textContent = measure.code;
-    code.style.cssText = 'font-size: 12px; color: #666; font-weight: 600;';
+    code.style.cssText = "font-size: 12px; color: #666; font-weight: 600;";
 
-    const name = document.createElement('div');
+    const name = document.createElement("div");
     name.textContent = measure.name;
-    name.style.cssText = 'font-size: 14px; font-weight: 600; margin-top: 4px;';
+    name.style.cssText = "font-size: 14px; font-weight: 600; margin-top: 4px;";
 
     header.appendChild(code);
     header.appendChild(name);
 
     // Rate
-    const rate = document.createElement('div');
+    const rate = document.createElement("div");
     rate.textContent = `${measure.rate.toFixed(1)}%`;
-    rate.style.cssText = 'font-size: 32px; font-weight: 700; margin: 12px 0;';
+    rate.style.cssText = "font-size: 32px; font-weight: 700; margin: 12px 0;";
 
     // Progress bar
     const progressBar = this.createProgressBar(measure);
 
     // Footer
-    const footer = document.createElement('div');
-    footer.style.cssText = 'font-size: 12px; color: #666; margin-top: 12px;';
+    const footer = document.createElement("div");
+    footer.style.cssText = "font-size: 12px; color: #666; margin-top: 12px;";
     footer.innerHTML = `
       Target: ${measure.target}% | ${measure.numerator}/${measure.denominator} patients
     `;
@@ -92,7 +92,7 @@ export class QualityMetrics {
   }
 
   private createProgressBar(measure: QualityMeasure): HTMLElement {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     container.style.cssText = `
       height: 8px;
       background: #e9ecef;
@@ -100,7 +100,7 @@ export class QualityMetrics {
       overflow: hidden;
     `;
 
-    const bar = document.createElement('div');
+    const bar = document.createElement("div");
     bar.style.cssText = `
       height: 100%;
       width: ${measure.rate}%;
@@ -114,11 +114,11 @@ export class QualityMetrics {
 
   private getStatusColor(status: string): string {
     const colors = {
-      compliant: '#50c878',
-      at_risk: '#f5a623',
-      non_compliant: '#e74c3c',
+      compliant: "#50c878",
+      at_risk: "#f5a623",
+      non_compliant: "#e74c3c",
     };
-    return colors[status as keyof typeof colors] || '#666';
+    return colors[status as keyof typeof colors] || "#666";
   }
 
   public update(measures: QualityMeasure[]): void {

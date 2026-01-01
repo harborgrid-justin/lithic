@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Claim } from '@/types/billing';
-import ClaimsList from '@/components/billing/ClaimsList';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { Claim } from "@/types/billing";
+import ClaimsList from "@/components/billing/ClaimsList";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ClaimsPage() {
   const router = useRouter();
@@ -18,13 +18,13 @@ export default function ClaimsPage() {
 
   const fetchClaims = async () => {
     try {
-      const response = await fetch('/api/billing/claims');
+      const response = await fetch("/api/billing/claims");
       if (response.ok) {
         const data = await response.json();
         setClaims(data);
       }
     } catch (error) {
-      console.error('Error fetching claims:', error);
+      console.error("Error fetching claims:", error);
     } finally {
       setIsLoading(false);
     }
@@ -39,7 +39,9 @@ export default function ClaimsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Claims Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Claims Management
+          </h1>
           <p className="text-gray-600 mt-2">View and manage insurance claims</p>
         </div>
         <Link

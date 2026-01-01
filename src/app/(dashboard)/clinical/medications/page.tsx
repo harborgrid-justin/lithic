@@ -1,31 +1,31 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Medication } from '@/types/clinical'
-import { getMedications } from '@/services/clinical.service'
-import { MedicationList } from '@/components/clinical/MedicationList'
-import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { Medication } from "@/types/clinical";
+import { getMedications } from "@/services/clinical.service";
+import { MedicationList } from "@/components/clinical/MedicationList";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function MedicationsPage() {
-  const [medications, setMedications] = useState<Medication[]>([])
-  const [loading, setLoading] = useState(true)
+  const [medications, setMedications] = useState<Medication[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadMedications()
-  }, [])
+    loadMedications();
+  }, []);
 
   const loadMedications = async () => {
     try {
       // In production, pass actual patient ID
-      const data = await getMedications('P001')
-      setMedications(data)
+      const data = await getMedications("P001");
+      setMedications(data);
     } catch (error) {
-      console.error('Failed to load medications:', error)
+      console.error("Failed to load medications:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -34,7 +34,7 @@ export default function MedicationsPage() {
           <p>Loading medications...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -43,7 +43,9 @@ export default function MedicationsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Medications</h1>
-            <p className="text-gray-600 mt-1">Active and historical medication list</p>
+            <p className="text-gray-600 mt-1">
+              Active and historical medication list
+            </p>
           </div>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -54,5 +56,5 @@ export default function MedicationsPage() {
         <MedicationList medications={medications} />
       </div>
     </div>
-  )
+  );
 }

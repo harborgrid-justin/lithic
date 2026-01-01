@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Payment } from '@/types/billing';
-import PaymentPosting from '@/components/billing/PaymentPosting';
-import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils';
-import { DollarSign, Filter, Calendar } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Payment } from "@/types/billing";
+import PaymentPosting from "@/components/billing/PaymentPosting";
+import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
+import { DollarSign, Filter, Calendar } from "lucide-react";
 
 export default function PaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showPostingForm, setShowPostingForm] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'insurance' | 'patient'>('all');
+  const [filter, setFilter] = useState<"all" | "insurance" | "patient">("all");
 
   useEffect(() => {
     fetchPayments();
@@ -18,13 +18,13 @@ export default function PaymentsPage() {
 
   const fetchPayments = async () => {
     try {
-      const response = await fetch('/api/billing/payments');
+      const response = await fetch("/api/billing/payments");
       if (response.ok) {
         const data = await response.json();
         setPayments(data);
       }
     } catch (error) {
-      console.error('Error fetching payments:', error);
+      console.error("Error fetching payments:", error);
     } finally {
       setIsLoading(false);
     }
@@ -32,28 +32,28 @@ export default function PaymentsPage() {
 
   const handlePostPayment = async (paymentData: Partial<Payment>) => {
     try {
-      const response = await fetch('/api/billing/payments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/billing/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(paymentData),
       });
 
       if (response.ok) {
-        alert('Payment posted successfully!');
+        alert("Payment posted successfully!");
         setShowPostingForm(false);
         fetchPayments();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error || 'Failed to post payment'}`);
+        alert(`Error: ${error.error || "Failed to post payment"}`);
       }
     } catch (error) {
-      console.error('Error posting payment:', error);
-      alert('Failed to post payment');
+      console.error("Error posting payment:", error);
+      alert("Failed to post payment");
     }
   };
 
   const filteredPayments = payments.filter((payment) => {
-    if (filter === 'all') return true;
+    if (filter === "all") return true;
     return payment.paymentMethod === filter;
   });
 
@@ -64,7 +64,9 @@ export default function PaymentsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Payment Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Payment Management
+          </h1>
           <p className="text-gray-600 mt-2">View and post payments</p>
         </div>
         <button
@@ -95,7 +97,9 @@ export default function PaymentsPage() {
         </div>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-sm text-green-700">Total Amount</p>
-          <p className="text-2xl font-bold text-green-900">{formatCurrency(totalPayments)}</p>
+          <p className="text-2xl font-bold text-green-900">
+            {formatCurrency(totalPayments)}
+          </p>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-700">This Month</p>
@@ -110,7 +114,7 @@ export default function PaymentsPage() {
                     paymentDate.getFullYear() === now.getFullYear()
                   );
                 })
-                .reduce((sum, p) => sum + p.amount, 0)
+                .reduce((sum, p) => sum + p.amount, 0),
             )}
           </p>
         </div>
@@ -168,7 +172,10 @@ export default function PaymentsPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredPayments.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     No payments found
                   </td>
                 </tr>
@@ -182,10 +189,10 @@ export default function PaymentsPage() {
                       {payment.patientName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">
-                      {payment.paymentMethod.replace('_', ' ')}
+                      {payment.paymentMethod.replace("_", " ")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {payment.referenceNumber || '-'}
+                      {payment.referenceNumber || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold text-green-600">
                       {formatCurrency(payment.amount)}

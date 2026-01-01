@@ -1,57 +1,57 @@
 // Pharmacy & Medication Management Types
 
 export enum MedicationStatus {
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
-  DISCONTINUED = 'DISCONTINUED',
-  ON_HOLD = 'ON_HOLD',
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  DISCONTINUED = "DISCONTINUED",
+  ON_HOLD = "ON_HOLD",
 }
 
 export enum PrescriptionStatus {
-  PENDING = 'PENDING',
-  SENT = 'SENT',
-  DISPENSED = 'DISPENSED',
-  CANCELLED = 'CANCELLED',
-  EXPIRED = 'EXPIRED',
+  PENDING = "PENDING",
+  SENT = "SENT",
+  DISPENSED = "DISPENSED",
+  CANCELLED = "CANCELLED",
+  EXPIRED = "EXPIRED",
 }
 
 export enum MedicationRoute {
-  ORAL = 'ORAL',
-  IV = 'IV',
-  IM = 'IM',
-  SC = 'SC',
-  TOPICAL = 'TOPICAL',
-  INHALATION = 'INHALATION',
-  RECTAL = 'RECTAL',
-  SUBLINGUAL = 'SUBLINGUAL',
-  TRANSDERMAL = 'TRANSDERMAL',
-  OPHTHALMIC = 'OPHTHALMIC',
-  OTIC = 'OTIC',
-  NASAL = 'NASAL',
+  ORAL = "ORAL",
+  IV = "IV",
+  IM = "IM",
+  SC = "SC",
+  TOPICAL = "TOPICAL",
+  INHALATION = "INHALATION",
+  RECTAL = "RECTAL",
+  SUBLINGUAL = "SUBLINGUAL",
+  TRANSDERMAL = "TRANSDERMAL",
+  OPHTHALMIC = "OPHTHALMIC",
+  OTIC = "OTIC",
+  NASAL = "NASAL",
 }
 
 export enum MedicationForm {
-  TABLET = 'TABLET',
-  CAPSULE = 'CAPSULE',
-  LIQUID = 'LIQUID',
-  SOLUTION = 'SOLUTION',
-  SUSPENSION = 'SUSPENSION',
-  INJECTION = 'INJECTION',
-  CREAM = 'CREAM',
-  OINTMENT = 'OINTMENT',
-  PATCH = 'PATCH',
-  INHALER = 'INHALER',
-  SUPPOSITORY = 'SUPPOSITORY',
-  DROP = 'DROP',
+  TABLET = "TABLET",
+  CAPSULE = "CAPSULE",
+  LIQUID = "LIQUID",
+  SOLUTION = "SOLUTION",
+  SUSPENSION = "SUSPENSION",
+  INJECTION = "INJECTION",
+  CREAM = "CREAM",
+  OINTMENT = "OINTMENT",
+  PATCH = "PATCH",
+  INHALER = "INHALER",
+  SUPPOSITORY = "SUPPOSITORY",
+  DROP = "DROP",
 }
 
 export enum DEASchedule {
-  SCHEDULE_I = 'SCHEDULE_I',
-  SCHEDULE_II = 'SCHEDULE_II',
-  SCHEDULE_III = 'SCHEDULE_III',
-  SCHEDULE_IV = 'SCHEDULE_IV',
-  SCHEDULE_V = 'SCHEDULE_V',
-  NON_CONTROLLED = 'NON_CONTROLLED',
+  SCHEDULE_I = "SCHEDULE_I",
+  SCHEDULE_II = "SCHEDULE_II",
+  SCHEDULE_III = "SCHEDULE_III",
+  SCHEDULE_IV = "SCHEDULE_IV",
+  SCHEDULE_V = "SCHEDULE_V",
+  NON_CONTROLLED = "NON_CONTROLLED",
 }
 
 export interface MedicationOrder {
@@ -127,7 +127,7 @@ export interface MedicationAdministration {
 }
 
 export interface DrugInteraction {
-  severity: 'MAJOR' | 'MODERATE' | 'MINOR';
+  severity: "MAJOR" | "MODERATE" | "MINOR";
   description: string;
   recommendation: string;
   drug1: string;
@@ -138,9 +138,9 @@ export interface DrugAllergy {
   id: string;
   patientId: string;
   allergen: string;
-  allergenType: 'MEDICATION' | 'FOOD' | 'ENVIRONMENTAL';
+  allergenType: "MEDICATION" | "FOOD" | "ENVIRONMENTAL";
   reaction: string;
-  severity: 'MILD' | 'MODERATE' | 'SEVERE' | 'LIFE_THREATENING';
+  severity: "MILD" | "MODERATE" | "SEVERE" | "LIFE_THREATENING";
   onsetDate?: string;
   notes?: string;
   verifiedBy?: string;
@@ -273,7 +273,7 @@ export interface MedicationReconciliation {
   homeMedications: MedicationOrder[];
   facilityMedications: MedicationOrder[];
   discrepancies: {
-    type: 'MISSING' | 'INCORRECT_DOSE' | 'INCORRECT_FREQUENCY' | 'DUPLICATE';
+    type: "MISSING" | "INCORRECT_DOSE" | "INCORRECT_FREQUENCY" | "DUPLICATE";
     description: string;
     resolved: boolean;
   }[];

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import LabReport from '@/components/laboratory/LabReport';
-import ResultViewer from '@/components/laboratory/ResultViewer';
-import SpecimenTracker from '@/components/laboratory/SpecimenTracker';
+import React from "react";
+import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import LabReport from "@/components/laboratory/LabReport";
+import ResultViewer from "@/components/laboratory/ResultViewer";
+import SpecimenTracker from "@/components/laboratory/SpecimenTracker";
 
 export default function OrderDetailPage() {
   const params = useParams();

@@ -3,14 +3,14 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response } from "express";
 
 const router = Router();
 
 export interface Resource {
   id: string;
   name: string;
-  type: 'room' | 'equipment' | 'vehicle' | 'supply' | 'other';
+  type: "room" | "equipment" | "vehicle" | "supply" | "other";
   category?: string;
   description?: string;
   facilityId: string;
@@ -26,7 +26,7 @@ export interface Resource {
   };
   capacity?: number; // For rooms
   specifications?: Record<string, any>;
-  status: 'available' | 'in-use' | 'maintenance' | 'out-of-service' | 'retired';
+  status: "available" | "in-use" | "maintenance" | "out-of-service" | "retired";
   requiresBooking: boolean;
   bookingDuration?: number; // Default booking duration in minutes
   minBookingDuration?: number;
@@ -36,7 +36,7 @@ export interface Resource {
   allowSimultaneousBookings: boolean;
   maxSimultaneousBookings?: number;
   maintenanceSchedule?: {
-    frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annually';
+    frequency: "daily" | "weekly" | "monthly" | "quarterly" | "annually";
     lastMaintenance?: Date;
     nextMaintenance?: Date;
     notes?: string;
@@ -68,7 +68,7 @@ export interface ResourceBooking {
   startTime: Date;
   endTime: Date;
   purpose: string;
-  status: 'pending' | 'confirmed' | 'in-use' | 'completed' | 'cancelled';
+  status: "pending" | "confirmed" | "in-use" | "completed" | "cancelled";
   notes?: string;
   bookedBy: string;
   bookedAt: Date;
@@ -91,7 +91,7 @@ export interface ResourceAvailability {
 }
 
 // GET /api/scheduling/resources - Get all resources
-router.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const {
       type,
@@ -99,8 +99,8 @@ router.get('/', async (req: Request, res: Response) => {
       facilityId,
       status,
       available,
-      limit = '50',
-      offset = '0'
+      limit = "50",
+      offset = "0",
     } = req.query;
 
     // TODO: Implement database query
@@ -112,20 +112,20 @@ router.get('/', async (req: Request, res: Response) => {
       pagination: {
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
-        total: 0
-      }
+        total: 0,
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch resources',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch resources",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/resources/:id - Get resource by ID
-router.get('/:id', async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -135,25 +135,25 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (!resource) {
       return res.status(404).json({
         success: false,
-        error: 'Resource not found'
+        error: "Resource not found",
       });
     }
 
     res.json({
       success: true,
-      data: resource
+      data: resource,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch resource',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch resource",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/resources - Create new resource
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const resourceData = req.body;
 
@@ -161,39 +161,40 @@ router.post('/', async (req: Request, res: Response) => {
     if (!resourceData.name || !resourceData.type || !resourceData.facilityId) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: name, type, facilityId'
+        error: "Missing required fields: name, type, facilityId",
       });
     }
 
     const newResource: Resource = {
       id: `res-${Date.now()}`,
       ...resourceData,
-      status: resourceData.status || 'available',
+      status: resourceData.status || "available",
       requiresBooking: resourceData.requiresBooking ?? true,
-      allowSimultaneousBookings: resourceData.allowSimultaneousBookings ?? false,
+      allowSimultaneousBookings:
+        resourceData.allowSimultaneousBookings ?? false,
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'system', // TODO: Get from auth
-      updatedBy: 'system'
+      createdBy: "system", // TODO: Get from auth
+      updatedBy: "system",
     };
 
     // TODO: Save to database
 
     res.status(201).json({
       success: true,
-      data: newResource
+      data: newResource,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to create resource',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to create resource",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // PUT /api/scheduling/resources/:id - Update resource
-router.put('/:id', async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -204,7 +205,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     if (!existingResource) {
       return res.status(404).json({
         success: false,
-        error: 'Resource not found'
+        error: "Resource not found",
       });
     }
 
@@ -213,26 +214,26 @@ router.put('/:id', async (req: Request, res: Response) => {
       ...existingResource,
       ...updateData,
       updatedAt: new Date(),
-      updatedBy: 'system' // TODO: Get from auth
+      updatedBy: "system", // TODO: Get from auth
     };
 
     // TODO: Save to database
 
     res.json({
       success: true,
-      data: updatedResource
+      data: updatedResource,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to update resource',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to update resource",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // DELETE /api/scheduling/resources/:id - Delete/retire resource
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -242,7 +243,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     if (!existingResource) {
       return res.status(404).json({
         success: false,
-        error: 'Resource not found'
+        error: "Resource not found",
       });
     }
 
@@ -252,9 +253,9 @@ router.delete('/:id', async (req: Request, res: Response) => {
     // Retire resource
     const retiredResource: Resource = {
       ...existingResource,
-      status: 'retired',
+      status: "retired",
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // TODO: Save to database
@@ -262,19 +263,19 @@ router.delete('/:id', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: retiredResource,
-      message: 'Resource retired successfully'
+      message: "Resource retired successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to retire resource',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to retire resource",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/resources/:id/availability - Get resource availability
-router.get('/:id/availability', async (req: Request, res: Response) => {
+router.get("/:id/availability", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { startDate, endDate } = req.query;
@@ -282,7 +283,7 @@ router.get('/:id/availability', async (req: Request, res: Response) => {
     if (!startDate || !endDate) {
       return res.status(400).json({
         success: false,
-        error: 'Start date and end date are required'
+        error: "Start date and end date are required",
       });
     }
 
@@ -291,28 +292,32 @@ router.get('/:id/availability', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      data: availability
+      data: availability,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch resource availability',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch resource availability",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/resources/:id/book - Book resource
-router.post('/:id/book', async (req: Request, res: Response) => {
+router.post("/:id/book", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const bookingData = req.body;
 
     // Validate required fields
-    if (!bookingData.startTime || !bookingData.endTime || !bookingData.purpose) {
+    if (
+      !bookingData.startTime ||
+      !bookingData.endTime ||
+      !bookingData.purpose
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: startTime, endTime, purpose'
+        error: "Missing required fields: startTime, endTime, purpose",
       });
     }
 
@@ -322,14 +327,14 @@ router.post('/:id/book', async (req: Request, res: Response) => {
     if (!resource) {
       return res.status(404).json({
         success: false,
-        error: 'Resource not found'
+        error: "Resource not found",
       });
     }
 
-    if (resource.status !== 'available') {
+    if (resource.status !== "available") {
       return res.status(400).json({
         success: false,
-        error: `Resource is ${resource.status}`
+        error: `Resource is ${resource.status}`,
       });
     }
 
@@ -341,9 +346,9 @@ router.post('/:id/book', async (req: Request, res: Response) => {
       resourceId: id,
       resourceName: resource.name,
       ...bookingData,
-      status: 'confirmed',
-      bookedBy: 'system', // TODO: Get from auth
-      bookedAt: new Date()
+      status: "confirmed",
+      bookedBy: "system", // TODO: Get from auth
+      bookedAt: new Date(),
     };
 
     // TODO: Save to database
@@ -351,19 +356,19 @@ router.post('/:id/book', async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       data: newBooking,
-      message: 'Resource booked successfully'
+      message: "Resource booked successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to book resource',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to book resource",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/resources/:id/bookings - Get resource bookings
-router.get('/:id/bookings', async (req: Request, res: Response) => {
+router.get("/:id/bookings", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { startDate, endDate, status } = req.query;
@@ -373,19 +378,19 @@ router.get('/:id/bookings', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      data: bookings
+      data: bookings,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch resource bookings',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch resource bookings",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // DELETE /api/scheduling/resources/booking/:bookingId - Cancel booking
-router.delete('/booking/:bookingId', async (req: Request, res: Response) => {
+router.delete("/booking/:bookingId", async (req: Request, res: Response) => {
   try {
     const { bookingId } = req.params;
     const { reason } = req.body;
@@ -396,17 +401,17 @@ router.delete('/booking/:bookingId', async (req: Request, res: Response) => {
     if (!existingBooking) {
       return res.status(404).json({
         success: false,
-        error: 'Booking not found'
+        error: "Booking not found",
       });
     }
 
     // Cancel booking
     const cancelledBooking: ResourceBooking = {
       ...existingBooking,
-      status: 'cancelled',
+      status: "cancelled",
       cancelledAt: new Date(),
-      cancelledBy: 'system', // TODO: Get from auth
-      cancellationReason: reason
+      cancelledBy: "system", // TODO: Get from auth
+      cancellationReason: reason,
     };
 
     // TODO: Save to database
@@ -414,48 +419,41 @@ router.delete('/booking/:bookingId', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: cancelledBooking,
-      message: 'Booking cancelled successfully'
+      message: "Booking cancelled successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to cancel booking',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to cancel booking",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/resources/search - Search available resources
-router.get('/search', async (req: Request, res: Response) => {
+router.get("/search", async (req: Request, res: Response) => {
   try {
-    const {
-      type,
-      category,
-      facilityId,
-      startTime,
-      endTime,
-      capacity,
-      tags
-    } = req.query;
+    const { type, category, facilityId, startTime, endTime, capacity, tags } =
+      req.query;
 
     // TODO: Implement resource search logic
     const resources: Resource[] = [];
 
     res.json({
       success: true,
-      data: resources
+      data: resources,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to search resources',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to search resources",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/resources/:id/maintenance - Schedule maintenance
-router.post('/:id/maintenance', async (req: Request, res: Response) => {
+router.post("/:id/maintenance", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { startTime, endTime, notes } = req.body;
@@ -463,7 +461,7 @@ router.post('/:id/maintenance', async (req: Request, res: Response) => {
     if (!startTime || !endTime) {
       return res.status(400).json({
         success: false,
-        error: 'Start time and end time are required'
+        error: "Start time and end time are required",
       });
     }
 
@@ -471,37 +469,37 @@ router.post('/:id/maintenance', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      message: 'Maintenance scheduled successfully'
+      message: "Maintenance scheduled successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to schedule maintenance',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to schedule maintenance",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/resources/types - Get resource types
-router.get('/types', async (req: Request, res: Response) => {
+router.get("/types", async (req: Request, res: Response) => {
   try {
     const types = [
-      { value: 'room', label: 'Room', icon: 'door' },
-      { value: 'equipment', label: 'Equipment', icon: 'tools' },
-      { value: 'vehicle', label: 'Vehicle', icon: 'car' },
-      { value: 'supply', label: 'Supply', icon: 'package' },
-      { value: 'other', label: 'Other', icon: 'more' }
+      { value: "room", label: "Room", icon: "door" },
+      { value: "equipment", label: "Equipment", icon: "tools" },
+      { value: "vehicle", label: "Vehicle", icon: "car" },
+      { value: "supply", label: "Supply", icon: "package" },
+      { value: "other", label: "Other", icon: "more" },
     ];
 
     res.json({
       success: true,
-      data: types
+      data: types,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch resource types',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch resource types",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });

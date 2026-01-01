@@ -3,13 +3,18 @@
  * View and manage all prescriptions with filtering and search
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { prescriptionService, type Prescription } from '@/services/prescription.service';
-import { PrescriptionList } from '@/components/pharmacy/PrescriptionList';
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  prescriptionService,
+  type Prescription,
+} from "@/services/prescription.service";
+import { PrescriptionList } from "@/components/pharmacy/PrescriptionList";
+
+export const dynamic = "force-dynamic";
 
 export default function PrescriptionsPage() {
   const searchParams = useSearchParams();
@@ -17,13 +22,13 @@ export default function PrescriptionsPage() {
 
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
-    status: searchParams.get('status') || '',
-    patientId: searchParams.get('patientId') || '',
-    prescriberId: searchParams.get('prescriberId') || '',
-    startDate: searchParams.get('startDate') || '',
-    endDate: searchParams.get('endDate') || '',
+    status: searchParams.get("status") || "",
+    patientId: searchParams.get("patientId") || "",
+    prescriberId: searchParams.get("prescriberId") || "",
+    startDate: searchParams.get("startDate") || "",
+    endDate: searchParams.get("endDate") || "",
   });
 
   useEffect(() => {
@@ -42,28 +47,28 @@ export default function PrescriptionsPage() {
       });
       setPrescriptions(data);
     } catch (error) {
-      console.error('Failed to load prescriptions:', error);
+      console.error("Failed to load prescriptions:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleClearFilters = () => {
     setFilters({
-      status: '',
-      patientId: '',
-      prescriberId: '',
-      startDate: '',
-      endDate: '',
+      status: "",
+      patientId: "",
+      prescriberId: "",
+      startDate: "",
+      endDate: "",
     });
-    router.push('/pharmacy/prescriptions');
+    router.push("/pharmacy/prescriptions");
   };
 
-  const filteredPrescriptions = prescriptions.filter(rx => {
+  const filteredPrescriptions = prescriptions.filter((rx) => {
     if (!searchQuery) return true;
 
     const query = searchQuery.toLowerCase();
@@ -78,9 +83,11 @@ export default function PrescriptionsPage() {
 
   const stats = {
     total: filteredPrescriptions.length,
-    pending: filteredPrescriptions.filter(rx => rx.status === 'pending').length,
-    active: filteredPrescriptions.filter(rx => rx.status === 'active').length,
-    dispensed: filteredPrescriptions.filter(rx => rx.status === 'dispensed').length,
+    pending: filteredPrescriptions.filter((rx) => rx.status === "pending")
+      .length,
+    active: filteredPrescriptions.filter((rx) => rx.status === "active").length,
+    dispensed: filteredPrescriptions.filter((rx) => rx.status === "dispensed")
+      .length,
   };
 
   return (
@@ -88,7 +95,9 @@ export default function PrescriptionsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Prescriptions</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Prescriptions
+            </h1>
             <p className="text-gray-600">Manage and track all prescriptions</p>
           </div>
           <Link
@@ -103,19 +112,27 @@ export default function PrescriptionsPage() {
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="text-sm text-gray-600 mb-1">Total</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.total}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-yellow-200 p-4">
             <div className="text-sm text-gray-600 mb-1">Pending</div>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {stats.pending}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-blue-200 p-4">
             <div className="text-sm text-gray-600 mb-1">Active</div>
-            <div className="text-2xl font-bold text-blue-600">{stats.active}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {stats.active}
+            </div>
           </div>
           <div className="bg-white rounded-lg border border-green-200 p-4">
             <div className="text-sm text-gray-600 mb-1">Dispensed</div>
-            <div className="text-2xl font-bold text-green-600">{stats.dispensed}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.dispensed}
+            </div>
           </div>
         </div>
       </div>
@@ -131,7 +148,7 @@ export default function PrescriptionsPage() {
             </label>
             <select
               value={filters.status}
-              onChange={(e) => handleFilterChange('status', e.target.value)}
+              onChange={(e) => handleFilterChange("status", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">All Statuses</option>
@@ -151,7 +168,7 @@ export default function PrescriptionsPage() {
             <input
               type="date"
               value={filters.startDate}
-              onChange={(e) => handleFilterChange('startDate', e.target.value)}
+              onChange={(e) => handleFilterChange("startDate", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -163,7 +180,7 @@ export default function PrescriptionsPage() {
             <input
               type="date"
               value={filters.endDate}
-              onChange={(e) => handleFilterChange('endDate', e.target.value)}
+              onChange={(e) => handleFilterChange("endDate", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>

@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { auditLogger } from '../utils/logger';
-import { AuthRequest } from './auth';
-import { maskSensitiveData } from '../utils/crypto';
+import { Request, Response, NextFunction } from "express";
+import { auditLogger } from "../utils/logger";
+import { AuthRequest } from "./auth";
+import { maskSensitiveData } from "../utils/crypto";
 
 interface AuditLogEntry {
   timestamp: string;
@@ -26,7 +26,7 @@ interface AuditLogEntry {
 export const auditLog = (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const startTime = Date.now();
 
@@ -48,8 +48,8 @@ export const auditLog = (
       resourceId: req.params?.id,
       method: req.method,
       endpoint: req.originalUrl,
-      ip: req.ip || req.socket.remoteAddress || 'unknown',
-      userAgent: req.headers['user-agent'] || 'unknown',
+      ip: req.ip || req.socket.remoteAddress || "unknown",
+      userAgent: req.headers["user-agent"] || "unknown",
       statusCode: res.statusCode,
       metadata: {
         duration,
@@ -60,9 +60,9 @@ export const auditLog = (
     // Log based on status code and resource type
     if (shouldAudit(req.path, req.method)) {
       if (res.statusCode >= 400) {
-        auditLogger.warn('Failed operation', auditEntry);
+        auditLogger.warn("Failed operation", auditEntry);
       } else {
-        auditLogger.info('Successful operation', auditEntry);
+        auditLogger.info("Successful operation", auditEntry);
       }
     }
 
@@ -76,7 +76,7 @@ export const auditLog = (
     if (isDataModification(req.method) && shouldAudit(req.path, req.method)) {
       const sanitizedBody = sanitizeBody(req.body);
 
-      auditLogger.info('Data modification', {
+      auditLogger.info("Data modification", {
         timestamp: new Date().toISOString(),
         userId: req.user?.id,
         action: getActionFromMethod(req.method),
@@ -118,8 +118,8 @@ const shouldAudit = (path: string, method: string): boolean => {
   ];
 
   // Check if path matches PHI or auth patterns
-  const isPHI = phiPatterns.some(pattern => pattern.test(path));
-  const isAuth = authPatterns.some(pattern => pattern.test(path));
+  const isPHI = phiPatterns.some((pattern) => pattern.test(path));
+  const isAuth = authPatterns.some((pattern) => pattern.test(path));
 
   return isPHI || isAuth;
 };
@@ -128,7 +128,7 @@ const shouldAudit = (path: string, method: string): boolean => {
  * Check if request is a data modification
  */
 const isDataModification = (method: string): boolean => {
-  return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method);
+  return ["POST", "PUT", "PATCH", "DELETE"].includes(method);
 };
 
 /**
@@ -136,53 +136,56 @@ const isDataModification = (method: string): boolean => {
  */
 const getActionFromMethod = (method: string): string => {
   const actions: Record<string, string> = {
-    GET: 'VIEW',
-    POST: 'CREATE',
-    PUT: 'UPDATE',
-    PATCH: 'UPDATE',
-    DELETE: 'DELETE',
+    GET: "VIEW",
+    POST: "CREATE",
+    PUT: "UPDATE",
+    PATCH: "UPDATE",
+    DELETE: "DELETE",
   };
 
-  return actions[method] || 'UNKNOWN';
+  return actions[method] || "UNKNOWN";
 };
 
 /**
  * Extract resource from path
  */
 const getResourceFromPath = (path: string): string => {
-  const parts = path.split('/').filter(Boolean);
-  return parts[0] || 'unknown';
+  const parts = path.split("/").filter(Boolean);
+  return parts[0] || "unknown";
 };
 
 /**
  * Sanitize request body for logging (remove sensitive data)
  */
 const sanitizeBody = (body: any): any => {
-  if (!body || typeof body !== 'object') {
+  if (!body || typeof body !== "object") {
     return body;
   }
 
   const sanitized = { ...body };
   const sensitiveFields = [
-    'password',
-    'currentPassword',
-    'newPassword',
-    'confirmPassword',
-    'ssn',
-    'creditCard',
-    'cvv',
-    'pin',
-    'token',
-    'secret',
+    "password",
+    "currentPassword",
+    "newPassword",
+    "confirmPassword",
+    "ssn",
+    "creditCard",
+    "cvv",
+    "pin",
+    "token",
+    "secret",
   ];
 
   // Recursively sanitize
-  Object.keys(sanitized).forEach(key => {
+  Object.keys(sanitized).forEach((key) => {
     if (sensitiveFields.includes(key)) {
-      sanitized[key] = '[REDACTED]';
-    } else if (typeof sanitized[key] === 'object') {
+      sanitized[key] = "[REDACTED]";
+    } else if (typeof sanitized[key] === "object") {
       sanitized[key] = sanitizeBody(sanitized[key]);
-    } else if (typeof sanitized[key] === 'string' && sanitized[key].length > 100) {
+    } else if (
+      typeof sanitized[key] === "string" &&
+      sanitized[key].length > 100
+    ) {
       // Mask long strings that might contain PHI
       sanitized[key] = maskSensitiveData(sanitized[key]);
     }
@@ -194,28 +197,36 @@ const sanitizeBody = (body: any): any => {
 /**
  * Log successful authentication
  */
-export const logAuthSuccess = (userId: string, email: string, req: Request): void => {
-  auditLogger.info('Authentication successful', {
+export const logAuthSuccess = (
+  userId: string,
+  email: string,
+  req: Request,
+): void => {
+  auditLogger.info("Authentication successful", {
     timestamp: new Date().toISOString(),
     userId,
     email,
-    action: 'LOGIN',
+    action: "LOGIN",
     ip: req.ip,
-    userAgent: req.headers['user-agent'],
+    userAgent: req.headers["user-agent"],
   });
 };
 
 /**
  * Log failed authentication
  */
-export const logAuthFailure = (email: string, reason: string, req: Request): void => {
-  auditLogger.warn('Authentication failed', {
+export const logAuthFailure = (
+  email: string,
+  reason: string,
+  req: Request,
+): void => {
+  auditLogger.warn("Authentication failed", {
     timestamp: new Date().toISOString(),
     email: maskSensitiveData(email, 3),
-    action: 'LOGIN_FAILED',
+    action: "LOGIN_FAILED",
     reason,
     ip: req.ip,
-    userAgent: req.headers['user-agent'],
+    userAgent: req.headers["user-agent"],
   });
 };
 
@@ -227,9 +238,9 @@ export const logPhiAccess = (
   patientId: string,
   dataType: string,
   action: string,
-  req: Request
+  req: Request,
 ): void => {
-  auditLogger.info('PHI accessed', {
+  auditLogger.info("PHI accessed", {
     timestamp: new Date().toISOString(),
     userId,
     patientId,
@@ -237,7 +248,7 @@ export const logPhiAccess = (
     action,
     endpoint: req.originalUrl,
     ip: req.ip,
-    userAgent: req.headers['user-agent'],
+    userAgent: req.headers["user-agent"],
   });
 };
 
@@ -246,17 +257,17 @@ export const logPhiAccess = (
  */
 export const logSecurityEvent = (
   eventType: string,
-  severity: 'info' | 'warn' | 'error',
+  severity: "info" | "warn" | "error",
   details: any,
-  req: Request
+  req: Request,
 ): void => {
-  auditLogger[severity]('Security event', {
+  auditLogger[severity]("Security event", {
     timestamp: new Date().toISOString(),
     eventType,
     severity,
     details,
     ip: req.ip,
-    userAgent: req.headers['user-agent'],
+    userAgent: req.headers["user-agent"],
   });
 };
 

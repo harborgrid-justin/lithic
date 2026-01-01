@@ -7,7 +7,10 @@ export class AppointmentForm {
   private container: HTMLElement;
   private onSubmit: (data: any) => Promise<void>;
 
-  constructor(container: HTMLElement, options: { onSubmit: (data: any) => Promise<void> }) {
+  constructor(
+    container: HTMLElement,
+    options: { onSubmit: (data: any) => Promise<void> },
+  ) {
     this.container = container;
     this.onSubmit = options.onSubmit;
   }
@@ -113,15 +116,15 @@ export class AppointmentForm {
   }
 
   private attachEventListeners(): void {
-    const form = document.getElementById('appointmentForm') as HTMLFormElement;
-    form.addEventListener('submit', async (e) => {
+    const form = document.getElementById("appointmentForm") as HTMLFormElement;
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.handleSubmit();
     });
   }
 
   private async handleSubmit(): Promise<void> {
-    const form = document.getElementById('appointmentForm') as HTMLFormElement;
+    const form = document.getElementById("appointmentForm") as HTMLFormElement;
     const formData = new FormData(form);
     const data: any = {};
 

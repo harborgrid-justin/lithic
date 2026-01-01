@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * SecurityDashboard Component
@@ -126,7 +126,7 @@ export class SecurityDashboard {
       return '<div class="alert alert--success">No security alerts</div>';
     }
 
-    return alerts.join('');
+    return alerts.join("");
   }
 
   private showError(message: string): void {
@@ -138,6 +138,6 @@ export class SecurityDashboard {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

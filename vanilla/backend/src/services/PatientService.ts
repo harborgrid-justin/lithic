@@ -11,9 +11,9 @@ import {
   AuditLog,
   Document,
   Insurance,
-} from '../models/Patient';
-import MRNGenerator from './MRNGenerator';
-import DuplicateDetector from './DuplicateDetector';
+} from "../models/Patient";
+import MRNGenerator from "./MRNGenerator";
+import DuplicateDetector from "./DuplicateDetector";
 
 export class PatientService {
   // In-memory storage (replace with database in production)
@@ -30,15 +30,15 @@ export class PatientService {
    * Create a new patient
    */
   public async createPatient(
-    patientData: Omit<Patient, 'id' | 'mrn' | 'createdAt' | 'updatedAt'>,
-    userId: string
+    patientData: Omit<Patient, "id" | "mrn" | "createdAt" | "updatedAt">,
+    userId: string,
   ): Promise<Patient> {
     // Check for duplicates
     const duplicates = await this.findDuplicates(patientData);
 
     if (duplicates.length > 0 && duplicates[0].score >= 90) {
       throw new Error(
-        `Potential duplicate patient found: ${duplicates[0].patient.firstName} ${duplicates[0].patient.lastName} (MRN: ${duplicates[0].patient.mrn})`
+        `Potential duplicate patient found: ${duplicates[0].patient.firstName} ${duplicates[0].patient.lastName} (MRN: ${duplicates[0].patient.mrn})`,
       );
     }
 
@@ -50,7 +50,7 @@ export class PatientService {
       ...patientData,
       id: this.generateId(),
       mrn,
-      status: 'active',
+      status: "active",
       createdAt: new Date(),
       updatedAt: new Date(),
       createdBy: userId,
@@ -66,7 +66,7 @@ export class PatientService {
     // Create audit log
     await this.createAuditLog({
       patientId: patient.id,
-      action: 'created',
+      action: "created",
       performedBy: userId,
       performedAt: new Date(),
     });
@@ -77,13 +77,16 @@ export class PatientService {
   /**
    * Get patient by ID
    */
-  public async getPatientById(id: string, userId: string): Promise<Patient | null> {
+  public async getPatientById(
+    id: string,
+    userId: string,
+  ): Promise<Patient | null> {
     const patient = this.patients.get(id);
 
     if (patient) {
       await this.createAuditLog({
         patientId: id,
-        action: 'viewed',
+        action: "viewed",
         performedBy: userId,
         performedAt: new Date(),
       });
@@ -95,7 +98,10 @@ export class PatientService {
   /**
    * Get patient by MRN
    */
-  public async getPatientByMRN(mrn: string, userId: string): Promise<Patient | null> {
+  public async getPatientByMRN(
+    mrn: string,
+    userId: string,
+  ): Promise<Patient | null> {
     const id = this.mrnIndex.get(mrn);
     if (!id) return null;
 
@@ -108,7 +114,7 @@ export class PatientService {
   public async updatePatient(
     id: string,
     updates: Partial<Patient>,
-    userId: string
+    userId: string,
   ): Promise<Patient> {
     const patient = this.patients.get(id);
 
@@ -140,7 +146,7 @@ export class PatientService {
     // Create audit log
     await this.createAuditLog({
       patientId: id,
-      action: 'updated',
+      action: "updated",
       performedBy: userId,
       performedAt: new Date(),
       changes,
@@ -160,12 +166,12 @@ export class PatientService {
     }
 
     // Soft delete by setting status to inactive
-    await this.updatePatient(id, { status: 'inactive' }, userId);
+    await this.updatePatient(id, { status: "inactive" }, userId);
 
     // Create audit log
     await this.createAuditLog({
       patientId: id,
-      action: 'deleted',
+      action: "deleted",
       performedBy: userId,
       performedAt: new Date(),
     });
@@ -185,44 +191,46 @@ export class PatientService {
     // Filter by MRN
     if (params.mrn) {
       results = results.filter((p) =>
-        p.mrn.toLowerCase().includes(params.mrn!.toLowerCase())
+        p.mrn.toLowerCase().includes(params.mrn!.toLowerCase()),
       );
     }
 
     // Filter by name
     if (params.firstName) {
       results = results.filter((p) =>
-        p.firstName.toLowerCase().includes(params.firstName!.toLowerCase())
+        p.firstName.toLowerCase().includes(params.firstName!.toLowerCase()),
       );
     }
 
     if (params.lastName) {
       results = results.filter((p) =>
-        p.lastName.toLowerCase().includes(params.lastName!.toLowerCase())
+        p.lastName.toLowerCase().includes(params.lastName!.toLowerCase()),
       );
     }
 
     // Filter by DOB
     if (params.dateOfBirth) {
-      const searchDob = new Date(params.dateOfBirth).toISOString().split('T')[0];
+      const searchDob = new Date(params.dateOfBirth)
+        .toISOString()
+        .split("T")[0];
       results = results.filter((p) => {
-        const patientDob = new Date(p.dateOfBirth).toISOString().split('T')[0];
+        const patientDob = new Date(p.dateOfBirth).toISOString().split("T")[0];
         return patientDob === searchDob;
       });
     }
 
     // Filter by phone
     if (params.phone) {
-      const normalizedPhone = params.phone.replace(/\D/g, '');
+      const normalizedPhone = params.phone.replace(/\D/g, "");
       results = results.filter((p) =>
-        p.contact.phone.replace(/\D/g, '').includes(normalizedPhone)
+        p.contact.phone.replace(/\D/g, "").includes(normalizedPhone),
       );
     }
 
     // Filter by email
     if (params.email) {
       results = results.filter((p) =>
-        p.contact.email?.toLowerCase().includes(params.email!.toLowerCase())
+        p.contact.email?.toLowerCase().includes(params.email!.toLowerCase()),
       );
     }
 
@@ -235,7 +243,7 @@ export class PatientService {
           p.lastName.toLowerCase().includes(query) ||
           p.mrn.toLowerCase().includes(query) ||
           p.contact.phone.includes(query) ||
-          p.contact.email?.toLowerCase().includes(query)
+          p.contact.email?.toLowerCase().includes(query),
       );
     }
 
@@ -250,10 +258,10 @@ export class PatientService {
    * Find duplicate patients
    */
   public async findDuplicates(
-    patientData: Partial<Patient>
+    patientData: Partial<Patient>,
   ): Promise<DuplicateMatch[]> {
     const existingPatients = Array.from(this.patients.values()).filter(
-      (p) => p.status === 'active'
+      (p) => p.status === "active",
     );
 
     return DuplicateDetector.findDuplicates(patientData, existingPatients);
@@ -262,14 +270,18 @@ export class PatientService {
   /**
    * Merge two patient records
    */
-  public async mergePatients(
-    request: PatientMergeRequest
-  ): Promise<Patient> {
-    const source = await this.getPatientByMRN(request.sourceMrn, request.performedBy);
-    const target = await this.getPatientByMRN(request.targetMrn, request.performedBy);
+  public async mergePatients(request: PatientMergeRequest): Promise<Patient> {
+    const source = await this.getPatientByMRN(
+      request.sourceMrn,
+      request.performedBy,
+    );
+    const target = await this.getPatientByMRN(
+      request.targetMrn,
+      request.performedBy,
+    );
 
     if (!source || !target) {
-      throw new Error('Source or target patient not found');
+      throw new Error("Source or target patient not found");
     }
 
     // Merge insurance records
@@ -288,23 +300,23 @@ export class PatientService {
         insurance: mergedInsurance,
         documents: mergedDocuments,
       },
-      request.performedBy
+      request.performedBy,
     );
 
     // Mark source as merged
     await this.updatePatient(
       source.id,
       {
-        status: 'merged',
+        status: "merged",
         mergedInto: target.id,
       },
-      request.performedBy
+      request.performedBy,
     );
 
     // Create audit logs
     await this.createAuditLog({
       patientId: source.id,
-      action: 'merged',
+      action: "merged",
       performedBy: request.performedBy,
       performedAt: new Date(),
       changes: { mergedInto: target.mrn, reason: request.reason },
@@ -312,7 +324,7 @@ export class PatientService {
 
     await this.createAuditLog({
       patientId: target.id,
-      action: 'merged',
+      action: "merged",
       performedBy: request.performedBy,
       performedAt: new Date(),
       changes: { mergedFrom: source.mrn, reason: request.reason },
@@ -326,8 +338,8 @@ export class PatientService {
    */
   public async addDocument(
     patientId: string,
-    document: Omit<Document, 'id' | 'patientId' | 'uploadedAt'>,
-    userId: string
+    document: Omit<Document, "id" | "patientId" | "uploadedAt">,
+    userId: string,
   ): Promise<Patient> {
     const patient = this.patients.get(patientId);
 
@@ -353,7 +365,7 @@ export class PatientService {
   public async updateInsurance(
     patientId: string,
     insurance: Insurance,
-    userId: string
+    userId: string,
   ): Promise<Patient> {
     const patient = this.patients.get(patientId);
 
@@ -364,7 +376,9 @@ export class PatientService {
     let insuranceList = [...patient.insurance];
 
     // If insurance has an ID, update existing; otherwise, add new
-    const existingIndex = insuranceList.findIndex((ins) => ins.id === insurance.id);
+    const existingIndex = insuranceList.findIndex(
+      (ins) => ins.id === insurance.id,
+    );
 
     if (existingIndex >= 0) {
       insuranceList[existingIndex] = insurance;
@@ -393,7 +407,7 @@ export class PatientService {
   /**
    * Create audit log entry
    */
-  private async createAuditLog(log: Omit<AuditLog, 'id'>): Promise<void> {
+  private async createAuditLog(log: Omit<AuditLog, "id">): Promise<void> {
     const auditLog: AuditLog = {
       ...log,
       id: this.generateId(),
@@ -415,7 +429,7 @@ export class PatientService {
    */
   public async getAllPatients(
     limit: number = 100,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Patient[]> {
     const patients = Array.from(this.patients.values());
     return patients.slice(offset, offset + limit);
@@ -440,57 +454,60 @@ export class PatientService {
    */
   private initializeMockData(): void {
     // This would be removed in production
-    const mockPatients: Omit<Patient, 'id' | 'mrn' | 'createdAt' | 'updatedAt'>[] = [
+    const mockPatients: Omit<
+      Patient,
+      "id" | "mrn" | "createdAt" | "updatedAt"
+    >[] = [
       {
-        firstName: 'John',
-        lastName: 'Doe',
-        dateOfBirth: new Date('1980-05-15'),
-        gender: 'male',
+        firstName: "John",
+        lastName: "Doe",
+        dateOfBirth: new Date("1980-05-15"),
+        gender: "male",
         address: {
-          street: '123 Main St',
-          city: 'Springfield',
-          state: 'IL',
-          zipCode: '62701',
-          country: 'USA',
+          street: "123 Main St",
+          city: "Springfield",
+          state: "IL",
+          zipCode: "62701",
+          country: "USA",
         },
         contact: {
-          phone: '555-123-4567',
-          email: 'john.doe@email.com',
+          phone: "555-123-4567",
+          email: "john.doe@email.com",
         },
         insurance: [],
-        status: 'active',
-        createdBy: 'system',
-        updatedBy: 'system',
+        status: "active",
+        createdBy: "system",
+        updatedBy: "system",
       },
       {
-        firstName: 'Jane',
-        lastName: 'Smith',
-        dateOfBirth: new Date('1992-08-22'),
-        gender: 'female',
+        firstName: "Jane",
+        lastName: "Smith",
+        dateOfBirth: new Date("1992-08-22"),
+        gender: "female",
         address: {
-          street: '456 Oak Ave',
-          city: 'Springfield',
-          state: 'IL',
-          zipCode: '62702',
-          country: 'USA',
+          street: "456 Oak Ave",
+          city: "Springfield",
+          state: "IL",
+          zipCode: "62702",
+          country: "USA",
         },
         contact: {
-          phone: '555-987-6543',
-          email: 'jane.smith@email.com',
+          phone: "555-987-6543",
+          email: "jane.smith@email.com",
         },
         insurance: [],
-        status: 'active',
-        bloodType: 'O+',
-        allergies: ['Penicillin'],
-        createdBy: 'system',
-        updatedBy: 'system',
+        status: "active",
+        bloodType: "O+",
+        allergies: ["Penicillin"],
+        createdBy: "system",
+        updatedBy: "system",
       },
     ];
 
     // Create mock patients (async operation)
     setTimeout(() => {
       mockPatients.forEach((patientData) => {
-        this.createPatient(patientData, 'system').catch(console.error);
+        this.createPatient(patientData, "system").catch(console.error);
       });
     }, 0);
   }

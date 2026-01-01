@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response } from "express";
 
 const router = Router();
 
@@ -13,12 +13,28 @@ export interface Appointment {
   patientName: string;
   providerId: string;
   providerName: string;
-  appointmentType: 'consultation' | 'follow-up' | 'procedure' | 'lab' | 'imaging' | 'therapy' | 'vaccination' | 'other';
+  appointmentType:
+    | "consultation"
+    | "follow-up"
+    | "procedure"
+    | "lab"
+    | "imaging"
+    | "therapy"
+    | "vaccination"
+    | "other";
   specialty?: string;
   startTime: Date;
   endTime: Date;
   duration: number; // minutes
-  status: 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'completed' | 'cancelled' | 'no-show' | 'rescheduled';
+  status:
+    | "scheduled"
+    | "confirmed"
+    | "checked-in"
+    | "in-progress"
+    | "completed"
+    | "cancelled"
+    | "no-show"
+    | "rescheduled";
   reason: string;
   notes?: string;
   location: {
@@ -43,9 +59,9 @@ export interface Appointment {
   copayAmount?: number;
   copayPaid?: boolean;
   reminders: {
-    type: 'email' | 'sms' | 'call' | 'push';
+    type: "email" | "sms" | "call" | "push";
     sentAt: Date;
-    status: 'sent' | 'delivered' | 'failed';
+    status: "sent" | "delivered" | "failed";
   }[];
   checkInTime?: Date;
   checkOutTime?: Date;
@@ -67,21 +83,25 @@ export interface AppointmentSearchParams {
   facilityId?: string;
   startDate?: Date;
   endDate?: Date;
-  status?: Appointment['status'];
-  appointmentType?: Appointment['appointmentType'];
+  status?: Appointment["status"];
+  appointmentType?: Appointment["appointmentType"];
   limit?: number;
   offset?: number;
 }
 
 export interface AppointmentConflict {
   appointmentId: string;
-  conflictType: 'double-booking' | 'resource-conflict' | 'provider-unavailable' | 'facility-closed';
+  conflictType:
+    | "double-booking"
+    | "resource-conflict"
+    | "provider-unavailable"
+    | "facility-closed";
   message: string;
   conflictingAppointment?: Appointment;
 }
 
 // GET /api/scheduling/appointments - Get all appointments
-router.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const {
       patientId,
@@ -91,8 +111,8 @@ router.get('/', async (req: Request, res: Response) => {
       endDate,
       status,
       appointmentType,
-      limit = '50',
-      offset = '0'
+      limit = "50",
+      offset = "0",
     } = req.query;
 
     // TODO: Implement database query
@@ -104,20 +124,20 @@ router.get('/', async (req: Request, res: Response) => {
       pagination: {
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
-        total: 0
-      }
+        total: 0,
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch appointments',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch appointments",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/appointments/:id - Get appointment by ID
-router.get('/:id', async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -127,33 +147,37 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (!appointment) {
       return res.status(404).json({
         success: false,
-        error: 'Appointment not found'
+        error: "Appointment not found",
       });
     }
 
     res.json({
       success: true,
-      data: appointment
+      data: appointment,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/appointments - Create new appointment
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const appointmentData = req.body;
 
     // Validate required fields
-    if (!appointmentData.patientId || !appointmentData.providerId || !appointmentData.startTime) {
+    if (
+      !appointmentData.patientId ||
+      !appointmentData.providerId ||
+      !appointmentData.startTime
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: patientId, providerId, startTime'
+        error: "Missing required fields: patientId, providerId, startTime",
       });
     }
 
@@ -164,8 +188,8 @@ router.post('/', async (req: Request, res: Response) => {
     if (conflicts.length > 0) {
       return res.status(409).json({
         success: false,
-        error: 'Appointment conflicts detected',
-        conflicts
+        error: "Appointment conflicts detected",
+        conflicts,
       });
     }
 
@@ -173,32 +197,32 @@ router.post('/', async (req: Request, res: Response) => {
     const newAppointment: Appointment = {
       id: `apt-${Date.now()}`,
       ...appointmentData,
-      status: 'scheduled',
+      status: "scheduled",
       insuranceVerified: false,
       reminders: [],
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'system', // TODO: Get from auth
-      updatedBy: 'system'
+      createdBy: "system", // TODO: Get from auth
+      updatedBy: "system",
     };
 
     // TODO: Save to database
 
     res.status(201).json({
       success: true,
-      data: newAppointment
+      data: newAppointment,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to create appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to create appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // PUT /api/scheduling/appointments/:id - Update appointment
-router.put('/:id', async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -209,12 +233,15 @@ router.put('/:id', async (req: Request, res: Response) => {
     if (!existingAppointment) {
       return res.status(404).json({
         success: false,
-        error: 'Appointment not found'
+        error: "Appointment not found",
       });
     }
 
     // Check if rescheduling (start time changed)
-    if (updateData.startTime && updateData.startTime !== existingAppointment.startTime) {
+    if (
+      updateData.startTime &&
+      updateData.startTime !== existingAppointment.startTime
+    ) {
       // Check for conflicts
       const conflicts: AppointmentConflict[] = [];
       // TODO: Implement conflict detection
@@ -222,8 +249,8 @@ router.put('/:id', async (req: Request, res: Response) => {
       if (conflicts.length > 0) {
         return res.status(409).json({
           success: false,
-          error: 'Appointment conflicts detected',
-          conflicts
+          error: "Appointment conflicts detected",
+          conflicts,
         });
       }
     }
@@ -233,26 +260,26 @@ router.put('/:id', async (req: Request, res: Response) => {
       ...existingAppointment,
       ...updateData,
       updatedAt: new Date(),
-      updatedBy: 'system' // TODO: Get from auth
+      updatedBy: "system", // TODO: Get from auth
     };
 
     // TODO: Save to database
 
     res.json({
       success: true,
-      data: updatedAppointment
+      data: updatedAppointment,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to update appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to update appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // DELETE /api/scheduling/appointments/:id - Cancel appointment
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
@@ -263,19 +290,19 @@ router.delete('/:id', async (req: Request, res: Response) => {
     if (!existingAppointment) {
       return res.status(404).json({
         success: false,
-        error: 'Appointment not found'
+        error: "Appointment not found",
       });
     }
 
     // Cancel appointment
     const cancelledAppointment: Appointment = {
       ...existingAppointment,
-      status: 'cancelled',
+      status: "cancelled",
       cancelledAt: new Date(),
-      cancelledBy: 'system', // TODO: Get from auth
+      cancelledBy: "system", // TODO: Get from auth
       cancellationReason: reason,
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // TODO: Save to database
@@ -283,19 +310,19 @@ router.delete('/:id', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: cancelledAppointment,
-      message: 'Appointment cancelled successfully'
+      message: "Appointment cancelled successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to cancel appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to cancel appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/appointments/:id/check-in - Check in patient
-router.post('/:id/check-in', async (req: Request, res: Response) => {
+router.post("/:id/check-in", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -305,24 +332,24 @@ router.post('/:id/check-in', async (req: Request, res: Response) => {
     if (!existingAppointment) {
       return res.status(404).json({
         success: false,
-        error: 'Appointment not found'
+        error: "Appointment not found",
       });
     }
 
-    if (existingAppointment.status === 'cancelled') {
+    if (existingAppointment.status === "cancelled") {
       return res.status(400).json({
         success: false,
-        error: 'Cannot check in to a cancelled appointment'
+        error: "Cannot check in to a cancelled appointment",
       });
     }
 
     // Check in
     const checkedInAppointment: Appointment = {
       ...existingAppointment,
-      status: 'checked-in',
+      status: "checked-in",
       checkInTime: new Date(),
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // TODO: Save to database
@@ -330,19 +357,19 @@ router.post('/:id/check-in', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: checkedInAppointment,
-      message: 'Patient checked in successfully'
+      message: "Patient checked in successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to check in patient',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to check in patient",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/appointments/:id/check-out - Check out patient
-router.post('/:id/check-out', async (req: Request, res: Response) => {
+router.post("/:id/check-out", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -352,17 +379,17 @@ router.post('/:id/check-out', async (req: Request, res: Response) => {
     if (!existingAppointment) {
       return res.status(404).json({
         success: false,
-        error: 'Appointment not found'
+        error: "Appointment not found",
       });
     }
 
     // Check out
     const checkedOutAppointment: Appointment = {
       ...existingAppointment,
-      status: 'completed',
+      status: "completed",
       checkOutTime: new Date(),
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // TODO: Save to database
@@ -370,19 +397,19 @@ router.post('/:id/check-out', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: checkedOutAppointment,
-      message: 'Patient checked out successfully'
+      message: "Patient checked out successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to check out patient',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to check out patient",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/appointments/:id/reschedule - Reschedule appointment
-router.post('/:id/reschedule', async (req: Request, res: Response) => {
+router.post("/:id/reschedule", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { newStartTime, reason } = req.body;
@@ -390,7 +417,7 @@ router.post('/:id/reschedule', async (req: Request, res: Response) => {
     if (!newStartTime) {
       return res.status(400).json({
         success: false,
-        error: 'New start time is required'
+        error: "New start time is required",
       });
     }
 
@@ -400,7 +427,7 @@ router.post('/:id/reschedule', async (req: Request, res: Response) => {
     if (!existingAppointment) {
       return res.status(404).json({
         success: false,
-        error: 'Appointment not found'
+        error: "Appointment not found",
       });
     }
 
@@ -411,8 +438,8 @@ router.post('/:id/reschedule', async (req: Request, res: Response) => {
     if (conflicts.length > 0) {
       return res.status(409).json({
         success: false,
-        error: 'Appointment conflicts detected at new time',
-        conflicts
+        error: "Appointment conflicts detected at new time",
+        conflicts,
       });
     }
 
@@ -421,21 +448,23 @@ router.post('/:id/reschedule', async (req: Request, res: Response) => {
       ...existingAppointment,
       id: `apt-${Date.now()}`,
       startTime: new Date(newStartTime),
-      endTime: new Date(new Date(newStartTime).getTime() + existingAppointment.duration * 60000),
-      status: 'scheduled',
+      endTime: new Date(
+        new Date(newStartTime).getTime() + existingAppointment.duration * 60000,
+      ),
+      status: "scheduled",
       rescheduledFrom: id,
-      notes: `${existingAppointment.notes || ''}\nRescheduled: ${reason || 'No reason provided'}`,
+      notes: `${existingAppointment.notes || ""}\nRescheduled: ${reason || "No reason provided"}`,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Update old appointment
     const oldAppointment: Appointment = {
       ...existingAppointment,
-      status: 'rescheduled',
+      status: "rescheduled",
       rescheduledTo: newAppointment.id,
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // TODO: Save both to database
@@ -444,21 +473,21 @@ router.post('/:id/reschedule', async (req: Request, res: Response) => {
       success: true,
       data: {
         oldAppointment,
-        newAppointment
+        newAppointment,
       },
-      message: 'Appointment rescheduled successfully'
+      message: "Appointment rescheduled successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to reschedule appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to reschedule appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/appointments/:id/confirm - Confirm appointment
-router.post('/:id/confirm', async (req: Request, res: Response) => {
+router.post("/:id/confirm", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -468,16 +497,16 @@ router.post('/:id/confirm', async (req: Request, res: Response) => {
     if (!existingAppointment) {
       return res.status(404).json({
         success: false,
-        error: 'Appointment not found'
+        error: "Appointment not found",
       });
     }
 
     // Confirm appointment
     const confirmedAppointment: Appointment = {
       ...existingAppointment,
-      status: 'confirmed',
+      status: "confirmed",
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // TODO: Save to database
@@ -485,26 +514,26 @@ router.post('/:id/confirm', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: confirmedAppointment,
-      message: 'Appointment confirmed successfully'
+      message: "Appointment confirmed successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to confirm appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to confirm appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/appointments/check-conflicts - Check for scheduling conflicts
-router.post('/check-conflicts', async (req: Request, res: Response) => {
+router.post("/check-conflicts", async (req: Request, res: Response) => {
   try {
     const { providerId, startTime, endTime, excludeAppointmentId } = req.body;
 
     if (!providerId || !startTime || !endTime) {
       return res.status(400).json({
         success: false,
-        error: 'Provider ID, start time, and end time are required'
+        error: "Provider ID, start time, and end time are required",
       });
     }
 
@@ -514,13 +543,13 @@ router.post('/check-conflicts', async (req: Request, res: Response) => {
     res.json({
       success: true,
       hasConflicts: conflicts.length > 0,
-      conflicts
+      conflicts,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to check conflicts',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to check conflicts",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });

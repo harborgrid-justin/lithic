@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { sendUnauthorized, sendForbidden } from '../utils/response';
-import { auditLogger } from '../utils/logger';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { sendUnauthorized, sendForbidden } from "../utils/response";
+import { auditLogger } from "../utils/logger";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 export interface AuthUser {
   id: string;
@@ -24,22 +24,25 @@ export interface AuthRequest extends Request {
 export const authenticate = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ')
-      ? authHeader.substring(7)
-      : null;
+    const token =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.substring(7)
+        : null;
 
     if (!token) {
-      sendUnauthorized(res, 'No authentication token provided');
+      sendUnauthorized(res, "No authentication token provided");
       return;
     }
 
     // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser & { sessionId: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser & {
+      sessionId: string;
+    };
 
     // Attach user to request
     req.user = {
@@ -52,27 +55,27 @@ export const authenticate = async (
     req.sessionId = decoded.sessionId;
 
     // Audit log
-    auditLogger.info('User authenticated', {
+    auditLogger.info("User authenticated", {
       userId: decoded.id,
       email: decoded.email,
       ip: req.ip,
-      userAgent: req.headers['user-agent'],
+      userAgent: req.headers["user-agent"],
       endpoint: req.originalUrl,
     });
 
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      sendUnauthorized(res, 'Token has expired');
+      sendUnauthorized(res, "Token has expired");
       return;
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
-      sendUnauthorized(res, 'Invalid token');
+      sendUnauthorized(res, "Invalid token");
       return;
     }
 
-    sendUnauthorized(res, 'Authentication failed');
+    sendUnauthorized(res, "Authentication failed");
   }
 };
 
@@ -82,12 +85,12 @@ export const authenticate = async (
 export const authorize = (...allowedRoles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      sendUnauthorized(res, 'User not authenticated');
+      sendUnauthorized(res, "User not authenticated");
       return;
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      auditLogger.warn('Unauthorized access attempt', {
+      auditLogger.warn("Unauthorized access attempt", {
         userId: req.user.id,
         role: req.user.role,
         requiredRoles: allowedRoles,
@@ -95,7 +98,7 @@ export const authorize = (...allowedRoles: string[]) => {
         ip: req.ip,
       });
 
-      sendForbidden(res, 'Insufficient permissions');
+      sendForbidden(res, "Insufficient permissions");
       return;
     }
 
@@ -109,17 +112,17 @@ export const authorize = (...allowedRoles: string[]) => {
 export const requirePermission = (...requiredPermissions: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      sendUnauthorized(res, 'User not authenticated');
+      sendUnauthorized(res, "User not authenticated");
       return;
     }
 
     const userPermissions = req.user.permissions || [];
-    const hasPermission = requiredPermissions.every(permission =>
-      userPermissions.includes(permission)
+    const hasPermission = requiredPermissions.every((permission) =>
+      userPermissions.includes(permission),
     );
 
     if (!hasPermission) {
-      auditLogger.warn('Permission denied', {
+      auditLogger.warn("Permission denied", {
         userId: req.user.id,
         userPermissions,
         requiredPermissions,
@@ -127,7 +130,7 @@ export const requirePermission = (...requiredPermissions: string[]) => {
         ip: req.ip,
       });
 
-      sendForbidden(res, 'You do not have the required permissions');
+      sendForbidden(res, "You do not have the required permissions");
       return;
     }
 
@@ -141,16 +144,19 @@ export const requirePermission = (...requiredPermissions: string[]) => {
 export const optionalAuth = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ')
-      ? authHeader.substring(7)
-      : null;
+    const token =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.substring(7)
+        : null;
 
     if (token) {
-      const decoded = jwt.verify(token, JWT_SECRET) as AuthUser & { sessionId: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as AuthUser & {
+        sessionId: string;
+      };
       req.user = {
         id: decoded.id,
         email: decoded.email,
@@ -174,7 +180,7 @@ export const optionalAuth = async (
 export const generateToken = (
   user: AuthUser,
   sessionId: string,
-  expiresIn: string = process.env.JWT_EXPIRES_IN || '24h'
+  expiresIn: string = process.env.JWT_EXPIRES_IN || "24h",
 ): string => {
   return jwt.sign(
     {
@@ -186,7 +192,7 @@ export const generateToken = (
       sessionId,
     },
     JWT_SECRET,
-    { expiresIn }
+    { expiresIn },
   );
 };
 
@@ -195,23 +201,23 @@ export const generateToken = (
  */
 export const generateRefreshToken = (
   userId: string,
-  sessionId: string
+  sessionId: string,
 ): string => {
-  return jwt.sign(
-    { userId, sessionId, type: 'refresh' },
-    JWT_SECRET,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
-  );
+  return jwt.sign({ userId, sessionId, type: "refresh" }, JWT_SECRET, {
+    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
+  });
 };
 
 /**
  * Verify refresh token
  */
-export const verifyRefreshToken = (token: string): { userId: string; sessionId: string } => {
+export const verifyRefreshToken = (
+  token: string,
+): { userId: string; sessionId: string } => {
   const decoded = jwt.verify(token, JWT_SECRET) as any;
 
-  if (decoded.type !== 'refresh') {
-    throw new Error('Invalid token type');
+  if (decoded.type !== "refresh") {
+    throw new Error("Invalid token type");
   }
 
   return {

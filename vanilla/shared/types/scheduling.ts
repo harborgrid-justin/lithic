@@ -1,26 +1,26 @@
 // Scheduling & Appointments Types
 
 export enum AppointmentType {
-  INITIAL_CONSULTATION = 'INITIAL_CONSULTATION',
-  FOLLOWUP = 'FOLLOWUP',
-  ROUTINE_CHECKUP = 'ROUTINE_CHECKUP',
-  URGENT_CARE = 'URGENT_CARE',
-  PROCEDURE = 'PROCEDURE',
-  TELEMEDICINE = 'TELEMEDICINE',
-  VACCINATION = 'VACCINATION',
-  LAB_WORK = 'LAB_WORK',
-  IMAGING = 'IMAGING',
+  INITIAL_CONSULTATION = "INITIAL_CONSULTATION",
+  FOLLOWUP = "FOLLOWUP",
+  ROUTINE_CHECKUP = "ROUTINE_CHECKUP",
+  URGENT_CARE = "URGENT_CARE",
+  PROCEDURE = "PROCEDURE",
+  TELEMEDICINE = "TELEMEDICINE",
+  VACCINATION = "VACCINATION",
+  LAB_WORK = "LAB_WORK",
+  IMAGING = "IMAGING",
 }
 
 export enum AppointmentStatus {
-  SCHEDULED = 'SCHEDULED',
-  CONFIRMED = 'CONFIRMED',
-  CHECKED_IN = 'CHECKED_IN',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  NO_SHOW = 'NO_SHOW',
-  CANCELLED = 'CANCELLED',
-  RESCHEDULED = 'RESCHEDULED',
+  SCHEDULED = "SCHEDULED",
+  CONFIRMED = "CONFIRMED",
+  CHECKED_IN = "CHECKED_IN",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  NO_SHOW = "NO_SHOW",
+  CANCELLED = "CANCELLED",
+  RESCHEDULED = "RESCHEDULED",
 }
 
 export interface Appointment {
@@ -167,16 +167,16 @@ export interface WaitingRoomEntry {
   checkedInAt: string;
   waitTime: number; // minutes
   roomNumber?: string;
-  status: 'WAITING' | 'READY' | 'IN_ROOM';
+  status: "WAITING" | "READY" | "IN_ROOM";
 }
 
 export interface AppointmentReminder {
   appointmentId: string;
   patientId: string;
-  reminderType: 'EMAIL' | 'SMS' | 'PHONE';
+  reminderType: "EMAIL" | "SMS" | "PHONE";
   scheduledFor: string;
   sentAt?: string;
-  status: 'PENDING' | 'SENT' | 'FAILED';
+  status: "PENDING" | "SENT" | "FAILED";
 }
 
 export interface AppointmentStatistics {

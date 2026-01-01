@@ -1,54 +1,54 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { ClinicalNote as ClinicalNoteType } from '@/types/clinical'
-import { getClinicalNote, signClinicalNote } from '@/services/clinical.service'
-import { ClinicalNote } from '@/components/clinical/ClinicalNote'
-import { SOAPNote } from '@/components/clinical/SOAPNote'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, FileSignature } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { ClinicalNote as ClinicalNoteType } from "@/types/clinical";
+import { getClinicalNote, signClinicalNote } from "@/services/clinical.service";
+import { ClinicalNote } from "@/components/clinical/ClinicalNote";
+import { SOAPNote } from "@/components/clinical/SOAPNote";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, FileSignature } from "lucide-react";
 
 export default function ClinicalNoteDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const [note, setNote] = useState<ClinicalNoteType | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [showSignature, setShowSignature] = useState(false)
-  const [signature, setSignature] = useState('')
+  const params = useParams();
+  const router = useRouter();
+  const [note, setNote] = useState<ClinicalNoteType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showSignature, setShowSignature] = useState(false);
+  const [signature, setSignature] = useState("");
 
   useEffect(() => {
     if (params.id) {
-      loadNote(params.id as string)
+      loadNote(params.id as string);
     }
-  }, [params.id])
+  }, [params.id]);
 
   const loadNote = async (id: string) => {
     try {
-      const data = await getClinicalNote(id)
-      setNote(data)
+      const data = await getClinicalNote(id);
+      setNote(data);
     } catch (error) {
-      console.error('Failed to load note:', error)
+      console.error("Failed to load note:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSign = async () => {
-    if (!note || !signature) return
+    if (!note || !signature) return;
     try {
-      const updated = await signClinicalNote(note.id, signature)
-      setNote(updated)
-      setShowSignature(false)
-      setSignature('')
+      const updated = await signClinicalNote(note.id, signature);
+      setNote(updated);
+      setShowSignature(false);
+      setSignature("");
     } catch (error) {
-      console.error('Failed to sign note:', error)
-      alert('Failed to sign note. Please try again.')
+      console.error("Failed to sign note:", error);
+      alert("Failed to sign note. Please try again.");
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -57,7 +57,7 @@ export default function ClinicalNoteDetailPage() {
           <p>Loading note...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!note) {
@@ -67,7 +67,7 @@ export default function ClinicalNoteDetailPage() {
           <p>Note not found</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -80,7 +80,9 @@ export default function ClinicalNoteDetailPage() {
               Back
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Clinical Note</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Clinical Note
+              </h1>
             </div>
           </div>
           {!note.signed && (
@@ -98,7 +100,9 @@ export default function ClinicalNoteDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="signature">Type your full name to sign this note</Label>
+                <Label htmlFor="signature">
+                  Type your full name to sign this note
+                </Label>
                 <Input
                   id="signature"
                   value={signature}
@@ -110,7 +114,10 @@ export default function ClinicalNoteDetailPage() {
                 <Button onClick={handleSign} disabled={!signature}>
                   Apply Signature
                 </Button>
-                <Button variant="outline" onClick={() => setShowSignature(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowSignature(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -118,8 +125,12 @@ export default function ClinicalNoteDetailPage() {
           </Card>
         )}
 
-        {note.type === 'soap' ? <SOAPNote note={note} /> : <ClinicalNote note={note} />}
+        {note.type === "soap" ? (
+          <SOAPNote note={note} />
+        ) : (
+          <ClinicalNote note={note} />
+        )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import { UserService } from '../services/UserService';
-import { RoleService } from '../services/RoleService';
-import { AuditService } from '../services/AuditService';
-import { SessionService } from '../services/SessionService';
-import { MFAService } from '../services/MFAService';
+import { Request, Response } from "express";
+import { UserService } from "../services/UserService";
+import { RoleService } from "../services/RoleService";
+import { AuditService } from "../services/AuditService";
+import { SessionService } from "../services/SessionService";
+import { MFAService } from "../services/MFAService";
 
 /**
  * AdminController - Handles administrative endpoints
@@ -20,7 +20,7 @@ export class AdminController {
     roleService: RoleService,
     auditService: AuditService,
     sessionService: SessionService,
-    mfaService: MFAService
+    mfaService: MFAService,
   ) {
     this.userService = userService;
     this.roleService = roleService;
@@ -48,13 +48,13 @@ export class AdminController {
         users = await this.userService.searchUsers(
           organizationId,
           search as string,
-          Number(limit)
+          Number(limit),
         );
       } else {
         users = await this.userService.getUsersByOrganization(
           organizationId,
           Number(limit),
-          Number(offset)
+          Number(offset),
         );
       }
 
@@ -69,7 +69,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get users',
+        error: error.message || "Failed to get users",
       });
     }
   };
@@ -87,7 +87,7 @@ export class AdminController {
       if (!user) {
         res.status(404).json({
           success: false,
-          error: 'User not found',
+          error: "User not found",
         });
         return;
       }
@@ -105,7 +105,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get user',
+        error: error.message || "Failed to get user",
       });
     }
   };
@@ -118,12 +118,13 @@ export class AdminController {
     try {
       const adminId = (req as any).user?.userId;
       const organizationId = (req as any).user?.organizationId;
-      const { email, password, firstName, lastName, roles, metadata } = req.body;
+      const { email, password, firstName, lastName, roles, metadata } =
+        req.body;
 
       if (!email || !password || !firstName || !lastName) {
         res.status(400).json({
           success: false,
-          error: 'All required fields must be provided',
+          error: "All required fields must be provided",
         });
         return;
       }
@@ -138,7 +139,7 @@ export class AdminController {
           roles,
           metadata,
         },
-        adminId
+        adminId,
       );
 
       res.status(201).json({
@@ -148,7 +149,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to create user',
+        error: error.message || "Failed to create user",
       });
     }
   };
@@ -172,7 +173,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to update user',
+        error: error.message || "Failed to update user",
       });
     }
   };
@@ -190,12 +191,12 @@ export class AdminController {
 
       res.status(200).json({
         success: true,
-        message: 'User deactivated successfully',
+        message: "User deactivated successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to deactivate user',
+        error: error.message || "Failed to deactivate user",
       });
     }
   };
@@ -213,12 +214,12 @@ export class AdminController {
 
       res.status(200).json({
         success: true,
-        message: 'User activated successfully',
+        message: "User activated successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to activate user',
+        error: error.message || "Failed to activate user",
       });
     }
   };
@@ -236,7 +237,7 @@ export class AdminController {
       if (!newPassword) {
         res.status(400).json({
           success: false,
-          error: 'New password is required',
+          error: "New password is required",
         });
         return;
       }
@@ -245,12 +246,12 @@ export class AdminController {
 
       res.status(200).json({
         success: true,
-        message: 'Password reset successfully',
+        message: "Password reset successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to reset password',
+        error: error.message || "Failed to reset password",
       });
     }
   };
@@ -276,7 +277,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get roles',
+        error: error.message || "Failed to get roles",
       });
     }
   };
@@ -295,7 +296,7 @@ export class AdminController {
       if (!roleName) {
         res.status(400).json({
           success: false,
-          error: 'Role name is required',
+          error: "Role name is required",
         });
         return;
       }
@@ -304,17 +305,17 @@ export class AdminController {
         userId,
         roleName,
         organizationId,
-        adminId
+        adminId,
       );
 
       res.status(200).json({
         success: true,
-        message: 'Role assigned successfully',
+        message: "Role assigned successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to assign role',
+        error: error.message || "Failed to assign role",
       });
     }
   };
@@ -333,17 +334,17 @@ export class AdminController {
         userId,
         roleName,
         organizationId,
-        adminId
+        adminId,
       );
 
       res.status(200).json({
         success: true,
-        message: 'Role revoked successfully',
+        message: "Role revoked successfully",
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to revoke role',
+        error: error.message || "Failed to revoke role",
       });
     }
   };
@@ -358,20 +359,28 @@ export class AdminController {
       // For now, return a static list of resources and actions
       const permissions = {
         resources: [
-          'USERS',
-          'ROLES',
-          'PATIENTS',
-          'APPOINTMENTS',
-          'MEDICAL_RECORDS',
-          'PRESCRIPTIONS',
-          'LAB_RESULTS',
-          'BILLING',
-          'INSURANCE',
-          'REPORTS',
-          'SETTINGS',
-          'AUDIT_LOGS',
+          "USERS",
+          "ROLES",
+          "PATIENTS",
+          "APPOINTMENTS",
+          "MEDICAL_RECORDS",
+          "PRESCRIPTIONS",
+          "LAB_RESULTS",
+          "BILLING",
+          "INSURANCE",
+          "REPORTS",
+          "SETTINGS",
+          "AUDIT_LOGS",
         ],
-        actions: ['CREATE', 'READ', 'UPDATE', 'DELETE', 'EXPORT', 'PRINT', 'MANAGE'],
+        actions: [
+          "CREATE",
+          "READ",
+          "UPDATE",
+          "DELETE",
+          "EXPORT",
+          "PRINT",
+          "MANAGE",
+        ],
       };
 
       res.status(200).json({
@@ -381,7 +390,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get permissions',
+        error: error.message || "Failed to get permissions",
       });
     }
   };
@@ -417,7 +426,8 @@ export class AdminController {
       if (userId) filters.userId = userId as string;
       if (action) filters.action = action;
       if (resourceType) filters.resourceType = resourceType;
-      if (phiAccessed !== undefined) filters.phiAccessed = phiAccessed === 'true';
+      if (phiAccessed !== undefined)
+        filters.phiAccessed = phiAccessed === "true";
       if (startDate) filters.startDate = new Date(startDate as string);
       if (endDate) filters.endDate = new Date(endDate as string);
 
@@ -434,7 +444,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get audit logs',
+        error: error.message || "Failed to get audit logs",
       });
     }
   };
@@ -456,7 +466,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get statistics',
+        error: error.message || "Failed to get statistics",
       });
     }
   };
@@ -468,12 +478,12 @@ export class AdminController {
   exportAuditLogs = async (req: Request, res: Response): Promise<void> => {
     try {
       const organizationId = (req as any).user?.organizationId;
-      const { startDate, endDate, format = 'json' } = req.body;
+      const { startDate, endDate, format = "json" } = req.body;
 
       if (!startDate || !endDate) {
         res.status(400).json({
           success: false,
-          error: 'Start date and end date are required',
+          error: "Start date and end date are required",
         });
         return;
       }
@@ -482,19 +492,22 @@ export class AdminController {
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         organizationId,
-        format: format as 'json' | 'csv',
+        format: format as "json" | "csv",
       });
 
-      const contentType = format === 'csv' ? 'text/csv' : 'application/json';
+      const contentType = format === "csv" ? "text/csv" : "application/json";
       const filename = `audit-logs-${startDate}-${endDate}.${format}`;
 
-      res.setHeader('Content-Type', contentType);
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader("Content-Type", contentType);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${filename}"`,
+      );
       res.status(200).send(exportData);
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to export audit logs',
+        error: error.message || "Failed to export audit logs",
       });
     }
   };
@@ -511,7 +524,8 @@ export class AdminController {
     try {
       const organizationId = (req as any).user?.organizationId;
 
-      const statistics = await this.sessionService.getSessionStatistics(organizationId);
+      const statistics =
+        await this.sessionService.getSessionStatistics(organizationId);
 
       res.status(200).json({
         success: true,
@@ -520,7 +534,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get session statistics',
+        error: error.message || "Failed to get session statistics",
       });
     }
   };
@@ -529,7 +543,10 @@ export class AdminController {
    * DELETE /admin/users/:userId/sessions
    * Terminate all sessions for a user
    */
-  terminateUserSessions = async (req: Request, res: Response): Promise<void> => {
+  terminateUserSessions = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { userId } = req.params;
 
@@ -543,7 +560,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to terminate sessions',
+        error: error.message || "Failed to terminate sessions",
       });
     }
   };
@@ -566,8 +583,8 @@ export class AdminController {
         success: true,
         organization: {
           id: organizationId,
-          name: 'Sample Healthcare Organization',
-          type: 'hospital',
+          name: "Sample Healthcare Organization",
+          type: "hospital",
           settings: {
             mfaRequired: true,
             sessionTimeout: 30,
@@ -583,7 +600,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get organization',
+        error: error.message || "Failed to get organization",
       });
     }
   };
@@ -600,7 +617,7 @@ export class AdminController {
       // In production, this would update organizations table
       res.status(200).json({
         success: true,
-        message: 'Organization updated successfully',
+        message: "Organization updated successfully",
         organization: {
           id: organizationId,
           ...updates,
@@ -609,7 +626,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to update organization',
+        error: error.message || "Failed to update organization",
       });
     }
   };
@@ -633,7 +650,7 @@ export class AdminController {
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to get MFA statistics',
+        error: error.message || "Failed to get MFA statistics",
       });
     }
   };

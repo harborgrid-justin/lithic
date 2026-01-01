@@ -3,9 +3,9 @@
  * Display and manage the dispensing workflow queue
  */
 
-'use client';
+"use client";
 
-import { type DispensingQueueItem } from '@/services/prescription.service';
+import { type DispensingQueueItem } from "@/services/prescription.service";
 
 interface DispensingQueueProps {
   items: DispensingQueueItem[];
@@ -23,29 +23,29 @@ export function DispensingQueue({ items, onRefresh }: DispensingQueueProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'stat':
-        return 'bg-red-100 text-red-800 border-red-300';
-      case 'urgent':
-        return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'priority':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case "stat":
+        return "bg-red-100 text-red-800 border-red-300";
+      case "urgent":
+        return "bg-orange-100 text-orange-800 border-orange-300";
+      case "priority":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
       default:
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return "bg-blue-100 text-blue-800 border-blue-300";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ready':
-        return 'bg-green-100 text-green-800';
-      case 'verification':
-        return 'bg-purple-100 text-purple-800';
-      case 'in-progress':
-        return 'bg-blue-100 text-blue-800';
-      case 'picked-up':
-        return 'bg-gray-100 text-gray-800';
+      case "ready":
+        return "bg-green-100 text-green-800";
+      case "verification":
+        return "bg-purple-100 text-purple-800";
+      case "in-progress":
+        return "bg-blue-100 text-blue-800";
+      case "picked-up":
+        return "bg-gray-100 text-gray-800";
       default:
-        return 'bg-yellow-100 text-yellow-800';
+        return "bg-yellow-100 text-yellow-800";
     }
   };
 
@@ -87,26 +87,30 @@ export function DispensingQueue({ items, onRefresh }: DispensingQueueProps) {
                 #{item.queuePosition}
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded border ${getPriorityColor(item.priority)}`}>
+                <span
+                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded border ${getPriorityColor(item.priority)}`}
+                >
                   {item.priority.toUpperCase()}
                 </span>
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-blue-600 font-medium">
-                {item.prescription?.rxNumber || 'N/A'}
+                {item.prescription?.rxNumber || "N/A"}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                {item.prescription?.patientName || 'N/A'}
+                {item.prescription?.patientName || "N/A"}
               </td>
               <td className="px-4 py-3">
                 <div className="text-sm text-gray-900">
-                  {item.prescription?.medicationName || 'N/A'}
+                  {item.prescription?.medicationName || "N/A"}
                 </div>
                 <div className="text-xs text-gray-500">
-                  Qty: {item.prescription?.quantity || 'N/A'}
+                  Qty: {item.prescription?.quantity || "N/A"}
                 </div>
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>
+                <span
+                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}
+                >
                   {item.status}
                 </span>
               </td>
@@ -114,7 +118,7 @@ export function DispensingQueue({ items, onRefresh }: DispensingQueueProps) {
                 {new Date(item.estimatedReadyTime).toLocaleTimeString()}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                {item.assignedTo || 'Unassigned'}
+                {item.assignedTo || "Unassigned"}
               </td>
             </tr>
           ))}

@@ -3,7 +3,7 @@
  * Agent 7: Pharmacy
  */
 
-import type { BaseEntity } from './index';
+import type { BaseEntity } from "./index";
 
 // ============================================================================
 // Prescription Types
@@ -52,64 +52,64 @@ export interface Prescription extends BaseEntity {
 }
 
 export enum DosageForm {
-  TABLET = 'TABLET',
-  CAPSULE = 'CAPSULE',
-  LIQUID = 'LIQUID',
-  SYRUP = 'SYRUP',
-  SUSPENSION = 'SUSPENSION',
-  INJECTION = 'INJECTION',
-  CREAM = 'CREAM',
-  OINTMENT = 'OINTMENT',
-  PATCH = 'PATCH',
-  INHALER = 'INHALER',
-  DROPS = 'DROPS',
-  SUPPOSITORY = 'SUPPOSITORY',
-  POWDER = 'POWDER',
-  GEL = 'GEL',
+  TABLET = "TABLET",
+  CAPSULE = "CAPSULE",
+  LIQUID = "LIQUID",
+  SYRUP = "SYRUP",
+  SUSPENSION = "SUSPENSION",
+  INJECTION = "INJECTION",
+  CREAM = "CREAM",
+  OINTMENT = "OINTMENT",
+  PATCH = "PATCH",
+  INHALER = "INHALER",
+  DROPS = "DROPS",
+  SUPPOSITORY = "SUPPOSITORY",
+  POWDER = "POWDER",
+  GEL = "GEL",
 }
 
 export enum MedicationRoute {
-  ORAL = 'ORAL',
-  SUBLINGUAL = 'SUBLINGUAL',
-  BUCCAL = 'BUCCAL',
-  RECTAL = 'RECTAL',
-  VAGINAL = 'VAGINAL',
-  TOPICAL = 'TOPICAL',
-  TRANSDERMAL = 'TRANSDERMAL',
-  INTRAVENOUS = 'INTRAVENOUS',
-  INTRAMUSCULAR = 'INTRAMUSCULAR',
-  SUBCUTANEOUS = 'SUBCUTANEOUS',
-  INHALATION = 'INHALATION',
-  NASAL = 'NASAL',
-  OPHTHALMIC = 'OPHTHALMIC',
-  OTIC = 'OTIC',
+  ORAL = "ORAL",
+  SUBLINGUAL = "SUBLINGUAL",
+  BUCCAL = "BUCCAL",
+  RECTAL = "RECTAL",
+  VAGINAL = "VAGINAL",
+  TOPICAL = "TOPICAL",
+  TRANSDERMAL = "TRANSDERMAL",
+  INTRAVENOUS = "INTRAVENOUS",
+  INTRAMUSCULAR = "INTRAMUSCULAR",
+  SUBCUTANEOUS = "SUBCUTANEOUS",
+  INHALATION = "INHALATION",
+  NASAL = "NASAL",
+  OPHTHALMIC = "OPHTHALMIC",
+  OTIC = "OTIC",
 }
 
 export enum PrescriptionStatus {
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
-  DISCONTINUED = 'DISCONTINUED',
-  CANCELLED = 'CANCELLED',
-  ON_HOLD = 'ON_HOLD',
-  EXPIRED = 'EXPIRED',
-  ENTERED_IN_ERROR = 'ENTERED_IN_ERROR',
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  DISCONTINUED = "DISCONTINUED",
+  CANCELLED = "CANCELLED",
+  ON_HOLD = "ON_HOLD",
+  EXPIRED = "EXPIRED",
+  ENTERED_IN_ERROR = "ENTERED_IN_ERROR",
 }
 
 export enum ControlledSchedule {
-  SCHEDULE_I = 'SCHEDULE_I',
-  SCHEDULE_II = 'SCHEDULE_II',
-  SCHEDULE_III = 'SCHEDULE_III',
-  SCHEDULE_IV = 'SCHEDULE_IV',
-  SCHEDULE_V = 'SCHEDULE_V',
-  NON_CONTROLLED = 'NON_CONTROLLED',
+  SCHEDULE_I = "SCHEDULE_I",
+  SCHEDULE_II = "SCHEDULE_II",
+  SCHEDULE_III = "SCHEDULE_III",
+  SCHEDULE_IV = "SCHEDULE_IV",
+  SCHEDULE_V = "SCHEDULE_V",
+  NON_CONTROLLED = "NON_CONTROLLED",
 }
 
 export enum EPrescribeStatus {
-  PENDING = 'PENDING',
-  SENT = 'SENT',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-  ERROR = 'ERROR',
+  PENDING = "PENDING",
+  SENT = "SENT",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+  ERROR = "ERROR",
 }
 
 // ============================================================================
@@ -141,38 +141,38 @@ export interface Medication extends BaseEntity {
 }
 
 export enum MedicationCategory {
-  ANTIBIOTIC = 'ANTIBIOTIC',
-  ANTIVIRAL = 'ANTIVIRAL',
-  ANTIFUNGAL = 'ANTIFUNGAL',
-  ANALGESIC = 'ANALGESIC',
-  ANTI_INFLAMMATORY = 'ANTI_INFLAMMATORY',
-  ANTIHYPERTENSIVE = 'ANTIHYPERTENSIVE',
-  ANTIDIABETIC = 'ANTIDIABETIC',
-  ANTIDEPRESSANT = 'ANTIDEPRESSANT',
-  ANTIPSYCHOTIC = 'ANTIPSYCHOTIC',
-  ANTICONVULSANT = 'ANTICONVULSANT',
-  CARDIOVASCULAR = 'CARDIOVASCULAR',
-  RESPIRATORY = 'RESPIRATORY',
-  GASTROINTESTINAL = 'GASTROINTESTINAL',
-  HORMONES = 'HORMONES',
-  VITAMINS_SUPPLEMENTS = 'VITAMINS_SUPPLEMENTS',
-  OTHER = 'OTHER',
+  ANTIBIOTIC = "ANTIBIOTIC",
+  ANTIVIRAL = "ANTIVIRAL",
+  ANTIFUNGAL = "ANTIFUNGAL",
+  ANALGESIC = "ANALGESIC",
+  ANTI_INFLAMMATORY = "ANTI_INFLAMMATORY",
+  ANTIHYPERTENSIVE = "ANTIHYPERTENSIVE",
+  ANTIDIABETIC = "ANTIDIABETIC",
+  ANTIDEPRESSANT = "ANTIDEPRESSANT",
+  ANTIPSYCHOTIC = "ANTIPSYCHOTIC",
+  ANTICONVULSANT = "ANTICONVULSANT",
+  CARDIOVASCULAR = "CARDIOVASCULAR",
+  RESPIRATORY = "RESPIRATORY",
+  GASTROINTESTINAL = "GASTROINTESTINAL",
+  HORMONES = "HORMONES",
+  VITAMINS_SUPPLEMENTS = "VITAMINS_SUPPLEMENTS",
+  OTHER = "OTHER",
 }
 
 export enum PregnancyCategory {
-  A = 'A',
-  B = 'B',
-  C = 'C',
-  D = 'D',
-  X = 'X',
-  UNKNOWN = 'UNKNOWN',
+  A = "A",
+  B = "B",
+  C = "C",
+  D = "D",
+  X = "X",
+  UNKNOWN = "UNKNOWN",
 }
 
 export enum LactationCategory {
-  COMPATIBLE = 'COMPATIBLE',
-  USE_CAUTION = 'USE_CAUTION',
-  AVOID = 'AVOID',
-  UNKNOWN = 'UNKNOWN',
+  COMPATIBLE = "COMPATIBLE",
+  USE_CAUTION = "USE_CAUTION",
+  AVOID = "AVOID",
+  UNKNOWN = "UNKNOWN",
 }
 
 // ============================================================================
@@ -193,10 +193,10 @@ export interface DrugInteraction extends BaseEntity {
 }
 
 export enum InteractionSeverity {
-  MINOR = 'MINOR',
-  MODERATE = 'MODERATE',
-  MAJOR = 'MAJOR',
-  CONTRAINDICATED = 'CONTRAINDICATED',
+  MINOR = "MINOR",
+  MODERATE = "MODERATE",
+  MAJOR = "MAJOR",
+  CONTRAINDICATED = "CONTRAINDICATED",
 }
 
 export interface InteractionCheck {
@@ -213,7 +213,7 @@ export interface AllergyConflict {
   medicationName: string;
   allergyId: string;
   allergen: string;
-  severity: 'MILD' | 'MODERATE' | 'SEVERE' | 'LIFE_THREATENING';
+  severity: "MILD" | "MODERATE" | "SEVERE" | "LIFE_THREATENING";
   crossSensitivity: boolean;
 }
 
@@ -227,20 +227,20 @@ export interface DuplicateTherapy {
 
 export interface MedicationWarning {
   type: WarningType;
-  severity: 'INFO' | 'WARNING' | 'CRITICAL';
+  severity: "INFO" | "WARNING" | "CRITICAL";
   message: string;
   details: string | null;
 }
 
 export enum WarningType {
-  AGE_RELATED = 'AGE_RELATED',
-  PREGNANCY = 'PREGNANCY',
-  LACTATION = 'LACTATION',
-  RENAL_IMPAIRMENT = 'RENAL_IMPAIRMENT',
-  HEPATIC_IMPAIRMENT = 'HEPATIC_IMPAIRMENT',
-  GENETIC_FACTOR = 'GENETIC_FACTOR',
-  DOSAGE = 'DOSAGE',
-  OTHER = 'OTHER',
+  AGE_RELATED = "AGE_RELATED",
+  PREGNANCY = "PREGNANCY",
+  LACTATION = "LACTATION",
+  RENAL_IMPAIRMENT = "RENAL_IMPAIRMENT",
+  HEPATIC_IMPAIRMENT = "HEPATIC_IMPAIRMENT",
+  GENETIC_FACTOR = "GENETIC_FACTOR",
+  DOSAGE = "DOSAGE",
+  OTHER = "OTHER",
 }
 
 // ============================================================================
@@ -266,12 +266,12 @@ export interface MedicationAdministration extends BaseEntity {
 }
 
 export enum AdministrationStatus {
-  SCHEDULED = 'SCHEDULED',
-  ADMINISTERED = 'ADMINISTERED',
-  MISSED = 'MISSED',
-  REFUSED = 'REFUSED',
-  HELD = 'HELD',
-  NOT_GIVEN = 'NOT_GIVEN',
+  SCHEDULED = "SCHEDULED",
+  ADMINISTERED = "ADMINISTERED",
+  MISSED = "MISSED",
+  REFUSED = "REFUSED",
+  HELD = "HELD",
+  NOT_GIVEN = "NOT_GIVEN",
 }
 
 // ============================================================================
@@ -289,11 +289,11 @@ export interface Formulary extends BaseEntity {
 }
 
 export enum FormularyType {
-  COMMERCIAL = 'COMMERCIAL',
-  MEDICARE = 'MEDICARE',
-  MEDICAID = 'MEDICAID',
-  HOSPITAL = 'HOSPITAL',
-  CUSTOM = 'CUSTOM',
+  COMMERCIAL = "COMMERCIAL",
+  MEDICARE = "MEDICARE",
+  MEDICAID = "MEDICAID",
+  HOSPITAL = "HOSPITAL",
+  CUSTOM = "CUSTOM",
 }
 
 export interface FormularyMedication {
@@ -315,12 +315,12 @@ export interface FormularyRestriction {
 }
 
 export enum RestrictionType {
-  PRIOR_AUTHORIZATION = 'PRIOR_AUTHORIZATION',
-  STEP_THERAPY = 'STEP_THERAPY',
-  QUANTITY_LIMIT = 'QUANTITY_LIMIT',
-  AGE_LIMIT = 'AGE_LIMIT',
-  GENDER_LIMIT = 'GENDER_LIMIT',
-  DIAGNOSIS_REQUIRED = 'DIAGNOSIS_REQUIRED',
+  PRIOR_AUTHORIZATION = "PRIOR_AUTHORIZATION",
+  STEP_THERAPY = "STEP_THERAPY",
+  QUANTITY_LIMIT = "QUANTITY_LIMIT",
+  AGE_LIMIT = "AGE_LIMIT",
+  GENDER_LIMIT = "GENDER_LIMIT",
+  DIAGNOSIS_REQUIRED = "DIAGNOSIS_REQUIRED",
 }
 
 // ============================================================================
@@ -363,17 +363,17 @@ export interface RefillRequest extends BaseEntity {
 }
 
 export enum RefillMethod {
-  PATIENT_PORTAL = 'PATIENT_PORTAL',
-  PHONE = 'PHONE',
-  PHARMACY = 'PHARMACY',
-  IN_PERSON = 'IN_PERSON',
+  PATIENT_PORTAL = "PATIENT_PORTAL",
+  PHONE = "PHONE",
+  PHARMACY = "PHARMACY",
+  IN_PERSON = "IN_PERSON",
 }
 
 export enum RefillStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  DENIED = 'DENIED',
-  CANCELLED = 'CANCELLED',
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  DENIED = "DENIED",
+  CANCELLED = "CANCELLED",
 }
 
 // ============================================================================

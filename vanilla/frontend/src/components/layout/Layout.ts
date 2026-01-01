@@ -3,11 +3,11 @@
  * Main Layout Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
-import { Header, HeaderProps } from './Header';
-import { Sidebar, SidebarProps, SidebarMenuItem } from './Sidebar';
-import { Footer, FooterProps } from './Footer';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
+import { Header, HeaderProps } from "./Header";
+import { Sidebar, SidebarProps, SidebarMenuItem } from "./Sidebar";
+import { Footer, FooterProps } from "./Footer";
 
 export interface LayoutProps {
   header?: HeaderProps;
@@ -35,24 +35,24 @@ export class Layout extends Component<LayoutProps, LayoutState> {
   }
 
   protected getClassName(): string {
-    const classes = ['layout'];
+    const classes = ["layout"];
 
     if (this.state.sidebarOpen && this.props.showSidebar) {
-      classes.push('layout-sidebar-open');
+      classes.push("layout-sidebar-open");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
     this.removeAllChildren();
 
     // Header
     if (this.props.header) {
-      const headerContainer = createElement('div', {
-        className: 'layout-header',
+      const headerContainer = createElement("div", {
+        className: "layout-header",
       });
 
       this.headerComponent = new Header({
@@ -65,14 +65,14 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     }
 
     // Main container
-    const mainContainer = createElement('div', {
-      className: 'layout-main',
+    const mainContainer = createElement("div", {
+      className: "layout-main",
     });
 
     // Sidebar
     if (this.props.showSidebar && this.props.sidebar) {
-      const sidebarContainer = createElement('aside', {
-        className: 'layout-sidebar',
+      const sidebarContainer = createElement("aside", {
+        className: "layout-sidebar",
       });
 
       this.sidebarComponent = new Sidebar({
@@ -85,13 +85,13 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     }
 
     // Content
-    const contentContainer = createElement('main', {
-      className: 'layout-content',
+    const contentContainer = createElement("main", {
+      className: "layout-content",
     });
 
-    this.mainContent = createElement('div', {
-      className: 'layout-content-inner',
-      id: 'main-content',
+    this.mainContent = createElement("div", {
+      className: "layout-content-inner",
+      id: "main-content",
     });
 
     contentContainer.appendChild(this.mainContent);
@@ -101,8 +101,8 @@ export class Layout extends Component<LayoutProps, LayoutState> {
 
     // Footer
     if (this.props.footer) {
-      const footerContainer = createElement('div', {
-        className: 'layout-footer',
+      const footerContainer = createElement("div", {
+        className: "layout-footer",
       });
 
       this.footerComponent = new Footer(this.props.footer);
@@ -128,7 +128,7 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     if (!this.mainContent) return;
 
     // Clear existing content
-    this.mainContent.innerHTML = '';
+    this.mainContent.innerHTML = "";
 
     // Add new content
     if (content instanceof Component) {

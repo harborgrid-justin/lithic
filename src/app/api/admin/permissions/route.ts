@@ -1,7 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { authOptions, getServerSession } from '@/lib/auth';
-import { checkPermission, getPermissionMatrix, assignRole, grantAccess } from '@/lib/permissions';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { authOptions, getServerSession } from "@/lib/auth";
+import {
+  checkPermission,
+  getPermissionMatrix,
+  assignRole,
+  grantAccess,
+} from "@/lib/permissions";
+import { z } from "zod";
 
 // GET /api/admin/permissions - Get permission matrix
 export async function GET(request: NextRequest) {
@@ -10,36 +15,39 @@ export async function GET(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     const hasPermission = await checkPermission({
       userId: session.user.id,
-      resource: 'permission',
-      action: 'read',
+      resource: "permission",
+      action: "read",
       organizationId: (session.user as any).organizationId,
     });
 
     if (!hasPermission) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: "Forbidden" },
+        { status: 403 },
       );
     }
 
-    const matrix = await getPermissionMatrix((session.user as any).organizationId);
+    const matrix = await getPermissionMatrix(
+      (session.user as any).organizationId,
+    );
 
     return NextResponse.json({
       success: true,
       data: matrix,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch permissions';
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch permissions";
     return NextResponse.json(
       { success: false, error: message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -51,29 +59,29 @@ export async function POST(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     const hasPermission = await checkPermission({
       userId: session.user.id,
-      resource: 'permission',
-      action: 'write',
+      resource: "permission",
+      action: "write",
       organizationId: (session.user as any).organizationId,
     });
 
     if (!hasPermission) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: "Forbidden" },
+        { status: 403 },
       );
     }
 
     const body = await request.json();
     const { type } = body;
 
-    if (type === 'assign-role') {
+    if (type === "assign-role") {
       const schema = z.object({
         userId: z.string(),
         roleId: z.string(),
@@ -87,7 +95,7 @@ export async function POST(request: NextRequest) {
         success: true,
         data: result,
       });
-    } else if (type === 'grant-access') {
+    } else if (type === "grant-access") {
       const schema = z.object({
         userId: z.string(),
         resource: z.string(),
@@ -111,25 +119,26 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { success: false, error: 'Invalid permission type' },
-      { status: 400 }
+      { success: false, error: "Invalid permission type" },
+      { status: 400 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Validation error',
+          error: "Validation error",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const message = error instanceof Error ? error.message : 'Failed to grant permission';
+    const message =
+      error instanceof Error ? error.message : "Failed to grant permission";
     return NextResponse.json(
       { success: false, error: message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

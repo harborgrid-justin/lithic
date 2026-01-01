@@ -6,17 +6,20 @@
 export class Calendar {
   private container: HTMLElement;
   private currentDate: Date;
-  private currentView: 'day' | 'week' | 'month';
+  private currentView: "day" | "week" | "month";
   private onDateSelect?: (date: Date) => void;
 
-  constructor(container: HTMLElement, options?: {
-    initialDate?: Date;
-    initialView?: 'day' | 'week' | 'month';
-    onDateSelect?: (date: Date) => void;
-  }) {
+  constructor(
+    container: HTMLElement,
+    options?: {
+      initialDate?: Date;
+      initialView?: "day" | "week" | "month";
+      onDateSelect?: (date: Date) => void;
+    },
+  ) {
     this.container = container;
     this.currentDate = options?.initialDate || new Date();
-    this.currentView = options?.initialView || 'month';
+    this.currentView = options?.initialView || "month";
     this.onDateSelect = options?.onDateSelect;
   }
 
@@ -37,16 +40,16 @@ export class Calendar {
   }
 
   private renderBody(): void {
-    const body = document.getElementById('calendarBody')!;
+    const body = document.getElementById("calendarBody")!;
 
     switch (this.currentView) {
-      case 'month':
+      case "month":
         body.innerHTML = this.renderMonthView();
         break;
-      case 'week':
+      case "week":
         body.innerHTML = this.renderWeekView();
         break;
-      case 'day':
+      case "day":
         body.innerHTML = this.renderDayView();
         break;
     }
@@ -69,22 +72,22 @@ export class Calendar {
         const isToday = this.isToday(date);
 
         days.push(`
-          <div class="calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}"
+          <div class="calendar-day ${!isCurrentMonth ? "other-month" : ""} ${isToday ? "today" : ""}"
                data-date="${date.toISOString()}">
             ${date.getDate()}
           </div>
         `);
         currentDay++;
       }
-      weeks.push(`<div class="calendar-week">${days.join('')}</div>`);
+      weeks.push(`<div class="calendar-week">${days.join("")}</div>`);
     }
 
     return `
       <div class="calendar-month">
         <div class="calendar-weekdays">
-          ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `<div class="weekday">${d}</div>`).join('')}
+          ${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => `<div class="weekday">${d}</div>`).join("")}
         </div>
-        ${weeks.join('')}
+        ${weeks.join("")}
       </div>
     `;
   }
@@ -98,16 +101,16 @@ export class Calendar {
   }
 
   private attachEventListeners(): void {
-    document.getElementById('prevBtn')?.addEventListener('click', () => {
+    document.getElementById("prevBtn")?.addEventListener("click", () => {
       this.navigate(-1);
     });
 
-    document.getElementById('nextBtn')?.addEventListener('click', () => {
+    document.getElementById("nextBtn")?.addEventListener("click", () => {
       this.navigate(1);
     });
 
-    this.container.querySelectorAll('.calendar-day').forEach(day => {
-      day.addEventListener('click', (e) => {
+    this.container.querySelectorAll(".calendar-day").forEach((day) => {
+      day.addEventListener("click", (e) => {
         const dateStr = (e.currentTarget as HTMLElement).dataset.date;
         if (dateStr && this.onDateSelect) {
           this.onDateSelect(new Date(dateStr));
@@ -118,13 +121,13 @@ export class Calendar {
 
   private navigate(direction: number): void {
     switch (this.currentView) {
-      case 'month':
+      case "month":
         this.currentDate.setMonth(this.currentDate.getMonth() + direction);
         break;
-      case 'week':
-        this.currentDate.setDate(this.currentDate.getDate() + (direction * 7));
+      case "week":
+        this.currentDate.setDate(this.currentDate.getDate() + direction * 7);
         break;
-      case 'day':
+      case "day":
         this.currentDate.setDate(this.currentDate.getDate() + direction);
         break;
     }
@@ -133,20 +136,30 @@ export class Calendar {
 
   private getTitle(): string {
     switch (this.currentView) {
-      case 'month':
-        return this.currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      case 'week':
+      case "month":
+        return this.currentDate.toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        });
+      case "week":
         return `Week of ${this.currentDate.toLocaleDateString()}`;
-      case 'day':
-        return this.currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      case "day":
+        return this.currentDate.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
     }
   }
 
   private isToday(date: Date): boolean {
     const today = new Date();
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
   }
 
   destroy(): void {}

@@ -1,17 +1,35 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, Calendar, Clock, User, MapPin, FileText, CheckCircle, XCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { schedulingService } from '@/services/scheduling.service';
-import type { Appointment } from '@/types/scheduling';
-import { formatDateTime, formatDuration, getStatusColor } from '@/lib/utils';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Calendar,
+  Clock,
+  User,
+  MapPin,
+  FileText,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { schedulingService } from "@/services/scheduling.service";
+import type { Appointment } from "@/types/scheduling";
+import { formatDateTime, formatDuration, getStatusColor } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function AppointmentDetailPage() {
   const router = useRouter();
@@ -21,7 +39,7 @@ export default function AppointmentDetailPage() {
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const [cancelReason, setCancelReason] = useState('');
+  const [cancelReason, setCancelReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
@@ -36,7 +54,7 @@ export default function AppointmentDetailPage() {
       const data = await schedulingService.getAppointment(id);
       setAppointment(data);
     } catch (error) {
-      toast.error('Failed to load appointment');
+      toast.error("Failed to load appointment");
       console.error(error);
     } finally {
       setLoading(false);
@@ -49,10 +67,10 @@ export default function AppointmentDetailPage() {
     setActionLoading(true);
     try {
       await schedulingService.confirmAppointment(appointment.id);
-      toast.success('Appointment confirmed');
+      toast.success("Appointment confirmed");
       await loadAppointment();
     } catch (error) {
-      toast.error('Failed to confirm appointment');
+      toast.error("Failed to confirm appointment");
       console.error(error);
     } finally {
       setActionLoading(false);
@@ -65,10 +83,10 @@ export default function AppointmentDetailPage() {
     setActionLoading(true);
     try {
       await schedulingService.checkInAppointment(appointment.id);
-      toast.success('Patient checked in');
+      toast.success("Patient checked in");
       await loadAppointment();
     } catch (error) {
-      toast.error('Failed to check in patient');
+      toast.error("Failed to check in patient");
       console.error(error);
     } finally {
       setActionLoading(false);
@@ -81,10 +99,10 @@ export default function AppointmentDetailPage() {
     setActionLoading(true);
     try {
       await schedulingService.completeAppointment(appointment.id);
-      toast.success('Appointment completed');
+      toast.success("Appointment completed");
       await loadAppointment();
     } catch (error) {
-      toast.error('Failed to complete appointment');
+      toast.error("Failed to complete appointment");
       console.error(error);
     } finally {
       setActionLoading(false);
@@ -97,11 +115,11 @@ export default function AppointmentDetailPage() {
     setActionLoading(true);
     try {
       await schedulingService.cancelAppointment(appointment.id, cancelReason);
-      toast.success('Appointment cancelled');
+      toast.success("Appointment cancelled");
       setShowCancelDialog(false);
       await loadAppointment();
     } catch (error) {
-      toast.error('Failed to cancel appointment');
+      toast.error("Failed to cancel appointment");
       console.error(error);
     } finally {
       setActionLoading(false);
@@ -111,15 +129,15 @@ export default function AppointmentDetailPage() {
   const handleDelete = async () => {
     if (!appointment) return;
 
-    if (!confirm('Are you sure you want to delete this appointment?')) return;
+    if (!confirm("Are you sure you want to delete this appointment?")) return;
 
     setActionLoading(true);
     try {
       await schedulingService.deleteAppointment(appointment.id);
-      toast.success('Appointment deleted');
-      router.push('/scheduling/appointments');
+      toast.success("Appointment deleted");
+      router.push("/scheduling/appointments");
     } catch (error) {
-      toast.error('Failed to delete appointment');
+      toast.error("Failed to delete appointment");
       console.error(error);
     } finally {
       setActionLoading(false);
@@ -129,7 +147,9 @@ export default function AppointmentDetailPage() {
   if (loading) {
     return (
       <div className="p-6">
-        <div className="text-center py-12 text-gray-500">Loading appointment...</div>
+        <div className="text-center py-12 text-gray-500">
+          Loading appointment...
+        </div>
       </div>
     );
   }
@@ -139,7 +159,10 @@ export default function AppointmentDetailPage() {
       <div className="p-6">
         <div className="text-center py-12">
           <p className="text-gray-500">Appointment not found</p>
-          <Button className="mt-4" onClick={() => router.push('/scheduling/appointments')}>
+          <Button
+            className="mt-4"
+            onClick={() => router.push("/scheduling/appointments")}
+          >
             Back to Appointments
           </Button>
         </div>
@@ -155,7 +178,7 @@ export default function AppointmentDetailPage() {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => router.push('/scheduling/appointments')}
+            onClick={() => router.push("/scheduling/appointments")}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -165,27 +188,35 @@ export default function AppointmentDetailPage() {
           </div>
         </div>
         <div className="flex space-x-2">
-          {appointment.status === 'scheduled' && (
+          {appointment.status === "scheduled" && (
             <Button onClick={handleConfirm} disabled={actionLoading}>
               <CheckCircle className="h-4 w-4 mr-2" />
               Confirm
             </Button>
           )}
-          {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
+          {(appointment.status === "scheduled" ||
+            appointment.status === "confirmed") && (
             <Button onClick={handleCheckIn} disabled={actionLoading}>
               Check In
             </Button>
           )}
-          {appointment.status === 'in-progress' && (
+          {appointment.status === "in-progress" && (
             <Button onClick={handleComplete} disabled={actionLoading}>
               Complete
             </Button>
           )}
-          <Button variant="outline" onClick={() => router.push(`/scheduling/appointments/${id}/edit`)}>
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/scheduling/appointments/${id}/edit`)}
+          >
             <Edit className="h-4 w-4 mr-2" />
             Edit
           </Button>
-          <Button variant="destructive" onClick={() => setShowCancelDialog(true)} disabled={actionLoading}>
+          <Button
+            variant="destructive"
+            onClick={() => setShowCancelDialog(true)}
+            disabled={actionLoading}
+          >
             <XCircle className="h-4 w-4 mr-2" />
             Cancel
           </Button>
@@ -199,7 +230,9 @@ export default function AppointmentDetailPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Appointment Information</CardTitle>
-                <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
+                <Badge className={getStatusColor(appointment.status)}>
+                  {appointment.status}
+                </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -208,7 +241,9 @@ export default function AppointmentDetailPage() {
                   <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div>
                     <div className="text-sm text-gray-500">Date & Time</div>
-                    <div className="font-medium">{formatDateTime(appointment.startTime)}</div>
+                    <div className="font-medium">
+                      {formatDateTime(appointment.startTime)}
+                    </div>
                   </div>
                 </div>
 
@@ -216,7 +251,9 @@ export default function AppointmentDetailPage() {
                   <Clock className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div>
                     <div className="text-sm text-gray-500">Duration</div>
-                    <div className="font-medium">{formatDuration(appointment.duration)}</div>
+                    <div className="font-medium">
+                      {formatDuration(appointment.duration)}
+                    </div>
                   </div>
                 </div>
 
@@ -234,14 +271,18 @@ export default function AppointmentDetailPage() {
                   <FileText className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div>
                     <div className="text-sm text-gray-500">Type</div>
-                    <div className="font-medium capitalize">{appointment.type}</div>
+                    <div className="font-medium capitalize">
+                      {appointment.type}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {appointment.chiefComplaint && (
                 <div className="pt-4 border-t">
-                  <div className="text-sm text-gray-500 mb-1">Chief Complaint</div>
+                  <div className="text-sm text-gray-500 mb-1">
+                    Chief Complaint
+                  </div>
                   <div>{appointment.chiefComplaint}</div>
                 </div>
               )}
@@ -256,7 +297,9 @@ export default function AppointmentDetailPage() {
               {appointment.notes && (
                 <div className="pt-4 border-t">
                   <div className="text-sm text-gray-500 mb-1">Notes</div>
-                  <div className="p-3 bg-gray-50 rounded">{appointment.notes}</div>
+                  <div className="p-3 bg-gray-50 rounded">
+                    {appointment.notes}
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -278,10 +321,15 @@ export default function AppointmentDetailPage() {
                   </div>
                   <div>
                     <div className="font-medium">
-                      {appointment.patient.firstName} {appointment.patient.lastName}
+                      {appointment.patient.firstName}{" "}
+                      {appointment.patient.lastName}
                     </div>
-                    <div className="text-sm text-gray-500">{appointment.patient.email}</div>
-                    <div className="text-sm text-gray-500">{appointment.patient.phone}</div>
+                    <div className="text-sm text-gray-500">
+                      {appointment.patient.email}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {appointment.patient.phone}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -300,9 +348,15 @@ export default function AppointmentDetailPage() {
                     <User className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <div className="font-medium">{appointment.provider.name}</div>
-                    <div className="text-sm text-gray-500">{appointment.provider.specialty}</div>
-                    <div className="text-sm text-gray-500">{appointment.provider.department}</div>
+                    <div className="font-medium">
+                      {appointment.provider.name}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {appointment.provider.specialty}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {appointment.provider.department}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -329,10 +383,17 @@ export default function AppointmentDetailPage() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowCancelDialog(false)}
+            >
               Keep Appointment
             </Button>
-            <Button variant="destructive" onClick={handleCancel} disabled={actionLoading}>
+            <Button
+              variant="destructive"
+              onClick={handleCancel}
+              disabled={actionLoading}
+            >
               Cancel Appointment
             </Button>
           </DialogFooter>

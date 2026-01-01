@@ -4,7 +4,10 @@ export class EncounterList {
   private encounters: any[] = [];
   private onEncounterClick?: (encounterId: string) => void;
 
-  constructor(containerId: string, onEncounterClick?: (encounterId: string) => void) {
+  constructor(
+    containerId: string,
+    onEncounterClick?: (encounterId: string) => void,
+  ) {
     const element = document.getElementById(containerId);
     if (!element) throw new Error(`Element with id ${containerId} not found`);
     this.container = element;
@@ -26,7 +29,9 @@ export class EncounterList {
       return;
     }
 
-    const encountersHTML = this.encounters.map(encounter => this.renderEncounter(encounter)).join('');
+    const encountersHTML = this.encounters
+      .map((encounter) => this.renderEncounter(encounter))
+      .join("");
 
     this.container.innerHTML = `
       <div class="encounter-list">
@@ -39,7 +44,10 @@ export class EncounterList {
 
   private renderEncounter(encounter: any): string {
     const date = new Date(encounter.encounterDate).toLocaleDateString();
-    const time = new Date(encounter.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const time = new Date(encounter.startTime).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     const statusClass = `status-${encounter.status}`;
     const statusLabel = this.getStatusLabel(encounter.status);
 
@@ -59,11 +67,15 @@ export class EncounterList {
           <div class="encounter-department">
             <strong>Department:</strong> ${encounter.department}
           </div>
-          ${encounter.icd10Codes && encounter.icd10Codes.length > 0 ? `
+          ${
+            encounter.icd10Codes && encounter.icd10Codes.length > 0
+              ? `
             <div class="encounter-diagnoses">
-              <strong>Diagnoses:</strong> ${encounter.icd10Codes.join(', ')}
+              <strong>Diagnoses:</strong> ${encounter.icd10Codes.join(", ")}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
         <div class="encounter-footer">
           <button class="btn btn-primary view-encounter-btn" data-encounter-id="${encounter.id}">
@@ -76,20 +88,22 @@ export class EncounterList {
 
   private getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'scheduled': 'Scheduled',
-      'in-progress': 'In Progress',
-      'completed': 'Completed',
-      'cancelled': 'Cancelled',
+      scheduled: "Scheduled",
+      "in-progress": "In Progress",
+      completed: "Completed",
+      cancelled: "Cancelled",
     };
     return labels[status] || status;
   }
 
   private attachEventListeners(): void {
-    const buttons = this.container.querySelectorAll('.view-encounter-btn');
-    buttons.forEach(button => {
-      button.addEventListener('click', (e) => {
+    const buttons = this.container.querySelectorAll(".view-encounter-btn");
+    buttons.forEach((button) => {
+      button.addEventListener("click", (e) => {
         e.preventDefault();
-        const encounterId = (e.target as HTMLElement).getAttribute('data-encounter-id');
+        const encounterId = (e.target as HTMLElement).getAttribute(
+          "data-encounter-id",
+        );
         if (encounterId && this.onEncounterClick) {
           this.onEncounterClick(encounterId);
         }
@@ -98,7 +112,7 @@ export class EncounterList {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

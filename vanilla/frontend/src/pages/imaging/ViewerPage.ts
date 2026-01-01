@@ -1,8 +1,8 @@
-import { ImagingService } from '../../services/ImagingService';
-import { DicomViewer } from '../../components/imaging/DicomViewer';
-import { MeasurementTools } from '../../components/imaging/MeasurementTools';
-import { ImageAnnotations } from '../../components/imaging/ImageAnnotations';
-import { CompareStudies } from '../../components/imaging/CompareStudies';
+import { ImagingService } from "../../services/ImagingService";
+import { DicomViewer } from "../../components/imaging/DicomViewer";
+import { MeasurementTools } from "../../components/imaging/MeasurementTools";
+import { ImageAnnotations } from "../../components/imaging/ImageAnnotations";
+import { CompareStudies } from "../../components/imaging/CompareStudies";
 
 export class ViewerPage {
   private container: HTMLElement;
@@ -15,12 +15,16 @@ export class ViewerPage {
   private currentSeriesUID?: string;
   private compareStudyUID?: string;
 
-  constructor(container: HTMLElement, studyInstanceUID: string, params?: URLSearchParams) {
+  constructor(
+    container: HTMLElement,
+    studyInstanceUID: string,
+    params?: URLSearchParams,
+  ) {
     this.container = container;
     this.imagingService = new ImagingService();
     this.studyInstanceUID = studyInstanceUID;
-    this.currentSeriesUID = params?.get('series') || undefined;
-    this.compareStudyUID = params?.get('compare') || undefined;
+    this.currentSeriesUID = params?.get("series") || undefined;
+    this.compareStudyUID = params?.get("compare") || undefined;
 
     this.dicomViewer = new DicomViewer();
     this.measurementTools = new MeasurementTools();
@@ -32,11 +36,11 @@ export class ViewerPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
-    this.container.className = 'viewer-page';
+    this.container.innerHTML = "";
+    this.container.className = "viewer-page";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'viewer-layout';
+    const wrapper = document.createElement("div");
+    wrapper.className = "viewer-layout";
     wrapper.innerHTML = `
       <!-- Top Toolbar -->
       <div class="viewer-toolbar">
@@ -50,12 +54,12 @@ export class ViewerPage {
 
         <div class="toolbar-center">
           <div class="tool-group">
-            <button class="btn btn-icon ${this.activeToolClass('pan')}" data-tool="pan" title="Pan">🖐️</button>
-            <button class="btn btn-icon ${this.activeToolClass('zoom')}" data-tool="zoom" title="Zoom">🔍</button>
-            <button class="btn btn-icon ${this.activeToolClass('window')}" data-tool="window" title="Window/Level">🎚️</button>
-            <button class="btn btn-icon ${this.activeToolClass('measure')}" data-tool="measure" title="Measure">📏</button>
-            <button class="btn btn-icon ${this.activeToolClass('angle')}" data-tool="angle" title="Angle">📐</button>
-            <button class="btn btn-icon ${this.activeToolClass('annotate')}" data-tool="annotate" title="Annotate">✏️</button>
+            <button class="btn btn-icon ${this.activeToolClass("pan")}" data-tool="pan" title="Pan">🖐️</button>
+            <button class="btn btn-icon ${this.activeToolClass("zoom")}" data-tool="zoom" title="Zoom">🔍</button>
+            <button class="btn btn-icon ${this.activeToolClass("window")}" data-tool="window" title="Window/Level">🎚️</button>
+            <button class="btn btn-icon ${this.activeToolClass("measure")}" data-tool="measure" title="Measure">📏</button>
+            <button class="btn btn-icon ${this.activeToolClass("angle")}" data-tool="angle" title="Angle">📐</button>
+            <button class="btn btn-icon ${this.activeToolClass("annotate")}" data-tool="annotate" title="Annotate">✏️</button>
           </div>
 
           <div class="separator"></div>
@@ -96,7 +100,9 @@ export class ViewerPage {
 
         <!-- Central Viewing Area -->
         <div class="viewer-content">
-          ${this.compareStudyUID ? `
+          ${
+            this.compareStudyUID
+              ? `
             <div class="viewer-grid compare-layout">
               <div class="viewport-container">
                 <div class="viewport-header">Current Study</div>
@@ -107,9 +113,11 @@ export class ViewerPage {
                 <div id="viewer-compare" class="viewport"></div>
               </div>
             </div>
-          ` : `
+          `
+              : `
             <div id="viewer-main" class="viewport"></div>
-          `}
+          `
+          }
 
           <!-- Image Navigation -->
           <div class="image-navigation">
@@ -176,27 +184,31 @@ export class ViewerPage {
   }
 
   private activeToolClass(tool: string): string {
-    return 'active'; // TODO: Track active tool state
+    return "active"; // TODO: Track active tool state
   }
 
   private renderWindowPresets(): string {
     const presets = [
-      { name: 'Soft Tissue', ww: 400, wc: 40 },
-      { name: 'Lung', ww: 1500, wc: -600 },
-      { name: 'Bone', ww: 2000, wc: 300 },
-      { name: 'Brain', ww: 80, wc: 40 },
-      { name: 'Liver', ww: 150, wc: 30 },
-      { name: 'Abdomen', ww: 350, wc: 50 },
+      { name: "Soft Tissue", ww: 400, wc: 40 },
+      { name: "Lung", ww: 1500, wc: -600 },
+      { name: "Bone", ww: 2000, wc: 300 },
+      { name: "Brain", ww: 80, wc: 40 },
+      { name: "Liver", ww: 150, wc: 30 },
+      { name: "Abdomen", ww: 350, wc: 50 },
     ];
 
     return `
       <div class="presets-list">
-        ${presets.map(p => `
+        ${presets
+          .map(
+            (p) => `
           <button class="preset-btn" data-ww="${p.ww}" data-wc="${p.wc}">
             ${p.name}<br>
             <small>W:${p.ww} L:${p.wc}</small>
           </button>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
@@ -204,13 +216,15 @@ export class ViewerPage {
   private async loadStudyAndSeries() {
     try {
       const study = await this.imagingService.getStudy(this.studyInstanceUID);
-      const series = await this.imagingService.getStudySeries(this.studyInstanceUID);
+      const series = await this.imagingService.getStudySeries(
+        this.studyInstanceUID,
+      );
 
       // Update study info in header
-      const patientName = document.getElementById('patient-name');
-      const studyDesc = document.getElementById('study-description');
+      const patientName = document.getElementById("patient-name");
+      const studyDesc = document.getElementById("study-description");
       if (patientName) patientName.textContent = study.patientName;
-      if (studyDesc) studyDesc.textContent = study.studyDescription || '';
+      if (studyDesc) studyDesc.textContent = study.studyDescription || "";
 
       // Render series list
       await this.renderSeriesList(series);
@@ -225,35 +239,39 @@ export class ViewerPage {
         await this.loadSeries(this.currentSeriesUID);
       }
     } catch (error) {
-      console.error('Error loading study:', error);
-      this.showError('Failed to load study');
+      console.error("Error loading study:", error);
+      this.showError("Failed to load study");
     }
   }
 
   private async renderSeriesList(series: any[]) {
-    const container = document.getElementById('series-list');
+    const container = document.getElementById("series-list");
     if (!container) return;
 
-    container.innerHTML = series.map(s => `
-      <div class="series-item ${s.seriesInstanceUID === this.currentSeriesUID ? 'active' : ''}"
+    container.innerHTML = series
+      .map(
+        (s) => `
+      <div class="series-item ${s.seriesInstanceUID === this.currentSeriesUID ? "active" : ""}"
            data-series-uid="${s.seriesInstanceUID}">
         <div class="series-thumbnail">
           <div class="series-number">${s.seriesNumber}</div>
         </div>
         <div class="series-details">
-          <div class="series-desc">${s.seriesDescription || 'Unnamed'}</div>
+          <div class="series-desc">${s.seriesDescription || "Unnamed"}</div>
           <div class="series-meta">
             <span class="badge badge-sm">${s.modality}</span>
             <span>${s.numberOfInstances} images</span>
           </div>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
 
     // Add click handlers
-    container.querySelectorAll('.series-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const seriesUID = item.getAttribute('data-series-uid');
+    container.querySelectorAll(".series-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        const seriesUID = item.getAttribute("data-series-uid");
         if (seriesUID) this.loadSeries(seriesUID);
       });
     });
@@ -265,34 +283,36 @@ export class ViewerPage {
 
       const instances = await this.imagingService.getSeriesInstances(
         this.studyInstanceUID,
-        seriesInstanceUID
+        seriesInstanceUID,
       );
 
       // Update viewer with instances
-      const viewerContainer = document.getElementById('viewer-main');
+      const viewerContainer = document.getElementById("viewer-main");
       if (viewerContainer) {
         await this.dicomViewer.loadSeries(viewerContainer, instances);
       }
 
       // Update image count
-      const totalImages = document.getElementById('total-images');
+      const totalImages = document.getElementById("total-images");
       if (totalImages) totalImages.textContent = instances.length.toString();
 
       // Update slider
-      const slider = document.getElementById('image-slider') as HTMLInputElement;
+      const slider = document.getElementById(
+        "image-slider",
+      ) as HTMLInputElement;
       if (slider) {
         slider.max = instances.length.toString();
-        slider.value = '1';
+        slider.value = "1";
       }
     } catch (error) {
-      console.error('Error loading series:', error);
-      this.showError('Failed to load series');
+      console.error("Error loading series:", error);
+      this.showError("Failed to load series");
     }
   }
 
   private initializeViewer() {
-    const measurementsContainer = document.getElementById('tab-measurements');
-    const annotationsContainer = document.getElementById('tab-annotations');
+    const measurementsContainer = document.getElementById("tab-measurements");
+    const annotationsContainer = document.getElementById("tab-annotations");
 
     if (measurementsContainer) {
       this.measurementTools.render(measurementsContainer);
@@ -306,53 +326,53 @@ export class ViewerPage {
   private async attachEventListeners() {
     // Back button
     const backBtn = this.container.querySelector('[data-action="back"]');
-    backBtn?.addEventListener('click', () => {
+    backBtn?.addEventListener("click", () => {
       window.location.href = `#/imaging/studies/${this.studyInstanceUID}`;
     });
 
     // Tool buttons
-    this.container.querySelectorAll('[data-tool]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    this.container.querySelectorAll("[data-tool]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const tool = (e.target as HTMLElement).dataset.tool;
         this.activateTool(tool!);
       });
     });
 
     // Action buttons
-    this.container.addEventListener('click', (e) => {
+    this.container.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
       const action = target.dataset.action;
 
-      if (action === 'invert') this.dicomViewer.invert();
-      if (action === 'reset') this.dicomViewer.reset();
-      if (action === 'rotate-left') this.dicomViewer.rotate(-90);
-      if (action === 'rotate-right') this.dicomViewer.rotate(90);
-      if (action === 'fullscreen') this.toggleFullscreen();
-      if (action === 'prev-image') this.previousImage();
-      if (action === 'next-image') this.nextImage();
-      if (action === 'report') this.createReport();
+      if (action === "invert") this.dicomViewer.invert();
+      if (action === "reset") this.dicomViewer.reset();
+      if (action === "rotate-left") this.dicomViewer.rotate(-90);
+      if (action === "rotate-right") this.dicomViewer.rotate(90);
+      if (action === "fullscreen") this.toggleFullscreen();
+      if (action === "prev-image") this.previousImage();
+      if (action === "next-image") this.nextImage();
+      if (action === "report") this.createReport();
     });
 
     // Window presets
-    this.container.querySelectorAll('.preset-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    this.container.querySelectorAll(".preset-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const target = e.currentTarget as HTMLElement;
-        const ww = parseInt(target.dataset.ww || '400');
-        const wc = parseInt(target.dataset.wc || '40');
+        const ww = parseInt(target.dataset.ww || "400");
+        const wc = parseInt(target.dataset.wc || "40");
         this.dicomViewer.setWindowLevel(ww, wc);
       });
     });
 
     // Image slider
-    const slider = document.getElementById('image-slider') as HTMLInputElement;
-    slider?.addEventListener('input', (e) => {
+    const slider = document.getElementById("image-slider") as HTMLInputElement;
+    slider?.addEventListener("input", (e) => {
       const index = parseInt((e.target as HTMLInputElement).value) - 1;
       this.dicomViewer.goToImage(index);
     });
 
     // Tab switching
-    this.container.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    this.container.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const tab = (e.target as HTMLElement).dataset.tab;
         this.switchTab(tab!);
       });
@@ -361,13 +381,13 @@ export class ViewerPage {
 
   private activateTool(tool: string) {
     // Deactivate all tools
-    this.container.querySelectorAll('[data-tool]').forEach(btn => {
-      btn.classList.remove('active');
+    this.container.querySelectorAll("[data-tool]").forEach((btn) => {
+      btn.classList.remove("active");
     });
 
     // Activate selected tool
     const toolBtn = this.container.querySelector(`[data-tool="${tool}"]`);
-    toolBtn?.classList.add('active');
+    toolBtn?.classList.add("active");
 
     // Set tool on viewer
     this.dicomViewer.setTool(tool);
@@ -391,18 +411,18 @@ export class ViewerPage {
 
   private switchTab(tabName: string) {
     // Update tab buttons
-    this.container.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.remove('active');
+    this.container.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.classList.remove("active");
     });
     const activeBtn = this.container.querySelector(`[data-tab="${tabName}"]`);
-    activeBtn?.classList.add('active');
+    activeBtn?.classList.add("active");
 
     // Update tab panels
-    this.container.querySelectorAll('.tab-panel').forEach(panel => {
-      panel.classList.remove('active');
+    this.container.querySelectorAll(".tab-panel").forEach((panel) => {
+      panel.classList.remove("active");
     });
     const activePanel = document.getElementById(`tab-${tabName}`);
-    activePanel?.classList.add('active');
+    activePanel?.classList.add("active");
   }
 
   private createReport() {
@@ -415,6 +435,6 @@ export class ViewerPage {
 
   destroy() {
     this.dicomViewer.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

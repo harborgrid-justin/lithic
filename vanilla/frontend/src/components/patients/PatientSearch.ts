@@ -2,8 +2,8 @@
  * PatientSearch Component - Advanced patient search
  */
 
-import { PatientSearchParams, Patient } from '../../types/Patient';
-import PatientService from '../../services/PatientService';
+import { PatientSearchParams, Patient } from "../../types/Patient";
+import PatientService from "../../services/PatientService";
 
 export class PatientSearch {
   private container: HTMLElement;
@@ -108,23 +108,29 @@ export class PatientSearch {
    * Attach event listeners
    */
   private attachEventListeners(): void {
-    const form = this.container.querySelector('#searchForm') as HTMLFormElement;
-    const toggleBtn = this.container.querySelector('#toggleAdvanced') as HTMLButtonElement;
-    const clearBtn = this.container.querySelector('#clearBtn') as HTMLButtonElement;
-    const advancedSearch = this.container.querySelector('#advancedSearch') as HTMLElement;
+    const form = this.container.querySelector("#searchForm") as HTMLFormElement;
+    const toggleBtn = this.container.querySelector(
+      "#toggleAdvanced",
+    ) as HTMLButtonElement;
+    const clearBtn = this.container.querySelector(
+      "#clearBtn",
+    ) as HTMLButtonElement;
+    const advancedSearch = this.container.querySelector(
+      "#advancedSearch",
+    ) as HTMLElement;
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.handleSearch();
     });
 
-    toggleBtn.addEventListener('click', () => {
-      const isHidden = advancedSearch.style.display === 'none';
-      advancedSearch.style.display = isHidden ? 'block' : 'none';
-      toggleBtn.textContent = isHidden ? 'Simple Search' : 'Advanced Search';
+    toggleBtn.addEventListener("click", () => {
+      const isHidden = advancedSearch.style.display === "none";
+      advancedSearch.style.display = isHidden ? "block" : "none";
+      toggleBtn.textContent = isHidden ? "Simple Search" : "Advanced Search";
     });
 
-    clearBtn.addEventListener('click', () => {
+    clearBtn.addEventListener("click", () => {
       form.reset();
       this.clearResults();
     });
@@ -134,32 +140,34 @@ export class PatientSearch {
    * Handle search submission
    */
   private async handleSearch(): Promise<void> {
-    const form = this.container.querySelector('#searchForm') as HTMLFormElement;
+    const form = this.container.querySelector("#searchForm") as HTMLFormElement;
     const formData = new FormData(form);
-    const messageEl = this.container.querySelector('#searchMessage') as HTMLElement;
+    const messageEl = this.container.querySelector(
+      "#searchMessage",
+    ) as HTMLElement;
 
     const params: PatientSearchParams = {
-      query: formData.get('query') as string || undefined,
-      firstName: formData.get('firstName') as string || undefined,
-      lastName: formData.get('lastName') as string || undefined,
-      mrn: formData.get('mrn') as string || undefined,
-      phone: formData.get('phone') as string || undefined,
-      email: formData.get('email') as string || undefined,
-      status: formData.get('status') as Patient['status'] || undefined,
+      query: (formData.get("query") as string) || undefined,
+      firstName: (formData.get("firstName") as string) || undefined,
+      lastName: (formData.get("lastName") as string) || undefined,
+      mrn: (formData.get("mrn") as string) || undefined,
+      phone: (formData.get("phone") as string) || undefined,
+      email: (formData.get("email") as string) || undefined,
+      status: (formData.get("status") as Patient["status"]) || undefined,
     };
 
-    if (formData.get('dateOfBirth')) {
-      params.dateOfBirth = formData.get('dateOfBirth') as string;
+    if (formData.get("dateOfBirth")) {
+      params.dateOfBirth = formData.get("dateOfBirth") as string;
     }
 
     try {
-      messageEl.className = 'search-message loading';
-      messageEl.textContent = 'Searching...';
+      messageEl.className = "search-message loading";
+      messageEl.textContent = "Searching...";
 
       const response = await PatientService.searchPatients(params);
 
       if (response.success && response.data) {
-        messageEl.className = 'search-message success';
+        messageEl.className = "search-message success";
         messageEl.textContent = `Found ${response.count || 0} patient(s)`;
 
         if (this.onResults) {
@@ -168,11 +176,12 @@ export class PatientSearch {
 
         this.displayResults(response.data);
       } else {
-        throw new Error(response.error || 'Search failed');
+        throw new Error(response.error || "Search failed");
       }
     } catch (error) {
-      messageEl.className = 'search-message error';
-      messageEl.textContent = error instanceof Error ? error.message : 'Search failed';
+      messageEl.className = "search-message error";
+      messageEl.textContent =
+        error instanceof Error ? error.message : "Search failed";
     }
   }
 
@@ -180,7 +189,9 @@ export class PatientSearch {
    * Display search results
    */
   private displayResults(patients: Patient[]): void {
-    const resultsEl = this.container.querySelector('#searchResults') as HTMLElement;
+    const resultsEl = this.container.querySelector(
+      "#searchResults",
+    ) as HTMLElement;
 
     if (patients.length === 0) {
       resultsEl.innerHTML = '<div class="no-results">No patients found</div>';
@@ -201,7 +212,9 @@ export class PatientSearch {
           </tr>
         </thead>
         <tbody>
-          ${patients.map(patient => `
+          ${patients
+            .map(
+              (patient) => `
             <tr>
               <td>${patient.mrn}</td>
               <td>${patient.firstName} ${patient.lastName}</td>
@@ -214,7 +227,9 @@ export class PatientSearch {
                 </button>
               </td>
             </tr>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
     `;
@@ -224,10 +239,14 @@ export class PatientSearch {
    * Clear search results
    */
   private clearResults(): void {
-    const resultsEl = this.container.querySelector('#searchResults') as HTMLElement;
-    const messageEl = this.container.querySelector('#searchMessage') as HTMLElement;
+    const resultsEl = this.container.querySelector(
+      "#searchResults",
+    ) as HTMLElement;
+    const messageEl = this.container.querySelector(
+      "#searchMessage",
+    ) as HTMLElement;
 
-    resultsEl.innerHTML = '';
-    messageEl.textContent = '';
+    resultsEl.innerHTML = "";
+    messageEl.textContent = "";
   }
 }

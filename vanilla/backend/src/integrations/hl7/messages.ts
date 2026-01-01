@@ -4,26 +4,32 @@
  * Common HL7v2 message templates and utilities
  */
 
-import { HL7Builder, SegmentBuilder, createACK, createADTA01, createORUR01 } from './builder';
-import { HL7Parser, HL7Message } from './parser';
+import {
+  HL7Builder,
+  SegmentBuilder,
+  createACK,
+  createADTA01,
+  createORUR01,
+} from "./builder";
+import { HL7Parser, HL7Message } from "./parser";
 
 /**
  * ADT Message Types
  */
 export const ADTMessageTypes = {
-  A01: 'Patient Admit',
-  A02: 'Patient Transfer',
-  A03: 'Patient Discharge',
-  A04: 'Patient Registration',
-  A05: 'Patient Pre-Admit',
-  A08: 'Update Patient Information',
-  A11: 'Cancel Admit',
-  A12: 'Cancel Transfer',
-  A13: 'Cancel Discharge',
-  A28: 'Add Person Information',
-  A31: 'Update Person Information',
-  A34: 'Patient Merge',
-  A40: 'Merge Patient',
+  A01: "Patient Admit",
+  A02: "Patient Transfer",
+  A03: "Patient Discharge",
+  A04: "Patient Registration",
+  A05: "Patient Pre-Admit",
+  A08: "Update Patient Information",
+  A11: "Cancel Admit",
+  A12: "Cancel Transfer",
+  A13: "Cancel Discharge",
+  A28: "Add Person Information",
+  A31: "Update Person Information",
+  A34: "Patient Merge",
+  A40: "Merge Patient",
 };
 
 /**
@@ -50,12 +56,12 @@ export function createPatientRegistration(
     patientClass: string;
     assignedLocation?: string;
     attendingDoctor?: { id: string; lastName: string; firstName: string };
-  }
+  },
 ): string {
   const builder = new HL7Builder();
   const messageControlId = `ADT${Date.now()}`;
 
-  builder.addMSH('ADT', 'A04', messageControlId).addPID(patient);
+  builder.addMSH("ADT", "A04", messageControlId).addPID(patient);
 
   if (visit) {
     builder.addPV1(visit);
@@ -67,14 +73,11 @@ export function createPatientRegistration(
 /**
  * Create ADT^A08 message (Update Patient Information)
  */
-export function createPatientUpdate(
-  patient: any,
-  visit?: any
-): string {
+export function createPatientUpdate(patient: any, visit?: any): string {
   const builder = new HL7Builder();
   const messageControlId = `ADT${Date.now()}`;
 
-  builder.addMSH('ADT', 'A08', messageControlId).addPID(patient);
+  builder.addMSH("ADT", "A08", messageControlId).addPID(patient);
 
   if (visit) {
     builder.addPV1(visit);
@@ -91,18 +94,18 @@ export function createPatientDischarge(
   dischargeInfo: {
     dischargeDateTime: string;
     dischargeDisposition?: string;
-  }
+  },
 ): string {
   const builder = new HL7Builder();
   const messageControlId = `ADT${Date.now()}`;
 
-  builder.addMSH('ADT', 'A03', messageControlId).addPID(patient);
+  builder.addMSH("ADT", "A03", messageControlId).addPID(patient);
 
   // Add PV1 with discharge info
-  const pv1 = new SegmentBuilder('PV1');
+  const pv1 = new SegmentBuilder("PV1");
   pv1.addFields(
-    '1', // Set ID
-    'I', // Patient Class (Inpatient)
+    "1", // Set ID
+    "I", // Patient Class (Inpatient)
     null, // Assigned Patient Location
     null, // Admission Type
     null, // Preadmit Number
@@ -144,7 +147,10 @@ export function createPatientDischarge(
     null, // Account Status
     null, // Pending Location
     null, // Prior Temporary Location
-    new Date(dischargeInfo.dischargeDateTime).toISOString().replace(/[-:]/g, '').split('.')[0]
+    new Date(dischargeInfo.dischargeDateTime)
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .split(".")[0],
   );
 
   builder.addSegment(pv1);
@@ -164,13 +170,13 @@ export function createGeneralOrder(
     universalServiceName: string;
     priority?: string;
     orderDateTime?: string;
-  }
+  },
 ): string {
   const builder = new HL7Builder();
   const messageControlId = `ORM${Date.now()}`;
 
   builder
-    .addMSH('ORM', 'O01', messageControlId)
+    .addMSH("ORM", "O01", messageControlId)
     .addPID(patient)
     .addORC({
       orderControl: order.orderControl,
@@ -179,7 +185,7 @@ export function createGeneralOrder(
       orderDateTime: order.orderDateTime || new Date().toISOString(),
     })
     .addOBR({
-      setId: '1',
+      setId: "1",
       placerOrderNumber: order.placerOrderNumber,
       universalServiceId: order.universalServiceId,
       universalServiceName: order.universalServiceName,
@@ -199,21 +205,18 @@ export function createLabOrder(
     testId: string;
     testName: string;
   }>,
-  orderingProvider: { id: string; lastName: string; firstName: string }
+  orderingProvider: { id: string; lastName: string; firstName: string },
 ): string {
   const builder = new HL7Builder();
   const messageControlId = `ORM${Date.now()}`;
   const placerOrderNumber = `LAB${Date.now()}`;
 
-  builder
-    .addMSH('ORM', 'O01', messageControlId)
-    .addPID(patient)
-    .addORC({
-      orderControl: 'NW',
-      placerOrderNumber,
-      orderingProvider,
-      orderDateTime: new Date().toISOString(),
-    });
+  builder.addMSH("ORM", "O01", messageControlId).addPID(patient).addORC({
+    orderControl: "NW",
+    placerOrderNumber,
+    orderingProvider,
+    orderDateTime: new Date().toISOString(),
+  });
 
   // Add OBR for each test
   labTests.forEach((test, index) => {
@@ -222,7 +225,7 @@ export function createLabOrder(
       placerOrderNumber,
       universalServiceId: test.testId,
       universalServiceName: test.testName,
-      priority: 'R',
+      priority: "R",
       observationDateTime: new Date().toISOString(),
     });
   });
@@ -242,15 +245,15 @@ export function createAppointmentNotification(
     provider: { id: string; lastName: string; firstName: string };
     location?: string;
     appointmentType?: string;
-  }
+  },
 ): string {
   const builder = new HL7Builder();
   const messageControlId = `SIU${Date.now()}`;
 
-  builder.addMSH('SIU', 'S12', messageControlId);
+  builder.addMSH("SIU", "S12", messageControlId);
 
   // SCH segment (Schedule Activity Information)
-  const sch = new SegmentBuilder('SCH');
+  const sch = new SegmentBuilder("SCH");
   const startDate = new Date(appointment.startDateTime);
   const endDate = new Date(startDate.getTime() + appointment.duration * 60000);
 
@@ -264,7 +267,7 @@ export function createAppointmentNotification(
     null, // Appointment Reason
     null, // Appointment Type
     String(appointment.duration), // Appointment Duration
-    'min', // Appointment Duration Units
+    "min", // Appointment Duration Units
     null, // Appointment Timing Quantity
     null, // Placer Contact Person
     null, // Placer Contact Phone Number
@@ -279,7 +282,7 @@ export function createAppointmentNotification(
     null, // Entered By Location
     null, // Parent Placer Appointment ID
     null, // Parent Filler Appointment ID
-    'Booked' // Filler Status Code
+    "Booked", // Filler Status Code
   );
 
   builder.addSegment(sch);
@@ -288,15 +291,19 @@ export function createAppointmentNotification(
   builder.addPID(patient);
 
   // AIP segment (Appointment Information - Personnel Resource)
-  const aip = new SegmentBuilder('AIP');
+  const aip = new SegmentBuilder("AIP");
   aip.addFields(
-    '1', // Set ID
+    "1", // Set ID
     null, // Segment Action Code
-    [appointment.provider.id, appointment.provider.lastName, appointment.provider.firstName],
-    appointment.appointmentType || 'OFFICE',
-    startDate.toISOString().replace(/[-:]/g, '').split('.')[0],
+    [
+      appointment.provider.id,
+      appointment.provider.lastName,
+      appointment.provider.firstName,
+    ],
+    appointment.appointmentType || "OFFICE",
+    startDate.toISOString().replace(/[-:]/g, "").split(".")[0],
     String(appointment.duration),
-    'min'
+    "min",
   );
 
   builder.addSegment(aip);
@@ -315,22 +322,22 @@ export function createDocumentNotification(
     documentTitle: string;
     completionStatus: string;
     documentContent?: string;
-  }
+  },
 ): string {
   const builder = new HL7Builder();
   const messageControlId = `MDM${Date.now()}`;
 
-  builder.addMSH('MDM', 'T02', messageControlId).addPID(patient);
+  builder.addMSH("MDM", "T02", messageControlId).addPID(patient);
 
   // TXA segment (Transcription Document Header)
-  const txa = new SegmentBuilder('TXA');
+  const txa = new SegmentBuilder("TXA");
   txa.addFields(
-    '1', // Set ID
+    "1", // Set ID
     document.documentType,
     null, // Document Content Presentation
     null, // Activity Date/Time
     null, // Primary Activity Provider
-    new Date().toISOString().replace(/[-:]/g, '').split('.')[0],
+    new Date().toISOString().replace(/[-:]/g, "").split(".")[0],
     null, // Edit Date/Time
     null, // Originator
     null, // Assigned Document Authenticator
@@ -345,18 +352,18 @@ export function createDocumentNotification(
     null, // Document Confidentiality Status
     null, // Document Availability Status
     null, // Document Storage Status
-    document.documentTitle
+    document.documentTitle,
   );
 
   builder.addSegment(txa);
 
   // OBX segment for document content (if provided)
   if (document.documentContent) {
-    const obx = new SegmentBuilder('OBX');
+    const obx = new SegmentBuilder("OBX");
     obx.addFields(
-      '1', // Set ID
-      'TX', // Value Type (Text)
-      'DOCUMENT', // Observation Identifier
+      "1", // Set ID
+      "TX", // Value Type (Text)
+      "DOCUMENT", // Observation Identifier
       null, // Observation Sub-ID
       document.documentContent,
       null, // Units
@@ -364,7 +371,7 @@ export function createDocumentNotification(
       null, // Abnormal Flags
       null, // Probability
       null, // Nature of Abnormal Test
-      'F' // Observation Result Status
+      "F", // Observation Result Status
     );
 
     builder.addSegment(obx);
@@ -385,22 +392,22 @@ export function getMessageInfo(message: string): {
   const messageKey = `${parsed.messageType}^${parsed.triggerEvent}`;
 
   const descriptions: Record<string, string> = {
-    'ADT^A01': 'Patient Admit',
-    'ADT^A02': 'Patient Transfer',
-    'ADT^A03': 'Patient Discharge',
-    'ADT^A04': 'Patient Registration',
-    'ADT^A08': 'Update Patient Information',
-    'ORM^O01': 'General Order',
-    'ORU^R01': 'Observation Result',
-    'SIU^S12': 'Appointment Notification',
-    'MDM^T02': 'Document Notification',
-    'ACK^*': 'General Acknowledgment',
+    "ADT^A01": "Patient Admit",
+    "ADT^A02": "Patient Transfer",
+    "ADT^A03": "Patient Discharge",
+    "ADT^A04": "Patient Registration",
+    "ADT^A08": "Update Patient Information",
+    "ORM^O01": "General Order",
+    "ORU^R01": "Observation Result",
+    "SIU^S12": "Appointment Notification",
+    "MDM^T02": "Document Notification",
+    "ACK^*": "General Acknowledgment",
   };
 
   return {
     messageType: parsed.messageType,
     triggerEvent: parsed.triggerEvent,
-    description: descriptions[messageKey] || 'Unknown Message Type',
+    description: descriptions[messageKey] || "Unknown Message Type",
   };
 }
 
@@ -419,14 +426,14 @@ export function validateMessage(message: string): {
     const warnings: string[] = [];
 
     // Check for common optional segments
-    if (!HL7Parser.findSegment(parsed, 'EVN')) {
-      warnings.push('Missing EVN segment (Event Type)');
+    if (!HL7Parser.findSegment(parsed, "EVN")) {
+      warnings.push("Missing EVN segment (Event Type)");
     }
 
     // Check patient identifier
-    const pid = HL7Parser.findSegment(parsed, 'PID');
+    const pid = HL7Parser.findSegment(parsed, "PID");
     if (pid && !HL7Parser.getField(pid, 3, 1)) {
-      validation.errors.push('Missing patient identifier in PID-3');
+      validation.errors.push("Missing patient identifier in PID-3");
     }
 
     return {
@@ -444,8 +451,4 @@ export function validateMessage(message: string): {
 }
 
 // Export message creators
-export {
-  createACK,
-  createADTA01,
-  createORUR01,
-};
+export { createACK, createADTA01, createORUR01 };

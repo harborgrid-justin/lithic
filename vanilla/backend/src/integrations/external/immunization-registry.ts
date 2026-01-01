@@ -4,10 +4,10 @@
  * State immunization information system (IIS) integration using HL7v2
  */
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
-import { logger } from '../../utils/logger';
-import { HL7Builder } from '../hl7/builder';
-import { HL7Parser } from '../hl7/parser';
+import axios, { AxiosInstance, AxiosError } from "axios";
+import { logger } from "../../utils/logger";
+import { HL7Builder } from "../hl7/builder";
+import { HL7Parser } from "../hl7/parser";
 
 // Immunization Record
 export interface ImmunizationRecord {
@@ -27,7 +27,7 @@ export interface ImmunizationRecord {
   site?: string;
   doseAmount?: number;
   doseUnit?: string;
-  seriesStatus?: 'complete' | 'incomplete' | 'not_applicable';
+  seriesStatus?: "complete" | "incomplete" | "not_applicable";
   refusalReason?: string;
   notes?: string;
 }
@@ -64,14 +64,14 @@ export interface ImmunizationQueryResponse {
   }>;
   evaluations?: Array<{
     vaccineGroup: string;
-    seriesStatus: 'complete' | 'incomplete' | 'not_started';
+    seriesStatus: "complete" | "incomplete" | "not_started";
     nextDueDate?: string;
     nextVaccine?: string;
   }>;
   recommendations?: Array<{
     vaccineCode: string;
     vaccineName: string;
-    forecastStatus: 'due' | 'overdue' | 'not_due' | 'complete';
+    forecastStatus: "due" | "overdue" | "not_due" | "complete";
     dueDate?: string;
     earliestDate?: string;
     latestDate?: string;
@@ -98,11 +98,16 @@ export interface ForecastResponse {
     vaccineCode: string;
     vaccineName: string;
     vaccineGroup: string;
-    forecastStatus: 'due' | 'overdue' | 'not_due' | 'complete' | 'contraindicated';
+    forecastStatus:
+      | "due"
+      | "overdue"
+      | "not_due"
+      | "complete"
+      | "contraindicated";
     dueDate?: string;
     earliestDate?: string;
     latestDate?: string;
-    seriesStatus: 'complete' | 'incomplete' | 'not_started';
+    seriesStatus: "complete" | "incomplete" | "not_started";
     doseNumber?: number;
     totalDoses?: number;
     reason?: string;
@@ -127,15 +132,18 @@ export class ImmunizationRegistryClient {
   }) {
     this.facilityId = config.facilityId;
     this.apiKey = config.apiKey;
-    this.registryUrl = config.baseUrl || process.env.IIS_BASE_URL || 'https://iis.state.gov/api/v1';
+    this.registryUrl =
+      config.baseUrl ||
+      process.env.IIS_BASE_URL ||
+      "https://iis.state.gov/api/v1";
 
     this.client = axios.create({
       baseURL: this.registryUrl,
       timeout: config.timeout || 30000,
       headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': this.apiKey,
-        'X-Facility-ID': this.facilityId,
+        "Content-Type": "application/json",
+        "X-API-Key": this.apiKey,
+        "X-Facility-ID": this.facilityId,
       },
     });
 
@@ -148,50 +156,52 @@ export class ImmunizationRegistryClient {
   private setupInterceptors(): void {
     this.client.interceptors.request.use(
       (config) => {
-        logger.debug('IIS Request', {
+        logger.debug("IIS Request", {
           method: config.method?.toUpperCase(),
           url: config.url,
         });
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     this.client.interceptors.response.use(
       (response) => {
-        logger.debug('IIS Response', {
+        logger.debug("IIS Response", {
           status: response.status,
         });
         return response;
       },
       async (error: AxiosError) => {
-        logger.error('IIS Error', {
+        logger.error("IIS Error", {
           status: error.response?.status,
           message: error.message,
         });
         throw new ImmunizationRegistryError(
           error.message,
           error.response?.status,
-          error.response?.data
+          error.response?.data,
         );
-      }
+      },
     );
   }
 
   /**
    * Submit immunization record
    */
-  async submitImmunization(record: ImmunizationRecord): Promise<{ submissionId: string; status: string }> {
+  async submitImmunization(
+    record: ImmunizationRecord,
+  ): Promise<{ submissionId: string; status: string }> {
     try {
       // Build HL7 VXU^V04 message
       const hl7Message = this.buildVXUMessage(record);
 
-      const response = await this.client.post('/immunizations/submit', {
+      const response = await this.client.post("/immunizations/submit", {
         hl7: hl7Message,
         data: record,
       });
 
-      logger.info('Immunization submitted to registry', {
+      logger.info("Immunization submitted to registry", {
         immunizationId: record.immunizationId,
         patientId: record.patientId,
         vaccineCode: record.vaccineCode,
@@ -199,10 +209,10 @@ export class ImmunizationRegistryClient {
 
       return {
         submissionId: response.data.submissionId || crypto.randomUUID(),
-        status: response.data.status || 'submitted',
+        status: response.data.status || "submitted",
       };
     } catch (error) {
-      logger.error('Failed to submit immunization', {
+      logger.error("Failed to submit immunization", {
         immunizationId: record.immunizationId,
         error,
       });
@@ -213,17 +223,19 @@ export class ImmunizationRegistryClient {
   /**
    * Query patient immunization history
    */
-  async queryImmunizations(query: ImmunizationQuery): Promise<ImmunizationQueryResponse> {
+  async queryImmunizations(
+    query: ImmunizationQuery,
+  ): Promise<ImmunizationQueryResponse> {
     try {
       // Build HL7 QBP^Q11 message
       const hl7Query = this.buildQueryMessage(query);
 
-      const response = await this.client.post('/immunizations/query', {
+      const response = await this.client.post("/immunizations/query", {
         hl7: hl7Query,
         data: query,
       });
 
-      logger.info('Immunization history queried', {
+      logger.info("Immunization history queried", {
         patientId: query.patientId,
         recordsFound: response.data.immunizations?.length || 0,
       });
@@ -236,7 +248,7 @@ export class ImmunizationRegistryClient {
         recommendations: response.data.recommendations,
       };
     } catch (error) {
-      logger.error('Failed to query immunizations', {
+      logger.error("Failed to query immunizations", {
         patientId: query.patientId,
         error,
       });
@@ -249,9 +261,12 @@ export class ImmunizationRegistryClient {
    */
   async getForecast(request: ForecastRequest): Promise<ForecastResponse> {
     try {
-      const response = await this.client.post('/immunizations/forecast', request);
+      const response = await this.client.post(
+        "/immunizations/forecast",
+        request,
+      );
 
-      logger.info('Immunization forecast generated', {
+      logger.info("Immunization forecast generated", {
         patientId: request.patientId,
         recommendationsCount: response.data.recommendations?.length || 0,
       });
@@ -262,7 +277,7 @@ export class ImmunizationRegistryClient {
         recommendations: response.data.recommendations || [],
       };
     } catch (error) {
-      logger.error('Failed to get immunization forecast', {
+      logger.error("Failed to get immunization forecast", {
         patientId: request.patientId,
         error,
       });
@@ -275,21 +290,24 @@ export class ImmunizationRegistryClient {
    */
   async updateImmunization(
     immunizationId: string,
-    updates: Partial<ImmunizationRecord>
+    updates: Partial<ImmunizationRecord>,
   ): Promise<{ submissionId: string; status: string }> {
     try {
-      const response = await this.client.patch(`/immunizations/${immunizationId}`, updates);
+      const response = await this.client.patch(
+        `/immunizations/${immunizationId}`,
+        updates,
+      );
 
-      logger.info('Immunization record updated', {
+      logger.info("Immunization record updated", {
         immunizationId,
       });
 
       return {
         submissionId: response.data.submissionId || crypto.randomUUID(),
-        status: response.data.status || 'updated',
+        status: response.data.status || "updated",
       };
     } catch (error) {
-      logger.error('Failed to update immunization', { immunizationId, error });
+      logger.error("Failed to update immunization", { immunizationId, error });
       throw error;
     }
   }
@@ -297,22 +315,28 @@ export class ImmunizationRegistryClient {
   /**
    * Delete/void immunization record
    */
-  async voidImmunization(immunizationId: string, reason: string): Promise<{ status: string }> {
+  async voidImmunization(
+    immunizationId: string,
+    reason: string,
+  ): Promise<{ status: string }> {
     try {
-      const response = await this.client.delete(`/immunizations/${immunizationId}`, {
-        data: { reason },
-      });
+      const response = await this.client.delete(
+        `/immunizations/${immunizationId}`,
+        {
+          data: { reason },
+        },
+      );
 
-      logger.info('Immunization record voided', {
+      logger.info("Immunization record voided", {
         immunizationId,
         reason,
       });
 
       return {
-        status: response.data.status || 'voided',
+        status: response.data.status || "voided",
       };
     } catch (error) {
-      logger.error('Failed to void immunization', { immunizationId, error });
+      logger.error("Failed to void immunization", { immunizationId, error });
       throw error;
     }
   }
@@ -332,7 +356,7 @@ export class ImmunizationRegistryClient {
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get vaccine info', { cvxCode, error });
+      logger.error("Failed to get vaccine info", { cvxCode, error });
       throw error;
     }
   }
@@ -340,19 +364,21 @@ export class ImmunizationRegistryClient {
   /**
    * Search vaccines
    */
-  async searchVaccines(query: string): Promise<Array<{
-    cvxCode: string;
-    vaccineName: string;
-    vaccineGroup: string;
-  }>> {
+  async searchVaccines(query: string): Promise<
+    Array<{
+      cvxCode: string;
+      vaccineName: string;
+      vaccineGroup: string;
+    }>
+  > {
     try {
-      const response = await this.client.get('/vaccines/search', {
+      const response = await this.client.get("/vaccines/search", {
         params: { q: query },
       });
 
       return response.data.vaccines || [];
     } catch (error) {
-      logger.error('Failed to search vaccines', { error });
+      logger.error("Failed to search vaccines", { error });
       throw error;
     }
   }
@@ -360,17 +386,19 @@ export class ImmunizationRegistryClient {
   /**
    * Get all active vaccines
    */
-  async getActiveVaccines(): Promise<Array<{
-    cvxCode: string;
-    vaccineName: string;
-    vaccineGroup: string;
-  }>> {
+  async getActiveVaccines(): Promise<
+    Array<{
+      cvxCode: string;
+      vaccineName: string;
+      vaccineGroup: string;
+    }>
+  > {
     try {
-      const response = await this.client.get('/vaccines/active');
+      const response = await this.client.get("/vaccines/active");
 
       return response.data.vaccines || [];
     } catch (error) {
-      logger.error('Failed to get active vaccines', { error });
+      logger.error("Failed to get active vaccines", { error });
       throw error;
     }
   }
@@ -384,7 +412,10 @@ export class ImmunizationRegistryClient {
     warnings?: string[];
   }> {
     try {
-      const response = await this.client.post('/immunizations/validate', record);
+      const response = await this.client.post(
+        "/immunizations/validate",
+        record,
+      );
 
       return {
         valid: response.data.valid || false,
@@ -392,7 +423,7 @@ export class ImmunizationRegistryClient {
         warnings: response.data.warnings,
       };
     } catch (error) {
-      logger.error('Failed to validate immunization record', { error });
+      logger.error("Failed to validate immunization record", { error });
       throw error;
     }
   }
@@ -404,7 +435,7 @@ export class ImmunizationRegistryClient {
     const builder = new HL7Builder();
     const messageControlId = `VXU${Date.now()}`;
 
-    builder.addMSH('VXU', 'V04', messageControlId);
+    builder.addMSH("VXU", "V04", messageControlId);
 
     // PID segment would be added here with patient demographics
     // RXA segment for administration
@@ -420,7 +451,7 @@ export class ImmunizationRegistryClient {
     const builder = new HL7Builder();
     const messageControlId = `QBP${Date.now()}`;
 
-    builder.addMSH('QBP', 'Q11', messageControlId);
+    builder.addMSH("QBP", "Q11", messageControlId);
 
     // QPD segment for query parameters
     // RCP segment for response control parameters
@@ -441,11 +472,13 @@ export class ImmunizationRegistryClient {
     pending: number;
   }> {
     try {
-      const response = await this.client.get('/immunizations/stats', { params });
+      const response = await this.client.get("/immunizations/stats", {
+        params,
+      });
 
       return response.data;
     } catch (error) {
-      logger.error('Failed to get submission stats', { error });
+      logger.error("Failed to get submission stats", { error });
       throw error;
     }
   }
@@ -458,10 +491,10 @@ export class ImmunizationRegistryError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
-    this.name = 'ImmunizationRegistryError';
+    this.name = "ImmunizationRegistryError";
   }
 }
 
@@ -470,8 +503,8 @@ export class ImmunizationRegistryError extends Error {
  */
 export const immunizationRegistryClient = new ImmunizationRegistryClient({
   baseUrl: process.env.IIS_BASE_URL,
-  facilityId: process.env.IIS_FACILITY_ID || '',
-  apiKey: process.env.IIS_API_KEY || '',
+  facilityId: process.env.IIS_FACILITY_ID || "",
+  apiKey: process.env.IIS_API_KEY || "",
   state: process.env.IIS_STATE,
-  timeout: parseInt(process.env.IIS_TIMEOUT || '30000', 10),
+  timeout: parseInt(process.env.IIS_TIMEOUT || "30000", 10),
 });

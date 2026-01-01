@@ -3,7 +3,7 @@
  * Agent 9: Analytics
  */
 
-import type { BaseEntity } from './index';
+import type { BaseEntity } from "./index";
 
 // ============================================================================
 // Report Types
@@ -27,20 +27,20 @@ export interface Report extends BaseEntity {
 }
 
 export enum ReportCategory {
-  FINANCIAL = 'FINANCIAL',
-  CLINICAL = 'CLINICAL',
-  OPERATIONAL = 'OPERATIONAL',
-  QUALITY = 'QUALITY',
-  COMPLIANCE = 'COMPLIANCE',
-  POPULATION_HEALTH = 'POPULATION_HEALTH',
-  CUSTOM = 'CUSTOM',
+  FINANCIAL = "FINANCIAL",
+  CLINICAL = "CLINICAL",
+  OPERATIONAL = "OPERATIONAL",
+  QUALITY = "QUALITY",
+  COMPLIANCE = "COMPLIANCE",
+  POPULATION_HEALTH = "POPULATION_HEALTH",
+  CUSTOM = "CUSTOM",
 }
 
 export enum ReportType {
-  TABLE = 'TABLE',
-  CHART = 'CHART',
-  DASHBOARD = 'DASHBOARD',
-  EXPORT = 'EXPORT',
+  TABLE = "TABLE",
+  CHART = "CHART",
+  DASHBOARD = "DASHBOARD",
+  EXPORT = "EXPORT",
 }
 
 export interface ReportConfiguration {
@@ -64,13 +64,13 @@ export interface ColumnDefinition {
 }
 
 export enum ColumnType {
-  TEXT = 'TEXT',
-  NUMBER = 'NUMBER',
-  CURRENCY = 'CURRENCY',
-  DATE = 'DATE',
-  DATETIME = 'DATETIME',
-  BOOLEAN = 'BOOLEAN',
-  ENUM = 'ENUM',
+  TEXT = "TEXT",
+  NUMBER = "NUMBER",
+  CURRENCY = "CURRENCY",
+  DATE = "DATE",
+  DATETIME = "DATETIME",
+  BOOLEAN = "BOOLEAN",
+  ENUM = "ENUM",
 }
 
 export interface FilterDefinition {
@@ -81,26 +81,26 @@ export interface FilterDefinition {
 }
 
 export enum FilterOperator {
-  EQUALS = 'EQUALS',
-  NOT_EQUALS = 'NOT_EQUALS',
-  GREATER_THAN = 'GREATER_THAN',
-  LESS_THAN = 'LESS_THAN',
-  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
-  LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
-  CONTAINS = 'CONTAINS',
-  NOT_CONTAINS = 'NOT_CONTAINS',
-  STARTS_WITH = 'STARTS_WITH',
-  ENDS_WITH = 'ENDS_WITH',
-  IN = 'IN',
-  NOT_IN = 'NOT_IN',
-  BETWEEN = 'BETWEEN',
-  IS_NULL = 'IS_NULL',
-  IS_NOT_NULL = 'IS_NOT_NULL',
+  EQUALS = "EQUALS",
+  NOT_EQUALS = "NOT_EQUALS",
+  GREATER_THAN = "GREATER_THAN",
+  LESS_THAN = "LESS_THAN",
+  GREATER_THAN_OR_EQUAL = "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL = "LESS_THAN_OR_EQUAL",
+  CONTAINS = "CONTAINS",
+  NOT_CONTAINS = "NOT_CONTAINS",
+  STARTS_WITH = "STARTS_WITH",
+  ENDS_WITH = "ENDS_WITH",
+  IN = "IN",
+  NOT_IN = "NOT_IN",
+  BETWEEN = "BETWEEN",
+  IS_NULL = "IS_NULL",
+  IS_NOT_NULL = "IS_NOT_NULL",
 }
 
 export interface SortDefinition {
   field: string;
-  direction: 'ASC' | 'DESC';
+  direction: "ASC" | "DESC";
   priority: number;
 }
 
@@ -116,12 +116,12 @@ export interface AggregationDefinition {
 }
 
 export enum AggregationFunction {
-  COUNT = 'COUNT',
-  SUM = 'SUM',
-  AVG = 'AVG',
-  MIN = 'MIN',
-  MAX = 'MAX',
-  DISTINCT_COUNT = 'DISTINCT_COUNT',
+  COUNT = "COUNT",
+  SUM = "SUM",
+  AVG = "AVG",
+  MIN = "MIN",
+  MAX = "MAX",
+  DISTINCT_COUNT = "DISTINCT_COUNT",
 }
 
 export interface VisualizationConfig {
@@ -134,24 +134,24 @@ export interface VisualizationConfig {
 }
 
 export enum ChartType {
-  LINE = 'LINE',
-  BAR = 'BAR',
-  COLUMN = 'COLUMN',
-  PIE = 'PIE',
-  DONUT = 'DONUT',
-  AREA = 'AREA',
-  SCATTER = 'SCATTER',
-  HEATMAP = 'HEATMAP',
-  GAUGE = 'GAUGE',
-  FUNNEL = 'FUNNEL',
+  LINE = "LINE",
+  BAR = "BAR",
+  COLUMN = "COLUMN",
+  PIE = "PIE",
+  DONUT = "DONUT",
+  AREA = "AREA",
+  SCATTER = "SCATTER",
+  HEATMAP = "HEATMAP",
+  GAUGE = "GAUGE",
+  FUNNEL = "FUNNEL",
 }
 
 export enum OutputFormat {
-  HTML = 'HTML',
-  PDF = 'PDF',
-  EXCEL = 'EXCEL',
-  CSV = 'CSV',
-  JSON = 'JSON',
+  HTML = "HTML",
+  PDF = "PDF",
+  EXCEL = "EXCEL",
+  CSV = "CSV",
+  JSON = "JSON",
 }
 
 export interface ReportParameter {
@@ -165,13 +165,13 @@ export interface ReportParameter {
 }
 
 export enum ParameterType {
-  STRING = 'STRING',
-  NUMBER = 'NUMBER',
-  DATE = 'DATE',
-  DATE_RANGE = 'DATE_RANGE',
-  SELECT = 'SELECT',
-  MULTISELECT = 'MULTISELECT',
-  BOOLEAN = 'BOOLEAN',
+  STRING = "STRING",
+  NUMBER = "NUMBER",
+  DATE = "DATE",
+  DATE_RANGE = "DATE_RANGE",
+  SELECT = "SELECT",
+  MULTISELECT = "MULTISELECT",
+  BOOLEAN = "BOOLEAN",
 }
 
 // ============================================================================
@@ -198,26 +198,26 @@ export interface ReportSchedule extends BaseEntity {
 }
 
 export enum ScheduleFrequency {
-  DAILY = 'DAILY',
-  WEEKLY = 'WEEKLY',
-  MONTHLY = 'MONTHLY',
-  QUARTERLY = 'QUARTERLY',
-  ANNUALLY = 'ANNUALLY',
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  QUARTERLY = "QUARTERLY",
+  ANNUALLY = "ANNUALLY",
 }
 
 export enum DeliveryMethod {
-  EMAIL = 'EMAIL',
-  PORTAL = 'PORTAL',
-  FTP = 'FTP',
-  SFTP = 'SFTP',
-  S3 = 'S3',
+  EMAIL = "EMAIL",
+  PORTAL = "PORTAL",
+  FTP = "FTP",
+  SFTP = "SFTP",
+  S3 = "S3",
 }
 
 export enum ScheduleStatus {
-  ACTIVE = 'ACTIVE',
-  PAUSED = 'PAUSED',
-  EXPIRED = 'EXPIRED',
-  ERROR = 'ERROR',
+  ACTIVE = "ACTIVE",
+  PAUSED = "PAUSED",
+  EXPIRED = "EXPIRED",
+  ERROR = "ERROR",
 }
 
 export interface ReportExecution extends BaseEntity {
@@ -233,10 +233,10 @@ export interface ReportExecution extends BaseEntity {
 }
 
 export enum ExecutionStatus {
-  RUNNING = 'RUNNING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
+  RUNNING = "RUNNING",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+  CANCELLED = "CANCELLED",
 }
 
 // ============================================================================
@@ -274,12 +274,12 @@ export interface DashboardWidget extends BaseEntity {
 }
 
 export enum WidgetType {
-  METRIC = 'METRIC',
-  CHART = 'CHART',
-  TABLE = 'TABLE',
-  LIST = 'LIST',
-  TEXT = 'TEXT',
-  IFRAME = 'IFRAME',
+  METRIC = "METRIC",
+  CHART = "CHART",
+  TABLE = "TABLE",
+  LIST = "LIST",
+  TEXT = "TEXT",
+  IFRAME = "IFRAME",
 }
 
 export interface WidgetPosition {
@@ -309,7 +309,7 @@ export interface FormattingOptions {
 
 export interface Threshold {
   value: number;
-  comparison: 'GT' | 'LT' | 'GTE' | 'LTE' | 'EQ';
+  comparison: "GT" | "LT" | "GTE" | "LTE" | "EQ";
   color: string;
   label: string | null;
 }
@@ -343,34 +343,34 @@ export interface Metric extends BaseEntity {
 }
 
 export enum MetricCategory {
-  FINANCIAL = 'FINANCIAL',
-  CLINICAL = 'CLINICAL',
-  OPERATIONAL = 'OPERATIONAL',
-  QUALITY = 'QUALITY',
-  PATIENT_SATISFACTION = 'PATIENT_SATISFACTION',
+  FINANCIAL = "FINANCIAL",
+  CLINICAL = "CLINICAL",
+  OPERATIONAL = "OPERATIONAL",
+  QUALITY = "QUALITY",
+  PATIENT_SATISFACTION = "PATIENT_SATISFACTION",
 }
 
 export enum MetricCalculation {
-  SUM = 'SUM',
-  AVERAGE = 'AVERAGE',
-  COUNT = 'COUNT',
-  PERCENTAGE = 'PERCENTAGE',
-  RATIO = 'RATIO',
-  CUSTOM = 'CUSTOM',
+  SUM = "SUM",
+  AVERAGE = "AVERAGE",
+  COUNT = "COUNT",
+  PERCENTAGE = "PERCENTAGE",
+  RATIO = "RATIO",
+  CUSTOM = "CUSTOM",
 }
 
 export enum CalculationFrequency {
-  REAL_TIME = 'REAL_TIME',
-  HOURLY = 'HOURLY',
-  DAILY = 'DAILY',
-  WEEKLY = 'WEEKLY',
-  MONTHLY = 'MONTHLY',
+  REAL_TIME = "REAL_TIME",
+  HOURLY = "HOURLY",
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
 }
 
 export enum TrendDirection {
-  UP = 'UP',
-  DOWN = 'DOWN',
-  STABLE = 'STABLE',
+  UP = "UP",
+  DOWN = "DOWN",
+  STABLE = "STABLE",
 }
 
 export interface MetricValue extends BaseEntity {
@@ -405,19 +405,19 @@ export interface QualityMeasure extends BaseEntity {
 }
 
 export enum MeasureSet {
-  HEDIS = 'HEDIS',
-  MIPS = 'MIPS',
-  PQRS = 'PQRS',
-  CORE = 'CORE',
-  CUSTOM = 'CUSTOM',
+  HEDIS = "HEDIS",
+  MIPS = "MIPS",
+  PQRS = "PQRS",
+  CORE = "CORE",
+  CUSTOM = "CUSTOM",
 }
 
 export enum QualityCategory {
-  PREVENTIVE_CARE = 'PREVENTIVE_CARE',
-  CHRONIC_DISEASE = 'CHRONIC_DISEASE',
-  PATIENT_SAFETY = 'PATIENT_SAFETY',
-  CARE_COORDINATION = 'CARE_COORDINATION',
-  PATIENT_ENGAGEMENT = 'PATIENT_ENGAGEMENT',
+  PREVENTIVE_CARE = "PREVENTIVE_CARE",
+  CHRONIC_DISEASE = "CHRONIC_DISEASE",
+  PATIENT_SAFETY = "PATIENT_SAFETY",
+  CARE_COORDINATION = "CARE_COORDINATION",
+  PATIENT_ENGAGEMENT = "PATIENT_ENGAGEMENT",
 }
 
 export interface MeasureComponent {
@@ -427,9 +427,9 @@ export interface MeasureComponent {
 }
 
 export enum ReportingFrequency {
-  MONTHLY = 'MONTHLY',
-  QUARTERLY = 'QUARTERLY',
-  ANNUALLY = 'ANNUALLY',
+  MONTHLY = "MONTHLY",
+  QUARTERLY = "QUARTERLY",
+  ANNUALLY = "ANNUALLY",
 }
 
 export interface QualityMeasureResult extends BaseEntity {
@@ -465,7 +465,7 @@ export interface CohortCriteria {
   field: string;
   operator: FilterOperator;
   value: any;
-  logicalOperator: 'AND' | 'OR';
+  logicalOperator: "AND" | "OR";
 }
 
 export interface PopulationHealthMetric {
@@ -478,10 +478,10 @@ export interface PopulationHealthMetric {
 }
 
 export enum RiskLevel {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL',
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  CRITICAL = "CRITICAL",
 }
 
 // ============================================================================
@@ -498,10 +498,10 @@ export interface AnalyticsCache extends BaseEntity {
 }
 
 export enum CacheType {
-  REPORT = 'REPORT',
-  DASHBOARD = 'DASHBOARD',
-  METRIC = 'METRIC',
-  QUERY = 'QUERY',
+  REPORT = "REPORT",
+  DASHBOARD = "DASHBOARD",
+  METRIC = "METRIC",
+  QUERY = "QUERY",
 }
 
 // ============================================================================
@@ -519,7 +519,7 @@ export interface CreateDashboardDto {
   description?: string;
   category: ReportCategory;
   layout?: DashboardLayout;
-  widgets?: Omit<DashboardWidget, keyof BaseEntity | 'dashboardId'>[];
+  widgets?: Omit<DashboardWidget, keyof BaseEntity | "dashboardId">[];
 }
 
 export interface ExecuteQueryDto {

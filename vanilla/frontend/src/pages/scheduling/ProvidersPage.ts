@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
+import { SchedulingService } from "../../services/SchedulingService";
 
 export class ProvidersPage {
   private container: HTMLElement;
@@ -36,23 +36,27 @@ export class ProvidersPage {
       const providers = await this.schedulingService.getProviders();
       this.renderProviders(providers);
     } catch (error) {
-      console.error('Error loading providers:', error);
+      console.error("Error loading providers:", error);
     }
   }
 
   private renderProviders(providers: any[]): void {
-    const grid = document.getElementById('providersGrid')!;
-    grid.innerHTML = providers.map(p => `
+    const grid = document.getElementById("providersGrid")!;
+    grid.innerHTML = providers
+      .map(
+        (p) => `
       <div class="provider-card" data-id="${p.id}">
         <div class="provider-avatar">${p.firstName.charAt(0)}${p.lastName.charAt(0)}</div>
         <h3>${p.fullName}</h3>
         <p class="specialty">${p.specialty}</p>
-        <p class="status ${p.acceptingNewPatients ? 'accepting' : ''}">
-          ${p.acceptingNewPatients ? 'Accepting New Patients' : 'Not Accepting Patients'}
+        <p class="status ${p.acceptingNewPatients ? "accepting" : ""}">
+          ${p.acceptingNewPatients ? "Accepting New Patients" : "Not Accepting Patients"}
         </p>
         <button class="btn btn-small" onclick="window.location.hash='/scheduling/providers/${p.id}'">View Schedule</button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   destroy(): void {}

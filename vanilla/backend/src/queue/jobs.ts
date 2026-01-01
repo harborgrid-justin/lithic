@@ -4,48 +4,48 @@
  * Predefined job types for common healthcare operations
  */
 
-import { queueProcessor, JobPriority } from './processor';
-import { logger } from '../utils/logger';
-import { triggerWebhook } from '../integrations/webhooks/manager';
+import { queueProcessor, JobPriority } from "./processor";
+import { logger } from "../utils/logger";
+import { triggerWebhook } from "../integrations/webhooks/manager";
 
 /**
  * Job Types
  */
 export enum JobType {
   // Patient operations
-  PATIENT_SYNC = 'patient:sync',
-  PATIENT_EXPORT = 'patient:export',
-  PATIENT_MERGE = 'patient:merge',
+  PATIENT_SYNC = "patient:sync",
+  PATIENT_EXPORT = "patient:export",
+  PATIENT_MERGE = "patient:merge",
 
   // Clinical operations
-  RESULT_NOTIFICATION = 'result:notification',
-  LAB_ORDER_SUBMIT = 'lab:order:submit',
-  IMAGING_ORDER_SUBMIT = 'imaging:order:submit',
+  RESULT_NOTIFICATION = "result:notification",
+  LAB_ORDER_SUBMIT = "lab:order:submit",
+  IMAGING_ORDER_SUBMIT = "imaging:order:submit",
 
   // Billing operations
-  CLAIM_SUBMIT = 'claim:submit',
-  CLAIM_STATUS_CHECK = 'claim:status:check',
-  ELIGIBILITY_CHECK = 'eligibility:check',
-  ERA_PROCESS = 'era:process',
+  CLAIM_SUBMIT = "claim:submit",
+  CLAIM_STATUS_CHECK = "claim:status:check",
+  ELIGIBILITY_CHECK = "eligibility:check",
+  ERA_PROCESS = "era:process",
 
   // Prescription operations
-  PRESCRIPTION_SEND = 'prescription:send',
-  PRESCRIPTION_STATUS = 'prescription:status',
+  PRESCRIPTION_SEND = "prescription:send",
+  PRESCRIPTION_STATUS = "prescription:status",
 
   // Integration operations
-  FHIR_SYNC = 'fhir:sync',
-  HL7_SEND = 'hl7:send',
-  WEBHOOK_DELIVERY = 'webhook:delivery',
+  FHIR_SYNC = "fhir:sync",
+  HL7_SEND = "hl7:send",
+  WEBHOOK_DELIVERY = "webhook:delivery",
 
   // Analytics operations
-  REPORT_GENERATE = 'report:generate',
-  DATA_EXPORT = 'data:export',
-  ANALYTICS_UPDATE = 'analytics:update',
+  REPORT_GENERATE = "report:generate",
+  DATA_EXPORT = "data:export",
+  ANALYTICS_UPDATE = "analytics:update",
 
   // Maintenance operations
-  AUDIT_LOG_ARCHIVE = 'audit:archive',
-  DATA_CLEANUP = 'data:cleanup',
-  BACKUP = 'backup',
+  AUDIT_LOG_ARCHIVE = "audit:archive",
+  DATA_CLEANUP = "data:cleanup",
+  BACKUP = "backup",
 }
 
 /**
@@ -57,14 +57,14 @@ export class JobFactory {
    */
   static async createPatientSyncJob(data: {
     patientId: string;
-    source: 'fhir' | 'hl7' | 'api';
+    source: "fhir" | "hl7" | "api";
     destination: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.PATIENT_SYNC, data, {
-      priority: 'normal',
+      priority: "normal",
       maxAttempts: 3,
       metadata: {
-        category: 'patient',
+        category: "patient",
       },
     });
 
@@ -78,13 +78,18 @@ export class JobFactory {
     orderId: string;
     patientId: string;
     tests: string[];
-    priority: 'routine' | 'urgent' | 'stat';
+    priority: "routine" | "urgent" | "stat";
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.LAB_ORDER_SUBMIT, data, {
-      priority: data.priority === 'stat' ? 'critical' : data.priority === 'urgent' ? 'high' : 'normal',
+      priority:
+        data.priority === "stat"
+          ? "critical"
+          : data.priority === "urgent"
+            ? "high"
+            : "normal",
       maxAttempts: 3,
       metadata: {
-        category: 'clinical',
+        category: "clinical",
       },
     });
 
@@ -98,14 +103,14 @@ export class JobFactory {
     resultId: string;
     patientId: string;
     providerId: string;
-    resultType: 'lab' | 'imaging' | 'pathology';
+    resultType: "lab" | "imaging" | "pathology";
     critical: boolean;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.RESULT_NOTIFICATION, data, {
-      priority: data.critical ? 'critical' : 'high',
+      priority: data.critical ? "critical" : "high",
       maxAttempts: 5,
       metadata: {
-        category: 'clinical',
+        category: "clinical",
       },
     });
 
@@ -123,10 +128,10 @@ export class JobFactory {
     totalCharges: number;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.CLAIM_SUBMIT, data, {
-      priority: 'normal',
+      priority: "normal",
       maxAttempts: 3,
       metadata: {
-        category: 'billing',
+        category: "billing",
       },
     });
 
@@ -143,10 +148,10 @@ export class JobFactory {
     serviceDate?: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.ELIGIBILITY_CHECK, data, {
-      priority: 'high',
+      priority: "high",
       maxAttempts: 2,
       metadata: {
-        category: 'billing',
+        category: "billing",
       },
     });
 
@@ -164,10 +169,10 @@ export class JobFactory {
     urgent: boolean;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.PRESCRIPTION_SEND, data, {
-      priority: data.urgent ? 'high' : 'normal',
+      priority: data.urgent ? "high" : "normal",
       maxAttempts: 3,
       metadata: {
-        category: 'pharmacy',
+        category: "pharmacy",
       },
     });
 
@@ -180,14 +185,14 @@ export class JobFactory {
   static async createFHIRSyncJob(data: {
     resourceType: string;
     resourceId: string;
-    operation: 'create' | 'update' | 'delete';
+    operation: "create" | "update" | "delete";
     destination: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.FHIR_SYNC, data, {
-      priority: 'normal',
+      priority: "normal",
       maxAttempts: 3,
       metadata: {
-        category: 'integration',
+        category: "integration",
       },
     });
 
@@ -203,10 +208,10 @@ export class JobFactory {
     destination: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.HL7_SEND, data, {
-      priority: 'normal',
+      priority: "normal",
       maxAttempts: 3,
       metadata: {
-        category: 'integration',
+        category: "integration",
       },
     });
 
@@ -222,10 +227,10 @@ export class JobFactory {
     url: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.WEBHOOK_DELIVERY, data, {
-      priority: 'normal',
+      priority: "normal",
       maxAttempts: 3,
       metadata: {
-        category: 'integration',
+        category: "integration",
       },
     });
 
@@ -238,14 +243,14 @@ export class JobFactory {
   static async createReportGenerationJob(data: {
     reportType: string;
     parameters: Record<string, any>;
-    format: 'pdf' | 'excel' | 'csv';
+    format: "pdf" | "excel" | "csv";
     requestedBy: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.REPORT_GENERATE, data, {
-      priority: 'low',
+      priority: "low",
       maxAttempts: 2,
       metadata: {
-        category: 'analytics',
+        category: "analytics",
       },
     });
 
@@ -258,14 +263,14 @@ export class JobFactory {
   static async createDataExportJob(data: {
     dataType: string;
     filters: Record<string, any>;
-    format: 'csv' | 'json' | 'xml';
+    format: "csv" | "json" | "xml";
     destination: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.DATA_EXPORT, data, {
-      priority: 'low',
+      priority: "low",
       maxAttempts: 2,
       metadata: {
-        category: 'analytics',
+        category: "analytics",
       },
     });
 
@@ -281,10 +286,10 @@ export class JobFactory {
     destination: string;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.AUDIT_LOG_ARCHIVE, data, {
-      priority: 'low',
+      priority: "low",
       maxAttempts: 2,
       metadata: {
-        category: 'maintenance',
+        category: "maintenance",
       },
     });
 
@@ -300,10 +305,10 @@ export class JobFactory {
     dryRun: boolean;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.DATA_CLEANUP, data, {
-      priority: 'low',
+      priority: "low",
       maxAttempts: 1,
       metadata: {
-        category: 'maintenance',
+        category: "maintenance",
       },
     });
 
@@ -314,15 +319,15 @@ export class JobFactory {
    * Create backup job
    */
   static async createBackupJob(data: {
-    backupType: 'full' | 'incremental';
+    backupType: "full" | "incremental";
     destination: string;
     encrypt: boolean;
   }): Promise<string> {
     const job = await queueProcessor.addJob(JobType.BACKUP, data, {
-      priority: 'low',
+      priority: "low",
       maxAttempts: 1,
       metadata: {
-        category: 'maintenance',
+        category: "maintenance",
       },
     });
 
@@ -342,7 +347,7 @@ export class BatchJobCreator {
       patientId: string;
       payerId: string;
       memberId: string;
-    }>
+    }>,
   ): Promise<string[]> {
     const jobIds: string[] = [];
 
@@ -351,7 +356,7 @@ export class BatchJobCreator {
       jobIds.push(jobId);
     }
 
-    logger.info('Batch eligibility checks created', {
+    logger.info("Batch eligibility checks created", {
       count: jobIds.length,
     });
 
@@ -368,7 +373,7 @@ export class BatchJobCreator {
       providerId: string;
       payerId: string;
       totalCharges: number;
-    }>
+    }>,
   ): Promise<string[]> {
     const jobIds: string[] = [];
 
@@ -377,7 +382,7 @@ export class BatchJobCreator {
       jobIds.push(jobId);
     }
 
-    logger.info('Batch claim submissions created', {
+    logger.info("Batch claim submissions created", {
       count: jobIds.length,
     });
 
@@ -391,9 +396,9 @@ export class BatchJobCreator {
     resources: Array<{
       resourceType: string;
       resourceId: string;
-      operation: 'create' | 'update' | 'delete';
+      operation: "create" | "update" | "delete";
       destination: string;
-    }>
+    }>,
   ): Promise<string[]> {
     const jobIds: string[] = [];
 
@@ -402,7 +407,7 @@ export class BatchJobCreator {
       jobIds.push(jobId);
     }
 
-    logger.info('Batch FHIR sync jobs created', {
+    logger.info("Batch FHIR sync jobs created", {
       count: jobIds.length,
     });
 
@@ -432,8 +437,10 @@ export class ScheduledJobCreator {
 
       setTimeout(async () => {
         await JobFactory.createDataCleanupJob({
-          dataType: 'completed_jobs',
-          olderThan: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          dataType: "completed_jobs",
+          olderThan: new Date(
+            Date.now() - 7 * 24 * 60 * 60 * 1000,
+          ).toISOString(),
           dryRun: false,
         });
 
@@ -442,7 +449,7 @@ export class ScheduledJobCreator {
     };
 
     schedule();
-    logger.info('Scheduled daily cleanup job');
+    logger.info("Scheduled daily cleanup job");
   }
 
   /**
@@ -466,8 +473,8 @@ export class ScheduledJobCreator {
 
       setTimeout(async () => {
         await JobFactory.createBackupJob({
-          backupType: 'full',
-          destination: process.env.BACKUP_DESTINATION || '/backups',
+          backupType: "full",
+          destination: process.env.BACKUP_DESTINATION || "/backups",
           encrypt: true,
         });
 
@@ -476,12 +483,12 @@ export class ScheduledJobCreator {
     };
 
     schedule();
-    logger.info('Scheduled weekly backup job');
+    logger.info("Scheduled weekly backup job");
   }
 }
 
 // Auto-schedule maintenance jobs
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   ScheduledJobCreator.scheduleDailyCleanup();
   ScheduledJobCreator.scheduleWeeklyBackup();
 }

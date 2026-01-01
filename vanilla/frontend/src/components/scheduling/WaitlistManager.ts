@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
+import { SchedulingService } from "../../services/SchedulingService";
 
 export class WaitlistManager {
   private container: HTMLElement;
@@ -44,7 +44,9 @@ export class WaitlistManager {
   }
 
   private renderWaitlistEntries(entries: any[]): string {
-    return entries.map(entry => `
+    return entries
+      .map(
+        (entry) => `
       <div class="waitlist-entry priority-${entry.priority}" data-id="${entry.id}">
         <div class="entry-header">
           <span class="priority-badge">${entry.priority}</span>
@@ -61,12 +63,14 @@ export class WaitlistManager {
           <button class="btn-small" data-action="remove" data-id="${entry.id}">Remove</button>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   private attachEventListeners(): void {
-    this.container.querySelectorAll('[data-action]').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
+    this.container.querySelectorAll("[data-action]").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
         const action = (e.currentTarget as HTMLElement).dataset.action;
         const id = (e.currentTarget as HTMLElement).dataset.id;
         await this.handleAction(action!, id!);
@@ -76,13 +80,13 @@ export class WaitlistManager {
 
   private async handleAction(action: string, id: string): Promise<void> {
     switch (action) {
-      case 'find-slots':
+      case "find-slots":
         // Open find slots modal
         break;
-      case 'notify':
+      case "notify":
         await this.schedulingService.notifyWaitlistEntry(id);
         break;
-      case 'remove':
+      case "remove":
         await this.schedulingService.removeFromWaitlist(id);
         await this.render();
         break;

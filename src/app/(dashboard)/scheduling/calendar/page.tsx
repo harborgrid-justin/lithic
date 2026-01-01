@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Plus, Download, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Select } from '@/components/ui/select';
-import DragDropCalendar from '@/components/scheduling/DragDropCalendar';
-import { schedulingService } from '@/services/scheduling.service';
-import type { Appointment, Provider, CalendarView } from '@/types/scheduling';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Plus, Download, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import DragDropCalendar from "@/components/scheduling/DragDropCalendar";
+import { schedulingService } from "@/services/scheduling.service";
+import type { Appointment, Provider, CalendarView } from "@/types/scheduling";
+import { toast } from "sonner";
 
 export default function CalendarPage() {
   const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [selectedProviderId, setSelectedProviderId] = useState<string>('all');
+  const [selectedProviderId, setSelectedProviderId] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,8 +31,8 @@ export default function CalendarPage() {
 
       const [appointmentsData, providersData] = await Promise.all([
         schedulingService.getAppointments({
-          startDate: startDate.toISOString().split('T')[0],
-          endDate: endDate.toISOString().split('T')[0],
+          startDate: startDate.toISOString().split("T")[0],
+          endDate: endDate.toISOString().split("T")[0],
         }),
         schedulingService.getProviders(),
       ]);
@@ -40,16 +40,22 @@ export default function CalendarPage() {
       setAppointments(appointmentsData);
       setProviders(providersData);
     } catch (error) {
-      toast.error('Failed to load calendar data');
+      toast.error("Failed to load calendar data");
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAppointmentMove = async (appointmentId: string, newStartTime: Date) => {
+  const handleAppointmentMove = async (
+    appointmentId: string,
+    newStartTime: Date,
+  ) => {
     try {
-      await schedulingService.rescheduleAppointment(appointmentId, newStartTime.toISOString());
+      await schedulingService.rescheduleAppointment(
+        appointmentId,
+        newStartTime.toISOString(),
+      );
       await loadData();
     } catch (error) {
       throw error;
@@ -57,13 +63,14 @@ export default function CalendarPage() {
   };
 
   const handleTimeSlotClick = (date: Date, time: string) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toISOString().split("T")[0];
     router.push(`/scheduling/appointments/new?date=${dateStr}&time=${time}`);
   };
 
-  const filteredAppointments = selectedProviderId === 'all'
-    ? appointments
-    : appointments.filter((apt) => apt.providerId === selectedProviderId);
+  const filteredAppointments =
+    selectedProviderId === "all"
+      ? appointments
+      : appointments.filter((apt) => apt.providerId === selectedProviderId);
 
   return (
     <div className="p-6 space-y-6">
@@ -71,7 +78,9 @@ export default function CalendarPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Calendar</h1>
-          <p className="text-gray-600 mt-1">Drag and drop to reschedule appointments</p>
+          <p className="text-gray-600 mt-1">
+            Drag and drop to reschedule appointments
+          </p>
         </div>
         <div className="flex space-x-3">
           <Select
@@ -94,7 +103,7 @@ export default function CalendarPage() {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button onClick={() => router.push('/scheduling/appointments/new')}>
+          <Button onClick={() => router.push("/scheduling/appointments/new")}>
             <Plus className="h-4 w-4 mr-2" />
             New Appointment
           </Button>

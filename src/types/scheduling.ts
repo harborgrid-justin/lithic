@@ -3,7 +3,7 @@
  * Agent 4: Scheduling
  */
 
-import type { BaseEntity } from './index';
+import type { BaseEntity } from "./index";
 
 // ============================================================================
 // Appointment Types
@@ -44,47 +44,47 @@ export interface Appointment extends BaseEntity {
 }
 
 export enum AppointmentType {
-  NEW_PATIENT = 'NEW_PATIENT',
-  FOLLOW_UP = 'FOLLOW_UP',
-  ANNUAL_PHYSICAL = 'ANNUAL_PHYSICAL',
-  WELL_CHILD = 'WELL_CHILD',
-  SICK_VISIT = 'SICK_VISIT',
-  CONSULTATION = 'CONSULTATION',
-  PROCEDURE = 'PROCEDURE',
-  SURGERY = 'SURGERY',
-  THERAPY = 'THERAPY',
-  LAB_ONLY = 'LAB_ONLY',
-  IMAGING_ONLY = 'IMAGING_ONLY',
-  VACCINE = 'VACCINE',
-  TELEHEALTH = 'TELEHEALTH',
-  WALK_IN = 'WALK_IN',
+  NEW_PATIENT = "NEW_PATIENT",
+  FOLLOW_UP = "FOLLOW_UP",
+  ANNUAL_PHYSICAL = "ANNUAL_PHYSICAL",
+  WELL_CHILD = "WELL_CHILD",
+  SICK_VISIT = "SICK_VISIT",
+  CONSULTATION = "CONSULTATION",
+  PROCEDURE = "PROCEDURE",
+  SURGERY = "SURGERY",
+  THERAPY = "THERAPY",
+  LAB_ONLY = "LAB_ONLY",
+  IMAGING_ONLY = "IMAGING_ONLY",
+  VACCINE = "VACCINE",
+  TELEHEALTH = "TELEHEALTH",
+  WALK_IN = "WALK_IN",
 }
 
 export enum AppointmentStatus {
-  SCHEDULED = 'SCHEDULED',
-  CONFIRMED = 'CONFIRMED',
-  ARRIVED = 'ARRIVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  NO_SHOW = 'NO_SHOW',
-  RESCHEDULED = 'RESCHEDULED',
-  WAITLIST = 'WAITLIST',
+  SCHEDULED = "SCHEDULED",
+  CONFIRMED = "CONFIRMED",
+  ARRIVED = "ARRIVED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  NO_SHOW = "NO_SHOW",
+  RESCHEDULED = "RESCHEDULED",
+  WAITLIST = "WAITLIST",
 }
 
 export enum AppointmentPriority {
-  ROUTINE = 'ROUTINE',
-  URGENT = 'URGENT',
-  ASAP = 'ASAP',
-  STAT = 'STAT',
+  ROUTINE = "ROUTINE",
+  URGENT = "URGENT",
+  ASAP = "ASAP",
+  STAT = "STAT",
 }
 
 export enum ConfirmationMethod {
-  PHONE = 'PHONE',
-  SMS = 'SMS',
-  EMAIL = 'EMAIL',
-  PORTAL = 'PORTAL',
-  IN_PERSON = 'IN_PERSON',
+  PHONE = "PHONE",
+  SMS = "SMS",
+  EMAIL = "EMAIL",
+  PORTAL = "PORTAL",
+  IN_PERSON = "IN_PERSON",
 }
 
 // ============================================================================
@@ -105,25 +105,25 @@ export interface AppointmentReminder extends BaseEntity {
 }
 
 export enum ReminderType {
-  CONFIRMATION = 'CONFIRMATION',
-  REMINDER_24H = 'REMINDER_24H',
-  REMINDER_1H = 'REMINDER_1H',
-  FOLLOW_UP = 'FOLLOW_UP',
+  CONFIRMATION = "CONFIRMATION",
+  REMINDER_24H = "REMINDER_24H",
+  REMINDER_1H = "REMINDER_1H",
+  FOLLOW_UP = "FOLLOW_UP",
 }
 
 export enum ReminderMethod {
-  SMS = 'SMS',
-  EMAIL = 'EMAIL',
-  PHONE = 'PHONE',
-  PUSH = 'PUSH',
+  SMS = "SMS",
+  EMAIL = "EMAIL",
+  PHONE = "PHONE",
+  PUSH = "PUSH",
 }
 
 export enum ReminderStatus {
-  SCHEDULED = 'SCHEDULED',
-  SENT = 'SENT',
-  DELIVERED = 'DELIVERED',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
+  SCHEDULED = "SCHEDULED",
+  SENT = "SENT",
+  DELIVERED = "DELIVERED",
+  FAILED = "FAILED",
+  CANCELLED = "CANCELLED",
 }
 
 // ============================================================================
@@ -147,15 +147,15 @@ export interface Schedule extends BaseEntity {
 }
 
 export enum ScheduleType {
-  PROVIDER = 'PROVIDER',
-  ROOM = 'ROOM',
-  EQUIPMENT = 'EQUIPMENT',
+  PROVIDER = "PROVIDER",
+  ROOM = "ROOM",
+  EQUIPMENT = "EQUIPMENT",
 }
 
 export enum ScheduleStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  DRAFT = 'DRAFT',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  DRAFT = "DRAFT",
 }
 
 export interface TimeSlot extends BaseEntity {
@@ -190,12 +190,12 @@ export interface ScheduleException extends BaseEntity {
 }
 
 export enum ExceptionType {
-  CLOSED = 'CLOSED',
-  HOLIDAY = 'HOLIDAY',
-  VACATION = 'VACATION',
-  CONFERENCE = 'CONFERENCE',
-  EMERGENCY = 'EMERGENCY',
-  CUSTOM = 'CUSTOM',
+  CLOSED = "CLOSED",
+  HOLIDAY = "HOLIDAY",
+  VACATION = "VACATION",
+  CONFERENCE = "CONFERENCE",
+  EMERGENCY = "EMERGENCY",
+  CUSTOM = "CUSTOM",
 }
 
 export interface RecurrenceRule {
@@ -209,10 +209,10 @@ export interface RecurrenceRule {
 }
 
 export enum RecurrenceFrequency {
-  DAILY = 'DAILY',
-  WEEKLY = 'WEEKLY',
-  MONTHLY = 'MONTHLY',
-  YEARLY = 'YEARLY',
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  YEARLY = "YEARLY",
 }
 
 // ============================================================================
@@ -238,27 +238,27 @@ export interface Waitlist extends BaseEntity {
 }
 
 export enum PreferredTime {
-  EARLY_MORNING = 'EARLY_MORNING',
-  MORNING = 'MORNING',
-  AFTERNOON = 'AFTERNOON',
-  EVENING = 'EVENING',
-  ANY = 'ANY',
+  EARLY_MORNING = "EARLY_MORNING",
+  MORNING = "MORNING",
+  AFTERNOON = "AFTERNOON",
+  EVENING = "EVENING",
+  ANY = "ANY",
 }
 
 export enum WaitlistPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  URGENT = 'URGENT',
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  URGENT = "URGENT",
 }
 
 export enum WaitlistStatus {
-  ACTIVE = 'ACTIVE',
-  NOTIFIED = 'NOTIFIED',
-  ACCEPTED = 'ACCEPTED',
-  DECLINED = 'DECLINED',
-  EXPIRED = 'EXPIRED',
-  CANCELLED = 'CANCELLED',
+  ACTIVE = "ACTIVE",
+  NOTIFIED = "NOTIFIED",
+  ACCEPTED = "ACCEPTED",
+  DECLINED = "DECLINED",
+  EXPIRED = "EXPIRED",
+  CANCELLED = "CANCELLED",
 }
 
 // ============================================================================
@@ -279,22 +279,22 @@ export interface Room extends BaseEntity {
 }
 
 export enum RoomType {
-  EXAM_ROOM = 'EXAM_ROOM',
-  PROCEDURE_ROOM = 'PROCEDURE_ROOM',
-  OPERATING_ROOM = 'OPERATING_ROOM',
-  TREATMENT_ROOM = 'TREATMENT_ROOM',
-  CONSULTATION_ROOM = 'CONSULTATION_ROOM',
-  LAB = 'LAB',
-  IMAGING = 'IMAGING',
-  WAITING_AREA = 'WAITING_AREA',
+  EXAM_ROOM = "EXAM_ROOM",
+  PROCEDURE_ROOM = "PROCEDURE_ROOM",
+  OPERATING_ROOM = "OPERATING_ROOM",
+  TREATMENT_ROOM = "TREATMENT_ROOM",
+  CONSULTATION_ROOM = "CONSULTATION_ROOM",
+  LAB = "LAB",
+  IMAGING = "IMAGING",
+  WAITING_AREA = "WAITING_AREA",
 }
 
 export enum RoomStatus {
-  AVAILABLE = 'AVAILABLE',
-  OCCUPIED = 'OCCUPIED',
-  CLEANING = 'CLEANING',
-  MAINTENANCE = 'MAINTENANCE',
-  OUT_OF_SERVICE = 'OUT_OF_SERVICE',
+  AVAILABLE = "AVAILABLE",
+  OCCUPIED = "OCCUPIED",
+  CLEANING = "CLEANING",
+  MAINTENANCE = "MAINTENANCE",
+  OUT_OF_SERVICE = "OUT_OF_SERVICE",
 }
 
 export interface Equipment extends BaseEntity {
@@ -313,11 +313,11 @@ export interface Equipment extends BaseEntity {
 }
 
 export enum EquipmentStatus {
-  AVAILABLE = 'AVAILABLE',
-  IN_USE = 'IN_USE',
-  MAINTENANCE = 'MAINTENANCE',
-  OUT_OF_SERVICE = 'OUT_OF_SERVICE',
-  RETIRED = 'RETIRED',
+  AVAILABLE = "AVAILABLE",
+  IN_USE = "IN_USE",
+  MAINTENANCE = "MAINTENANCE",
+  OUT_OF_SERVICE = "OUT_OF_SERVICE",
+  RETIRED = "RETIRED",
 }
 
 // ============================================================================
@@ -367,10 +367,10 @@ export interface CheckIn {
 }
 
 export enum CheckInMethod {
-  FRONT_DESK = 'FRONT_DESK',
-  KIOSK = 'KIOSK',
-  MOBILE = 'MOBILE',
-  PORTAL = 'PORTAL',
+  FRONT_DESK = "FRONT_DESK",
+  KIOSK = "KIOSK",
+  MOBILE = "MOBILE",
+  PORTAL = "PORTAL",
 }
 
 export interface CheckOut {

@@ -3,7 +3,7 @@
  * Uses fuzzy matching algorithms to detect potential duplicate patient records
  */
 
-import { Patient, DuplicateMatch } from '../models/Patient';
+import { Patient, DuplicateMatch } from "../models/Patient";
 
 export class DuplicateDetector {
   private readonly EXACT_MATCH_SCORE = 100;
@@ -15,7 +15,7 @@ export class DuplicateDetector {
    */
   public async findDuplicates(
     patient: Partial<Patient>,
-    existingPatients: Patient[]
+    existingPatients: Patient[],
   ): Promise<DuplicateMatch[]> {
     const matches: DuplicateMatch[] = [];
 
@@ -41,7 +41,7 @@ export class DuplicateDetector {
    */
   private calculateMatchScore(
     patient1: Partial<Patient>,
-    patient2: Patient
+    patient2: Patient,
   ): number {
     let totalScore = 0;
     let weights = 0;
@@ -57,12 +57,16 @@ export class DuplicateDetector {
     // Name and DOB combination (high weight)
     const nameDobWeight = 30;
     weights += nameDobWeight;
-    totalScore += this.scoreNameAndDob(patient1, patient2) * nameDobWeight / 100;
+    totalScore +=
+      (this.scoreNameAndDob(patient1, patient2) * nameDobWeight) / 100;
 
     // Phone number (medium weight)
     if (patient1.contact?.phone && patient2.contact?.phone) {
       weights += 15;
-      if (this.normalizePhone(patient1.contact.phone) === this.normalizePhone(patient2.contact.phone)) {
+      if (
+        this.normalizePhone(patient1.contact.phone) ===
+        this.normalizePhone(patient2.contact.phone)
+      ) {
         totalScore += 15;
       }
     }
@@ -70,7 +74,10 @@ export class DuplicateDetector {
     // Email (low-medium weight)
     if (patient1.contact?.email && patient2.contact?.email) {
       weights += 10;
-      if (patient1.contact.email.toLowerCase() === patient2.contact.email.toLowerCase()) {
+      if (
+        patient1.contact.email.toLowerCase() ===
+        patient2.contact.email.toLowerCase()
+      ) {
         totalScore += 10;
       }
     }
@@ -78,7 +85,8 @@ export class DuplicateDetector {
     // Address (low weight)
     if (patient1.address && patient2.address) {
       weights += 5;
-      totalScore += this.scoreAddress(patient1.address, patient2.address) * 5 / 100;
+      totalScore +=
+        (this.scoreAddress(patient1.address, patient2.address) * 5) / 100;
     }
 
     // Normalize to 100-point scale
@@ -90,7 +98,7 @@ export class DuplicateDetector {
    */
   private scoreNameAndDob(
     patient1: Partial<Patient>,
-    patient2: Patient
+    patient2: Patient,
   ): number {
     let score = 0;
     let checks = 0;
@@ -100,7 +108,7 @@ export class DuplicateDetector {
       checks++;
       const similarity = this.calculateStringSimilarity(
         patient1.firstName.toLowerCase(),
-        patient2.firstName.toLowerCase()
+        patient2.firstName.toLowerCase(),
       );
       score += similarity;
     }
@@ -110,7 +118,7 @@ export class DuplicateDetector {
       checks++;
       const similarity = this.calculateStringSimilarity(
         patient1.lastName.toLowerCase(),
-        patient2.lastName.toLowerCase()
+        patient2.lastName.toLowerCase(),
       );
       score += similarity;
     }
@@ -118,8 +126,8 @@ export class DuplicateDetector {
     // Date of birth
     if (patient1.dateOfBirth && patient2.dateOfBirth) {
       checks++;
-      const dob1 = new Date(patient1.dateOfBirth).toISOString().split('T')[0];
-      const dob2 = new Date(patient2.dateOfBirth).toISOString().split('T')[0];
+      const dob1 = new Date(patient1.dateOfBirth).toISOString().split("T")[0];
+      const dob2 = new Date(patient2.dateOfBirth).toISOString().split("T")[0];
       if (dob1 === dob2) {
         score += 100;
       }
@@ -135,7 +143,7 @@ export class DuplicateDetector {
     let matches = 0;
     let total = 0;
 
-    const fields = ['street', 'city', 'state', 'zipCode'];
+    const fields = ["street", "city", "state", "zipCode"];
     for (const field of fields) {
       if (address1[field] && address2[field]) {
         total++;
@@ -183,7 +191,7 @@ export class DuplicateDetector {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+            matrix[i - 1][j] + 1,
           );
         }
       }
@@ -197,40 +205,54 @@ export class DuplicateDetector {
    */
   private getMatchedFields(
     patient1: Partial<Patient>,
-    patient2: Patient
+    patient2: Patient,
   ): string[] {
     const matched: string[] = [];
 
     if (patient1.ssn && patient2.ssn && patient1.ssn === patient2.ssn) {
-      matched.push('SSN');
+      matched.push("SSN");
     }
 
-    if (patient1.firstName && patient2.firstName &&
-        patient1.firstName.toLowerCase() === patient2.firstName.toLowerCase()) {
-      matched.push('First Name');
+    if (
+      patient1.firstName &&
+      patient2.firstName &&
+      patient1.firstName.toLowerCase() === patient2.firstName.toLowerCase()
+    ) {
+      matched.push("First Name");
     }
 
-    if (patient1.lastName && patient2.lastName &&
-        patient1.lastName.toLowerCase() === patient2.lastName.toLowerCase()) {
-      matched.push('Last Name');
+    if (
+      patient1.lastName &&
+      patient2.lastName &&
+      patient1.lastName.toLowerCase() === patient2.lastName.toLowerCase()
+    ) {
+      matched.push("Last Name");
     }
 
     if (patient1.dateOfBirth && patient2.dateOfBirth) {
-      const dob1 = new Date(patient1.dateOfBirth).toISOString().split('T')[0];
-      const dob2 = new Date(patient2.dateOfBirth).toISOString().split('T')[0];
+      const dob1 = new Date(patient1.dateOfBirth).toISOString().split("T")[0];
+      const dob2 = new Date(patient2.dateOfBirth).toISOString().split("T")[0];
       if (dob1 === dob2) {
-        matched.push('Date of Birth');
+        matched.push("Date of Birth");
       }
     }
 
-    if (patient1.contact?.phone && patient2.contact?.phone &&
-        this.normalizePhone(patient1.contact.phone) === this.normalizePhone(patient2.contact.phone)) {
-      matched.push('Phone');
+    if (
+      patient1.contact?.phone &&
+      patient2.contact?.phone &&
+      this.normalizePhone(patient1.contact.phone) ===
+        this.normalizePhone(patient2.contact.phone)
+    ) {
+      matched.push("Phone");
     }
 
-    if (patient1.contact?.email && patient2.contact?.email &&
-        patient1.contact.email.toLowerCase() === patient2.contact.email.toLowerCase()) {
-      matched.push('Email');
+    if (
+      patient1.contact?.email &&
+      patient2.contact?.email &&
+      patient1.contact.email.toLowerCase() ===
+        patient2.contact.email.toLowerCase()
+    ) {
+      matched.push("Email");
     }
 
     return matched;
@@ -240,16 +262,16 @@ export class DuplicateDetector {
    * Normalize phone number for comparison
    */
   private normalizePhone(phone: string): string {
-    return phone.replace(/\D/g, '');
+    return phone.replace(/\D/g, "");
   }
 
   /**
    * Classify match severity
    */
-  public classifyMatch(score: number): 'high' | 'medium' | 'low' {
-    if (score >= this.HIGH_THRESHOLD) return 'high';
-    if (score >= this.MEDIUM_THRESHOLD) return 'medium';
-    return 'low';
+  public classifyMatch(score: number): "high" | "medium" | "low" {
+    if (score >= this.HIGH_THRESHOLD) return "high";
+    if (score >= this.MEDIUM_THRESHOLD) return "medium";
+    return "low";
   }
 }
 

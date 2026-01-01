@@ -4,8 +4,8 @@
  * RESTful endpoints for HL7v2 message processing
  */
 
-import { Router, Request, Response } from 'express';
-import { HL7Parser, HL7ParseError } from '../../integrations/hl7/parser';
+import { Router, Request, Response } from "express";
+import { HL7Parser, HL7ParseError } from "../../integrations/hl7/parser";
 import {
   createPatientRegistration,
   createPatientUpdate,
@@ -18,8 +18,8 @@ import {
   createORUR01,
   getMessageInfo,
   validateMessage,
-} from '../../integrations/hl7/messages';
-import { logger } from '../../utils/logger';
+} from "../../integrations/hl7/messages";
+import { logger } from "../../utils/logger";
 
 const router = Router();
 
@@ -27,21 +27,21 @@ const router = Router();
  * POST /hl7/parse
  * Parse an HL7 message
  */
-router.post('/parse', async (req: Request, res: Response) => {
+router.post("/parse", async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required',
+        error: "Message is required",
       });
     }
 
     const parsed = HL7Parser.parse(message);
     const json = HL7Parser.toJSON(parsed);
 
-    logger.info('HL7 Message Parsed', {
+    logger.info("HL7 Message Parsed", {
       messageType: parsed.messageType,
       triggerEvent: parsed.triggerEvent,
       messageControlId: parsed.messageControlId,
@@ -52,7 +52,7 @@ router.post('/parse', async (req: Request, res: Response) => {
       data: json,
     });
   } catch (error: any) {
-    logger.error('HL7 Parse Error', { error: error.message });
+    logger.error("HL7 Parse Error", { error: error.message });
 
     if (error instanceof HL7ParseError) {
       return res.status(400).json({
@@ -63,7 +63,7 @@ router.post('/parse', async (req: Request, res: Response) => {
 
     res.status(500).json({
       success: false,
-      error: 'Internal server error',
+      error: "Internal server error",
     });
   }
 });
@@ -72,14 +72,14 @@ router.post('/parse', async (req: Request, res: Response) => {
  * POST /hl7/validate
  * Validate an HL7 message
  */
-router.post('/validate', async (req: Request, res: Response) => {
+router.post("/validate", async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required',
+        error: "Message is required",
       });
     }
 
@@ -90,7 +90,7 @@ router.post('/validate', async (req: Request, res: Response) => {
       data: validation,
     });
   } catch (error: any) {
-    logger.error('HL7 Validation Error', { error: error.message });
+    logger.error("HL7 Validation Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -103,14 +103,14 @@ router.post('/validate', async (req: Request, res: Response) => {
  * POST /hl7/extract/patient
  * Extract patient information from ADT message
  */
-router.post('/extract/patient', async (req: Request, res: Response) => {
+router.post("/extract/patient", async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required',
+        error: "Message is required",
       });
     }
 
@@ -120,7 +120,7 @@ router.post('/extract/patient', async (req: Request, res: Response) => {
     if (!patient) {
       return res.status(400).json({
         success: false,
-        error: 'No patient information found in message',
+        error: "No patient information found in message",
       });
     }
 
@@ -129,7 +129,7 @@ router.post('/extract/patient', async (req: Request, res: Response) => {
       data: patient,
     });
   } catch (error: any) {
-    logger.error('HL7 Patient Extraction Error', { error: error.message });
+    logger.error("HL7 Patient Extraction Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -142,14 +142,14 @@ router.post('/extract/patient', async (req: Request, res: Response) => {
  * POST /hl7/extract/order
  * Extract order information from ORM message
  */
-router.post('/extract/order', async (req: Request, res: Response) => {
+router.post("/extract/order", async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required',
+        error: "Message is required",
       });
     }
 
@@ -159,7 +159,7 @@ router.post('/extract/order', async (req: Request, res: Response) => {
     if (!order) {
       return res.status(400).json({
         success: false,
-        error: 'No order information found in message',
+        error: "No order information found in message",
       });
     }
 
@@ -168,7 +168,7 @@ router.post('/extract/order', async (req: Request, res: Response) => {
       data: order,
     });
   } catch (error: any) {
-    logger.error('HL7 Order Extraction Error', { error: error.message });
+    logger.error("HL7 Order Extraction Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -181,14 +181,14 @@ router.post('/extract/order', async (req: Request, res: Response) => {
  * POST /hl7/extract/observations
  * Extract observations from ORU message
  */
-router.post('/extract/observations', async (req: Request, res: Response) => {
+router.post("/extract/observations", async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required',
+        error: "Message is required",
       });
     }
 
@@ -200,7 +200,7 @@ router.post('/extract/observations', async (req: Request, res: Response) => {
       data: observations,
     });
   } catch (error: any) {
-    logger.error('HL7 Observations Extraction Error', { error: error.message });
+    logger.error("HL7 Observations Extraction Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -213,14 +213,14 @@ router.post('/extract/observations', async (req: Request, res: Response) => {
  * POST /hl7/create/ack
  * Create an ACK (acknowledgment) message
  */
-router.post('/create/ack', async (req: Request, res: Response) => {
+router.post("/create/ack", async (req: Request, res: Response) => {
   try {
-    const { originalMessage, acknowledgmentCode = 'AA' } = req.body;
+    const { originalMessage, acknowledgmentCode = "AA" } = req.body;
 
     if (!originalMessage) {
       return res.status(400).json({
         success: false,
-        error: 'Original message is required',
+        error: "Original message is required",
       });
     }
 
@@ -231,7 +231,7 @@ router.post('/create/ack', async (req: Request, res: Response) => {
         messageType: parsed.messageType,
         triggerEvent: parsed.triggerEvent,
       },
-      acknowledgmentCode
+      acknowledgmentCode,
     );
 
     res.json({
@@ -241,7 +241,7 @@ router.post('/create/ack', async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error('HL7 ACK Creation Error', { error: error.message });
+    logger.error("HL7 ACK Creation Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -254,47 +254,52 @@ router.post('/create/ack', async (req: Request, res: Response) => {
  * POST /hl7/create/patient-registration
  * Create ADT^A04 patient registration message
  */
-router.post('/create/patient-registration', async (req: Request, res: Response) => {
-  try {
-    const { patient, visit } = req.body;
+router.post(
+  "/create/patient-registration",
+  async (req: Request, res: Response) => {
+    try {
+      const { patient, visit } = req.body;
 
-    if (!patient) {
-      return res.status(400).json({
+      if (!patient) {
+        return res.status(400).json({
+          success: false,
+          error: "Patient is required",
+        });
+      }
+
+      const message = createPatientRegistration(patient, visit);
+
+      res.json({
+        success: true,
+        data: {
+          message,
+        },
+      });
+    } catch (error: any) {
+      logger.error("HL7 Patient Registration Creation Error", {
+        error: error.message,
+      });
+
+      res.status(500).json({
         success: false,
-        error: 'Patient is required',
+        error: error.message,
       });
     }
-
-    const message = createPatientRegistration(patient, visit);
-
-    res.json({
-      success: true,
-      data: {
-        message,
-      },
-    });
-  } catch (error: any) {
-    logger.error('HL7 Patient Registration Creation Error', { error: error.message });
-
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
+  },
+);
 
 /**
  * POST /hl7/create/patient-update
  * Create ADT^A08 patient update message
  */
-router.post('/create/patient-update', async (req: Request, res: Response) => {
+router.post("/create/patient-update", async (req: Request, res: Response) => {
   try {
     const { patient, visit } = req.body;
 
     if (!patient) {
       return res.status(400).json({
         success: false,
-        error: 'Patient is required',
+        error: "Patient is required",
       });
     }
 
@@ -307,7 +312,7 @@ router.post('/create/patient-update', async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error('HL7 Patient Update Creation Error', { error: error.message });
+    logger.error("HL7 Patient Update Creation Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -320,47 +325,52 @@ router.post('/create/patient-update', async (req: Request, res: Response) => {
  * POST /hl7/create/patient-discharge
  * Create ADT^A03 patient discharge message
  */
-router.post('/create/patient-discharge', async (req: Request, res: Response) => {
-  try {
-    const { patient, dischargeInfo } = req.body;
+router.post(
+  "/create/patient-discharge",
+  async (req: Request, res: Response) => {
+    try {
+      const { patient, dischargeInfo } = req.body;
 
-    if (!patient || !dischargeInfo) {
-      return res.status(400).json({
+      if (!patient || !dischargeInfo) {
+        return res.status(400).json({
+          success: false,
+          error: "Patient and discharge information are required",
+        });
+      }
+
+      const message = createPatientDischarge(patient, dischargeInfo);
+
+      res.json({
+        success: true,
+        data: {
+          message,
+        },
+      });
+    } catch (error: any) {
+      logger.error("HL7 Patient Discharge Creation Error", {
+        error: error.message,
+      });
+
+      res.status(500).json({
         success: false,
-        error: 'Patient and discharge information are required',
+        error: error.message,
       });
     }
-
-    const message = createPatientDischarge(patient, dischargeInfo);
-
-    res.json({
-      success: true,
-      data: {
-        message,
-      },
-    });
-  } catch (error: any) {
-    logger.error('HL7 Patient Discharge Creation Error', { error: error.message });
-
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
+  },
+);
 
 /**
  * POST /hl7/create/lab-order
  * Create ORM^O01 lab order message
  */
-router.post('/create/lab-order', async (req: Request, res: Response) => {
+router.post("/create/lab-order", async (req: Request, res: Response) => {
   try {
     const { patient, labTests, orderingProvider } = req.body;
 
     if (!patient || !labTests || !orderingProvider) {
       return res.status(400).json({
         success: false,
-        error: 'Patient, lab tests, and ordering provider are required',
+        error: "Patient, lab tests, and ordering provider are required",
       });
     }
 
@@ -373,7 +383,7 @@ router.post('/create/lab-order', async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error('HL7 Lab Order Creation Error', { error: error.message });
+    logger.error("HL7 Lab Order Creation Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -386,47 +396,52 @@ router.post('/create/lab-order', async (req: Request, res: Response) => {
  * POST /hl7/create/observation-result
  * Create ORU^R01 observation result message
  */
-router.post('/create/observation-result', async (req: Request, res: Response) => {
-  try {
-    const { patient, observations } = req.body;
+router.post(
+  "/create/observation-result",
+  async (req: Request, res: Response) => {
+    try {
+      const { patient, observations } = req.body;
 
-    if (!patient || !observations) {
-      return res.status(400).json({
+      if (!patient || !observations) {
+        return res.status(400).json({
+          success: false,
+          error: "Patient and observations are required",
+        });
+      }
+
+      const message = createORUR01(patient, observations);
+
+      res.json({
+        success: true,
+        data: {
+          message,
+        },
+      });
+    } catch (error: any) {
+      logger.error("HL7 Observation Result Creation Error", {
+        error: error.message,
+      });
+
+      res.status(500).json({
         success: false,
-        error: 'Patient and observations are required',
+        error: error.message,
       });
     }
-
-    const message = createORUR01(patient, observations);
-
-    res.json({
-      success: true,
-      data: {
-        message,
-      },
-    });
-  } catch (error: any) {
-    logger.error('HL7 Observation Result Creation Error', { error: error.message });
-
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
+  },
+);
 
 /**
  * POST /hl7/create/appointment
  * Create SIU^S12 appointment notification message
  */
-router.post('/create/appointment', async (req: Request, res: Response) => {
+router.post("/create/appointment", async (req: Request, res: Response) => {
   try {
     const { patient, appointment } = req.body;
 
     if (!patient || !appointment) {
       return res.status(400).json({
         success: false,
-        error: 'Patient and appointment are required',
+        error: "Patient and appointment are required",
       });
     }
 
@@ -439,7 +454,7 @@ router.post('/create/appointment', async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error('HL7 Appointment Creation Error', { error: error.message });
+    logger.error("HL7 Appointment Creation Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -452,14 +467,14 @@ router.post('/create/appointment', async (req: Request, res: Response) => {
  * POST /hl7/create/document
  * Create MDM^T02 document notification message
  */
-router.post('/create/document', async (req: Request, res: Response) => {
+router.post("/create/document", async (req: Request, res: Response) => {
   try {
     const { patient, document } = req.body;
 
     if (!patient || !document) {
       return res.status(400).json({
         success: false,
-        error: 'Patient and document are required',
+        error: "Patient and document are required",
       });
     }
 
@@ -472,7 +487,7 @@ router.post('/create/document', async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error('HL7 Document Creation Error', { error: error.message });
+    logger.error("HL7 Document Creation Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -485,14 +500,14 @@ router.post('/create/document', async (req: Request, res: Response) => {
  * POST /hl7/info
  * Get message type information
  */
-router.post('/info', async (req: Request, res: Response) => {
+router.post("/info", async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required',
+        error: "Message is required",
       });
     }
 
@@ -503,7 +518,7 @@ router.post('/info', async (req: Request, res: Response) => {
       data: info,
     });
   } catch (error: any) {
-    logger.error('HL7 Info Error', { error: error.message });
+    logger.error("HL7 Info Error", { error: error.message });
 
     res.status(500).json({
       success: false,
@@ -516,14 +531,14 @@ router.post('/info', async (req: Request, res: Response) => {
  * POST /hl7/process
  * Process incoming HL7 message (parse, validate, extract, and send ACK)
  */
-router.post('/process', async (req: Request, res: Response) => {
+router.post("/process", async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required',
+        error: "Message is required",
       });
     }
 
@@ -541,12 +556,12 @@ router.post('/process', async (req: Request, res: Response) => {
           messageType: parsed.messageType,
           triggerEvent: parsed.triggerEvent,
         },
-        'AE'
+        "AE",
       );
 
       return res.status(400).json({
         success: false,
-        error: 'Message validation failed',
+        error: "Message validation failed",
         validation,
         ack,
       });
@@ -555,11 +570,11 @@ router.post('/process', async (req: Request, res: Response) => {
     // Extract data based on message type
     let extractedData: any = {};
 
-    if (parsed.messageType === 'ADT') {
+    if (parsed.messageType === "ADT") {
       extractedData.patient = HL7Parser.extractPatient(parsed);
-    } else if (parsed.messageType === 'ORM') {
+    } else if (parsed.messageType === "ORM") {
       extractedData.order = HL7Parser.extractOrder(parsed);
-    } else if (parsed.messageType === 'ORU') {
+    } else if (parsed.messageType === "ORU") {
       extractedData.observations = HL7Parser.extractObservations(parsed);
     }
 
@@ -570,10 +585,10 @@ router.post('/process', async (req: Request, res: Response) => {
         messageType: parsed.messageType,
         triggerEvent: parsed.triggerEvent,
       },
-      'AA'
+      "AA",
     );
 
-    logger.info('HL7 Message Processed', {
+    logger.info("HL7 Message Processed", {
       messageType: parsed.messageType,
       triggerEvent: parsed.triggerEvent,
       messageControlId: parsed.messageControlId,
@@ -589,7 +604,7 @@ router.post('/process', async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error('HL7 Process Error', { error: error.message });
+    logger.error("HL7 Process Error", { error: error.message });
 
     res.status(500).json({
       success: false,

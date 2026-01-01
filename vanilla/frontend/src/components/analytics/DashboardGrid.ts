@@ -42,8 +42,8 @@ export class DashboardGrid {
   }
 
   private render(): void {
-    this.container.innerHTML = '';
-    this.container.className = 'dashboard-grid';
+    this.container.innerHTML = "";
+    this.container.className = "dashboard-grid";
     this.container.style.cssText = `
       position: relative;
       width: 100%;
@@ -57,9 +57,9 @@ export class DashboardGrid {
   }
 
   private createGridItem(item: GridItem): HTMLElement {
-    const element = document.createElement('div');
+    const element = document.createElement("div");
     element.dataset.id = item.id;
-    element.className = 'grid-item';
+    element.className = "grid-item";
 
     const { left, top, width, height } = this.calculatePosition(item);
 
@@ -73,13 +73,13 @@ export class DashboardGrid {
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       transition: box-shadow 0.2s;
-      cursor: ${this.config.isDraggable ? 'move' : 'default'};
+      cursor: ${this.config.isDraggable ? "move" : "default"};
     `;
 
     // Drag handle
     if (this.config.isDraggable) {
-      const handle = document.createElement('div');
-      handle.className = 'drag-handle';
+      const handle = document.createElement("div");
+      handle.className = "drag-handle";
       handle.style.cssText = `
         position: absolute;
         top: 0;
@@ -95,8 +95,8 @@ export class DashboardGrid {
         z-index: 10;
       `;
 
-      const gripIcon = document.createElement('div');
-      gripIcon.innerHTML = '⋮⋮';
+      const gripIcon = document.createElement("div");
+      gripIcon.innerHTML = "⋮⋮";
       gripIcon.style.cssText = `
         color: #999;
         font-size: 16px;
@@ -106,14 +106,16 @@ export class DashboardGrid {
       handle.appendChild(gripIcon);
       element.appendChild(handle);
 
-      handle.addEventListener('mousedown', (e) => this.handleDragStart(e, item));
+      handle.addEventListener("mousedown", (e) =>
+        this.handleDragStart(e, item),
+      );
     }
 
     // Content
-    const content = document.createElement('div');
-    content.className = 'grid-item-content';
+    const content = document.createElement("div");
+    content.className = "grid-item-content";
     content.style.cssText = `
-      padding: ${this.config.isDraggable ? '48px' : '16px'} 16px 16px 16px;
+      padding: ${this.config.isDraggable ? "48px" : "16px"} 16px 16px 16px;
       height: 100%;
       overflow: auto;
     `;
@@ -126,8 +128,8 @@ export class DashboardGrid {
 
     // Resize handle
     if (this.config.isResizable) {
-      const resizeHandle = document.createElement('div');
-      resizeHandle.className = 'resize-handle';
+      const resizeHandle = document.createElement("div");
+      resizeHandle.className = "resize-handle";
       resizeHandle.style.cssText = `
         position: absolute;
         bottom: 0;
@@ -143,17 +145,19 @@ export class DashboardGrid {
         </svg>
       `;
 
-      resizeHandle.addEventListener('mousedown', (e) => this.handleResizeStart(e, item));
+      resizeHandle.addEventListener("mousedown", (e) =>
+        this.handleResizeStart(e, item),
+      );
       element.appendChild(resizeHandle);
     }
 
     // Hover effect
-    element.addEventListener('mouseenter', () => {
-      element.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    element.addEventListener("mouseenter", () => {
+      element.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
     });
 
-    element.addEventListener('mouseleave', () => {
-      element.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    element.addEventListener("mouseleave", () => {
+      element.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
     });
 
     return element;
@@ -166,7 +170,9 @@ export class DashboardGrid {
     height: number;
   } {
     const containerWidth = this.container.clientWidth;
-    const columnWidth = (containerWidth - (this.config.columns - 1) * this.config.gap) / this.config.columns;
+    const columnWidth =
+      (containerWidth - (this.config.columns - 1) * this.config.gap) /
+      this.config.columns;
 
     return {
       left: item.x * (columnWidth + this.config.gap),
@@ -183,8 +189,8 @@ export class DashboardGrid {
     this.draggedItem = item;
     this.dragStartPos = { x: e.clientX, y: e.clientY };
 
-    document.addEventListener('mousemove', this.handleDragMove);
-    document.addEventListener('mouseup', this.handleDragEnd);
+    document.addEventListener("mousemove", this.handleDragMove);
+    document.addEventListener("mouseup", this.handleDragEnd);
   }
 
   private handleDragMove = (e: MouseEvent): void => {
@@ -194,13 +200,23 @@ export class DashboardGrid {
     const deltaY = e.clientY - this.dragStartPos.y;
 
     const containerWidth = this.container.clientWidth;
-    const columnWidth = (containerWidth - (this.config.columns - 1) * this.config.gap) / this.config.columns;
+    const columnWidth =
+      (containerWidth - (this.config.columns - 1) * this.config.gap) /
+      this.config.columns;
 
     const deltaColumns = Math.round(deltaX / (columnWidth + this.config.gap));
-    const deltaRows = Math.round(deltaY / (this.config.rowHeight + this.config.gap));
+    const deltaRows = Math.round(
+      deltaY / (this.config.rowHeight + this.config.gap),
+    );
 
     if (deltaColumns !== 0 || deltaRows !== 0) {
-      const newX = Math.max(0, Math.min(this.config.columns - this.draggedItem.w, this.draggedItem.x + deltaColumns));
+      const newX = Math.max(
+        0,
+        Math.min(
+          this.config.columns - this.draggedItem.w,
+          this.draggedItem.x + deltaColumns,
+        ),
+      );
       const newY = Math.max(0, this.draggedItem.y + deltaRows);
 
       if (newX !== this.draggedItem.x || newY !== this.draggedItem.y) {
@@ -213,8 +229,8 @@ export class DashboardGrid {
   };
 
   private handleDragEnd = (): void => {
-    document.removeEventListener('mousemove', this.handleDragMove);
-    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener("mousemove", this.handleDragMove);
+    document.removeEventListener("mouseup", this.handleDragEnd);
 
     if (this.draggedItem && this.config.onLayoutChange) {
       this.config.onLayoutChange(Array.from(this.gridItems.values()));
@@ -239,29 +255,36 @@ export class DashboardGrid {
       const deltaY = e.clientY - startY;
 
       const containerWidth = this.container.clientWidth;
-      const columnWidth = (containerWidth - (this.config.columns - 1) * this.config.gap) / this.config.columns;
+      const columnWidth =
+        (containerWidth - (this.config.columns - 1) * this.config.gap) /
+        this.config.columns;
 
       const deltaColumns = Math.round(deltaX / (columnWidth + this.config.gap));
-      const deltaRows = Math.round(deltaY / (this.config.rowHeight + this.config.gap));
+      const deltaRows = Math.round(
+        deltaY / (this.config.rowHeight + this.config.gap),
+      );
 
       if (deltaColumns !== 0 || deltaRows !== 0) {
-        item.w = Math.max(1, Math.min(this.config.columns - item.x, startW + deltaColumns));
+        item.w = Math.max(
+          1,
+          Math.min(this.config.columns - item.x, startW + deltaColumns),
+        );
         item.h = Math.max(1, startH + deltaRows);
         this.render();
       }
     };
 
     const handleResizeEnd = () => {
-      document.removeEventListener('mousemove', handleResizeMove);
-      document.removeEventListener('mouseup', handleResizeEnd);
+      document.removeEventListener("mousemove", handleResizeMove);
+      document.removeEventListener("mouseup", handleResizeEnd);
 
       if (this.config.onLayoutChange) {
         this.config.onLayoutChange(Array.from(this.gridItems.values()));
       }
     };
 
-    document.addEventListener('mousemove', handleResizeMove);
-    document.addEventListener('mouseup', handleResizeEnd);
+    document.addEventListener("mousemove", handleResizeMove);
+    document.addEventListener("mouseup", handleResizeEnd);
   }
 
   public addItem(item: GridItem): void {

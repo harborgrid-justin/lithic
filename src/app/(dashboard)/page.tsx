@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Calendar, FileText, Activity } from 'lucide-react';
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users, Calendar, FileText, Activity } from "lucide-react";
 
 export default function DashboardPage() {
   return (
@@ -17,7 +17,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Patients
+            </CardTitle>
             <Users className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
@@ -71,21 +73,27 @@ export default function DashboardPage() {
               className="block p-3 rounded-md hover:bg-gray-50 transition-colors"
             >
               <div className="font-medium">New Patient</div>
-              <div className="text-sm text-gray-500">Register a new patient</div>
+              <div className="text-sm text-gray-500">
+                Register a new patient
+              </div>
             </Link>
             <Link
               href="/patients"
               className="block p-3 rounded-md hover:bg-gray-50 transition-colors"
             >
               <div className="font-medium">View Patients</div>
-              <div className="text-sm text-gray-500">Browse all patient records</div>
+              <div className="text-sm text-gray-500">
+                Browse all patient records
+              </div>
             </Link>
             <Link
               href="/patients/merge"
               className="block p-3 rounded-md hover:bg-gray-50 transition-colors"
             >
               <div className="font-medium">Merge Records</div>
-              <div className="text-sm text-gray-500">Combine duplicate patient records</div>
+              <div className="text-sm text-gray-500">
+                Combine duplicate patient records
+              </div>
             </Link>
           </CardContent>
         </Card>

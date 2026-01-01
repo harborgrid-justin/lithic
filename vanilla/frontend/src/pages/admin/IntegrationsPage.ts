@@ -22,10 +22,10 @@ export class IntegrationsPage {
           <div class="integration-section">
             <h3>EHR Systems</h3>
             <div class="integrations-grid">
-              ${this.renderIntegrationCard('Epic', 'epic', false)}
-              ${this.renderIntegrationCard('Cerner', 'cerner', false)}
-              ${this.renderIntegrationCard('Allscripts', 'allscripts', false)}
-              ${this.renderIntegrationCard('Athenahealth', 'athenahealth', false)}
+              ${this.renderIntegrationCard("Epic", "epic", false)}
+              ${this.renderIntegrationCard("Cerner", "cerner", false)}
+              ${this.renderIntegrationCard("Allscripts", "allscripts", false)}
+              ${this.renderIntegrationCard("Athenahealth", "athenahealth", false)}
             </div>
           </div>
 
@@ -33,8 +33,8 @@ export class IntegrationsPage {
           <div class="integration-section">
             <h3>Payment Processors</h3>
             <div class="integrations-grid">
-              ${this.renderIntegrationCard('Stripe', 'stripe', false)}
-              ${this.renderIntegrationCard('Square', 'square', false)}
+              ${this.renderIntegrationCard("Stripe", "stripe", false)}
+              ${this.renderIntegrationCard("Square", "square", false)}
             </div>
           </div>
 
@@ -42,9 +42,9 @@ export class IntegrationsPage {
           <div class="integration-section">
             <h3>Security & Monitoring</h3>
             <div class="integrations-grid">
-              ${this.renderIntegrationCard('Splunk', 'splunk', false)}
-              ${this.renderIntegrationCard('Datadog', 'datadog', false)}
-              ${this.renderIntegrationCard('PagerDuty', 'pagerduty', false)}
+              ${this.renderIntegrationCard("Splunk", "splunk", false)}
+              ${this.renderIntegrationCard("Datadog", "datadog", false)}
+              ${this.renderIntegrationCard("PagerDuty", "pagerduty", false)}
             </div>
           </div>
 
@@ -76,22 +76,27 @@ export class IntegrationsPage {
     this.attachEventListeners();
   }
 
-  private renderIntegrationCard(name: string, id: string, enabled: boolean): string {
+  private renderIntegrationCard(
+    name: string,
+    id: string,
+    enabled: boolean,
+  ): string {
     return `
       <div class="integration-card">
         <div class="integration-card__header">
           <h4>${name}</h4>
-          <span class="badge badge--${enabled ? 'success' : 'secondary'}">
-            ${enabled ? 'Connected' : 'Not Connected'}
+          <span class="badge badge--${enabled ? "success" : "secondary"}">
+            ${enabled ? "Connected" : "Not Connected"}
           </span>
         </div>
         <div class="integration-card__body">
           <p>Connect ${name} to sync patient data and streamline workflows</p>
         </div>
         <div class="integration-card__actions">
-          ${enabled
-            ? `<button class="btn btn--sm btn--danger" data-integration="${id}">Disconnect</button>`
-            : `<button class="btn btn--sm btn--primary" data-integration="${id}">Connect</button>`
+          ${
+            enabled
+              ? `<button class="btn btn--sm btn--danger" data-integration="${id}">Disconnect</button>`
+              : `<button class="btn btn--sm btn--primary" data-integration="${id}">Connect</button>`
           }
           <button class="btn btn--sm btn--secondary">Configure</button>
         </div>
@@ -100,16 +105,18 @@ export class IntegrationsPage {
   }
 
   private attachEventListeners(): void {
-    const generateApiKeyBtn = document.getElementById('generate-api-key-btn');
-    const addWebhookBtn = document.getElementById('add-webhook-btn');
+    const generateApiKeyBtn = document.getElementById("generate-api-key-btn");
+    const addWebhookBtn = document.getElementById("add-webhook-btn");
 
-    generateApiKeyBtn?.addEventListener('click', () => this.generateApiKey());
-    addWebhookBtn?.addEventListener('click', () => this.addWebhook());
+    generateApiKeyBtn?.addEventListener("click", () => this.generateApiKey());
+    addWebhookBtn?.addEventListener("click", () => this.addWebhook());
 
     // Integration connect/disconnect buttons
-    const integrationButtons = document.querySelectorAll('.integration-card button');
+    const integrationButtons = document.querySelectorAll(
+      ".integration-card button",
+    );
     integrationButtons.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener("click", (e) => {
         const integration = (e.target as HTMLElement).dataset.integration;
         if (integration) {
           alert(`${integration} integration - Coming soon`);
@@ -119,16 +126,19 @@ export class IntegrationsPage {
   }
 
   private generateApiKey(): void {
-    const keyName = prompt('Enter a name for this API key:');
+    const keyName = prompt("Enter a name for this API key:");
     if (!keyName) return;
 
     // In production, this would call the backend API
-    const apiKey = 'sk_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const apiKey =
+      "sk_" +
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
 
-    const keysList = document.getElementById('api-keys-list');
+    const keysList = document.getElementById("api-keys-list");
     if (keysList) {
-      if (keysList.querySelector('.text-muted')) {
-        keysList.innerHTML = '';
+      if (keysList.querySelector(".text-muted")) {
+        keysList.innerHTML = "";
       }
 
       const keyHTML = `
@@ -142,20 +152,22 @@ export class IntegrationsPage {
         </div>
       `;
 
-      keysList.insertAdjacentHTML('beforeend', keyHTML);
+      keysList.insertAdjacentHTML("beforeend", keyHTML);
     }
 
-    alert(`API Key generated successfully!\n\nKey: ${apiKey}\n\nSave this key securely. It will not be shown again.`);
+    alert(
+      `API Key generated successfully!\n\nKey: ${apiKey}\n\nSave this key securely. It will not be shown again.`,
+    );
   }
 
   private addWebhook(): void {
-    const webhookUrl = prompt('Enter webhook URL:');
+    const webhookUrl = prompt("Enter webhook URL:");
     if (!webhookUrl) return;
 
-    const webhooksList = document.getElementById('webhooks-list');
+    const webhooksList = document.getElementById("webhooks-list");
     if (webhooksList) {
-      if (webhooksList.querySelector('.text-muted')) {
-        webhooksList.innerHTML = '';
+      if (webhooksList.querySelector(".text-muted")) {
+        webhooksList.innerHTML = "";
       }
 
       const webhookHTML = `
@@ -171,11 +183,11 @@ export class IntegrationsPage {
         </div>
       `;
 
-      webhooksList.insertAdjacentHTML('beforeend', webhookHTML);
+      webhooksList.insertAdjacentHTML("beforeend", webhookHTML);
     }
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

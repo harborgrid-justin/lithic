@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { LabOrder, LabResult } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { FileText, Download, Printer } from 'lucide-react';
-import { formatDateTime } from '@/lib/utils';
-import LaboratoryService from '@/services/laboratory.service';
+import React, { useEffect, useState } from "react";
+import { LabOrder, LabResult } from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { FileText, Download, Printer } from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
+import LaboratoryService from "@/services/laboratory.service";
 
 interface LabReportProps {
   orderId: string;
@@ -32,7 +32,7 @@ export default function LabReport({ orderId }: LabReportProps) {
       setOrder(orderData);
       setResults(resultsData);
     } catch (error) {
-      console.error('Failed to load report data:', error);
+      console.error("Failed to load report data:", error);
     } finally {
       setLoading(false);
     }
@@ -43,7 +43,7 @@ export default function LabReport({ orderId }: LabReportProps) {
   };
 
   const handleDownload = () => {
-    alert('Download functionality would generate PDF report');
+    alert("Download functionality would generate PDF report");
   };
 
   if (loading) {
@@ -79,7 +79,9 @@ export default function LabReport({ orderId }: LabReportProps) {
           {/* Header */}
           <div className="border-b pb-4">
             <h1 className="text-2xl font-bold">LITHIC LABORATORY</h1>
-            <p className="text-sm text-muted-foreground">Enterprise Healthcare SaaS</p>
+            <p className="text-sm text-muted-foreground">
+              Enterprise Healthcare SaaS
+            </p>
           </div>
 
           {/* Patient Information */}
@@ -101,7 +103,13 @@ export default function LabReport({ orderId }: LabReportProps) {
                 </div>
                 <div className="flex">
                   <dt className="font-medium w-24">Gender:</dt>
-                  <dd>{order.patientGender === 'M' ? 'Male' : order.patientGender === 'F' ? 'Female' : 'Other'}</dd>
+                  <dd>
+                    {order.patientGender === "M"
+                      ? "Male"
+                      : order.patientGender === "F"
+                        ? "Female"
+                        : "Other"}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -124,7 +132,11 @@ export default function LabReport({ orderId }: LabReportProps) {
                 <div className="flex">
                   <dt className="font-medium w-32">Priority:</dt>
                   <dd>
-                    <Badge variant={order.priority === 'STAT' ? 'destructive' : 'outline'}>
+                    <Badge
+                      variant={
+                        order.priority === "STAT" ? "destructive" : "outline"
+                      }
+                    >
                       {order.priority}
                     </Badge>
                   </dd>
@@ -139,12 +151,14 @@ export default function LabReport({ orderId }: LabReportProps) {
               <h3 className="font-semibold mb-2">Clinical Information</h3>
               {order.diagnosis && (
                 <p className="text-sm">
-                  <span className="font-medium">Diagnosis:</span> {order.diagnosis}
+                  <span className="font-medium">Diagnosis:</span>{" "}
+                  {order.diagnosis}
                 </p>
               )}
               {order.clinicalInfo && (
                 <p className="text-sm mt-1">
-                  <span className="font-medium">Notes:</span> {order.clinicalInfo}
+                  <span className="font-medium">Notes:</span>{" "}
+                  {order.clinicalInfo}
                 </p>
               )}
             </div>
@@ -167,7 +181,10 @@ export default function LabReport({ orderId }: LabReportProps) {
               <tbody>
                 {results.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-4 text-muted-foreground">
+                    <td
+                      colSpan={6}
+                      className="text-center py-4 text-muted-foreground"
+                    >
                       No results available
                     </td>
                   </tr>
@@ -177,18 +194,24 @@ export default function LabReport({ orderId }: LabReportProps) {
                       <td className="py-2 font-medium">{result.testName}</td>
                       <td className="py-2 font-semibold">{result.value}</td>
                       <td className="py-2">{result.unit}</td>
-                      <td className="py-2 text-muted-foreground">{result.referenceRange}</td>
+                      <td className="py-2 text-muted-foreground">
+                        {result.referenceRange}
+                      </td>
                       <td className="py-2">
                         {result.isCritical ? (
                           <Badge variant="destructive">CRITICAL</Badge>
-                        ) : result.flag !== 'NORMAL' ? (
+                        ) : result.flag !== "NORMAL" ? (
                           <Badge variant="warning">{result.flag}</Badge>
                         ) : (
                           <Badge variant="outline">NORMAL</Badge>
                         )}
                       </td>
                       <td className="py-2">
-                        <Badge variant={result.status === 'FINAL' ? 'success' : 'warning'}>
+                        <Badge
+                          variant={
+                            result.status === "FINAL" ? "success" : "warning"
+                          }
+                        >
                           {result.status}
                         </Badge>
                       </td>
@@ -200,15 +223,19 @@ export default function LabReport({ orderId }: LabReportProps) {
           </div>
 
           {/* Comments */}
-          {results.some(r => r.comments) && (
+          {results.some((r) => r.comments) && (
             <div>
               <h3 className="font-semibold mb-2">Comments</h3>
               <div className="space-y-2">
                 {results
-                  .filter(r => r.comments)
+                  .filter((r) => r.comments)
                   .map((result) => (
-                    <div key={result.id} className="text-sm border-l-2 border-primary pl-3 py-1">
-                      <span className="font-medium">{result.testName}:</span> {result.comments}
+                    <div
+                      key={result.id}
+                      className="text-sm border-l-2 border-primary pl-3 py-1"
+                    >
+                      <span className="font-medium">{result.testName}:</span>{" "}
+                      {result.comments}
                     </div>
                   ))}
               </div>
@@ -219,10 +246,12 @@ export default function LabReport({ orderId }: LabReportProps) {
           <div className="border-t pt-4 text-xs text-muted-foreground">
             <p>This report was generated on {formatDateTime(new Date())}</p>
             <p className="mt-1">
-              Results verified by: {results[0]?.verifiedBy || 'Pending verification'}
+              Results verified by:{" "}
+              {results[0]?.verifiedBy || "Pending verification"}
             </p>
             <p className="mt-2 font-medium">
-              Note: Critical values have been reported to the ordering physician.
+              Note: Critical values have been reported to the ordering
+              physician.
             </p>
           </div>
         </div>

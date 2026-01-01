@@ -3,18 +3,21 @@ export class ImagingService {
   private token: string | null = null;
 
   constructor() {
-    this.baseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api';
+    this.baseUrl = process.env.API_BASE_URL || "http://localhost:3000/api";
     this.token = this.getAuthToken();
   }
 
   private getAuthToken(): string | null {
-    return localStorage.getItem('auth_token');
+    return localStorage.getItem("auth_token");
   }
 
-  private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
+  private async request(
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<any> {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+      "Content-Type": "application/json",
+      ...(this.token && { Authorization: `Bearer ${this.token}` }),
       ...options.headers,
     };
 
@@ -24,7 +27,9 @@ export class ImagingService {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: "Request failed" }));
       throw new Error(error.message || `HTTP ${response.status}`);
     }
 
@@ -36,7 +41,7 @@ export class ImagingService {
   // ============================================
 
   async getDashboardStats(): Promise<any> {
-    return await this.request('/imaging/dashboard/stats');
+    return await this.request("/imaging/dashboard/stats");
   }
 
   async getRecentStudies(limit: number = 10): Promise<any[]> {
@@ -44,7 +49,9 @@ export class ImagingService {
   }
 
   async getCriticalReports(): Promise<any[]> {
-    return await this.request('/imaging/reports?criticalOnly=true&status=FINAL');
+    return await this.request(
+      "/imaging/reports?criticalOnly=true&status=FINAL",
+    );
   }
 
   // ============================================
@@ -61,41 +68,45 @@ export class ImagingService {
   }
 
   async createOrder(orderData: any): Promise<any> {
-    return await this.request('/imaging/orders', {
-      method: 'POST',
+    return await this.request("/imaging/orders", {
+      method: "POST",
       body: JSON.stringify(orderData),
     });
   }
 
   async updateOrder(orderId: string, updates: any): Promise<any> {
     return await this.request(`/imaging/orders/${orderId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(updates),
     });
   }
 
   async cancelOrder(orderId: string): Promise<void> {
     await this.request(`/imaging/orders/${orderId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
-  async scheduleOrder(orderId: string, scheduledDateTime: string, modalityId: string): Promise<any> {
+  async scheduleOrder(
+    orderId: string,
+    scheduledDateTime: string,
+    modalityId: string,
+  ): Promise<any> {
     return await this.request(`/imaging/orders/${orderId}/schedule`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ scheduledDateTime, modalityId }),
     });
   }
 
   async startOrder(orderId: string): Promise<any> {
     return await this.request(`/imaging/orders/${orderId}/start`, {
-      method: 'POST',
+      method: "POST",
     });
   }
 
   async completeOrder(orderId: string): Promise<any> {
     return await this.request(`/imaging/orders/${orderId}/complete`, {
-      method: 'POST',
+      method: "POST",
     });
   }
 
@@ -120,28 +131,44 @@ export class ImagingService {
     return await this.request(`/imaging/studies/${studyInstanceUID}/series`);
   }
 
-  async getSeriesInstances(studyInstanceUID: string, seriesInstanceUID: string): Promise<any[]> {
-    return await this.request(`/imaging/studies/${studyInstanceUID}/series/${seriesInstanceUID}/instances`);
+  async getSeriesInstances(
+    studyInstanceUID: string,
+    seriesInstanceUID: string,
+  ): Promise<any[]> {
+    return await this.request(
+      `/imaging/studies/${studyInstanceUID}/series/${seriesInstanceUID}/instances`,
+    );
   }
 
   async getStudyMetadata(studyInstanceUID: string): Promise<any> {
     return await this.request(`/imaging/studies/${studyInstanceUID}/metadata`);
   }
 
-  async compareStudies(currentStudyUID: string, compareStudyUIDs: string[]): Promise<any> {
+  async compareStudies(
+    currentStudyUID: string,
+    compareStudyUIDs: string[],
+  ): Promise<any> {
     return await this.request(`/imaging/studies/${currentStudyUID}/compare`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ compareStudyUIDs }),
     });
   }
 
-  async getPriorStudies(studyInstanceUID: string, limit: number = 5): Promise<any[]> {
-    return await this.request(`/imaging/studies/${studyInstanceUID}/priors?limit=${limit}`);
+  async getPriorStudies(
+    studyInstanceUID: string,
+    limit: number = 5,
+  ): Promise<any[]> {
+    return await this.request(
+      `/imaging/studies/${studyInstanceUID}/priors?limit=${limit}`,
+    );
   }
 
-  async createStudyShareLink(studyInstanceUID: string, expiresIn: number = 7 * 24 * 60 * 60): Promise<any> {
+  async createStudyShareLink(
+    studyInstanceUID: string,
+    expiresIn: number = 7 * 24 * 60 * 60,
+  ): Promise<any> {
     return await this.request(`/imaging/studies/${studyInstanceUID}/share`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ expiresIn }),
     });
   }
@@ -164,29 +191,33 @@ export class ImagingService {
   }
 
   async createReport(reportData: any): Promise<any> {
-    return await this.request('/imaging/reports', {
-      method: 'POST',
+    return await this.request("/imaging/reports", {
+      method: "POST",
       body: JSON.stringify(reportData),
     });
   }
 
   async updateReport(reportId: string, updates: any): Promise<any> {
     return await this.request(`/imaging/reports/${reportId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(updates),
     });
   }
 
   async signReport(reportId: string, signature: string): Promise<any> {
     return await this.request(`/imaging/reports/${reportId}/sign`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ signature }),
     });
   }
 
-  async addReportAddendum(reportId: string, addendumText: string, reason: string): Promise<any> {
+  async addReportAddendum(
+    reportId: string,
+    addendumText: string,
+    reason: string,
+  ): Promise<any> {
     return await this.request(`/imaging/reports/${reportId}/addendum`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ addendumText, reason }),
     });
   }
@@ -196,34 +227,45 @@ export class ImagingService {
   }
 
   async downloadReportPDF(reportId: string): Promise<Blob> {
-    const response = await fetch(`${this.baseUrl}/imaging/reports/${reportId}/pdf`, {
-      headers: {
-        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+    const response = await fetch(
+      `${this.baseUrl}/imaging/reports/${reportId}/pdf`,
+      {
+        headers: {
+          ...(this.token && { Authorization: `Bearer ${this.token}` }),
+        },
       },
-    });
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to download PDF');
+      throw new Error("Failed to download PDF");
     }
 
     return await response.blob();
   }
 
-  async notifyCriticalResult(reportId: string, notifyTo?: string, notificationMethod?: string): Promise<void> {
+  async notifyCriticalResult(
+    reportId: string,
+    notifyTo?: string,
+    notificationMethod?: string,
+  ): Promise<void> {
     await this.request(`/imaging/reports/${reportId}/notify`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ notifyTo, notificationMethod }),
     });
   }
 
   async getReportTemplates(modality?: string): Promise<any[]> {
-    const query = modality ? `?modality=${modality}` : '';
+    const query = modality ? `?modality=${modality}` : "";
     return await this.request(`/imaging/reports/templates/list${query}`);
   }
 
-  async saveVoiceDictation(reportId: string, transcription: string, audioUrl?: string): Promise<any> {
+  async saveVoiceDictation(
+    reportId: string,
+    transcription: string,
+    audioUrl?: string,
+  ): Promise<any> {
     return await this.request(`/imaging/reports/${reportId}/voice-dictation`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ transcription, audioUrl }),
     });
   }
@@ -233,31 +275,38 @@ export class ImagingService {
   // ============================================
 
   async retrieveStudy(studyInstanceUID: string): Promise<Blob> {
-    const response = await fetch(`${this.baseUrl}/imaging/dicom/studies/${studyInstanceUID}`, {
-      headers: {
-        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+    const response = await fetch(
+      `${this.baseUrl}/imaging/dicom/studies/${studyInstanceUID}`,
+      {
+        headers: {
+          ...(this.token && { Authorization: `Bearer ${this.token}` }),
+        },
       },
-    });
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to retrieve study');
+      throw new Error("Failed to retrieve study");
     }
 
     return await response.blob();
   }
 
-  async retrieveInstance(studyInstanceUID: string, seriesInstanceUID: string, sopInstanceUID: string): Promise<Blob> {
+  async retrieveInstance(
+    studyInstanceUID: string,
+    seriesInstanceUID: string,
+    sopInstanceUID: string,
+  ): Promise<Blob> {
     const response = await fetch(
       `${this.baseUrl}/imaging/dicom/studies/${studyInstanceUID}/series/${seriesInstanceUID}/instances/${sopInstanceUID}`,
       {
         headers: {
-          ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+          ...(this.token && { Authorization: `Bearer ${this.token}` }),
         },
-      }
+      },
     );
 
     if (!response.ok) {
-      throw new Error('Failed to retrieve instance');
+      throw new Error("Failed to retrieve instance");
     }
 
     return await response.blob();
@@ -267,11 +316,19 @@ export class ImagingService {
     studyInstanceUID: string,
     seriesInstanceUID: string,
     sopInstanceUID: string,
-    options: { windowCenter?: number; windowWidth?: number; quality?: number } = {}
+    options: {
+      windowCenter?: number;
+      windowWidth?: number;
+      quality?: number;
+    } = {},
   ): Promise<Blob> {
     const params = new URLSearchParams({
-      ...(options.windowCenter && { windowCenter: options.windowCenter.toString() }),
-      ...(options.windowWidth && { windowWidth: options.windowWidth.toString() }),
+      ...(options.windowCenter && {
+        windowCenter: options.windowCenter.toString(),
+      }),
+      ...(options.windowWidth && {
+        windowWidth: options.windowWidth.toString(),
+      }),
       ...(options.quality && { quality: options.quality.toString() }),
     });
 
@@ -279,13 +336,13 @@ export class ImagingService {
       `${this.baseUrl}/imaging/dicom/studies/${studyInstanceUID}/series/${seriesInstanceUID}/instances/${sopInstanceUID}/rendered?${params}`,
       {
         headers: {
-          ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+          ...(this.token && { Authorization: `Bearer ${this.token}` }),
         },
-      }
+      },
     );
 
     if (!response.ok) {
-      throw new Error('Failed to retrieve rendered instance');
+      throw new Error("Failed to retrieve rendered instance");
     }
 
     return await response.blob();
@@ -293,18 +350,18 @@ export class ImagingService {
 
   async uploadDicomFiles(files: File[]): Promise<any> {
     const formData = new FormData();
-    files.forEach(file => formData.append('files', file));
+    files.forEach((file) => formData.append("files", file));
 
     const response = await fetch(`${this.baseUrl}/imaging/dicom/studies`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+        ...(this.token && { Authorization: `Bearer ${this.token}` }),
       },
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('Failed to upload DICOM files');
+      throw new Error("Failed to upload DICOM files");
     }
 
     return await response.json();
@@ -312,18 +369,18 @@ export class ImagingService {
 
   async verifyDicomFile(file: File): Promise<any> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     const response = await fetch(`${this.baseUrl}/imaging/dicom/verify`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+        ...(this.token && { Authorization: `Bearer ${this.token}` }),
       },
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('Failed to verify DICOM file');
+      throw new Error("Failed to verify DICOM file");
     }
 
     return await response.json();
@@ -343,52 +400,60 @@ export class ImagingService {
   }
 
   async createWorklistItem(itemData: any): Promise<any> {
-    return await this.request('/imaging/worklist', {
-      method: 'POST',
+    return await this.request("/imaging/worklist", {
+      method: "POST",
       body: JSON.stringify(itemData),
     });
   }
 
   async updateWorklistItem(itemId: string, updates: any): Promise<any> {
     return await this.request(`/imaging/worklist/${itemId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(updates),
     });
   }
 
   async startWorklistItem(itemId: string): Promise<any> {
     return await this.request(`/imaging/worklist/${itemId}/start`, {
-      method: 'POST',
+      method: "POST",
     });
   }
 
-  async completeWorklistItem(itemId: string, completionNotes?: string): Promise<any> {
+  async completeWorklistItem(
+    itemId: string,
+    completionNotes?: string,
+  ): Promise<any> {
     return await this.request(`/imaging/worklist/${itemId}/complete`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ completionNotes }),
     });
   }
 
   async cancelWorklistItem(itemId: string, reason: string): Promise<any> {
     return await this.request(`/imaging/worklist/${itemId}/cancel`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ reason }),
     });
   }
 
   async getTodayWorklist(modality?: string): Promise<any> {
-    const query = modality ? `?modality=${modality}` : '';
+    const query = modality ? `?modality=${modality}` : "";
     return await this.request(`/imaging/worklist/date/today${query}`);
   }
 
   async getWorklistStats(filters: any = {}): Promise<any> {
     const queryParams = new URLSearchParams(filters).toString();
-    return await this.request(`/imaging/worklist/analytics/stats?${queryParams}`);
+    return await this.request(
+      `/imaging/worklist/analytics/stats?${queryParams}`,
+    );
   }
 
-  async bulkScheduleOrders(orderIds: string[], schedulingRules: any): Promise<any> {
-    return await this.request('/imaging/worklist/bulk-schedule', {
-      method: 'POST',
+  async bulkScheduleOrders(
+    orderIds: string[],
+    schedulingRules: any,
+  ): Promise<any> {
+    return await this.request("/imaging/worklist/bulk-schedule", {
+      method: "POST",
       body: JSON.stringify({ orderIds, schedulingRules }),
     });
   }
@@ -401,60 +466,60 @@ export class ImagingService {
     // Mock implementation - in production, create separate modalities endpoint
     return [
       {
-        id: '1',
-        name: 'CT Scanner 1',
-        type: 'CT',
-        status: 'ONLINE',
-        aeTitle: 'CT01',
-        stationName: 'CT-01',
-        location: 'Radiology - Room 101',
-        ipAddress: '192.168.1.101',
+        id: "1",
+        name: "CT Scanner 1",
+        type: "CT",
+        status: "ONLINE",
+        aeTitle: "CT01",
+        stationName: "CT-01",
+        location: "Radiology - Room 101",
+        ipAddress: "192.168.1.101",
         port: 11112,
         todayExams: 15,
         queuedExams: 3,
-        avgDuration: '25 min',
+        avgDuration: "25 min",
       },
       {
-        id: '2',
-        name: 'MRI Scanner 1',
-        type: 'MRI',
-        status: 'BUSY',
-        aeTitle: 'MRI01',
-        stationName: 'MRI-01',
-        location: 'Radiology - Room 201',
-        ipAddress: '192.168.1.201',
+        id: "2",
+        name: "MRI Scanner 1",
+        type: "MRI",
+        status: "BUSY",
+        aeTitle: "MRI01",
+        stationName: "MRI-01",
+        location: "Radiology - Room 201",
+        ipAddress: "192.168.1.201",
         port: 11112,
         todayExams: 8,
         queuedExams: 5,
-        avgDuration: '45 min',
+        avgDuration: "45 min",
       },
       {
-        id: '3',
-        name: 'X-Ray Room 1',
-        type: 'XRAY',
-        status: 'ONLINE',
-        aeTitle: 'XR01',
-        stationName: 'XRAY-01',
-        location: 'Radiology - Room 301',
-        ipAddress: '192.168.1.301',
+        id: "3",
+        name: "X-Ray Room 1",
+        type: "XRAY",
+        status: "ONLINE",
+        aeTitle: "XR01",
+        stationName: "XRAY-01",
+        location: "Radiology - Room 301",
+        ipAddress: "192.168.1.301",
         port: 11112,
         todayExams: 32,
         queuedExams: 1,
-        avgDuration: '10 min',
+        avgDuration: "10 min",
       },
       {
-        id: '4',
-        name: 'Ultrasound 1',
-        type: 'US',
-        status: 'ONLINE',
-        aeTitle: 'US01',
-        stationName: 'US-01',
-        location: 'Radiology - Room 401',
-        ipAddress: '192.168.1.401',
+        id: "4",
+        name: "Ultrasound 1",
+        type: "US",
+        status: "ONLINE",
+        aeTitle: "US01",
+        stationName: "US-01",
+        location: "Radiology - Room 401",
+        ipAddress: "192.168.1.401",
         port: 11112,
         todayExams: 12,
         queuedExams: 2,
-        avgDuration: '20 min',
+        avgDuration: "20 min",
       },
     ];
   }
@@ -463,7 +528,7 @@ export class ImagingService {
     // Mock implementation
     return {
       success: true,
-      message: 'Connection successful',
+      message: "Connection successful",
       echoTime: 45,
     };
   }
@@ -474,11 +539,11 @@ export class ImagingService {
 
   setAuthToken(token: string) {
     this.token = token;
-    localStorage.setItem('auth_token', token);
+    localStorage.setItem("auth_token", token);
   }
 
   clearAuthToken() {
     this.token = null;
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem("auth_token");
   }
 }

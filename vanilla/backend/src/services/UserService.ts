@@ -1,7 +1,7 @@
-import { Pool } from 'pg';
-import { AuditService, AuditAction, ResourceType } from './AuditService';
-import encryptionService from './EncryptionService';
-import { RoleService } from './RoleService';
+import { Pool } from "pg";
+import { AuditService, AuditAction, ResourceType } from "./AuditService";
+import encryptionService from "./EncryptionService";
+import { RoleService } from "./RoleService";
 
 /**
  * UserService - User management with HIPAA compliance
@@ -37,7 +37,11 @@ export class UserService {
   private auditService: AuditService;
   private roleService: RoleService;
 
-  constructor(pool: Pool, auditService: AuditService, roleService: RoleService) {
+  constructor(
+    pool: Pool,
+    auditService: AuditService,
+    roleService: RoleService,
+  ) {
     this.pool = pool;
     this.auditService = auditService;
     this.roleService = roleService;
@@ -74,7 +78,7 @@ export class UserService {
     try {
       await this.pool.query(createTableQuery);
     } catch (error) {
-      console.error('Failed to initialize user table:', error);
+      console.error("Failed to initialize user table:", error);
     }
   }
 
@@ -112,7 +116,7 @@ export class UserService {
           user.id,
           roleName,
           data.organizationId,
-          createdBy
+          createdBy,
         );
       }
     }
@@ -124,9 +128,9 @@ export class UserService {
       action: AuditAction.USER_CREATED,
       resourceType: ResourceType.USER,
       resourceId: user.id,
-      status: 'success',
+      status: "success",
       details: { email: data.email, roles: data.roles },
-      severity: 'medium',
+      severity: "medium",
     });
 
     return user;
@@ -172,9 +176,9 @@ export class UserService {
   async updateUser(
     userId: string,
     updates: Partial<User>,
-    updatedBy: string
+    updatedBy: string,
   ): Promise<User> {
-    const allowedFields = ['first_name', 'last_name', 'metadata', 'is_active'];
+    const allowedFields = ["first_name", "last_name", "metadata", "is_active"];
     const setters: string[] = [];
     const values: any[] = [];
     let paramCount = 1;
@@ -183,12 +187,12 @@ export class UserService {
       const dbKey = this.camelToSnake(key);
       if (allowedFields.includes(dbKey)) {
         setters.push(`${dbKey} = $${paramCount++}`);
-        values.push(typeof value === 'object' ? JSON.stringify(value) : value);
+        values.push(typeof value === "object" ? JSON.stringify(value) : value);
       }
     }
 
     if (setters.length === 0) {
-      throw new Error('No valid fields to update');
+      throw new Error("No valid fields to update");
     }
 
     setters.push(`updated_at = CURRENT_TIMESTAMP`);
@@ -196,7 +200,7 @@ export class UserService {
 
     const query = `
       UPDATE users
-      SET ${setters.join(', ')}
+      SET ${setters.join(", ")}
       WHERE id = $${paramCount}
       RETURNING *
     `;
@@ -211,9 +215,9 @@ export class UserService {
       action: AuditAction.USER_UPDATED,
       resourceType: ResourceType.USER,
       resourceId: userId,
-      status: 'success',
+      status: "success",
       details: { updates },
-      severity: 'low',
+      severity: "low",
     });
 
     return user;
@@ -225,7 +229,7 @@ export class UserService {
   async changePassword(
     userId: string,
     oldPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<boolean> {
     // Get current password hash
     const query = `SELECT password_hash FROM users WHERE id = $1`;
@@ -238,7 +242,10 @@ export class UserService {
     const currentHash = result.rows[0].password_hash;
 
     // Verify old password
-    const isValid = await encryptionService.verifyPassword(oldPassword, currentHash);
+    const isValid = await encryptionService.verifyPassword(
+      oldPassword,
+      currentHash,
+    );
     if (!isValid) {
       return false;
     }
@@ -265,8 +272,8 @@ export class UserService {
         action: AuditAction.PASSWORD_CHANGED,
         resourceType: ResourceType.USER,
         resourceId: userId,
-        status: 'success',
-        severity: 'medium',
+        status: "success",
+        severity: "medium",
       });
     }
 
@@ -279,7 +286,7 @@ export class UserService {
   async resetPassword(
     userId: string,
     newPassword: string,
-    resetBy: string
+    resetBy: string,
   ): Promise<boolean> {
     const passwordHash = await encryptionService.hashPassword(newPassword);
 
@@ -300,9 +307,9 @@ export class UserService {
         action: AuditAction.PASSWORD_RESET,
         resourceType: ResourceType.USER,
         resourceId: userId,
-        status: 'success',
+        status: "success",
         details: { targetUserId: userId, targetEmail: user.email },
-        severity: 'high',
+        severity: "high",
       });
     }
 
@@ -330,7 +337,10 @@ export class UserService {
     const passwordHash = result.rows[0].password_hash;
 
     // Verify password
-    const isValid = await encryptionService.verifyPassword(password, passwordHash);
+    const isValid = await encryptionService.verifyPassword(
+      password,
+      passwordHash,
+    );
 
     if (!isValid) {
       await this.recordFailedLogin(user.id);
@@ -377,9 +387,9 @@ export class UserService {
         action: AuditAction.USER_DEACTIVATED,
         resourceType: ResourceType.USER,
         resourceId: userId,
-        status: 'success',
+        status: "success",
         details: { targetUserId: userId },
-        severity: 'high',
+        severity: "high",
       });
     }
   }
@@ -405,9 +415,9 @@ export class UserService {
         action: AuditAction.USER_ACTIVATED,
         resourceType: ResourceType.USER,
         resourceId: userId,
-        status: 'success',
+        status: "success",
         details: { targetUserId: userId },
-        severity: 'medium',
+        severity: "medium",
       });
     }
   }
@@ -418,7 +428,7 @@ export class UserService {
   async getUsersByOrganization(
     organizationId: string,
     limit: number = 100,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<User[]> {
     const query = `
       SELECT * FROM users
@@ -427,7 +437,11 @@ export class UserService {
       LIMIT $2 OFFSET $3
     `;
 
-    const result = await this.pool.query(query, [organizationId, limit, offset]);
+    const result = await this.pool.query(query, [
+      organizationId,
+      limit,
+      offset,
+    ]);
     return result.rows.map(this.mapRowToUser);
   }
 
@@ -437,7 +451,7 @@ export class UserService {
   async searchUsers(
     organizationId: string,
     searchTerm: string,
-    limit: number = 50
+    limit: number = 50,
   ): Promise<User[]> {
     const query = `
       SELECT * FROM users

@@ -7,7 +7,10 @@ export class ClaimsList {
   private claims: any[] = [];
   private onClaimClick?: (claimId: string) => void;
 
-  constructor(container: HTMLElement, options?: { onClaimClick?: (claimId: string) => void }) {
+  constructor(
+    container: HTMLElement,
+    options?: { onClaimClick?: (claimId: string) => void },
+  ) {
     this.container = container;
     this.onClaimClick = options?.onClaimClick;
   }
@@ -28,7 +31,9 @@ export class ClaimsList {
             </tr>
           </thead>
           <tbody>
-            ${claims.map(claim => `
+            ${claims
+              .map(
+                (claim) => `
               <tr class="claim-row" data-claim-id="${claim.id}">
                 <td><a href="#/billing/claims/${claim.id}">${claim.claimNumber}</a></td>
                 <td>${claim.patientName}</td>
@@ -36,7 +41,9 @@ export class ClaimsList {
                 <td>$${claim.totalCharge.toLocaleString()}</td>
                 <td><span class="status-badge status-${claim.status}">${claim.status}</span></td>
               </tr>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </tbody>
         </table>
       </div>
@@ -47,9 +54,9 @@ export class ClaimsList {
 
   private attachEventListeners(): void {
     if (this.onClaimClick) {
-      const rows = this.container.querySelectorAll('.claim-row');
-      rows.forEach(row => {
-        row.addEventListener('click', (e) => {
+      const rows = this.container.querySelectorAll(".claim-row");
+      rows.forEach((row) => {
+        row.addEventListener("click", (e) => {
           const claimId = (row as HTMLElement).dataset.claimId;
           if (claimId && this.onClaimClick) {
             this.onClaimClick(claimId);

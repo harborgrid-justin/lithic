@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/analytics/metrics
@@ -18,80 +18,86 @@ export async function POST(request: NextRequest) {
         const record: any = {};
 
         // Add dimension values
-        if (dimensions?.includes('date')) {
+        if (dimensions?.includes("date")) {
           const date = new Date();
           date.setDate(date.getDate() - (numRecords - i));
-          record.date = date.toISOString().split('T')[0];
+          record.date = date.toISOString().split("T")[0];
         }
-        if (dimensions?.includes('department')) {
-          const departments = ['Cardiology', 'Oncology', 'Emergency', 'Surgery', 'ICU'];
+        if (dimensions?.includes("department")) {
+          const departments = [
+            "Cardiology",
+            "Oncology",
+            "Emergency",
+            "Surgery",
+            "ICU",
+          ];
           record.department = departments[i % departments.length];
         }
-        if (dimensions?.includes('provider')) {
-          record.provider = `Dr. Provider ${i % 10 + 1}`;
+        if (dimensions?.includes("provider")) {
+          record.provider = `Dr. Provider ${(i % 10) + 1}`;
         }
 
         // Add metric values
         metrics?.forEach((metric: string) => {
           switch (metric) {
-            case 'patient_volume':
+            case "patient_volume":
               record[metric] = Math.floor(Math.random() * 100) + 50;
               break;
-            case 'readmission_rate':
+            case "readmission_rate":
               record[metric] = (Math.random() * 10 + 15).toFixed(2);
               break;
-            case 'patient_satisfaction':
+            case "patient_satisfaction":
               record[metric] = (Math.random() * 20 + 80).toFixed(1);
               break;
-            case 'total_revenue':
+            case "total_revenue":
               record[metric] = Math.floor(Math.random() * 500000) + 1000000;
               break;
-            case 'net_revenue':
+            case "net_revenue":
               record[metric] = Math.floor(Math.random() * 400000) + 800000;
               break;
-            case 'collection_rate':
+            case "collection_rate":
               record[metric] = (Math.random() * 10 + 85).toFixed(2);
               break;
-            case 'bed_occupancy':
+            case "bed_occupancy":
               record[metric] = (Math.random() * 20 + 70).toFixed(1);
               break;
-            case 'average_length_of_stay':
+            case "average_length_of_stay":
               record[metric] = (Math.random() * 3 + 4).toFixed(1);
               break;
-            case 'mortality_rate':
+            case "mortality_rate":
               record[metric] = (Math.random() * 2 + 1).toFixed(2);
               break;
-            case 'infection_rate':
+            case "infection_rate":
               record[metric] = (Math.random() * 1 + 0.5).toFixed(2);
               break;
-            case 'core_measures':
+            case "core_measures":
               record[metric] = (Math.random() * 10 + 85).toFixed(1);
               break;
-            case 'days_in_ar':
+            case "days_in_ar":
               record[metric] = Math.floor(Math.random() * 20) + 30;
               break;
-            case 'denial_rate':
+            case "denial_rate":
               record[metric] = (Math.random() * 5 + 5).toFixed(2);
               break;
-            case 'er_wait_time':
+            case "er_wait_time":
               record[metric] = Math.floor(Math.random() * 30) + 20;
               break;
-            case 'total_patients':
+            case "total_patients":
               record[metric] = Math.floor(Math.random() * 10000) + 50000;
               break;
-            case 'active_patients':
+            case "active_patients":
               record[metric] = Math.floor(Math.random() * 8000) + 40000;
               break;
-            case 'high_risk_patients':
+            case "high_risk_patients":
               record[metric] = Math.floor(Math.random() * 2000) + 5000;
               break;
-            case 'chronic_disease_prevalence':
+            case "chronic_disease_prevalence":
               record[metric] = (Math.random() * 10 + 35).toFixed(1);
               break;
-            case 'preventive_care_compliance':
+            case "preventive_care_compliance":
               record[metric] = (Math.random() * 15 + 75).toFixed(1);
               break;
-            case 'care_gap_closure_rate':
+            case "care_gap_closure_rate":
               record[metric] = (Math.random() * 20 + 60).toFixed(1);
               break;
             default:
@@ -102,7 +108,8 @@ export async function POST(request: NextRequest) {
         // Add previous values for comparison
         if (i > 0 && !dimensions) {
           metrics?.forEach((metric: string) => {
-            record[`${metric}_previous`] = record[metric] * (0.9 + Math.random() * 0.2);
+            record[`${metric}_previous`] =
+              record[metric] * (0.9 + Math.random() * 0.2);
           });
         }
 
@@ -117,10 +124,13 @@ export async function POST(request: NextRequest) {
     // Calculate aggregations
     const aggregations: Record<string, number> = {};
     metrics?.forEach((metric: string) => {
-      const values = data.map(d => d[metric]).filter(v => typeof v === 'number');
+      const values = data
+        .map((d) => d[metric])
+        .filter((v) => typeof v === "number");
       if (values.length > 0) {
         aggregations[`${metric}_sum`] = values.reduce((a, b) => a + b, 0);
-        aggregations[`${metric}_avg`] = values.reduce((a, b) => a + b, 0) / values.length;
+        aggregations[`${metric}_avg`] =
+          values.reduce((a, b) => a + b, 0) / values.length;
         aggregations[`${metric}_min`] = Math.min(...values);
         aggregations[`${metric}_max`] = Math.max(...values);
       }
@@ -139,10 +149,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error executing metrics query:', error);
+    console.error("Error executing metrics query:", error);
     return NextResponse.json(
-      { error: 'Failed to execute metrics query' },
-      { status: 500 }
+      { error: "Failed to execute metrics query" },
+      { status: 500 },
     );
   }
 }
@@ -154,13 +164,13 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const metric = searchParams.get('metric');
-    const compareBy = searchParams.get('compareBy') || 'national';
+    const metric = searchParams.get("metric");
+    const compareBy = searchParams.get("compareBy") || "national";
 
     if (!metric) {
       return NextResponse.json(
-        { error: 'Metric parameter is required' },
-        { status: 400 }
+        { error: "Metric parameter is required" },
+        { status: 400 },
       );
     }
 
@@ -168,7 +178,10 @@ export async function GET(request: NextRequest) {
     const baseValue = 80 + Math.random() * 15;
     const current = baseValue + (Math.random() - 0.5) * 10;
     const benchmark = baseValue;
-    const percentile = Math.min(99, Math.max(1, Math.floor(50 + (current - benchmark) * 5)));
+    const percentile = Math.min(
+      99,
+      Math.max(1, Math.floor(50 + (current - benchmark) * 5)),
+    );
 
     const result = {
       current,
@@ -179,10 +192,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error fetching benchmark data:', error);
+    console.error("Error fetching benchmark data:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch benchmark data' },
-      { status: 500 }
+      { error: "Failed to fetch benchmark data" },
+      { status: 500 },
     );
   }
 }

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import ImagingOrderList from '@/components/imaging/ImagingOrderList';
-import { ImagingOrder } from '@/services/imaging.service';
+import { useState } from "react";
+import Link from "next/link";
+import ImagingOrderList from "@/components/imaging/ImagingOrderList";
+import { ImagingOrder } from "@/services/imaging.service";
 
 export default function ImagingOrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<ImagingOrder | null>(null);
@@ -38,29 +38,47 @@ export default function ImagingOrdersPage() {
                   onClick={() => setSelectedOrder(null)}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Patient Information</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">
+                    Patient Information
+                  </h3>
                   <div className="bg-gray-50 p-4 rounded space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Name:</span>
-                      <span className="font-medium">{selectedOrder.patientName}</span>
+                      <span className="font-medium">
+                        {selectedOrder.patientName}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">MRN:</span>
-                      <span className="font-medium">{selectedOrder.patientMRN}</span>
+                      <span className="font-medium">
+                        {selectedOrder.patientMRN}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Order Details</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">
+                    Order Details
+                  </h3>
                   <div className="bg-gray-50 p-4 rounded space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Order ID:</span>
@@ -68,31 +86,45 @@ export default function ImagingOrdersPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Procedure:</span>
-                      <span className="font-medium">{selectedOrder.procedure}</span>
+                      <span className="font-medium">
+                        {selectedOrder.procedure}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Modality:</span>
-                      <span className="font-medium">{selectedOrder.modality}</span>
+                      <span className="font-medium">
+                        {selectedOrder.modality}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Body Part:</span>
-                      <span className="font-medium">{selectedOrder.bodyPart}</span>
+                      <span className="font-medium">
+                        {selectedOrder.bodyPart}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Priority:</span>
-                      <span className="font-medium">{selectedOrder.priority}</span>
+                      <span className="font-medium">
+                        {selectedOrder.priority}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Status:</span>
-                      <span className="font-medium">{selectedOrder.status}</span>
+                      <span className="font-medium">
+                        {selectedOrder.status}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Clinical Indication</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">
+                    Clinical Indication
+                  </h3>
                   <div className="bg-gray-50 p-4 rounded">
-                    <p className="text-gray-900">{selectedOrder.clinicalIndication}</p>
+                    <p className="text-gray-900">
+                      {selectedOrder.clinicalIndication}
+                    </p>
                   </div>
                 </div>
 

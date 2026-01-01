@@ -3,10 +3,13 @@
  * Handle NCPDP e-prescribing messages
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { prescriptionService, type EPrescribeMessage } from '@/services/prescription.service';
+import { useEffect, useState } from "react";
+import {
+  prescriptionService,
+  type EPrescribeMessage,
+} from "@/services/prescription.service";
 
 interface EPrescribingProps {
   onMessageProcessed?: () => void;
@@ -16,10 +19,11 @@ export function EPrescribing({ onMessageProcessed }: EPrescribingProps) {
   const [messages, setMessages] = useState<EPrescribeMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({
-    messageType: '',
-    status: 'received',
+    messageType: "",
+    status: "received",
   });
-  const [selectedMessage, setSelectedMessage] = useState<EPrescribeMessage | null>(null);
+  const [selectedMessage, setSelectedMessage] =
+    useState<EPrescribeMessage | null>(null);
 
   useEffect(() => {
     loadMessages();
@@ -34,7 +38,7 @@ export function EPrescribing({ onMessageProcessed }: EPrescribingProps) {
       });
       setMessages(data);
     } catch (error) {
-      console.error('Failed to load e-prescribe messages:', error);
+      console.error("Failed to load e-prescribe messages:", error);
     } finally {
       setLoading(false);
     }
@@ -43,62 +47,62 @@ export function EPrescribing({ onMessageProcessed }: EPrescribingProps) {
   const handleProcessNewRx = async (messageId: string) => {
     try {
       await prescriptionService.processNewRxMessage(messageId);
-      alert('NEWRX message processed successfully');
+      alert("NEWRX message processed successfully");
       loadMessages();
       onMessageProcessed?.();
     } catch (error) {
-      console.error('Failed to process NEWRX:', error);
-      alert('Failed to process message');
+      console.error("Failed to process NEWRX:", error);
+      alert("Failed to process message");
     }
   };
 
   const handleSendResponse = async (
     messageId: string,
-    responseType: 'approved' | 'denied' | 'replaced'
+    responseType: "approved" | "denied" | "replaced",
   ) => {
     try {
       await prescriptionService.sendRefillResponse(messageId, responseType);
-      alert('Response sent successfully');
+      alert("Response sent successfully");
       loadMessages();
     } catch (error) {
-      console.error('Failed to send response:', error);
-      alert('Failed to send response');
+      console.error("Failed to send response:", error);
+      alert("Failed to send response");
     }
   };
 
   const getMessageTypeColor = (type: string) => {
     switch (type) {
-      case 'NEWRX':
-        return 'bg-blue-100 text-blue-800';
-      case 'REFRES':
-        return 'bg-green-100 text-green-800';
-      case 'RXCHG':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'CANRX':
-        return 'bg-red-100 text-red-800';
-      case 'ERROR':
-        return 'bg-red-100 text-red-800';
-      case 'STATUS':
-        return 'bg-purple-100 text-purple-800';
+      case "NEWRX":
+        return "bg-blue-100 text-blue-800";
+      case "REFRES":
+        return "bg-green-100 text-green-800";
+      case "RXCHG":
+        return "bg-yellow-100 text-yellow-800";
+      case "CANRX":
+        return "bg-red-100 text-red-800";
+      case "ERROR":
+        return "bg-red-100 text-red-800";
+      case "STATUS":
+        return "bg-purple-100 text-purple-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'received':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'processed':
-        return 'bg-green-100 text-green-800';
-      case 'error':
-        return 'bg-red-100 text-red-800';
-      case 'sent':
-        return 'bg-blue-100 text-blue-800';
-      case 'acknowledged':
-        return 'bg-purple-100 text-purple-800';
+      case "received":
+        return "bg-yellow-100 text-yellow-800";
+      case "processed":
+        return "bg-green-100 text-green-800";
+      case "error":
+        return "bg-red-100 text-red-800";
+      case "sent":
+        return "bg-blue-100 text-blue-800";
+      case "acknowledged":
+        return "bg-purple-100 text-purple-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -113,7 +117,9 @@ export function EPrescribing({ onMessageProcessed }: EPrescribingProps) {
             </label>
             <select
               value={filter.messageType}
-              onChange={(e) => setFilter({ ...filter, messageType: e.target.value })}
+              onChange={(e) =>
+                setFilter({ ...filter, messageType: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Types</option>
@@ -166,56 +172,85 @@ export function EPrescribing({ onMessageProcessed }: EPrescribingProps) {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded ${getMessageTypeColor(message.messageType)}`}>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded ${getMessageTypeColor(message.messageType)}`}
+                      >
                         {message.messageType}
                       </span>
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded ${getStatusColor(message.status)}`}>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded ${getStatusColor(message.status)}`}
+                      >
                         {message.status}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {message.direction === 'inbound' ? '← Inbound' : '→ Outbound'}
+                        {message.direction === "inbound"
+                          ? "← Inbound"
+                          : "→ Outbound"}
                       </span>
                     </div>
                     <div className="text-sm text-gray-600 mb-2">
-                      <span className="font-mono">{message.ncpdpMessageId}</span>
+                      <span className="font-mono">
+                        {message.ncpdpMessageId}
+                      </span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                       <div>
-                        <span className="font-medium text-gray-700">Prescriber ID:</span>
-                        <div className="text-gray-600">{message.prescriberId}</div>
+                        <span className="font-medium text-gray-700">
+                          Prescriber ID:
+                        </span>
+                        <div className="text-gray-600">
+                          {message.prescriberId}
+                        </div>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Patient ID:</span>
+                        <span className="font-medium text-gray-700">
+                          Patient ID:
+                        </span>
                         <div className="text-gray-600">{message.patientId}</div>
                       </div>
                       <div>
                         <span className="font-medium text-gray-700">
-                          {message.receivedAt ? 'Received' : 'Sent'}:
+                          {message.receivedAt ? "Received" : "Sent"}:
                         </span>
                         <div className="text-gray-600">
-                          {new Date(message.receivedAt || message.sentAt || '').toLocaleString()}
+                          {new Date(
+                            message.receivedAt || message.sentAt || "",
+                          ).toLocaleString()}
                         </div>
                       </div>
                       {message.prescriptionId && (
                         <div>
-                          <span className="font-medium text-gray-700">Prescription:</span>
-                          <div className="text-blue-600">{message.prescriptionId}</div>
+                          <span className="font-medium text-gray-700">
+                            Prescription:
+                          </span>
+                          <div className="text-blue-600">
+                            {message.prescriptionId}
+                          </div>
                         </div>
                       )}
                     </div>
 
                     {message.errorMessage && (
                       <div className="mt-3 p-3 bg-red-50 rounded">
-                        <p className="text-xs font-medium text-red-800 mb-1">Error:</p>
-                        <p className="text-xs text-red-700">{message.errorMessage}</p>
+                        <p className="text-xs font-medium text-red-800 mb-1">
+                          Error:
+                        </p>
+                        <p className="text-xs text-red-700">
+                          {message.errorMessage}
+                        </p>
                       </div>
                     )}
 
                     <button
-                      onClick={() => setSelectedMessage(selectedMessage?.id === message.id ? null : message)}
+                      onClick={() =>
+                        setSelectedMessage(
+                          selectedMessage?.id === message.id ? null : message,
+                        )
+                      }
                       className="mt-3 text-sm text-blue-600 hover:text-blue-700"
                     >
-                      {selectedMessage?.id === message.id ? 'Hide' : 'View'} Message Details
+                      {selectedMessage?.id === message.id ? "Hide" : "View"}{" "}
+                      Message Details
                     </button>
 
                     {selectedMessage?.id === message.id && (
@@ -229,30 +264,36 @@ export function EPrescribing({ onMessageProcessed }: EPrescribingProps) {
 
                   {/* Actions */}
                   <div className="ml-4 flex flex-col gap-2">
-                    {message.messageType === 'NEWRX' && message.status === 'received' && (
-                      <button
-                        onClick={() => handleProcessNewRx(message.id)}
-                        className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
-                      >
-                        Process
-                      </button>
-                    )}
-                    {message.messageType === 'REFRES' && message.status === 'received' && (
-                      <>
+                    {message.messageType === "NEWRX" &&
+                      message.status === "received" && (
                         <button
-                          onClick={() => handleSendResponse(message.id, 'approved')}
+                          onClick={() => handleProcessNewRx(message.id)}
                           className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
                         >
-                          Approve
+                          Process
                         </button>
-                        <button
-                          onClick={() => handleSendResponse(message.id, 'denied')}
-                          className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-                        >
-                          Deny
-                        </button>
-                      </>
-                    )}
+                      )}
+                    {message.messageType === "REFRES" &&
+                      message.status === "received" && (
+                        <>
+                          <button
+                            onClick={() =>
+                              handleSendResponse(message.id, "approved")
+                            }
+                            className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleSendResponse(message.id, "denied")
+                            }
+                            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                          >
+                            Deny
+                          </button>
+                        </>
+                      )}
                   </div>
                 </div>
               </div>

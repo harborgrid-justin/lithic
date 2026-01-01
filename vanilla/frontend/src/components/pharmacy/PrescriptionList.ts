@@ -3,14 +3,18 @@
  * Reusable prescription list component
  */
 
-import type { Prescription } from '../../services/PharmacyService';
+import type { Prescription } from "../../services/PharmacyService";
 
 export class PrescriptionList {
   private container: HTMLElement;
   private prescriptions: Prescription[];
   private onSelect?: (prescription: Prescription) => void;
 
-  constructor(container: HTMLElement, prescriptions: Prescription[], onSelect?: (prescription: Prescription) => void) {
+  constructor(
+    container: HTMLElement,
+    prescriptions: Prescription[],
+    onSelect?: (prescription: Prescription) => void,
+  ) {
     this.container = container;
     this.prescriptions = prescriptions;
     this.onSelect = onSelect;
@@ -18,13 +22,16 @@ export class PrescriptionList {
 
   render(): void {
     if (this.prescriptions.length === 0) {
-      this.container.innerHTML = '<div class="empty-state">No prescriptions found</div>';
+      this.container.innerHTML =
+        '<div class="empty-state">No prescriptions found</div>';
       return;
     }
 
     this.container.innerHTML = `
       <div class="prescription-list">
-        ${this.prescriptions.map(rx => `
+        ${this.prescriptions
+          .map(
+            (rx) => `
           <div class="prescription-item" data-id="${rx.id}">
             <div class="rx-header">
               <span class="rx-number">${rx.rxNumber}</span>
@@ -37,7 +44,9 @@ export class PrescriptionList {
               <span>${new Date(rx.writtenDate).toLocaleDateString()}</span>
             </div>
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
       <style>
         .prescription-list { display: flex; flex-direction: column; gap: 12px; }
@@ -53,10 +62,10 @@ export class PrescriptionList {
     `;
 
     if (this.onSelect) {
-      this.container.querySelectorAll('.prescription-item').forEach(item => {
-        item.addEventListener('click', () => {
+      this.container.querySelectorAll(".prescription-item").forEach((item) => {
+        item.addEventListener("click", () => {
           const id = (item as HTMLElement).dataset.id;
-          const rx = this.prescriptions.find(p => p.id === id);
+          const rx = this.prescriptions.find((p) => p.id === id);
           if (rx && this.onSelect) this.onSelect(rx);
         });
       });

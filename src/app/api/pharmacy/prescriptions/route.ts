@@ -3,7 +3,7 @@
  * Handle prescription listing and creation
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 // Mock database - In production, this would connect to a real database
 let prescriptions: any[] = [];
@@ -12,43 +12,50 @@ let rxCounter = 1000;
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const patientId = searchParams.get('patientId');
-    const prescriberId = searchParams.get('prescriberId');
-    const status = searchParams.get('status');
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
+    const patientId = searchParams.get("patientId");
+    const prescriberId = searchParams.get("prescriberId");
+    const status = searchParams.get("status");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
 
     let filtered = [...prescriptions];
 
     if (patientId) {
-      filtered = filtered.filter(p => p.patientId === patientId);
+      filtered = filtered.filter((p) => p.patientId === patientId);
     }
 
     if (prescriberId) {
-      filtered = filtered.filter(p => p.prescriberId === prescriberId);
+      filtered = filtered.filter((p) => p.prescriberId === prescriberId);
     }
 
     if (status) {
-      filtered = filtered.filter(p => p.status === status);
+      filtered = filtered.filter((p) => p.status === status);
     }
 
     if (startDate) {
-      filtered = filtered.filter(p => new Date(p.writtenDate) >= new Date(startDate));
+      filtered = filtered.filter(
+        (p) => new Date(p.writtenDate) >= new Date(startDate),
+      );
     }
 
     if (endDate) {
-      filtered = filtered.filter(p => new Date(p.writtenDate) <= new Date(endDate));
+      filtered = filtered.filter(
+        (p) => new Date(p.writtenDate) <= new Date(endDate),
+      );
     }
 
     // Sort by written date, newest first
-    filtered.sort((a, b) => new Date(b.writtenDate).getTime() - new Date(a.writtenDate).getTime());
+    filtered.sort(
+      (a, b) =>
+        new Date(b.writtenDate).getTime() - new Date(a.writtenDate).getTime(),
+    );
 
     return NextResponse.json(filtered);
   } catch (error) {
-    console.error('Error fetching prescriptions:', error);
+    console.error("Error fetching prescriptions:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch prescriptions' },
-      { status: 500 }
+      { error: "Failed to fetch prescriptions" },
+      { status: 500 },
     );
   }
 }
@@ -58,7 +65,7 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
 
     // Generate Rx number
-    const rxNumber = `RX${String(rxCounter++).padStart(7, '0')}`;
+    const rxNumber = `RX${String(rxCounter++).padStart(7, "0")}`;
 
     // Calculate expiration date based on controlled status
     const writtenDate = new Date(data.writtenDate);
@@ -81,8 +88,10 @@ export async function POST(request: NextRequest) {
       id: `rx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       rxNumber,
       ...data,
-      expirationDate: expirationDate.toISOString().split('T')[0],
-      nextRefillDate: nextRefillDate ? nextRefillDate.toISOString().split('T')[0] : null,
+      expirationDate: expirationDate.toISOString().split("T")[0],
+      nextRefillDate: nextRefillDate
+        ? nextRefillDate.toISOString().split("T")[0]
+        : null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -91,10 +100,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(prescription, { status: 201 });
   } catch (error) {
-    console.error('Error creating prescription:', error);
+    console.error("Error creating prescription:", error);
     return NextResponse.json(
-      { error: 'Failed to create prescription' },
-      { status: 500 }
+      { error: "Failed to create prescription" },
+      { status: 500 },
     );
   }
 }

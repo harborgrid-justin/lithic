@@ -3,12 +3,18 @@
  * Main pharmacy overview with key metrics and quick actions
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { prescriptionService, type Prescription } from '@/services/prescription.service';
-import { pharmacyService, type InventoryItem } from '@/services/pharmacy.service';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  prescriptionService,
+  type Prescription,
+} from "@/services/prescription.service";
+import {
+  pharmacyService,
+  type InventoryItem,
+} from "@/services/pharmacy.service";
 
 interface PharmacyMetrics {
   prescriptionsPending: number;
@@ -32,7 +38,9 @@ export default function PharmacyPage() {
     controlledSubstanceDiscrepancies: 0,
     ePrescribeMessages: 0,
   });
-  const [recentPrescriptions, setRecentPrescriptions] = useState<Prescription[]>([]);
+  const [recentPrescriptions, setRecentPrescriptions] = useState<
+    Prescription[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,20 +52,22 @@ export default function PharmacyPage() {
       setLoading(true);
 
       // Load metrics in parallel
-      const [prescriptions, inventory, queue, refills, eprescribe] = await Promise.all([
-        prescriptionService.getPrescriptions({
-          startDate: new Date().toISOString().split('T')[0],
-        }),
-        pharmacyService.getInventory({ lowStock: true }),
-        prescriptionService.getDispensingQueue({ status: 'queued' }),
-        prescriptionService.getRefillRequests({ status: 'pending' }),
-        prescriptionService.getEPrescribeMessages({ status: 'received' }),
-      ]);
+      const [prescriptions, inventory, queue, refills, eprescribe] =
+        await Promise.all([
+          prescriptionService.getPrescriptions({
+            startDate: new Date().toISOString().split("T")[0],
+          }),
+          pharmacyService.getInventory({ lowStock: true }),
+          prescriptionService.getDispensingQueue({ status: "queued" }),
+          prescriptionService.getRefillRequests({ status: "pending" }),
+          prescriptionService.getEPrescribeMessages({ status: "received" }),
+        ]);
 
-      const pending = prescriptions.filter(p => p.status === 'pending');
-      const expiringInventory = inventory.filter(item => {
+      const pending = prescriptions.filter((p) => p.status === "pending");
+      const expiringInventory = inventory.filter((item) => {
         const daysUntilExpiry = Math.floor(
-          (new Date(item.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          (new Date(item.expirationDate).getTime() - Date.now()) /
+            (1000 * 60 * 60 * 24),
         );
         return daysUntilExpiry <= 90 && daysUntilExpiry > 0;
       });
@@ -75,25 +85,32 @@ export default function PharmacyPage() {
 
       setRecentPrescriptions(prescriptions.slice(0, 10));
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+      console.error("Failed to load dashboard data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const MetricCard = ({ title, value, status, href }: {
+  const MetricCard = ({
+    title,
+    value,
+    status,
+    href,
+  }: {
     title: string;
     value: number;
-    status?: 'normal' | 'warning' | 'critical';
+    status?: "normal" | "warning" | "critical";
     href: string;
   }) => {
     const statusColors = {
-      normal: 'bg-green-50 border-green-200 text-green-700',
-      warning: 'bg-yellow-50 border-yellow-200 text-yellow-700',
-      critical: 'bg-red-50 border-red-200 text-red-700',
+      normal: "bg-green-50 border-green-200 text-green-700",
+      warning: "bg-yellow-50 border-yellow-200 text-yellow-700",
+      critical: "bg-red-50 border-red-200 text-red-700",
     };
 
-    const bgColor = status ? statusColors[status] : 'bg-blue-50 border-blue-200 text-blue-700';
+    const bgColor = status
+      ? statusColors[status]
+      : "bg-blue-50 border-blue-200 text-blue-700";
 
     return (
       <Link
@@ -119,8 +136,12 @@ export default function PharmacyPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Pharmacy Dashboard</h1>
-        <p className="text-gray-600">Manage prescriptions, dispensing, and pharmacy operations</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Pharmacy Dashboard
+        </h1>
+        <p className="text-gray-600">
+          Manage prescriptions, dispensing, and pharmacy operations
+        </p>
       </div>
 
       {/* Key Metrics */}
@@ -128,13 +149,13 @@ export default function PharmacyPage() {
         <MetricCard
           title="Pending Prescriptions"
           value={metrics.prescriptionsPending}
-          status={metrics.prescriptionsPending > 20 ? 'warning' : 'normal'}
+          status={metrics.prescriptionsPending > 20 ? "warning" : "normal"}
           href="/pharmacy/prescriptions?status=pending"
         />
         <MetricCard
           title="Dispensing Queue"
           value={metrics.dispensingQueueCount}
-          status={metrics.dispensingQueueCount > 15 ? 'warning' : 'normal'}
+          status={metrics.dispensingQueueCount > 15 ? "warning" : "normal"}
           href="/pharmacy/dispensing"
         />
         <MetricCard
@@ -145,7 +166,7 @@ export default function PharmacyPage() {
         <MetricCard
           title="E-Prescribe Messages"
           value={metrics.ePrescribeMessages}
-          status={metrics.ePrescribeMessages > 0 ? 'warning' : 'normal'}
+          status={metrics.ePrescribeMessages > 0 ? "warning" : "normal"}
           href="/pharmacy/prescriptions"
         />
       </div>
@@ -155,19 +176,21 @@ export default function PharmacyPage() {
         <MetricCard
           title="Low Stock Items"
           value={metrics.lowStockItems}
-          status={metrics.lowStockItems > 0 ? 'warning' : 'normal'}
+          status={metrics.lowStockItems > 0 ? "warning" : "normal"}
           href="/pharmacy/inventory?filter=low-stock"
         />
         <MetricCard
           title="Expiring Soon (90 days)"
           value={metrics.expiringItems}
-          status={metrics.expiringItems > 0 ? 'warning' : 'normal'}
+          status={metrics.expiringItems > 0 ? "warning" : "normal"}
           href="/pharmacy/inventory?filter=expiring"
         />
         <MetricCard
           title="Controlled Substance Alerts"
           value={metrics.controlledSubstanceDiscrepancies}
-          status={metrics.controlledSubstanceDiscrepancies > 0 ? 'critical' : 'normal'}
+          status={
+            metrics.controlledSubstanceDiscrepancies > 0 ? "critical" : "normal"
+          }
           href="/pharmacy/controlled"
         />
         <MetricCard
@@ -179,7 +202,9 @@ export default function PharmacyPage() {
 
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Quick Actions
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link
             href="/pharmacy/prescriptions/new"
@@ -211,7 +236,9 @@ export default function PharmacyPage() {
       {/* Recent Prescriptions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Prescriptions</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Recent Prescriptions
+          </h2>
           <Link
             href="/pharmacy/prescriptions"
             className="text-sm text-blue-600 hover:text-blue-700"
@@ -254,21 +281,25 @@ export default function PharmacyPage() {
                       {rx.rxNumber}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">{rx.patientName}</td>
+                  <td className="px-4 py-3 text-sm text-gray-900">
+                    {rx.patientName}
+                  </td>
                   <td className="px-4 py-3 text-sm text-gray-900">
                     {rx.medicationName} {rx.strength}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">{rx.prescriberName}</td>
+                  <td className="px-4 py-3 text-sm text-gray-900">
+                    {rx.prescriberName}
+                  </td>
                   <td className="px-4 py-3 text-sm">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        rx.status === 'dispensed'
-                          ? 'bg-green-100 text-green-800'
-                          : rx.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : rx.status === 'active'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
+                        rx.status === "dispensed"
+                          ? "bg-green-100 text-green-800"
+                          : rx.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : rx.status === "active"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {rx.status}

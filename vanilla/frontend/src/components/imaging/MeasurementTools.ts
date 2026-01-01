@@ -56,19 +56,19 @@ export class MeasurementTools {
 
     return `
       <ul class="measurement-items">
-        ${this.measurements.map((m, index) => this.createMeasurementItem(m, index)).join('')}
+        ${this.measurements.map((m, index) => this.createMeasurementItem(m, index)).join("")}
       </ul>
     `;
   }
 
   private createMeasurementItem(measurement: any, index: number): string {
-    let valueText = '';
+    let valueText = "";
 
-    if (measurement.type === 'length') {
+    if (measurement.type === "length") {
       valueText = `${measurement.value.toFixed(2)} mm`;
-    } else if (measurement.type === 'angle') {
+    } else if (measurement.type === "angle") {
       valueText = `${measurement.value.toFixed(1)}°`;
-    } else if (measurement.type === 'area') {
+    } else if (measurement.type === "area") {
       valueText = `${measurement.value.toFixed(2)} mm²`;
     }
 
@@ -89,18 +89,18 @@ export class MeasurementTools {
     if (!this.container) return;
 
     // Tool buttons
-    this.container.querySelectorAll('.tool-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    this.container.querySelectorAll(".tool-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const tool = (e.currentTarget as HTMLElement).dataset.tool;
         this.activateTool(tool!);
       });
     });
 
     // Delete measurement
-    this.container.addEventListener('click', (e) => {
+    this.container.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
-      if (target.dataset.action === 'delete') {
-        const index = parseInt(target.dataset.index || '0');
+      if (target.dataset.action === "delete") {
+        const index = parseInt(target.dataset.index || "0");
         this.deleteMeasurement(index);
       }
     });
@@ -108,16 +108,16 @@ export class MeasurementTools {
 
   private activateTool(tool: string) {
     // Deactivate all tools
-    this.container?.querySelectorAll('.tool-btn').forEach(btn => {
-      btn.classList.remove('active');
+    this.container?.querySelectorAll(".tool-btn").forEach((btn) => {
+      btn.classList.remove("active");
     });
 
     // Activate selected tool
     const toolBtn = this.container?.querySelector(`[data-tool="${tool}"]`);
-    toolBtn?.classList.add('active');
+    toolBtn?.classList.add("active");
 
     // TODO: Set tool on viewer
-    console.log('Activated tool:', tool);
+    console.log("Activated tool:", tool);
   }
 
   addMeasurement(measurement: any) {
@@ -139,13 +139,15 @@ export class MeasurementTools {
   }
 
   private updateList() {
-    const listContainer = document.getElementById('measurements-container');
+    const listContainer = document.getElementById("measurements-container");
     if (listContainer) {
       listContainer.innerHTML = this.renderMeasurementsList();
     }
 
     // Update stats
-    const statValue = this.container?.querySelector('.measurement-stats .stat-value');
+    const statValue = this.container?.querySelector(
+      ".measurement-stats .stat-value",
+    );
     if (statValue) {
       statValue.textContent = this.measurements.length.toString();
     }

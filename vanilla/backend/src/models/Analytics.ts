@@ -5,29 +5,42 @@
 
 // Dashboard Types
 export type WidgetType =
-  | 'kpi'
-  | 'line_chart'
-  | 'bar_chart'
-  | 'pie_chart'
-  | 'area_chart'
-  | 'table'
-  | 'metric_card'
-  | 'trend'
-  | 'heatmap'
-  | 'gauge';
+  | "kpi"
+  | "line_chart"
+  | "bar_chart"
+  | "pie_chart"
+  | "area_chart"
+  | "table"
+  | "metric_card"
+  | "trend"
+  | "heatmap"
+  | "gauge";
 
 export type MetricCategory =
-  | 'quality'
-  | 'financial'
-  | 'operational'
-  | 'population'
-  | 'clinical'
-  | 'patient_satisfaction'
-  | 'compliance';
+  | "quality"
+  | "financial"
+  | "operational"
+  | "population"
+  | "clinical"
+  | "patient_satisfaction"
+  | "compliance";
 
-export type TimeGranularity = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
+export type TimeGranularity =
+  | "hour"
+  | "day"
+  | "week"
+  | "month"
+  | "quarter"
+  | "year";
 
-export type AggregationFunction = 'sum' | 'avg' | 'count' | 'min' | 'max' | 'median' | 'percentile';
+export type AggregationFunction =
+  | "sum"
+  | "avg"
+  | "count"
+  | "min"
+  | "max"
+  | "median"
+  | "percentile";
 
 // Widget Configuration
 export interface WidgetConfig {
@@ -91,7 +104,7 @@ export interface Dashboard {
   };
 
   // Permissions
-  visibility: 'public' | 'private' | 'shared';
+  visibility: "public" | "private" | "shared";
   sharedWith?: string[]; // User IDs or role IDs
   owner: string;
 
@@ -126,7 +139,7 @@ export interface MetricDefinition {
 
   // Display
   unit?: string;
-  format?: 'number' | 'currency' | 'percentage' | 'duration';
+  format?: "number" | "currency" | "percentage" | "duration";
   decimalPlaces?: number;
 
   // Benchmarks
@@ -153,23 +166,28 @@ export interface MetricDataPoint {
 
   // Quality
   confidence?: number;
-  dataQuality?: 'high' | 'medium' | 'low';
+  dataQuality?: "high" | "medium" | "low";
   sampleSize?: number;
 }
 
 // Report Types
 export type ReportType =
-  | 'quality_measures'
-  | 'financial_summary'
-  | 'operational_dashboard'
-  | 'patient_outcomes'
-  | 'population_health'
-  | 'compliance'
-  | 'custom';
+  | "quality_measures"
+  | "financial_summary"
+  | "operational_dashboard"
+  | "patient_outcomes"
+  | "population_health"
+  | "compliance"
+  | "custom";
 
-export type ReportFormat = 'pdf' | 'excel' | 'csv' | 'json' | 'html';
+export type ReportFormat = "pdf" | "excel" | "csv" | "json" | "html";
 
-export type ReportStatus = 'draft' | 'scheduled' | 'running' | 'completed' | 'failed';
+export type ReportStatus =
+  | "draft"
+  | "scheduled"
+  | "running"
+  | "completed"
+  | "failed";
 
 // Report Configuration
 export interface ReportConfig {
@@ -207,7 +225,7 @@ export interface ReportConfig {
 
   // Distribution
   recipients?: string[];
-  deliveryMethod?: 'email' | 'download' | 'portal';
+  deliveryMethod?: "email" | "download" | "portal";
 
   createdAt: Date;
   updatedAt: Date;
@@ -220,7 +238,7 @@ export interface ReportSection {
   id: string;
   title: string;
   order: number;
-  type: 'text' | 'chart' | 'table' | 'metrics_grid' | 'summary';
+  type: "text" | "chart" | "table" | "metrics_grid" | "summary";
 
   content?: {
     text?: string;
@@ -271,7 +289,7 @@ export interface ScheduledReport {
 
   // Schedule
   schedule: {
-    frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+    frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
     dayOfWeek?: number; // 0-6 for weekly
     dayOfMonth?: number; // 1-31 for monthly
     time: string; // HH:mm format
@@ -302,7 +320,12 @@ export interface QualityMeasure {
   name: string;
   description: string;
 
-  category: 'preventive' | 'chronic_disease' | 'behavioral_health' | 'access' | 'experience';
+  category:
+    | "preventive"
+    | "chronic_disease"
+    | "behavioral_health"
+    | "access"
+    | "experience";
 
   // Measurement
   numerator: {
@@ -330,7 +353,7 @@ export interface QualityMeasure {
   };
 
   // Status
-  status: 'compliant' | 'non_compliant' | 'at_risk';
+  status: "compliant" | "non_compliant" | "at_risk";
 
   // Details
   affectedPatients?: string[];
@@ -348,14 +371,14 @@ export interface QualityMeasure {
 export interface FinancialMetric {
   id: string;
   metricType:
-    | 'revenue'
-    | 'expenses'
-    | 'margin'
-    | 'ar_days'
-    | 'collection_rate'
-    | 'claim_denial_rate'
-    | 'payment_variance'
-    | 'rvu';
+    | "revenue"
+    | "expenses"
+    | "margin"
+    | "ar_days"
+    | "collection_rate"
+    | "claim_denial_rate"
+    | "payment_variance"
+    | "rvu";
 
   period: {
     start: Date;
@@ -377,7 +400,7 @@ export interface FinancialMetric {
 
   // Trends
   trend: {
-    direction: 'up' | 'down' | 'stable';
+    direction: "up" | "down" | "stable";
     changePercent: number;
     isPositive: boolean;
   };
@@ -389,14 +412,14 @@ export interface FinancialMetric {
 export interface OperationalMetric {
   id: string;
   metricType:
-    | 'patient_volume'
-    | 'appointment_utilization'
-    | 'wait_time'
-    | 'length_of_stay'
-    | 'bed_occupancy'
-    | 'er_throughput'
-    | 'no_show_rate'
-    | 'staff_productivity';
+    | "patient_volume"
+    | "appointment_utilization"
+    | "wait_time"
+    | "length_of_stay"
+    | "bed_occupancy"
+    | "er_throughput"
+    | "no_show_rate"
+    | "staff_productivity";
 
   period: {
     start: Date;
@@ -430,12 +453,12 @@ export interface PopulationHealthMetric {
   populationSize: number;
 
   metricType:
-    | 'risk_score'
-    | 'disease_prevalence'
-    | 'utilization'
-    | 'cost_pmpm'
-    | 'readmission_rate'
-    | 'preventive_care_gap';
+    | "risk_score"
+    | "disease_prevalence"
+    | "utilization"
+    | "cost_pmpm"
+    | "readmission_rate"
+    | "preventive_care_gap";
 
   // Stratification
   stratification: {
@@ -471,7 +494,7 @@ export interface PopulationHealthMetric {
 // Export Job
 export interface ExportJob {
   id: string;
-  type: 'dashboard' | 'report' | 'dataset';
+  type: "dashboard" | "report" | "dataset";
   format: ReportFormat;
 
   // Source
@@ -491,7 +514,7 @@ export interface ExportJob {
   };
 
   // Status
-  status: 'queued' | 'processing' | 'completed' | 'failed';
+  status: "queued" | "processing" | "completed" | "failed";
   progress?: number; // 0-100
 
   // Results
@@ -518,16 +541,16 @@ export interface ExportJob {
 export interface AnalyticsAudit {
   id: string;
   action:
-    | 'dashboard_viewed'
-    | 'dashboard_created'
-    | 'dashboard_modified'
-    | 'dashboard_deleted'
-    | 'report_generated'
-    | 'report_scheduled'
-    | 'data_exported'
-    | 'metric_calculated';
+    | "dashboard_viewed"
+    | "dashboard_created"
+    | "dashboard_modified"
+    | "dashboard_deleted"
+    | "report_generated"
+    | "report_scheduled"
+    | "data_exported"
+    | "metric_calculated";
 
-  resourceType: 'dashboard' | 'report' | 'metric' | 'export';
+  resourceType: "dashboard" | "report" | "metric" | "export";
   resourceId: string;
   resourceName: string;
 
@@ -555,7 +578,7 @@ export interface ChartDataSeries {
     metadata?: Record<string, any>;
   }[];
   color?: string;
-  type?: 'line' | 'bar' | 'area';
+  type?: "line" | "bar" | "area";
 }
 
 // Chart Configuration
@@ -568,7 +591,7 @@ export interface ChartConfiguration {
   axes: {
     x: {
       label: string;
-      type: 'category' | 'number' | 'date';
+      type: "category" | "number" | "date";
       format?: string;
     };
     y: {
@@ -581,7 +604,7 @@ export interface ChartConfiguration {
 
   legend?: {
     show: boolean;
-    position: 'top' | 'bottom' | 'left' | 'right';
+    position: "top" | "bottom" | "left" | "right";
   };
 
   tooltip?: {

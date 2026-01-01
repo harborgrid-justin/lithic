@@ -1,53 +1,63 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Search, CheckCircle, XCircle, Clock, User, Calendar } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import type { Appointment, Patient } from '@/types/scheduling';
-import { formatTime, formatDate } from '@/lib/utils';
-import { schedulingService } from '@/services/scheduling.service';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import {
+  Search,
+  CheckCircle,
+  XCircle,
+  Clock,
+  User,
+  Calendar,
+} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { Appointment, Patient } from "@/types/scheduling";
+import { formatTime, formatDate } from "@/lib/utils";
+import { schedulingService } from "@/services/scheduling.service";
+import { toast } from "sonner";
 
 interface CheckInKioskProps {
   onCheckInComplete?: (appointment: Appointment) => void;
 }
 
 export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
-  const [step, setStep] = useState<'search' | 'verify' | 'confirm' | 'complete'>('search');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [step, setStep] = useState<
+    "search" | "verify" | "confirm" | "complete"
+  >("search");
+  const [searchQuery, setSearchQuery] = useState("");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-      toast.error('Please enter a last name or date of birth');
+      toast.error("Please enter a last name or date of birth");
       return;
     }
 
     setLoading(true);
     try {
       // Search for today's appointments by patient name
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       const results = await schedulingService.getAppointments({
         startDate: today,
         endDate: today,
         searchTerm: searchQuery,
-        status: ['scheduled', 'confirmed'],
+        status: ["scheduled", "confirmed"],
       });
 
       if (results.length === 0) {
-        toast.error('No appointments found for today');
+        toast.error("No appointments found for today");
         setAppointments([]);
       } else {
         setAppointments(results);
-        setStep('verify');
+        setStep("verify");
       }
     } catch (error) {
-      toast.error('Failed to search appointments');
+      toast.error("Failed to search appointments");
       console.error(error);
     } finally {
       setLoading(false);
@@ -56,7 +66,7 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
 
   const handleSelectAppointment = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
-    setStep('confirm');
+    setStep("confirm");
   };
 
   const handleCheckIn = async () => {
@@ -64,17 +74,19 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
 
     setLoading(true);
     try {
-      const updated = await schedulingService.checkInAppointment(selectedAppointment.id);
+      const updated = await schedulingService.checkInAppointment(
+        selectedAppointment.id,
+      );
       setSelectedAppointment(updated);
-      setStep('complete');
-      toast.success('Successfully checked in!');
+      setStep("complete");
+      toast.success("Successfully checked in!");
 
       setTimeout(() => {
         onCheckInComplete?.(updated);
         resetKiosk();
       }, 3000);
     } catch (error) {
-      toast.error('Failed to check in. Please see the front desk.');
+      toast.error("Failed to check in. Please see the front desk.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -82,8 +94,8 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
   };
 
   const resetKiosk = () => {
-    setStep('search');
-    setSearchQuery('');
+    setStep("search");
+    setSearchQuery("");
     setAppointments([]);
     setSelectedAppointment(null);
   };
@@ -109,7 +121,7 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
             placeholder="Last name or MM/DD/YYYY"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            onKeyPress={(e) => e.key === "Enter" && handleSearch()}
             className="mt-2 text-lg h-12"
             autoFocus
           />
@@ -120,7 +132,7 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
           className="w-full h-12 text-lg"
           size="lg"
         >
-          {loading ? 'Searching...' : 'Search'}
+          {loading ? "Searching..." : "Search"}
         </Button>
       </div>
     </div>
@@ -130,7 +142,9 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Select Your Appointment</h2>
-        <p className="text-gray-600">Please select your appointment from the list below</p>
+        <p className="text-gray-600">
+          Please select your appointment from the list below
+        </p>
       </div>
 
       <div className="space-y-3 max-w-2xl mx-auto">
@@ -148,7 +162,8 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">
-                      {appointment.patient?.firstName} {appointment.patient?.lastName}
+                      {appointment.patient?.firstName}{" "}
+                      {appointment.patient?.lastName}
                     </h3>
                     <div className="flex items-center text-gray-600 mt-1">
                       <Calendar className="h-4 w-4 mr-1" />
@@ -161,10 +176,16 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-medium">{appointment.provider?.name}</div>
-                  <div className="text-sm text-gray-500">{appointment.type}</div>
+                  <div className="font-medium">
+                    {appointment.provider?.name}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {appointment.type}
+                  </div>
                   {appointment.location && (
-                    <div className="text-sm text-gray-500 mt-1">{appointment.location}</div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      {appointment.location}
+                    </div>
                   )}
                 </div>
               </div>
@@ -192,7 +213,9 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
 
         <div>
           <h2 className="text-2xl font-bold mb-2">Confirm Your Appointment</h2>
-          <p className="text-gray-600">Please verify your appointment details</p>
+          <p className="text-gray-600">
+            Please verify your appointment details
+          </p>
         </div>
 
         <Card>
@@ -201,29 +224,40 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
               <div className="flex items-center justify-between py-3 border-b">
                 <span className="text-gray-600">Patient:</span>
                 <span className="font-semibold">
-                  {selectedAppointment.patient?.firstName} {selectedAppointment.patient?.lastName}
+                  {selectedAppointment.patient?.firstName}{" "}
+                  {selectedAppointment.patient?.lastName}
                 </span>
               </div>
               <div className="flex items-center justify-between py-3 border-b">
                 <span className="text-gray-600">Provider:</span>
-                <span className="font-semibold">{selectedAppointment.provider?.name}</span>
+                <span className="font-semibold">
+                  {selectedAppointment.provider?.name}
+                </span>
               </div>
               <div className="flex items-center justify-between py-3 border-b">
                 <span className="text-gray-600">Date:</span>
-                <span className="font-semibold">{formatDate(selectedAppointment.startTime)}</span>
+                <span className="font-semibold">
+                  {formatDate(selectedAppointment.startTime)}
+                </span>
               </div>
               <div className="flex items-center justify-between py-3 border-b">
                 <span className="text-gray-600">Time:</span>
-                <span className="font-semibold">{formatTime(selectedAppointment.startTime)}</span>
+                <span className="font-semibold">
+                  {formatTime(selectedAppointment.startTime)}
+                </span>
               </div>
               <div className="flex items-center justify-between py-3 border-b">
                 <span className="text-gray-600">Type:</span>
-                <span className="font-semibold capitalize">{selectedAppointment.type}</span>
+                <span className="font-semibold capitalize">
+                  {selectedAppointment.type}
+                </span>
               </div>
               {selectedAppointment.location && (
                 <div className="flex items-center justify-between py-3">
                   <span className="text-gray-600">Location:</span>
-                  <span className="font-semibold">{selectedAppointment.location}</span>
+                  <span className="font-semibold">
+                    {selectedAppointment.location}
+                  </span>
                 </div>
               )}
             </div>
@@ -231,11 +265,20 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
         </Card>
 
         <div className="flex justify-center space-x-4">
-          <Button variant="outline" onClick={() => setStep('verify')} disabled={loading}>
+          <Button
+            variant="outline"
+            onClick={() => setStep("verify")}
+            disabled={loading}
+          >
             Go Back
           </Button>
-          <Button onClick={handleCheckIn} disabled={loading} size="lg" className="px-8">
-            {loading ? 'Checking In...' : 'Check In'}
+          <Button
+            onClick={handleCheckIn}
+            disabled={loading}
+            size="lg"
+            className="px-8"
+          >
+            {loading ? "Checking In..." : "Check In"}
           </Button>
         </div>
       </div>
@@ -249,7 +292,9 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
       </div>
 
       <div>
-        <h2 className="text-3xl font-bold text-green-600 mb-2">You&apos;re Checked In!</h2>
+        <h2 className="text-3xl font-bold text-green-600 mb-2">
+          You&apos;re Checked In!
+        </h2>
         <p className="text-lg text-gray-600">
           Thank you, {selectedAppointment?.patient?.firstName}
         </p>
@@ -262,7 +307,8 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
           </p>
           {selectedAppointment?.location && (
             <p className="mt-3 text-sm text-gray-500">
-              Your appointment is in: <strong>{selectedAppointment.location}</strong>
+              Your appointment is in:{" "}
+              <strong>{selectedAppointment.location}</strong>
             </p>
           )}
         </CardContent>
@@ -276,10 +322,10 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
     <div className="min-h-screen bg-gray-100 p-8">
       <Card className="max-w-4xl mx-auto">
         <CardContent className="p-8 md:p-12">
-          {step === 'search' && renderSearchStep()}
-          {step === 'verify' && renderVerifyStep()}
-          {step === 'confirm' && renderConfirmStep()}
-          {step === 'complete' && renderCompleteStep()}
+          {step === "search" && renderSearchStep()}
+          {step === "verify" && renderVerifyStep()}
+          {step === "confirm" && renderConfirmStep()}
+          {step === "complete" && renderCompleteStep()}
         </CardContent>
       </Card>
     </div>

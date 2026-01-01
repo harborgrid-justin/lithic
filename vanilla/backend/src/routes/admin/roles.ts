@@ -1,17 +1,19 @@
-import { Router } from 'express';
-import { AdminController } from '../../controllers/AdminController';
+import { Router } from "express";
+import { AdminController } from "../../controllers/AdminController";
 
 /**
  * Admin roles routes
  */
-export function createAdminRolesRoute(adminController: AdminController): Router {
+export function createAdminRolesRoute(
+  adminController: AdminController,
+): Router {
   const router = Router();
 
   /**
    * GET /admin/roles
    * Get all roles
    */
-  router.get('/', adminController.getRoles);
+  router.get("/", adminController.getRoles);
 
   return router;
 }

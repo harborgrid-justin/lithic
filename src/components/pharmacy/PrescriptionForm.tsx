@@ -3,13 +3,13 @@
  * Form for creating/editing prescriptions
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { type Prescription } from '@/services/prescription.service';
-import { pharmacyService } from '@/services/pharmacy.service';
-import { DrugSearch } from './DrugSearch';
-import { InteractionChecker } from './InteractionChecker';
+import { useState } from "react";
+import { type Prescription } from "@/services/prescription.service";
+import { pharmacyService } from "@/services/pharmacy.service";
+import { DrugSearch } from "./DrugSearch";
+import { InteractionChecker } from "./InteractionChecker";
 
 interface PrescriptionFormProps {
   prescription?: Partial<Prescription>;
@@ -26,72 +26,73 @@ export function PrescriptionForm({
 }: PrescriptionFormProps) {
   const [formData, setFormData] = useState({
     // Patient Information
-    patientId: prescription?.patientId || '',
-    patientName: prescription?.patientName || '',
-    patientDOB: prescription?.patientDOB || '',
+    patientId: prescription?.patientId || "",
+    patientName: prescription?.patientName || "",
+    patientDOB: prescription?.patientDOB || "",
     patientAllergies: prescription?.patientAllergies || [],
 
     // Prescriber Information
-    prescriberId: prescription?.prescriberId || '',
-    prescriberName: prescription?.prescriberName || '',
-    prescriberNPI: prescription?.prescriberNPI || '',
-    prescriberDEA: prescription?.prescriberDEA || '',
-    prescriberPhone: prescription?.prescriberPhone || '',
+    prescriberId: prescription?.prescriberId || "",
+    prescriberName: prescription?.prescriberName || "",
+    prescriberNPI: prescription?.prescriberNPI || "",
+    prescriberDEA: prescription?.prescriberDEA || "",
+    prescriberPhone: prescription?.prescriberPhone || "",
 
     // Medication Information
-    drugId: prescription?.drugId || '',
-    ndc: prescription?.ndc || '',
-    medicationName: prescription?.medicationName || '',
-    strength: prescription?.strength || '',
-    dosageForm: prescription?.dosageForm || '',
+    drugId: prescription?.drugId || "",
+    ndc: prescription?.ndc || "",
+    medicationName: prescription?.medicationName || "",
+    strength: prescription?.strength || "",
+    dosageForm: prescription?.dosageForm || "",
 
     // Directions
     quantity: prescription?.quantity || 0,
     daysSupply: prescription?.daysSupply || 0,
-    sig: prescription?.sig || '',
+    sig: prescription?.sig || "",
 
     // Refills
     refillsAuthorized: prescription?.refillsAuthorized || 0,
     refillsRemaining: prescription?.refillsRemaining || 0,
 
     // Dates
-    writtenDate: prescription?.writtenDate || new Date().toISOString().split('T')[0],
+    writtenDate:
+      prescription?.writtenDate || new Date().toISOString().split("T")[0],
 
     // Additional
-    indication: prescription?.indication || '',
-    notes: prescription?.notes || '',
+    indication: prescription?.indication || "",
+    notes: prescription?.notes || "",
     priorAuthRequired: prescription?.priorAuthRequired || false,
     ePrescribed: prescription?.ePrescribed || false,
 
     // Status
-    status: prescription?.status || 'pending',
-    type: prescription?.type || 'new',
+    status: prescription?.status || "pending",
+    type: prescription?.type || "new",
   });
 
   const [showDrugSearch, setShowDrugSearch] = useState(false);
   const [showInteractions, setShowInteractions] = useState(false);
 
   const handleChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Auto-calculate days supply when quantity or sig changes
-    if (field === 'quantity' || field === 'sig') {
-      const qty = field === 'quantity' ? value : formData.quantity;
-      const sig = field === 'sig' ? value : formData.sig;
+    if (field === "quantity" || field === "sig") {
+      const qty = field === "quantity" ? value : formData.quantity;
+      const sig = field === "sig" ? value : formData.sig;
 
       if (qty && sig) {
         const daysSupply = pharmacyService.calculateDaysSupply(
           parseInt(qty),
           sig,
-          formData.dosageForm
+          formData.dosageForm,
         );
-        setFormData(prev => ({ ...prev, daysSupply }));
+        setFormData((prev) => ({ ...prev, daysSupply }));
       }
     }
   };
 
   const handleDrugSelect = (drug: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       drugId: drug.id,
       ndc: drug.ndc,
@@ -107,7 +108,7 @@ export function PrescriptionForm({
 
     // Validation
     if (!formData.patientName || !formData.medicationName) {
-      alert('Please fill in all required fields');
+      alert("Please fill in all required fields");
       return;
     }
 
@@ -118,7 +119,9 @@ export function PrescriptionForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Patient Information */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Patient Information</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Patient Information
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -128,7 +131,7 @@ export function PrescriptionForm({
               type="text"
               required
               value={formData.patientName}
-              onChange={(e) => handleChange('patientName', e.target.value)}
+              onChange={(e) => handleChange("patientName", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -140,7 +143,7 @@ export function PrescriptionForm({
               type="date"
               required
               value={formData.patientDOB}
-              onChange={(e) => handleChange('patientDOB', e.target.value)}
+              onChange={(e) => handleChange("patientDOB", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -149,7 +152,9 @@ export function PrescriptionForm({
 
       {/* Prescriber Information */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Prescriber Information</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Prescriber Information
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -159,7 +164,7 @@ export function PrescriptionForm({
               type="text"
               required
               value={formData.prescriberName}
-              onChange={(e) => handleChange('prescriberName', e.target.value)}
+              onChange={(e) => handleChange("prescriberName", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -171,7 +176,7 @@ export function PrescriptionForm({
               type="text"
               required
               value={formData.prescriberNPI}
-              onChange={(e) => handleChange('prescriberNPI', e.target.value)}
+              onChange={(e) => handleChange("prescriberNPI", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -182,7 +187,7 @@ export function PrescriptionForm({
             <input
               type="text"
               value={formData.prescriberDEA}
-              onChange={(e) => handleChange('prescriberDEA', e.target.value)}
+              onChange={(e) => handleChange("prescriberDEA", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -194,7 +199,7 @@ export function PrescriptionForm({
               type="tel"
               required
               value={formData.prescriberPhone}
-              onChange={(e) => handleChange('prescriberPhone', e.target.value)}
+              onChange={(e) => handleChange("prescriberPhone", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -203,7 +208,9 @@ export function PrescriptionForm({
 
       {/* Medication Information */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Medication Information</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Medication Information
+        </h3>
         <div className="mb-4">
           <button
             type="button"
@@ -235,7 +242,7 @@ export function PrescriptionForm({
               required
               min="1"
               value={formData.quantity}
-              onChange={(e) => handleChange('quantity', e.target.value)}
+              onChange={(e) => handleChange("quantity", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -246,7 +253,7 @@ export function PrescriptionForm({
             <input
               type="number"
               value={formData.daysSupply}
-              onChange={(e) => handleChange('daysSupply', e.target.value)}
+              onChange={(e) => handleChange("daysSupply", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
               readOnly
             />
@@ -259,7 +266,7 @@ export function PrescriptionForm({
               type="text"
               required
               value={formData.sig}
-              onChange={(e) => handleChange('sig', e.target.value)}
+              onChange={(e) => handleChange("sig", e.target.value)}
               placeholder="e.g., Take 1 tablet by mouth once daily"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -272,7 +279,9 @@ export function PrescriptionForm({
               type="number"
               min="0"
               value={formData.refillsAuthorized}
-              onChange={(e) => handleChange('refillsAuthorized', parseInt(e.target.value))}
+              onChange={(e) =>
+                handleChange("refillsAuthorized", parseInt(e.target.value))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -284,7 +293,7 @@ export function PrescriptionForm({
               type="date"
               required
               value={formData.writtenDate}
-              onChange={(e) => handleChange('writtenDate', e.target.value)}
+              onChange={(e) => handleChange("writtenDate", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -297,7 +306,7 @@ export function PrescriptionForm({
               onClick={() => setShowInteractions(!showInteractions)}
               className="text-sm text-blue-600 hover:text-blue-700"
             >
-              {showInteractions ? 'Hide' : 'Check'} Drug Interactions
+              {showInteractions ? "Hide" : "Check"} Drug Interactions
             </button>
             {showInteractions && (
               <div className="mt-2">
@@ -310,7 +319,9 @@ export function PrescriptionForm({
 
       {/* Additional Information */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Additional Information
+        </h3>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -319,7 +330,7 @@ export function PrescriptionForm({
             <input
               type="text"
               value={formData.indication}
-              onChange={(e) => handleChange('indication', e.target.value)}
+              onChange={(e) => handleChange("indication", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -329,7 +340,7 @@ export function PrescriptionForm({
             </label>
             <textarea
               value={formData.notes}
-              onChange={(e) => handleChange('notes', e.target.value)}
+              onChange={(e) => handleChange("notes", e.target.value)}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -339,10 +350,14 @@ export function PrescriptionForm({
               <input
                 type="checkbox"
                 checked={formData.priorAuthRequired}
-                onChange={(e) => handleChange('priorAuthRequired', e.target.checked)}
+                onChange={(e) =>
+                  handleChange("priorAuthRequired", e.target.checked)
+                }
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <span className="ml-2 text-sm text-gray-700">Prior Authorization Required</span>
+              <span className="ml-2 text-sm text-gray-700">
+                Prior Authorization Required
+              </span>
             </label>
           </div>
         </div>
@@ -362,7 +377,7 @@ export function PrescriptionForm({
           disabled={isSubmitting}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
-          {isSubmitting ? 'Saving...' : 'Save Prescription'}
+          {isSubmitting ? "Saving..." : "Save Prescription"}
         </button>
       </div>
 
@@ -371,7 +386,9 @@ export function PrescriptionForm({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Search Medication</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Search Medication
+              </h2>
               <button
                 type="button"
                 onClick={() => setShowDrugSearch(false)}

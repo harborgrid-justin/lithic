@@ -2,7 +2,7 @@
  * PatientCard Component - Displays patient summary card
  */
 
-import { Patient } from '../../types/Patient';
+import { Patient } from "../../types/Patient";
 
 export class PatientCard {
   private container: HTMLElement;
@@ -29,7 +29,8 @@ export class PatientCard {
    */
   private render(): void {
     if (!this.patient) {
-      this.container.innerHTML = '<div class="no-patient">No patient selected</div>';
+      this.container.innerHTML =
+        '<div class="no-patient">No patient selected</div>';
       return;
     }
 
@@ -62,12 +63,16 @@ export class PatientCard {
             <span class="label">Phone:</span>
             <span class="value">${this.patient.contact.phone}</span>
           </div>
-          ${this.patient.contact.email ? `
+          ${
+            this.patient.contact.email
+              ? `
             <div class="detail-row">
               <span class="label">Email:</span>
               <span class="value">${this.patient.contact.email}</span>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
           <div class="detail-row">
             <span class="label">Address:</span>
             <span class="value">
@@ -75,24 +80,36 @@ export class PatientCard {
               ${this.patient.address.city}, ${this.patient.address.state} ${this.patient.address.zipCode}
             </span>
           </div>
-          ${this.patient.bloodType ? `
+          ${
+            this.patient.bloodType
+              ? `
             <div class="detail-row">
               <span class="label">Blood Type:</span>
               <span class="value">${this.patient.bloodType}</span>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
 
-        ${this.patient.allergies && this.patient.allergies.length > 0 ? `
+        ${
+          this.patient.allergies && this.patient.allergies.length > 0
+            ? `
           <div class="patient-alerts">
             <h3>Allergies</h3>
             <div class="alert-badges">
-              ${this.patient.allergies.map(allergy => `
+              ${this.patient.allergies
+                .map(
+                  (allergy) => `
                 <span class="alert-badge">${allergy}</span>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div class="patient-actions">
           <button class="btn-primary" onclick="window.location.href='/patients/${this.patient.id}/edit'">
@@ -136,6 +153,6 @@ export class PatientCard {
    */
   public clear(): void {
     this.patient = null;
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

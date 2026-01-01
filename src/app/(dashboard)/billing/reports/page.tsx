@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { RevenueMetrics, ARAgingBucket } from '@/types/billing';
-import RevenueChart from '@/components/billing/RevenueChart';
-import ARAgingReport from '@/components/billing/ARAgingReport';
-import { BarChart3, TrendingUp, Calendar, FileText } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { RevenueMetrics, ARAgingBucket } from "@/types/billing";
+import RevenueChart from "@/components/billing/RevenueChart";
+import ARAgingReport from "@/components/billing/ARAgingReport";
+import { BarChart3, TrendingUp, Calendar, FileText } from "lucide-react";
 
 export default function ReportsPage() {
-  const [activeTab, setActiveTab] = useState<'revenue' | 'aging'>('revenue');
+  const [activeTab, setActiveTab] = useState<"revenue" | "aging">("revenue");
   const [revenueMetrics, setRevenueMetrics] = useState<RevenueMetrics[]>([]);
   const [agingBuckets, setAgingBuckets] = useState<ARAgingBucket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function ReportsPage() {
     // Mock data - in production, fetch from API
     const mockRevenueMetrics: RevenueMetrics[] = [
       {
-        period: 'Jan 2024',
+        period: "Jan 2024",
         totalCharges: 125000,
         totalPayments: 108000,
         totalAdjustments: 5000,
@@ -29,7 +29,7 @@ export default function ReportsPage() {
         collectionRate: 87,
       },
       {
-        period: 'Feb 2024',
+        period: "Feb 2024",
         totalCharges: 135000,
         totalPayments: 118000,
         totalAdjustments: 6000,
@@ -42,7 +42,7 @@ export default function ReportsPage() {
         collectionRate: 88,
       },
       {
-        period: 'Mar 2024',
+        period: "Mar 2024",
         totalCharges: 142000,
         totalPayments: 125000,
         totalAdjustments: 7000,
@@ -57,11 +57,11 @@ export default function ReportsPage() {
     ];
 
     const mockAgingBuckets: ARAgingBucket[] = [
-      { range: '0-30 days', count: 125, amount: 42000, percentage: 35 },
-      { range: '31-60 days', count: 85, amount: 38000, percentage: 32 },
-      { range: '61-90 days', count: 45, amount: 22000, percentage: 18 },
-      { range: '91-120 days', count: 25, amount: 12000, percentage: 10 },
-      { range: '120+ days', count: 20, amount: 6000, percentage: 5 },
+      { range: "0-30 days", count: 125, amount: 42000, percentage: 35 },
+      { range: "31-60 days", count: 85, amount: 38000, percentage: 32 },
+      { range: "61-90 days", count: 45, amount: 22000, percentage: 18 },
+      { range: "91-120 days", count: 25, amount: 12000, percentage: 10 },
+      { range: "120+ days", count: 20, amount: 6000, percentage: 5 },
     ];
 
     setTimeout(() => {
@@ -75,7 +75,9 @@ export default function ReportsPage() {
     <div className="p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Billing Reports & Analytics</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Billing Reports & Analytics
+        </h1>
         <p className="text-gray-600 mt-2">
           View revenue metrics and accounts receivable aging
         </p>
@@ -91,7 +93,7 @@ export default function ReportsPage() {
           <p className="text-2xl font-bold text-gray-900">
             {revenueMetrics.length > 0
               ? `${revenueMetrics[revenueMetrics.length - 1].collectionRate}%`
-              : '-'}
+              : "-"}
           </p>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -102,7 +104,7 @@ export default function ReportsPage() {
           <p className="text-2xl font-bold text-gray-900">
             {revenueMetrics.length > 0
               ? revenueMetrics[revenueMetrics.length - 1].daysInAR
-              : '-'}
+              : "-"}
           </p>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -113,7 +115,7 @@ export default function ReportsPage() {
           <p className="text-2xl font-bold text-gray-900">
             {revenueMetrics.length > 0
               ? `${Math.round((revenueMetrics[revenueMetrics.length - 1].claimsDenied / revenueMetrics[revenueMetrics.length - 1].claimsSubmitted) * 100)}%`
-              : '-'}
+              : "-"}
           </p>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -124,7 +126,7 @@ export default function ReportsPage() {
           <p className="text-2xl font-bold text-gray-900">
             {revenueMetrics.length > 0
               ? revenueMetrics[revenueMetrics.length - 1].claimsSubmitted
-              : '-'}
+              : "-"}
           </p>
         </div>
       </div>
@@ -133,21 +135,21 @@ export default function ReportsPage() {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
-            onClick={() => setActiveTab('revenue')}
+            onClick={() => setActiveTab("revenue")}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'revenue'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              activeTab === "revenue"
+                ? "border-primary-500 text-primary-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
             Revenue Analysis
           </button>
           <button
-            onClick={() => setActiveTab('aging')}
+            onClick={() => setActiveTab("aging")}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'aging'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              activeTab === "aging"
+                ? "border-primary-500 text-primary-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
             A/R Aging Report
@@ -162,8 +164,10 @@ export default function ReportsPage() {
         </div>
       ) : (
         <>
-          {activeTab === 'revenue' && <RevenueChart metrics={revenueMetrics} chartType="bar" />}
-          {activeTab === 'aging' && <ARAgingReport buckets={agingBuckets} />}
+          {activeTab === "revenue" && (
+            <RevenueChart metrics={revenueMetrics} chartType="bar" />
+          )}
+          {activeTab === "aging" && <ARAgingReport buckets={agingBuckets} />}
         </>
       )}
     </div>

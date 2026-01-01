@@ -27,23 +27,23 @@ export const isValidPassword = (password: string): ValidationResult => {
   const errors: string[] = [];
 
   if (password.length < 12) {
-    errors.push('Password must be at least 12 characters long');
+    errors.push("Password must be at least 12 characters long");
   }
 
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push("Password must contain at least one uppercase letter");
   }
 
   if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push("Password must contain at least one lowercase letter");
   }
 
   if (!/\d/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push("Password must contain at least one number");
   }
 
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    errors.push('Password must contain at least one special character');
+    errors.push("Password must contain at least one special character");
   }
 
   return {
@@ -56,15 +56,15 @@ export const isValidPassword = (password: string): ValidationResult => {
  * Validate phone number
  */
 export const isValidPhoneNumber = (phone: string): boolean => {
-  const cleaned = phone.replace(/\D/g, '');
-  return cleaned.length === 10 || (cleaned.length === 11 && cleaned[0] === '1');
+  const cleaned = phone.replace(/\D/g, "");
+  return cleaned.length === 10 || (cleaned.length === 11 && cleaned[0] === "1");
 };
 
 /**
  * Validate SSN
  */
 export const isValidSSN = (ssn: string): boolean => {
-  const cleaned = ssn.replace(/\D/g, '');
+  const cleaned = ssn.replace(/\D/g, "");
   return cleaned.length === 9;
 };
 
@@ -107,7 +107,7 @@ export const isValidDateRange = (startDate: Date, endDate: Date): boolean => {
  * Validate required field
  */
 export const isRequired = (value: any): boolean => {
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value.trim().length > 0;
   }
 
@@ -143,7 +143,7 @@ export const isInRange = (num: number, min: number, max: number): boolean => {
  * Validate credit card (Luhn algorithm)
  */
 export const isValidCreditCard = (cardNumber: string): boolean => {
-  const cleaned = cardNumber.replace(/\D/g, '');
+  const cleaned = cardNumber.replace(/\D/g, "");
 
   if (cleaned.length < 13 || cleaned.length > 19) {
     return false;
@@ -174,7 +174,7 @@ export const isValidCreditCard = (cardNumber: string): boolean => {
  */
 export const validateForm = (
   data: Record<string, any>,
-  rules: Record<string, ValidationRule[]>
+  rules: Record<string, ValidationRule[]>,
 ): Record<string, string[]> => {
   const errors: Record<string, string[]> = {};
 
@@ -201,12 +201,12 @@ export const validateForm = (
  * Common validation rules
  */
 export const validationRules = {
-  required: (message: string = 'This field is required'): ValidationRule => ({
+  required: (message: string = "This field is required"): ValidationRule => ({
     validate: isRequired,
     message,
   }),
 
-  email: (message: string = 'Invalid email address'): ValidationRule => ({
+  email: (message: string = "Invalid email address"): ValidationRule => ({
     validate: isValidEmail,
     message,
   }),
@@ -221,7 +221,7 @@ export const validationRules = {
     message: message || `Must be no more than ${max} characters`,
   }),
 
-  phoneNumber: (message: string = 'Invalid phone number'): ValidationRule => ({
+  phoneNumber: (message: string = "Invalid phone number"): ValidationRule => ({
     validate: isValidPhoneNumber,
     message,
   }),
@@ -231,7 +231,10 @@ export const validationRules = {
     message,
   }),
 
-  custom: (validator: (value: any) => boolean, message: string): ValidationRule => ({
+  custom: (
+    validator: (value: any) => boolean,
+    message: string,
+  ): ValidationRule => ({
     validate: validator,
     message,
   }),
@@ -241,14 +244,14 @@ export const validationRules = {
  * Sanitize input (remove HTML tags)
  */
 export const sanitizeInput = (input: string): string => {
-  return input.replace(/<[^>]*>/g, '');
+  return input.replace(/<[^>]*>/g, "");
 };
 
 /**
  * Escape HTML
  */
 export const escapeHtml = (html: string): string => {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.textContent = html;
   return div.innerHTML;
 };

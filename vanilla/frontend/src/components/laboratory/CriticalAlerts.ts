@@ -8,7 +8,10 @@ export class CriticalAlerts {
   private alerts: any[] = [];
   private onAcknowledge?: (resultId: string) => void;
 
-  constructor(container: HTMLElement, options: { onAcknowledge?: (resultId: string) => void } = {}) {
+  constructor(
+    container: HTMLElement,
+    options: { onAcknowledge?: (resultId: string) => void } = {},
+  ) {
     this.container = container;
     this.onAcknowledge = options.onAcknowledge;
   }
@@ -36,7 +39,7 @@ export class CriticalAlerts {
         </div>
 
         <div class="alerts-list">
-          ${this.alerts.map(alert => this.renderAlert(alert)).join('')}
+          ${this.alerts.map((alert) => this.renderAlert(alert)).join("")}
         </div>
       </div>
     `;
@@ -68,8 +71,8 @@ export class CriticalAlerts {
           <div class="alert-details">
             <div class="alert-value">
               <span class="label">Result:</span>
-              <span class="value critical-value">${alert.value} ${alert.unit || ''}</span>
-              ${alert.abnormalFlag ? `<span class="flag-badge">${alert.abnormalFlag}</span>` : ''}
+              <span class="value critical-value">${alert.value} ${alert.unit || ""}</span>
+              ${alert.abnormalFlag ? `<span class="flag-badge">${alert.abnormalFlag}</span>` : ""}
             </div>
 
             <div class="alert-range">
@@ -83,11 +86,15 @@ export class CriticalAlerts {
             </div>
           </div>
 
-          ${alert.comments ? `
+          ${
+            alert.comments
+              ? `
             <div class="alert-comments">
               <strong>Comments:</strong> ${alert.comments}
             </div>
-          ` : ''}
+          `
+              : ""
+          }
 
           <div class="alert-actions">
             <button type="button" class="btn-acknowledge" data-result-id="${alert.id}">
@@ -101,10 +108,10 @@ export class CriticalAlerts {
 
   private getUrgencyClass(alert: any): string {
     // Critical-critical (HH, LL) vs just critical (H, L with critical flag)
-    if (alert.abnormalFlag === 'HH' || alert.abnormalFlag === 'LL') {
-      return 'urgency-severe';
+    if (alert.abnormalFlag === "HH" || alert.abnormalFlag === "LL") {
+      return "urgency-severe";
     }
-    return 'urgency-high';
+    return "urgency-high";
   }
 
   private getTimeAgo(date: Date | string): string {
@@ -113,38 +120,39 @@ export class CriticalAlerts {
     const diffMs = now.getTime() - then.getTime();
     const diffMins = Math.floor(diffMs / 60000);
 
-    if (diffMins < 1) return 'Just now';
+    if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins} min ago`;
 
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
 
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+    return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
   }
 
   private formatReferenceRange(range?: any): string {
-    if (!range) return 'N/A';
+    if (!range) return "N/A";
     if (range.text) return range.text;
     if (range.min !== undefined && range.max !== undefined) {
       return `${range.min} - ${range.max}`;
     }
     if (range.max !== undefined) return `< ${range.max}`;
     if (range.min !== undefined) return `> ${range.min}`;
-    return 'N/A';
+    return "N/A";
   }
 
   private getPatientInfo(alert: any): string {
     // In a real implementation, this would fetch patient info from the order
-    return 'Patient information from order';
+    return "Patient information from order";
   }
 
   private attachEventListeners(): void {
-    const acknowledgeBtns = this.container.querySelectorAll('.btn-acknowledge');
+    const acknowledgeBtns = this.container.querySelectorAll(".btn-acknowledge");
 
-    acknowledgeBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const resultId = btn.getAttribute('data-result-id');
+    acknowledgeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const resultId = btn.getAttribute("data-result-id");
         if (resultId && this.onAcknowledge) {
           this.onAcknowledge(resultId);
         }
@@ -153,6 +161,6 @@ export class CriticalAlerts {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

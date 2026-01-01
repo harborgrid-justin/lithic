@@ -15,7 +15,7 @@ import {
   MetricCategory,
   TimeGranularity,
   ChartDataSeries,
-} from '../models/Analytics';
+} from "../models/Analytics";
 
 export class AnalyticsService {
   // In-memory storage (replace with database in production)
@@ -30,15 +30,18 @@ export class AnalyticsService {
 
   // ==================== Dashboard Management ====================
 
-  async getDashboards(userId: string, filters?: { category?: MetricCategory }): Promise<Dashboard[]> {
+  async getDashboards(
+    userId: string,
+    filters?: { category?: MetricCategory },
+  ): Promise<Dashboard[]> {
     const allDashboards = Array.from(this.dashboards.values());
 
     // Filter by ownership and visibility
     let filtered = allDashboards.filter(
       (d) =>
         d.owner === userId ||
-        d.visibility === 'public' ||
-        (d.visibility === 'shared' && d.sharedWith?.includes(userId))
+        d.visibility === "public" ||
+        (d.visibility === "shared" && d.sharedWith?.includes(userId)),
     );
 
     // Apply category filter
@@ -64,17 +67,20 @@ export class AnalyticsService {
     // Check permissions
     if (
       dashboard.owner !== userId &&
-      dashboard.visibility === 'private' &&
+      dashboard.visibility === "private" &&
       !dashboard.sharedWith?.includes(userId)
     ) {
-      throw new Error('Access denied to this dashboard');
+      throw new Error("Access denied to this dashboard");
     }
 
     return dashboard;
   }
 
-  async createDashboard(data: Omit<Dashboard, 'id' | 'createdAt' | 'updatedAt'>, userId: string): Promise<Dashboard> {
-    const id = this.generateId('dash');
+  async createDashboard(
+    data: Omit<Dashboard, "id" | "createdAt" | "updatedAt">,
+    userId: string,
+  ): Promise<Dashboard> {
+    const id = this.generateId("dash");
     const now = new Date();
 
     const dashboard: Dashboard = {
@@ -90,15 +96,19 @@ export class AnalyticsService {
     return dashboard;
   }
 
-  async updateDashboard(id: string, updates: Partial<Dashboard>, userId: string): Promise<Dashboard> {
+  async updateDashboard(
+    id: string,
+    updates: Partial<Dashboard>,
+    userId: string,
+  ): Promise<Dashboard> {
     const dashboard = this.dashboards.get(id);
 
     if (!dashboard) {
-      throw new Error('Dashboard not found');
+      throw new Error("Dashboard not found");
     }
 
     if (dashboard.owner !== userId) {
-      throw new Error('Only the owner can update this dashboard');
+      throw new Error("Only the owner can update this dashboard");
     }
 
     const updated: Dashboard = {
@@ -117,11 +127,11 @@ export class AnalyticsService {
     const dashboard = this.dashboards.get(id);
 
     if (!dashboard) {
-      throw new Error('Dashboard not found');
+      throw new Error("Dashboard not found");
     }
 
     if (dashboard.owner !== userId) {
-      throw new Error('Only the owner can delete this dashboard');
+      throw new Error("Only the owner can delete this dashboard");
     }
 
     this.dashboards.delete(id);
@@ -131,14 +141,14 @@ export class AnalyticsService {
     const original = await this.getDashboard(id, userId);
 
     if (!original) {
-      throw new Error('Dashboard not found');
+      throw new Error("Dashboard not found");
     }
 
-    const duplicate: Omit<Dashboard, 'id' | 'createdAt' | 'updatedAt'> = {
+    const duplicate: Omit<Dashboard, "id" | "createdAt" | "updatedAt"> = {
       ...original,
       name: `${original.name} (Copy)`,
       owner: userId,
-      visibility: 'private',
+      visibility: "private",
       sharedWith: [],
       isFavorite: false,
       isDefault: false,
@@ -164,7 +174,7 @@ export class AnalyticsService {
       filtered = dataPoints.filter(
         (dp) =>
           dp.timestamp >= dataSource.timeRange!.start &&
-          dp.timestamp <= dataSource.timeRange!.end
+          dp.timestamp <= dataSource.timeRange!.end,
       );
     }
 
@@ -178,7 +188,11 @@ export class AnalyticsService {
     }
 
     // Group and aggregate data
-    const series = this.aggregateData(filtered, dataSource.groupBy, dataSource.timeRange?.granularity);
+    const series = this.aggregateData(
+      filtered,
+      dataSource.groupBy,
+      dataSource.timeRange?.granularity,
+    );
 
     return series;
   }
@@ -186,15 +200,17 @@ export class AnalyticsService {
   private aggregateData(
     dataPoints: MetricDataPoint[],
     groupBy?: string[],
-    granularity?: TimeGranularity
+    granularity?: TimeGranularity,
   ): ChartDataSeries[] {
     if (!groupBy || groupBy.length === 0) {
       // Single series
-      const sorted = dataPoints.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const sorted = dataPoints.sort(
+        (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
+      );
 
       return [
         {
-          name: 'Value',
+          name: "Value",
           data: sorted.map((dp) => ({
             x: dp.timestamp,
             y: dp.value,
@@ -207,7 +223,9 @@ export class AnalyticsService {
     const groups = new Map<string, MetricDataPoint[]>();
 
     dataPoints.forEach((dp) => {
-      const groupKey = groupBy.map((key) => dp.dimensions?.[key] || 'Unknown').join(' - ');
+      const groupKey = groupBy
+        .map((key) => dp.dimensions?.[key] || "Unknown")
+        .join(" - ");
       if (!groups.has(groupKey)) {
         groups.set(groupKey, []);
       }
@@ -217,7 +235,9 @@ export class AnalyticsService {
     // Create series for each group
     const series: ChartDataSeries[] = [];
     groups.forEach((points, groupName) => {
-      const sorted = points.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const sorted = points.sort(
+        (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
+      );
       series.push({
         name: groupName,
         data: sorted.map((dp) => ({
@@ -246,11 +266,14 @@ export class AnalyticsService {
     return this.metrics.get(id) || null;
   }
 
-  async calculateMetric(metricId: string, params?: Record<string, any>): Promise<number> {
+  async calculateMetric(
+    metricId: string,
+    params?: Record<string, any>,
+  ): Promise<number> {
     const metric = this.metrics.get(metricId);
 
     if (!metric) {
-      throw new Error('Metric not found');
+      throw new Error("Metric not found");
     }
 
     // In a real implementation, this would execute the formula
@@ -258,7 +281,9 @@ export class AnalyticsService {
     return Math.random() * 100;
   }
 
-  async recordMetricDataPoint(dataPoint: Omit<MetricDataPoint, 'timestamp'>): Promise<void> {
+  async recordMetricDataPoint(
+    dataPoint: Omit<MetricDataPoint, "timestamp">,
+  ): Promise<void> {
     const point: MetricDataPoint = {
       ...dataPoint,
       timestamp: new Date(),
@@ -292,7 +317,7 @@ export class AnalyticsService {
       measures = measures.filter(
         (m) =>
           m.measurementPeriod.start >= filters.period!.start &&
-          m.measurementPeriod.end <= filters.period!.end
+          m.measurementPeriod.end <= filters.period!.end,
       );
     }
 
@@ -308,7 +333,7 @@ export class AnalyticsService {
     const measure = this.qualityMeasures.get(measureId);
 
     if (!measure) {
-      throw new Error('Quality measure not found');
+      throw new Error("Quality measure not found");
     }
 
     // Simulated calculation
@@ -321,7 +346,12 @@ export class AnalyticsService {
       numerator: { ...measure.numerator, count: numerator },
       denominator: { ...measure.denominator, count: denominator },
       rate,
-      status: rate >= measure.target ? 'compliant' : rate >= measure.target * 0.9 ? 'at_risk' : 'non_compliant',
+      status:
+        rate >= measure.target
+          ? "compliant"
+          : rate >= measure.target * 0.9
+            ? "at_risk"
+            : "non_compliant",
       lastCalculated: new Date(),
     };
 
@@ -331,15 +361,18 @@ export class AnalyticsService {
 
   // ==================== Financial Metrics ====================
 
-  async getFinancialMetrics(period: { start: Date; end: Date }): Promise<FinancialMetric[]> {
+  async getFinancialMetrics(period: {
+    start: Date;
+    end: Date;
+  }): Promise<FinancialMetric[]> {
     // Simulated financial metrics
-    const metricTypes: FinancialMetric['metricType'][] = [
-      'revenue',
-      'expenses',
-      'margin',
-      'ar_days',
-      'collection_rate',
-      'claim_denial_rate',
+    const metricTypes: FinancialMetric["metricType"][] = [
+      "revenue",
+      "expenses",
+      "margin",
+      "ar_days",
+      "collection_rate",
+      "claim_denial_rate",
     ];
 
     return metricTypes.map((metricType) => {
@@ -350,7 +383,7 @@ export class AnalyticsService {
       const variancePercent = (variance / budget) * 100;
 
       return {
-        id: this.generateId('fin'),
+        id: this.generateId("fin"),
         metricType,
         period,
         current,
@@ -359,9 +392,11 @@ export class AnalyticsService {
         variance,
         variancePercent,
         trend: {
-          direction: current > previous ? 'up' : current < previous ? 'down' : 'stable',
+          direction:
+            current > previous ? "up" : current < previous ? "down" : "stable",
           changePercent: ((current - previous) / previous) * 100,
-          isPositive: metricType === 'revenue' ? current > previous : current < previous,
+          isPositive:
+            metricType === "revenue" ? current > previous : current < previous,
         },
         calculatedAt: new Date(),
       };
@@ -370,23 +405,33 @@ export class AnalyticsService {
 
   // ==================== Operational Metrics ====================
 
-  async getOperationalMetrics(period: { start: Date; end: Date }): Promise<OperationalMetric[]> {
-    const metricTypes: OperationalMetric['metricType'][] = [
-      'patient_volume',
-      'appointment_utilization',
-      'wait_time',
-      'no_show_rate',
+  async getOperationalMetrics(period: {
+    start: Date;
+    end: Date;
+  }): Promise<OperationalMetric[]> {
+    const metricTypes: OperationalMetric["metricType"][] = [
+      "patient_volume",
+      "appointment_utilization",
+      "wait_time",
+      "no_show_rate",
     ];
 
     return metricTypes.map((metricType) => {
       const value = Math.random() * 100;
-      const target = metricType === 'wait_time' || metricType === 'no_show_rate' ? value * 0.8 : value * 1.2;
+      const target =
+        metricType === "wait_time" || metricType === "no_show_rate"
+          ? value * 0.8
+          : value * 1.2;
 
       // Generate time series data
-      const timeSeries = this.generateTimeSeries(period.start, period.end, 'day');
+      const timeSeries = this.generateTimeSeries(
+        period.start,
+        period.end,
+        "day",
+      );
 
       return {
-        id: this.generateId('ops'),
+        id: this.generateId("ops"),
         metricType,
         period,
         value,
@@ -400,33 +445,40 @@ export class AnalyticsService {
 
   private getMetricUnit(metricType: string): string {
     const units: Record<string, string> = {
-      patient_volume: 'patients',
-      appointment_utilization: '%',
-      wait_time: 'minutes',
-      no_show_rate: '%',
-      length_of_stay: 'days',
-      bed_occupancy: '%',
+      patient_volume: "patients",
+      appointment_utilization: "%",
+      wait_time: "minutes",
+      no_show_rate: "%",
+      length_of_stay: "days",
+      bed_occupancy: "%",
     };
 
-    return units[metricType] || 'count';
+    return units[metricType] || "count";
   }
 
   // ==================== Population Health ====================
 
-  async getPopulationHealthMetrics(populationId?: string): Promise<PopulationHealthMetric[]> {
+  async getPopulationHealthMetrics(
+    populationId?: string,
+  ): Promise<PopulationHealthMetric[]> {
     // Simulated population health data
-    const populations = ['All Patients', 'Diabetic Cohort', 'Hypertensive Cohort', 'High Risk'];
+    const populations = [
+      "All Patients",
+      "Diabetic Cohort",
+      "Hypertensive Cohort",
+      "High Risk",
+    ];
 
     return populations.map((popName, idx) => {
       const current = Math.random() * 100;
       const previous = Math.random() * 100;
 
       return {
-        id: this.generateId('pop'),
+        id: this.generateId("pop"),
         populationId: `pop-${idx}`,
         populationName: popName,
         populationSize: Math.floor(Math.random() * 5000) + 1000,
-        metricType: 'risk_score',
+        metricType: "risk_score",
         stratification: {
           byRiskLevel: {
             Low: Math.floor(Math.random() * 40) + 10,
@@ -453,7 +505,7 @@ export class AnalyticsService {
   private generateTimeSeries(
     start: Date,
     end: Date,
-    granularity: TimeGranularity
+    granularity: TimeGranularity,
   ): { timestamp: Date; value: number }[] {
     const series: { timestamp: Date; value: number }[] = [];
     const current = new Date(start);
@@ -466,22 +518,22 @@ export class AnalyticsService {
 
       // Increment based on granularity
       switch (granularity) {
-        case 'hour':
+        case "hour":
           current.setHours(current.getHours() + 1);
           break;
-        case 'day':
+        case "day":
           current.setDate(current.getDate() + 1);
           break;
-        case 'week':
+        case "week":
           current.setDate(current.getDate() + 7);
           break;
-        case 'month':
+        case "month":
           current.setMonth(current.getMonth() + 1);
           break;
-        case 'quarter':
+        case "quarter":
           current.setMonth(current.getMonth() + 3);
           break;
-        case 'year':
+        case "year":
           current.setFullYear(current.getFullYear() + 1);
           break;
       }
@@ -497,17 +549,17 @@ export class AnalyticsService {
   private initializeDefaultMetrics(): void {
     // Sample quality measure
     const breastCancerScreening: QualityMeasure = {
-      id: 'qm_hedis_bcs',
-      code: 'HEDIS-BCS',
-      name: 'Breast Cancer Screening',
-      description: 'Women ages 50-74 who had mammogram in past 2 years',
-      category: 'preventive',
+      id: "qm_hedis_bcs",
+      code: "HEDIS-BCS",
+      name: "Breast Cancer Screening",
+      description: "Women ages 50-74 who had mammogram in past 2 years",
+      category: "preventive",
       numerator: {
-        criteria: 'Women 50-74 with mammogram in measurement period',
+        criteria: "Women 50-74 with mammogram in measurement period",
         count: 0,
       },
       denominator: {
-        criteria: 'All women ages 50-74',
+        criteria: "All women ages 50-74",
         count: 0,
       },
       rate: 0,
@@ -517,27 +569,27 @@ export class AnalyticsService {
         start: new Date(new Date().getFullYear(), 0, 1),
         end: new Date(new Date().getFullYear(), 11, 31),
       },
-      status: 'at_risk',
+      status: "at_risk",
       lastCalculated: new Date(),
-      calculatedBy: 'system',
+      calculatedBy: "system",
     };
 
     this.qualityMeasures.set(breastCancerScreening.id, breastCancerScreening);
 
     // Sample metric definition
     const patientSatisfaction: MetricDefinition = {
-      id: 'metric_patient_sat',
-      name: 'Patient Satisfaction Score',
-      description: 'Average patient satisfaction rating (1-5)',
-      category: 'patient_satisfaction',
+      id: "metric_patient_sat",
+      name: "Patient Satisfaction Score",
+      description: "Average patient satisfaction rating (1-5)",
+      category: "patient_satisfaction",
       calculation: {
-        formula: 'AVG(survey_responses.rating)',
+        formula: "AVG(survey_responses.rating)",
         dependencies: [],
       },
-      dataSource: 'patient_surveys',
-      requiredFields: ['rating', 'survey_date'],
-      unit: 'score',
-      format: 'number',
+      dataSource: "patient_surveys",
+      requiredFields: ["rating", "survey_date"],
+      unit: "score",
+      format: "number",
       decimalPlaces: 2,
       benchmarks: {
         target: 4.5,

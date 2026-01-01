@@ -1,0 +1,41 @@
+export const darkTheme = {
+  name: "dark",
+  colors: {
+    background: "222.2 84% 4.9%",
+    foreground: "210 40% 98%",
+    card: "222.2 84% 4.9%",
+    "card-foreground": "210 40% 98%",
+    popover: "222.2 84% 4.9%",
+    "popover-foreground": "210 40% 98%",
+    primary: "217.2 91.2% 59.8%",
+    "primary-foreground": "222.2 47.4% 11.2%",
+    secondary: "217.2 32.6% 17.5%",
+    "secondary-foreground": "210 40% 98%",
+    muted: "217.2 32.6% 17.5%",
+    "muted-foreground": "215 20.2% 65.1%",
+    accent: "217.2 32.6% 17.5%",
+    "accent-foreground": "210 40% 98%",
+    destructive: "0 62.8% 30.6%",
+    "destructive-foreground": "210 40% 98%",
+    border: "217.2 32.6% 17.5%",
+    input: "217.2 32.6% 17.5%",
+    ring: "224.3 76.3% 48%",
+    // Additional healthcare-specific colors
+    success: "142 70% 45%",
+    "success-foreground": "0 0% 100%",
+    warning: "38 92% 50%",
+    "warning-foreground": "222.2 47.4% 11.2%",
+    info: "199 89% 48%",
+    "info-foreground": "222.2 47.4% 11.2%",
+    clinical: "210 79% 46%",
+    "clinical-foreground": "0 0% 100%",
+    // Status colors for healthcare (dark mode)
+    "status-critical": "0 72% 50%",
+    "status-urgent": "38 92% 50%",
+    "status-routine": "199 89% 48%",
+    "status-completed": "142 70% 45%",
+  },
+  radius: "0.5rem",
+} as const;
+
+export type ThemeColors = typeof darkTheme.colors;

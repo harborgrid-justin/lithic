@@ -1,26 +1,33 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { FeeSchedule as FeeScheduleType, FeeScheduleItem } from '@/types/billing';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { Search, Edit, Eye } from 'lucide-react';
+import { useState } from "react";
+import {
+  FeeSchedule as FeeScheduleType,
+  FeeScheduleItem,
+} from "@/types/billing";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { Search, Edit, Eye } from "lucide-react";
 
 interface FeeScheduleProps {
   feeSchedules: FeeScheduleType[];
   onSelect?: (schedule: FeeScheduleType) => void;
 }
 
-export default function FeeSchedule({ feeSchedules, onSelect }: FeeScheduleProps) {
-  const [selectedSchedule, setSelectedSchedule] = useState<FeeScheduleType | null>(
-    feeSchedules.length > 0 ? feeSchedules[0] : null
-  );
-  const [searchTerm, setSearchTerm] = useState('');
+export default function FeeSchedule({
+  feeSchedules,
+  onSelect,
+}: FeeScheduleProps) {
+  const [selectedSchedule, setSelectedSchedule] =
+    useState<FeeScheduleType | null>(
+      feeSchedules.length > 0 ? feeSchedules[0] : null,
+    );
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredItems = selectedSchedule
     ? selectedSchedule.items.filter(
         (item) =>
           item.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchTerm.toLowerCase())
+          item.description.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -38,14 +45,18 @@ export default function FeeSchedule({ feeSchedules, onSelect }: FeeScheduleProps
               onClick={() => setSelectedSchedule(schedule)}
               className={`p-4 border-2 rounded-lg text-left transition-colors ${
                 selectedSchedule?.id === schedule.id
-                  ? 'border-primary-500 bg-primary-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? "border-primary-500 bg-primary-50"
+                  : "border-gray-200 hover:border-gray-300"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900">{schedule.name}</h4>
-                  <p className="text-sm text-gray-500 capitalize mt-1">{schedule.type}</p>
+                  <h4 className="font-semibold text-gray-900">
+                    {schedule.name}
+                  </h4>
+                  <p className="text-sm text-gray-500 capitalize mt-1">
+                    {schedule.type}
+                  </p>
                   <p className="text-xs text-gray-400 mt-2">
                     Effective: {formatDate(schedule.effectiveDate)}
                   </p>
@@ -68,7 +79,9 @@ export default function FeeSchedule({ feeSchedules, onSelect }: FeeScheduleProps
             <div className="grid grid-cols-4 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Schedule Name</p>
-                <p className="font-semibold text-gray-900">{selectedSchedule.name}</p>
+                <p className="font-semibold text-gray-900">
+                  {selectedSchedule.name}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Type</p>
@@ -128,7 +141,10 @@ export default function FeeSchedule({ feeSchedules, onSelect }: FeeScheduleProps
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredItems.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      <td
+                        colSpan={4}
+                        className="px-6 py-8 text-center text-gray-500"
+                      >
                         No fee schedule items found
                       </td>
                     </tr>
@@ -174,7 +190,7 @@ export default function FeeSchedule({ feeSchedules, onSelect }: FeeScheduleProps
                   {filteredItems.length > 0
                     ? formatCurrency(
                         filteredItems.reduce((sum, item) => sum + item.fee, 0) /
-                          filteredItems.length
+                          filteredItems.length,
                       )
                     : formatCurrency(0)}
                 </p>
@@ -183,7 +199,9 @@ export default function FeeSchedule({ feeSchedules, onSelect }: FeeScheduleProps
                 <p className="text-sm text-gray-500">Highest Fee</p>
                 <p className="text-2xl font-bold text-primary-600">
                   {filteredItems.length > 0
-                    ? formatCurrency(Math.max(...filteredItems.map((item) => item.fee)))
+                    ? formatCurrency(
+                        Math.max(...filteredItems.map((item) => item.fee)),
+                      )
                     : formatCurrency(0)}
                 </p>
               </div>

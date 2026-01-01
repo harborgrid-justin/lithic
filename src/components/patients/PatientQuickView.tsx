@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Patient } from '@/types/patient';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { calculateAge, formatPhone, maskSSN } from '@/lib/utils';
-import { X, User, Phone, Mail, Calendar, Hash } from 'lucide-react';
+import { Patient } from "@/types/patient";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { calculateAge, formatPhone, maskSSN } from "@/lib/utils";
+import { X, User, Phone, Mail, Calendar, Hash } from "lucide-react";
 
 interface PatientQuickViewProps {
   patient: Patient;
@@ -12,7 +12,11 @@ interface PatientQuickViewProps {
   onViewFull?: () => void;
 }
 
-export function PatientQuickView({ patient, onClose, onViewFull }: PatientQuickViewProps) {
+export function PatientQuickView({
+  patient,
+  onClose,
+  onViewFull,
+}: PatientQuickViewProps) {
   const age = calculateAge(patient.dateOfBirth);
 
   return (
@@ -40,12 +44,12 @@ export function PatientQuickView({ patient, onClose, onViewFull }: PatientQuickV
 
         <div className="p-6 space-y-6">
           <div className="flex gap-2">
-            <Badge variant={patient.status === 'active' ? 'success' : 'secondary'}>
+            <Badge
+              variant={patient.status === "active" ? "success" : "secondary"}
+            >
               {patient.status}
             </Badge>
-            <Badge variant="outline">
-              {patient.gender}
-            </Badge>
+            <Badge variant="outline">{patient.gender}</Badge>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -90,7 +94,8 @@ export function PatientQuickView({ patient, onClose, onViewFull }: PatientQuickV
                 {patient.address.street1}
                 {patient.address.street2 && <>, {patient.address.street2}</>}
                 <br />
-                {patient.address.city}, {patient.address.state} {patient.address.zipCode}
+                {patient.address.city}, {patient.address.state}{" "}
+                {patient.address.zipCode}
               </div>
             </div>
           )}
@@ -100,12 +105,19 @@ export function PatientQuickView({ patient, onClose, onViewFull }: PatientQuickV
               <div className="text-sm text-gray-500 mb-2">Insurance</div>
               <div className="space-y-2">
                 {patient.insurance.slice(0, 2).map((ins) => (
-                  <div key={ins.id} className="flex items-center justify-between text-sm">
+                  <div
+                    key={ins.id}
+                    className="flex items-center justify-between text-sm"
+                  >
                     <div>
                       <div className="font-medium">{ins.provider}</div>
                       <div className="text-gray-500">{ins.type}</div>
                     </div>
-                    <Badge variant={ins.status === 'active' ? 'success' : 'secondary'}>
+                    <Badge
+                      variant={
+                        ins.status === "active" ? "success" : "secondary"
+                      }
+                    >
                       {ins.status}
                     </Badge>
                   </div>
@@ -114,24 +126,36 @@ export function PatientQuickView({ patient, onClose, onViewFull }: PatientQuickV
             </div>
           )}
 
-          {patient.emergencyContacts && patient.emergencyContacts.length > 0 && (
-            <div className="border-t pt-4">
-              <div className="text-sm text-gray-500 mb-2">Emergency Contact</div>
-              {patient.emergencyContacts.filter(c => c.isPrimary)[0] && (
-                <div className="text-sm">
-                  <div className="font-medium">
-                    {patient.emergencyContacts.filter(c => c.isPrimary)[0].name}
-                  </div>
-                  <div className="text-gray-500">
-                    {patient.emergencyContacts.filter(c => c.isPrimary)[0].relationship}
-                  </div>
-                  <div className="text-gray-600">
-                    {formatPhone(patient.emergencyContacts.filter(c => c.isPrimary)[0].phone)}
-                  </div>
+          {patient.emergencyContacts &&
+            patient.emergencyContacts.length > 0 && (
+              <div className="border-t pt-4">
+                <div className="text-sm text-gray-500 mb-2">
+                  Emergency Contact
                 </div>
-              )}
-            </div>
-          )}
+                {patient.emergencyContacts.filter((c) => c.isPrimary)[0] && (
+                  <div className="text-sm">
+                    <div className="font-medium">
+                      {
+                        patient.emergencyContacts.filter((c) => c.isPrimary)[0]
+                          .name
+                      }
+                    </div>
+                    <div className="text-gray-500">
+                      {
+                        patient.emergencyContacts.filter((c) => c.isPrimary)[0]
+                          .relationship
+                      }
+                    </div>
+                    <div className="text-gray-600">
+                      {formatPhone(
+                        patient.emergencyContacts.filter((c) => c.isPrimary)[0]
+                          .phone,
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
 
         <div className="sticky bottom-0 bg-gray-50 px-6 py-4 flex gap-2 justify-end border-t">
@@ -139,9 +163,7 @@ export function PatientQuickView({ patient, onClose, onViewFull }: PatientQuickV
             Close
           </Button>
           {onViewFull && (
-            <Button onClick={onViewFull}>
-              View Full Profile
-            </Button>
+            <Button onClick={onViewFull}>View Full Profile</Button>
           )}
         </div>
       </div>

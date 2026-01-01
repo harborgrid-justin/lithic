@@ -1,32 +1,52 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: Date | string, format: 'short' | 'long' | 'full' = 'short'): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  if (format === 'short') {
-    return d.toLocaleDateString('en-US');
-  } else if (format === 'long') {
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+export function formatDate(
+  date: Date | string,
+  format: "short" | "long" | "full" = "short",
+): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (format === "short") {
+    return d.toLocaleDateString("en-US");
+  } else if (format === "long") {
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   } else {
-    return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return d.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   }
 }
 
-export function formatTime(date: Date | string, includeSeconds = false): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: includeSeconds ? '2-digit' : undefined });
+export function formatTime(
+  date: Date | string,
+  includeSeconds = false,
+): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: includeSeconds ? "2-digit" : undefined,
+  });
 }
 
 export function formatDateTime(date: Date | string): string {
-  return formatDate(date) + ' ' + formatTime(date);
+  return formatDate(date) + " " + formatTime(date);
 }
 
 export function calculateAge(dateOfBirth: Date | string): number {
-  const dob = typeof dateOfBirth === 'string' ? new Date(dateOfBirth) : dateOfBirth;
+  const dob =
+    typeof dateOfBirth === "string" ? new Date(dateOfBirth) : dateOfBirth;
   const today = new Date();
   let age = today.getFullYear() - dob.getFullYear();
   const monthDiff = today.getMonth() - dob.getMonth();
@@ -36,16 +56,32 @@ export function calculateAge(dateOfBirth: Date | string): number {
   return age;
 }
 
-export function formatCurrency(amount: number, currency = 'USD'): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+export function formatCurrency(amount: number, currency = "USD"): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
+    amount,
+  );
 }
 
 export function formatPhoneNumber(phone: string): string {
-  const cleaned = phone.replace(/\D/g, '');
+  const cleaned = phone.replace(/\D/g, "");
   if (cleaned.length === 10) {
-    return '(' + cleaned.slice(0, 3) + ') ' + cleaned.slice(3, 6) + '-' + cleaned.slice(6);
-  } else if (cleaned.length === 11 && cleaned[0] === '1') {
-    return '+1 (' + cleaned.slice(1, 4) + ') ' + cleaned.slice(4, 7) + '-' + cleaned.slice(7);
+    return (
+      "(" +
+      cleaned.slice(0, 3) +
+      ") " +
+      cleaned.slice(3, 6) +
+      "-" +
+      cleaned.slice(6)
+    );
+  } else if (cleaned.length === 11 && cleaned[0] === "1") {
+    return (
+      "+1 (" +
+      cleaned.slice(1, 4) +
+      ") " +
+      cleaned.slice(4, 7) +
+      "-" +
+      cleaned.slice(7)
+    );
   }
   return phone;
 }
@@ -55,7 +91,7 @@ export const formatPhone = formatPhoneNumber;
 
 export function truncate(str: string, length: number): string {
   if (str.length <= length) return str;
-  return str.slice(0, length) + '...';
+  return str.slice(0, length) + "...";
 }
 
 export function sleep(ms: number): Promise<void> {
@@ -64,9 +100,9 @@ export function sleep(ms: number): Promise<void> {
 
 export function isEmpty(obj: any): boolean {
   if (obj === null || obj === undefined) return true;
-  if (typeof obj === 'string') return obj.length === 0;
+  if (typeof obj === "string") return obj.length === 0;
   if (Array.isArray(obj)) return obj.length === 0;
-  if (typeof obj === 'object') return Object.keys(obj).length === 0;
+  if (typeof obj === "object") return Object.keys(obj).length === 0;
   return false;
 }
 
@@ -76,20 +112,25 @@ export function capitalize(str: string): string {
 
 export function maskSSN(ssn: string): string {
   if (ssn.length !== 9) return ssn;
-  return '***-**-' + ssn.slice(-4);
+  return "***-**-" + ssn.slice(-4);
 }
 
-export function calculateBMI(weight: number, height: number, weightUnit: 'kg' | 'lb', heightUnit: 'cm' | 'in'): number {
-  let weightKg = weightUnit === 'kg' ? weight : weight * 0.453592;
-  let heightM = heightUnit === 'cm' ? height / 100 : height * 0.0254;
+export function calculateBMI(
+  weight: number,
+  height: number,
+  weightUnit: "kg" | "lb",
+  heightUnit: "cm" | "in",
+): number {
+  let weightKg = weightUnit === "kg" ? weight : weight * 0.453592;
+  let heightM = heightUnit === "cm" ? height / 100 : height * 0.0254;
   return Math.round((weightKg / (heightM * heightM)) * 10) / 10;
 }
 
 export function handleError(error: unknown): { code: string; message: string } {
   if (error instanceof Error) {
-    return { code: 'INTERNAL_ERROR', message: error.message };
+    return { code: "INTERNAL_ERROR", message: error.message };
   }
-  return { code: 'UNKNOWN_ERROR', message: 'An unknown error occurred' };
+  return { code: "UNKNOWN_ERROR", message: "An unknown error occurred" };
 }
 
 // Scheduling-specific utilities
@@ -102,8 +143,11 @@ export function formatDuration(minutes: number): string {
   return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
 }
 
-export function parseTimeString(timeStr: string): { hours: number; minutes: number } {
-  const [hours, minutes] = timeStr.split(':').map(Number);
+export function parseTimeString(timeStr: string): {
+  hours: number;
+  minutes: number;
+} {
+  const [hours, minutes] = timeStr.split(":").map(Number);
   return { hours, minutes };
 }
 
@@ -116,33 +160,33 @@ export function timeStringToDate(dateStr: string, timeStr: string): Date {
 
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
-    scheduled: 'bg-blue-100 text-blue-800',
-    confirmed: 'bg-green-100 text-green-800',
-    'checked-in': 'bg-purple-100 text-purple-800',
-    'in-progress': 'bg-yellow-100 text-yellow-800',
-    completed: 'bg-gray-100 text-gray-800',
-    cancelled: 'bg-red-100 text-red-800',
-    'no-show': 'bg-orange-100 text-orange-800',
-    rescheduled: 'bg-indigo-100 text-indigo-800',
+    scheduled: "bg-blue-100 text-blue-800",
+    confirmed: "bg-green-100 text-green-800",
+    "checked-in": "bg-purple-100 text-purple-800",
+    "in-progress": "bg-yellow-100 text-yellow-800",
+    completed: "bg-gray-100 text-gray-800",
+    cancelled: "bg-red-100 text-red-800",
+    "no-show": "bg-orange-100 text-orange-800",
+    rescheduled: "bg-indigo-100 text-indigo-800",
   };
-  return colors[status] || 'bg-gray-100 text-gray-800';
+  return colors[status] || "bg-gray-100 text-gray-800";
 }
 
 export function getPriorityColor(priority: string): string {
   const colors: Record<string, string> = {
-    low: 'bg-gray-100 text-gray-800',
-    medium: 'bg-blue-100 text-blue-800',
-    high: 'bg-orange-100 text-orange-800',
-    urgent: 'bg-red-100 text-red-800',
+    low: "bg-gray-100 text-gray-800",
+    medium: "bg-blue-100 text-blue-800",
+    high: "bg-orange-100 text-orange-800",
+    urgent: "bg-red-100 text-red-800",
   };
-  return colors[priority] || 'bg-gray-100 text-gray-800';
+  return colors[priority] || "bg-gray-100 text-gray-800";
 }
 
 export function generateTimeSlots(
   startTime: string,
   endTime: string,
   slotDuration: number,
-  breakDuration: number = 0
+  breakDuration: number = 0,
 ): string[] {
   const slots: string[] = [];
   const start = parseTimeString(startTime);
@@ -154,7 +198,9 @@ export function generateTimeSlots(
   while (currentMinutes + slotDuration <= endMinutes) {
     const hours = Math.floor(currentMinutes / 60);
     const minutes = currentMinutes % 60;
-    slots.push(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`);
+    slots.push(
+      `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`,
+    );
     currentMinutes += slotDuration + breakDuration;
   }
 
@@ -164,7 +210,7 @@ export function generateTimeSlots(
 export function isTimeSlotAvailable(
   slotStart: Date,
   slotEnd: Date,
-  existingAppointments: { startTime: string; endTime: string }[]
+  existingAppointments: { startTime: string; endTime: string }[],
 ): boolean {
   return !existingAppointments.some((apt) => {
     const aptStart = new Date(apt.startTime);
@@ -216,7 +262,7 @@ export function getWeekDates(date: Date): Date[] {
 
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
 

@@ -36,13 +36,17 @@ export class ClaimDetail {
           <table>
             <thead><tr><th>Code</th><th>Description</th><th>Charge</th></tr></thead>
             <tbody>
-              ${(claim.lineItems || []).map((item: any) => `
+              ${(claim.lineItems || [])
+                .map(
+                  (item: any) => `
                 <tr>
                   <td>${item.procedureCode}</td>
-                  <td>${item.description || '-'}</td>
+                  <td>${item.description || "-"}</td>
                   <td>$${item.charge.toLocaleString()}</td>
                 </tr>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </tbody>
           </table>
         </div>

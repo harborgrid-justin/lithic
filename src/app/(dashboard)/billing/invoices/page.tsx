@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Invoice } from '@/types/billing';
-import InvoiceGenerator from '@/components/billing/InvoiceGenerator';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { getInvoiceStatusColor } from '@/lib/billing-utils';
-import { Plus, Eye, Send } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Invoice } from "@/types/billing";
+import InvoiceGenerator from "@/components/billing/InvoiceGenerator";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { getInvoiceStatusColor } from "@/lib/billing-utils";
+import { Plus, Eye, Send } from "lucide-react";
 
 export default function InvoicesPage() {
   const router = useRouter();
@@ -20,13 +20,13 @@ export default function InvoicesPage() {
 
   const fetchInvoices = async () => {
     try {
-      const response = await fetch('/api/billing/invoices');
+      const response = await fetch("/api/billing/invoices");
       if (response.ok) {
         const data = await response.json();
         setInvoices(data);
       }
     } catch (error) {
-      console.error('Error fetching invoices:', error);
+      console.error("Error fetching invoices:", error);
     } finally {
       setIsLoading(false);
     }
@@ -34,24 +34,24 @@ export default function InvoicesPage() {
 
   const handleGenerateInvoice = async (invoiceData: Partial<Invoice>) => {
     try {
-      const response = await fetch('/api/billing/invoices', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/billing/invoices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(invoiceData),
       });
 
       if (response.ok) {
         const invoice = await response.json();
-        alert('Invoice generated successfully!');
+        alert("Invoice generated successfully!");
         setShowGenerator(false);
         router.push(`/billing/invoices/${invoice.id}`);
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error || 'Failed to generate invoice'}`);
+        alert(`Error: ${error.error || "Failed to generate invoice"}`);
       }
     } catch (error) {
-      console.error('Error generating invoice:', error);
-      alert('Failed to generate invoice');
+      console.error("Error generating invoice:", error);
+      alert("Failed to generate invoice");
     }
   };
 
@@ -68,7 +68,9 @@ export default function InvoicesPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Patient Invoices</h1>
-          <p className="text-gray-600 mt-2">Generate and manage patient statements</p>
+          <p className="text-gray-600 mt-2">
+            Generate and manage patient statements
+          </p>
         </div>
         <button
           onClick={() => setShowGenerator(!showGenerator)}
@@ -95,15 +97,21 @@ export default function InvoicesPage() {
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-700">Total Amount</p>
-          <p className="text-2xl font-bold text-blue-900">{formatCurrency(stats.totalAmount)}</p>
+          <p className="text-2xl font-bold text-blue-900">
+            {formatCurrency(stats.totalAmount)}
+          </p>
         </div>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-sm text-green-700">Paid</p>
-          <p className="text-2xl font-bold text-green-900">{formatCurrency(stats.paidAmount)}</p>
+          <p className="text-2xl font-bold text-green-900">
+            {formatCurrency(stats.paidAmount)}
+          </p>
         </div>
         <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
           <p className="text-sm text-orange-700">Outstanding</p>
-          <p className="text-2xl font-bold text-orange-900">{formatCurrency(stats.outstanding)}</p>
+          <p className="text-2xl font-bold text-orange-900">
+            {formatCurrency(stats.outstanding)}
+          </p>
         </div>
       </div>
 
@@ -149,7 +157,10 @@ export default function InvoicesPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {invoices.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan={9}
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     No invoices found
                   </td>
                 </tr>
@@ -186,7 +197,9 @@ export default function InvoicesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
-                        onClick={() => router.push(`/billing/invoices/${invoice.id}`)}
+                        onClick={() =>
+                          router.push(`/billing/invoices/${invoice.id}`)
+                        }
                         className="text-primary-600 hover:text-primary-900"
                       >
                         <Eye className="w-5 h-5" />

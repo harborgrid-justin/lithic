@@ -1,7 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { dicomService, ViewportSettings, DicomMetadata } from '@/services/dicom.service';
+import { useState, useEffect, useRef } from "react";
+import {
+  dicomService,
+  ViewportSettings,
+  DicomMetadata,
+} from "@/services/dicom.service";
 
 interface DicomViewerProps {
   studyInstanceUID: string;
@@ -52,16 +56,20 @@ export default function DicomViewer({
       const meta = await dicomService.getMetadata(
         studyInstanceUID,
         seriesInstanceUID,
-        sopInstanceUID
+        sopInstanceUID,
       );
       setMetadata(meta);
 
       // Set initial window/level from metadata
       if (meta.windowCenter && meta.windowWidth) {
-        setViewport(prev => ({
+        setViewport((prev) => ({
           ...prev,
-          windowCenter: Array.isArray(meta.windowCenter) ? meta.windowCenter[0] : meta.windowCenter,
-          windowWidth: Array.isArray(meta.windowWidth) ? meta.windowWidth[0] : meta.windowWidth,
+          windowCenter: Array.isArray(meta.windowCenter)
+            ? meta.windowCenter[0]
+            : meta.windowCenter,
+          windowWidth: Array.isArray(meta.windowWidth)
+            ? meta.windowWidth[0]
+            : meta.windowWidth,
         }));
       }
 
@@ -71,7 +79,7 @@ export default function DicomViewer({
 
       setLoading(false);
     } catch (error) {
-      console.error('Failed to load image:', error);
+      console.error("Failed to load image:", error);
       setLoading(false);
     }
   };
@@ -80,7 +88,7 @@ export default function DicomViewer({
     const canvas = canvasRef.current;
     if (!canvas || !metadata) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Set canvas size
@@ -94,7 +102,7 @@ export default function DicomViewer({
     // 4. Render to canvas
 
     // For now, show a placeholder
-    ctx.fillStyle = '#1a1a1a';
+    ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();
@@ -106,15 +114,27 @@ export default function DicomViewer({
     ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
     // Draw placeholder image
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = "#333";
     ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
 
-    ctx.fillStyle = '#fff';
-    ctx.font = '20px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('DICOM Image Viewer', canvas.width / 2, canvas.height / 2 - 40);
-    ctx.fillText(`${metadata.modality} - ${metadata.seriesDescription}`, canvas.width / 2, canvas.height / 2);
-    ctx.fillText(`WC: ${viewport.windowCenter} WW: ${viewport.windowWidth}`, canvas.width / 2, canvas.height / 2 + 40);
+    ctx.fillStyle = "#fff";
+    ctx.font = "20px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "DICOM Image Viewer",
+      canvas.width / 2,
+      canvas.height / 2 - 40,
+    );
+    ctx.fillText(
+      `${metadata.modality} - ${metadata.seriesDescription}`,
+      canvas.width / 2,
+      canvas.height / 2,
+    );
+    ctx.fillText(
+      `WC: ${viewport.windowCenter} WW: ${viewport.windowWidth}`,
+      canvas.width / 2,
+      canvas.height / 2 + 40,
+    );
 
     ctx.restore();
 
@@ -125,9 +145,9 @@ export default function DicomViewer({
   const drawOverlay = (ctx: CanvasRenderingContext2D) => {
     if (!metadata) return;
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'left';
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.font = "14px Arial";
+    ctx.textAlign = "left";
 
     const padding = 10;
     const lineHeight = 18;
@@ -141,34 +161,38 @@ export default function DicomViewer({
     ctx.fillText(`DOB: ${metadata.patientBirthDate}`, padding, y);
 
     // Top right
-    ctx.textAlign = 'right';
+    ctx.textAlign = "right";
     y = padding + lineHeight;
     ctx.fillText(`${metadata.modality}`, canvasRef.current!.width - padding, y);
     y += lineHeight;
-    ctx.fillText(`${metadata.studyDate}`, canvasRef.current!.width - padding, y);
+    ctx.fillText(
+      `${metadata.studyDate}`,
+      canvasRef.current!.width - padding,
+      y,
+    );
     y += lineHeight;
-    ctx.fillText(`${metadata.institutionName || ''}`, canvasRef.current!.width - padding, y);
+    ctx.fillText(
+      `${metadata.institutionName || ""}`,
+      canvasRef.current!.width - padding,
+      y,
+    );
 
     // Bottom left
-    ctx.textAlign = 'left';
+    ctx.textAlign = "left";
     y = canvasRef.current!.height - padding - lineHeight * 2;
-    ctx.fillText(
-      `${metadata.rows}x${metadata.columns}`,
-      padding,
-      y
-    );
+    ctx.fillText(`${metadata.rows}x${metadata.columns}`, padding, y);
     y += lineHeight;
     if (metadata.sliceThickness) {
       ctx.fillText(`Slice: ${metadata.sliceThickness}mm`, padding, y);
     }
 
     // Bottom right
-    ctx.textAlign = 'right';
+    ctx.textAlign = "right";
     y = canvasRef.current!.height - padding - lineHeight;
     ctx.fillText(
       `Zoom: ${(viewport.zoom * 100).toFixed(0)}%`,
       canvasRef.current!.width - padding,
-      y
+      y,
     );
   };
 
@@ -183,16 +207,16 @@ export default function DicomViewer({
     const dx = e.clientX - dragStart.x;
     const dy = e.clientY - dragStart.y;
 
-    if (activeTool === 'windowLevel') {
+    if (activeTool === "windowLevel") {
       // Adjust window/level
-      setViewport(prev => ({
+      setViewport((prev) => ({
         ...prev,
         windowCenter: prev.windowCenter + dx,
         windowWidth: Math.max(1, prev.windowWidth + dy),
       }));
-    } else if (activeTool === 'pan') {
+    } else if (activeTool === "pan") {
       // Pan
-      setViewport(prev => ({
+      setViewport((prev) => ({
         ...prev,
         pan: {
           x: prev.pan.x + dx,
@@ -211,7 +235,7 @@ export default function DicomViewer({
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setViewport(prev => ({
+    setViewport((prev) => ({
       ...prev,
       zoom: Math.max(0.1, Math.min(10, prev.zoom * delta)),
     }));
@@ -220,7 +244,7 @@ export default function DicomViewer({
   const applyPreset = (presetName: string) => {
     const preset = presets[presetName];
     if (preset) {
-      setViewport(prev => ({
+      setViewport((prev) => ({
         ...prev,
         windowCenter: preset.center,
         windowWidth: preset.width,
@@ -256,27 +280,29 @@ export default function DicomViewer({
         {/* Tools */}
         <div className="flex space-x-2">
           <button
-            onClick={() => setActiveTool(activeTool === 'windowLevel' ? null : 'windowLevel')}
+            onClick={() =>
+              setActiveTool(activeTool === "windowLevel" ? null : "windowLevel")
+            }
             className={`px-3 py-1 rounded ${
-              activeTool === 'windowLevel' ? 'bg-blue-600' : 'bg-gray-700'
+              activeTool === "windowLevel" ? "bg-blue-600" : "bg-gray-700"
             } hover:bg-blue-500`}
             title="Window/Level"
           >
             W/L
           </button>
           <button
-            onClick={() => setActiveTool(activeTool === 'pan' ? null : 'pan')}
+            onClick={() => setActiveTool(activeTool === "pan" ? null : "pan")}
             className={`px-3 py-1 rounded ${
-              activeTool === 'pan' ? 'bg-blue-600' : 'bg-gray-700'
+              activeTool === "pan" ? "bg-blue-600" : "bg-gray-700"
             } hover:bg-blue-500`}
             title="Pan"
           >
             Pan
           </button>
           <button
-            onClick={() => setActiveTool(activeTool === 'zoom' ? null : 'zoom')}
+            onClick={() => setActiveTool(activeTool === "zoom" ? null : "zoom")}
             className={`px-3 py-1 rounded ${
-              activeTool === 'zoom' ? 'bg-blue-600' : 'bg-gray-700'
+              activeTool === "zoom" ? "bg-blue-600" : "bg-gray-700"
             } hover:bg-blue-500`}
             title="Zoom"
           >
@@ -287,12 +313,12 @@ export default function DicomViewer({
         {/* Presets */}
         <div className="flex space-x-2">
           <select
-            onChange={e => applyPreset(e.target.value)}
+            onChange={(e) => applyPreset(e.target.value)}
             className="px-2 py-1 bg-gray-700 rounded text-sm"
             defaultValue=""
           >
             <option value="">W/L Presets</option>
-            {Object.keys(presets).map(preset => (
+            {Object.keys(presets).map((preset) => (
               <option key={preset} value={preset}>
                 {preset}
               </option>
@@ -303,28 +329,45 @@ export default function DicomViewer({
         {/* Transforms */}
         <div className="flex space-x-2">
           <button
-            onClick={() => setViewport(prev => ({ ...prev, rotation: (prev.rotation + 90) % 360 }))}
+            onClick={() =>
+              setViewport((prev) => ({
+                ...prev,
+                rotation: (prev.rotation + 90) % 360,
+              }))
+            }
             className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600"
             title="Rotate"
           >
             Rotate
           </button>
           <button
-            onClick={() => setViewport(prev => ({ ...prev, flipHorizontal: !prev.flipHorizontal }))}
+            onClick={() =>
+              setViewport((prev) => ({
+                ...prev,
+                flipHorizontal: !prev.flipHorizontal,
+              }))
+            }
             className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600"
             title="Flip Horizontal"
           >
             Flip H
           </button>
           <button
-            onClick={() => setViewport(prev => ({ ...prev, flipVertical: !prev.flipVertical }))}
+            onClick={() =>
+              setViewport((prev) => ({
+                ...prev,
+                flipVertical: !prev.flipVertical,
+              }))
+            }
             className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600"
             title="Flip Vertical"
           >
             Flip V
           </button>
           <button
-            onClick={() => setViewport(prev => ({ ...prev, invert: !prev.invert }))}
+            onClick={() =>
+              setViewport((prev) => ({ ...prev, invert: !prev.invert }))
+            }
             className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600"
             title="Invert"
           >
@@ -353,7 +396,7 @@ export default function DicomViewer({
           onWheel={handleWheel}
           className="max-w-full max-h-full cursor-crosshair"
           style={{
-            imageRendering: 'pixelated',
+            imageRendering: "pixelated",
           }}
         />
       </div>
@@ -361,7 +404,8 @@ export default function DicomViewer({
       {/* Status Bar */}
       <div className="bg-gray-800 text-white text-sm p-2 flex justify-between">
         <div>
-          WC: {viewport.windowCenter.toFixed(0)} | WW: {viewport.windowWidth.toFixed(0)}
+          WC: {viewport.windowCenter.toFixed(0)} | WW:{" "}
+          {viewport.windowWidth.toFixed(0)}
         </div>
         <div>Zoom: {(viewport.zoom * 100).toFixed(0)}%</div>
         <div>

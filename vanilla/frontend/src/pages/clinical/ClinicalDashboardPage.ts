@@ -1,6 +1,6 @@
 // Clinical Dashboard Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import EncounterList from '../../components/clinical/EncounterList';
+import ClinicalService from "../../services/ClinicalService";
+import EncounterList from "../../components/clinical/EncounterList";
 
 export class ClinicalDashboardPage {
   private container: HTMLElement;
@@ -74,13 +74,13 @@ export class ClinicalDashboardPage {
       this.updateStats(stats);
       this.displayEncounters(stats.recentEncounters);
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      this.showError('Failed to load dashboard data');
+      console.error("Error loading dashboard data:", error);
+      this.showError("Failed to load dashboard data");
     }
   }
 
   private updateStats(stats: any): void {
-    const statsContainer = document.getElementById('dashboard-stats');
+    const statsContainer = document.getElementById("dashboard-stats");
     if (!statsContainer) return;
 
     statsContainer.innerHTML = `
@@ -103,43 +103,46 @@ export class ClinicalDashboardPage {
     `;
 
     // Update badge counts
-    this.updateBadge('pending-notes-count', stats.pendingNotes);
-    this.updateBadge('pending-orders-count', stats.pendingOrders);
-    this.updateBadge('critical-alerts-count', stats.criticalAlerts);
+    this.updateBadge("pending-notes-count", stats.pendingNotes);
+    this.updateBadge("pending-orders-count", stats.pendingOrders);
+    this.updateBadge("critical-alerts-count", stats.criticalAlerts);
   }
 
   private updateBadge(elementId: string, count: number): void {
     const badge = document.getElementById(elementId);
     if (badge) {
       badge.textContent = count.toString();
-      badge.style.display = count > 0 ? 'inline-block' : 'none';
+      badge.style.display = count > 0 ? "inline-block" : "none";
     }
   }
 
   private displayEncounters(encounters: any[]): void {
-    this.encounterList = new EncounterList('encounter-list-container', (encounterId) => {
-      this.navigateToEncounter(encounterId);
-    });
+    this.encounterList = new EncounterList(
+      "encounter-list-container",
+      (encounterId) => {
+        this.navigateToEncounter(encounterId);
+      },
+    );
 
     this.encounterList.setEncounters(encounters);
   }
 
   private attachEventListeners(): void {
-    const newEncounterBtn = document.getElementById('new-encounter-btn');
-    newEncounterBtn?.addEventListener('click', () => {
+    const newEncounterBtn = document.getElementById("new-encounter-btn");
+    newEncounterBtn?.addEventListener("click", () => {
       this.navigateToNewEncounter();
     });
 
-    const pendingNotesBtn = document.getElementById('pending-notes-btn');
-    pendingNotesBtn?.addEventListener('click', () => {
+    const pendingNotesBtn = document.getElementById("pending-notes-btn");
+    pendingNotesBtn?.addEventListener("click", () => {
       // Navigate to pending notes view
-      console.log('Navigate to pending notes');
+      console.log("Navigate to pending notes");
     });
 
-    const pendingOrdersBtn = document.getElementById('pending-orders-btn');
-    pendingOrdersBtn?.addEventListener('click', () => {
+    const pendingOrdersBtn = document.getElementById("pending-orders-btn");
+    pendingOrdersBtn?.addEventListener("click", () => {
       // Navigate to pending orders view
-      console.log('Navigate to pending orders');
+      console.log("Navigate to pending orders");
     });
   }
 
@@ -148,11 +151,11 @@ export class ClinicalDashboardPage {
   }
 
   private navigateToNewEncounter(): void {
-    window.location.href = '/clinical/encounters/new';
+    window.location.href = "/clinical/encounters/new";
   }
 
   private showError(message: string): void {
-    const statsContainer = document.getElementById('dashboard-stats');
+    const statsContainer = document.getElementById("dashboard-stats");
     if (statsContainer) {
       statsContainer.innerHTML = `<div class="error-message">${message}</div>`;
     }
@@ -160,7 +163,7 @@ export class ClinicalDashboardPage {
 
   destroy(): void {
     this.encounterList?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

@@ -30,6 +30,6 @@ export class InteractionsPage {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

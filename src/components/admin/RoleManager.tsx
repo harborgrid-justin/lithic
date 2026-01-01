@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Users, Shield } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Users, Shield } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function RoleManager() {
   const [roles, setRoles] = useState<any[]>([]);
@@ -18,16 +24,16 @@ export default function RoleManager() {
   const fetchRoles = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/roles');
+      const response = await fetch("/api/admin/roles");
       const data = await response.json();
 
       if (data.success) {
         setRoles(data.data);
       } else {
-        toast.error(data.error || 'Failed to fetch roles');
+        toast.error(data.error || "Failed to fetch roles");
       }
     } catch (error) {
-      toast.error('Failed to fetch roles');
+      toast.error("Failed to fetch roles");
     } finally {
       setLoading(false);
     }
@@ -55,9 +61,7 @@ export default function RoleManager() {
                   <Shield className="h-5 w-5 text-primary" />
                   <CardTitle className="text-lg">{role.name}</CardTitle>
                 </div>
-                {role.isSystemRole && (
-                  <Badge variant="secondary">System</Badge>
-                )}
+                {role.isSystemRole && <Badge variant="secondary">System</Badge>}
               </div>
               <CardDescription>{role.description}</CardDescription>
             </CardHeader>

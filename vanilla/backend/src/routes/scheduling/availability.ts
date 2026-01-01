@@ -3,7 +3,7 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response } from "express";
 
 const router = Router();
 
@@ -42,7 +42,7 @@ export interface ProviderAvailability {
   }[];
   exceptions: {
     date: Date;
-    type: 'closed' | 'modified' | 'special';
+    type: "closed" | "modified" | "special";
     reason?: string;
     workingHours?: {
       startTime: string;
@@ -68,9 +68,15 @@ export interface BlockedTime {
   startTime: Date;
   endTime: Date;
   reason: string;
-  type: 'vacation' | 'meeting' | 'training' | 'personal' | 'maintenance' | 'other';
+  type:
+    | "vacation"
+    | "meeting"
+    | "training"
+    | "personal"
+    | "maintenance"
+    | "other";
   recurring?: {
-    pattern: 'daily' | 'weekly' | 'monthly';
+    pattern: "daily" | "weekly" | "monthly";
     interval: number;
     endDate?: Date;
   };
@@ -79,7 +85,7 @@ export interface BlockedTime {
 }
 
 // GET /api/scheduling/availability - Get availability
-router.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const {
       providerId,
@@ -88,13 +94,13 @@ router.get('/', async (req: Request, res: Response) => {
       appointmentType,
       startDate,
       endDate,
-      duration = '30'
+      duration = "30",
     } = req.query;
 
     if (!startDate || !endDate) {
       return res.status(400).json({
         success: false,
-        error: 'Start date and end date are required'
+        error: "Start date and end date are required",
       });
     }
 
@@ -111,28 +117,28 @@ router.get('/', async (req: Request, res: Response) => {
         appointmentType,
         startDate,
         endDate,
-        duration: parseInt(duration as string)
-      }
+        duration: parseInt(duration as string),
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch availability',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch availability",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/availability/provider/:providerId - Get provider availability
-router.get('/provider/:providerId', async (req: Request, res: Response) => {
+router.get("/provider/:providerId", async (req: Request, res: Response) => {
   try {
     const { providerId } = req.params;
-    const { startDate, endDate, duration = '30' } = req.query;
+    const { startDate, endDate, duration = "30" } = req.query;
 
     if (!startDate || !endDate) {
       return res.status(400).json({
         success: false,
-        error: 'Start date and end date are required'
+        error: "Start date and end date are required",
       });
     }
 
@@ -142,38 +148,38 @@ router.get('/provider/:providerId', async (req: Request, res: Response) => {
     if (!availability) {
       return res.status(404).json({
         success: false,
-        error: 'Provider not found or has no availability'
+        error: "Provider not found or has no availability",
       });
     }
 
     res.json({
       success: true,
-      data: availability
+      data: availability,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch provider availability',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch provider availability",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/availability/next-available - Find next available slot
-router.get('/next-available', async (req: Request, res: Response) => {
+router.get("/next-available", async (req: Request, res: Response) => {
   try {
     const {
       providerId,
       specialty,
       appointmentType,
-      duration = '30',
-      startDate
+      duration = "30",
+      startDate,
     } = req.query;
 
     if (!providerId && !specialty) {
       return res.status(400).json({
         success: false,
-        error: 'Either provider ID or specialty is required'
+        error: "Either provider ID or specialty is required",
       });
     }
 
@@ -183,32 +189,37 @@ router.get('/next-available', async (req: Request, res: Response) => {
     if (!nextSlot) {
       return res.status(404).json({
         success: false,
-        error: 'No available slots found in the next 30 days'
+        error: "No available slots found in the next 30 days",
       });
     }
 
     res.json({
       success: true,
-      data: nextSlot
+      data: nextSlot,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to find next available slot',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to find next available slot",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/availability/block - Block time (create unavailability)
-router.post('/block', async (req: Request, res: Response) => {
+router.post("/block", async (req: Request, res: Response) => {
   try {
     const blockData = req.body;
 
-    if (!blockData.providerId || !blockData.startTime || !blockData.endTime || !blockData.reason) {
+    if (
+      !blockData.providerId ||
+      !blockData.startTime ||
+      !blockData.endTime ||
+      !blockData.reason
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Provider ID, start time, end time, and reason are required'
+        error: "Provider ID, start time, end time, and reason are required",
       });
     }
 
@@ -219,7 +230,7 @@ router.post('/block', async (req: Request, res: Response) => {
       id: `block-${Date.now()}`,
       ...blockData,
       createdAt: new Date(),
-      createdBy: 'system' // TODO: Get from auth
+      createdBy: "system", // TODO: Get from auth
     };
 
     // TODO: Save to database
@@ -227,19 +238,19 @@ router.post('/block', async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       data: newBlock,
-      message: 'Time blocked successfully'
+      message: "Time blocked successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to block time',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to block time",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // DELETE /api/scheduling/availability/block/:id - Remove time block
-router.delete('/block/:id', async (req: Request, res: Response) => {
+router.delete("/block/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -247,19 +258,19 @@ router.delete('/block/:id', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      message: 'Time block removed successfully'
+      message: "Time block removed successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to remove time block',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to remove time block",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/availability/blocks - Get all time blocks
-router.get('/blocks', async (req: Request, res: Response) => {
+router.get("/blocks", async (req: Request, res: Response) => {
   try {
     const { providerId, startDate, endDate } = req.query;
 
@@ -268,71 +279,74 @@ router.get('/blocks', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      data: blocks
+      data: blocks,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch time blocks',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch time blocks",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // PUT /api/scheduling/availability/working-hours/:providerId - Update provider working hours
-router.put('/working-hours/:providerId', async (req: Request, res: Response) => {
-  try {
-    const { providerId } = req.params;
-    const { workingHours } = req.body;
+router.put(
+  "/working-hours/:providerId",
+  async (req: Request, res: Response) => {
+    try {
+      const { providerId } = req.params;
+      const { workingHours } = req.body;
 
-    if (!workingHours || !Array.isArray(workingHours)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Working hours array is required'
-      });
-    }
-
-    // Validate working hours format
-    for (const schedule of workingHours) {
-      if (
-        typeof schedule.dayOfWeek !== 'number' ||
-        schedule.dayOfWeek < 0 ||
-        schedule.dayOfWeek > 6 ||
-        !schedule.startTime ||
-        !schedule.endTime
-      ) {
+      if (!workingHours || !Array.isArray(workingHours)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid working hours format'
+          error: "Working hours array is required",
         });
       }
+
+      // Validate working hours format
+      for (const schedule of workingHours) {
+        if (
+          typeof schedule.dayOfWeek !== "number" ||
+          schedule.dayOfWeek < 0 ||
+          schedule.dayOfWeek > 6 ||
+          !schedule.startTime ||
+          !schedule.endTime
+        ) {
+          return res.status(400).json({
+            success: false,
+            error: "Invalid working hours format",
+          });
+        }
+      }
+
+      // TODO: Save to database
+
+      res.json({
+        success: true,
+        message: "Working hours updated successfully",
+        data: { providerId, workingHours },
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to update working hours",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
     }
-
-    // TODO: Save to database
-
-    res.json({
-      success: true,
-      message: 'Working hours updated successfully',
-      data: { providerId, workingHours }
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to update working hours',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
+  },
+);
 
 // POST /api/scheduling/availability/exception - Add schedule exception
-router.post('/exception', async (req: Request, res: Response) => {
+router.post("/exception", async (req: Request, res: Response) => {
   try {
     const { providerId, date, type, reason, workingHours } = req.body;
 
     if (!providerId || !date || !type) {
       return res.status(400).json({
         success: false,
-        error: 'Provider ID, date, and type are required'
+        error: "Provider ID, date, and type are required",
       });
     }
 
@@ -344,7 +358,7 @@ router.post('/exception', async (req: Request, res: Response) => {
       reason,
       workingHours,
       createdAt: new Date(),
-      createdBy: 'system' // TODO: Get from auth
+      createdBy: "system", // TODO: Get from auth
     };
 
     // TODO: Save to database
@@ -352,19 +366,19 @@ router.post('/exception', async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       data: exception,
-      message: 'Schedule exception added successfully'
+      message: "Schedule exception added successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to add schedule exception',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to add schedule exception",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // DELETE /api/scheduling/availability/exception/:id - Remove schedule exception
-router.delete('/exception/:id', async (req: Request, res: Response) => {
+router.delete("/exception/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -372,26 +386,26 @@ router.delete('/exception/:id', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      message: 'Schedule exception removed successfully'
+      message: "Schedule exception removed successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to remove schedule exception',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to remove schedule exception",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/availability/summary - Get availability summary
-router.get('/summary', async (req: Request, res: Response) => {
+router.get("/summary", async (req: Request, res: Response) => {
   try {
     const { providerId, startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return res.status(400).json({
         success: false,
-        error: 'Start date and end date are required'
+        error: "Start date and end date are required",
       });
     }
 
@@ -404,18 +418,18 @@ router.get('/summary', async (req: Request, res: Response) => {
       bookedSlots: 0,
       blockedSlots: 0,
       utilizationRate: 0,
-      averageSlotsPerDay: 0
+      averageSlotsPerDay: 0,
     };
 
     res.json({
       success: true,
-      data: summary
+      data: summary,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch availability summary',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch availability summary",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });

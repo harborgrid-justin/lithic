@@ -2,8 +2,8 @@
  * PatientForm Component - Form for creating/editing patients
  */
 
-import { Patient } from '../../types/Patient';
-import PatientService from '../../services/PatientService';
+import { Patient } from "../../types/Patient";
+import PatientService from "../../services/PatientService";
 
 export class PatientForm {
   private container: HTMLElement;
@@ -14,7 +14,7 @@ export class PatientForm {
   constructor(
     containerId: string,
     onSubmit?: (patient: Patient) => void,
-    onCancel?: () => void
+    onCancel?: () => void,
   ) {
     const element = document.getElementById(containerId);
     if (!element) {
@@ -42,7 +42,7 @@ export class PatientForm {
 
     this.container.innerHTML = `
       <form class="patient-form" id="patientForm">
-        <h2>${isEdit ? 'Edit Patient' : 'New Patient'}</h2>
+        <h2>${isEdit ? "Edit Patient" : "New Patient"}</h2>
 
         <div class="form-section">
           <h3>Personal Information</h3>
@@ -197,7 +197,7 @@ export class PatientForm {
 
         <div class="form-actions">
           <button type="submit" class="btn-primary">
-            ${isEdit ? 'Update Patient' : 'Create Patient'}
+            ${isEdit ? "Update Patient" : "Create Patient"}
           </button>
           <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
         </div>
@@ -215,60 +215,76 @@ export class PatientForm {
   private populateForm(): void {
     if (!this.patient) return;
 
-    const form = this.container.querySelector('form') as HTMLFormElement;
+    const form = this.container.querySelector("form") as HTMLFormElement;
     if (!form) return;
 
     // Personal info
-    (form.elements.namedItem('firstName') as HTMLInputElement).value = this.patient.firstName;
-    (form.elements.namedItem('middleName') as HTMLInputElement).value = this.patient.middleName || '';
-    (form.elements.namedItem('lastName') as HTMLInputElement).value = this.patient.lastName;
-    (form.elements.namedItem('dateOfBirth') as HTMLInputElement).value =
-      new Date(this.patient.dateOfBirth).toISOString().split('T')[0];
-    (form.elements.namedItem('gender') as HTMLSelectElement).value = this.patient.gender;
-    (form.elements.namedItem('bloodType') as HTMLSelectElement).value = this.patient.bloodType || '';
-    (form.elements.namedItem('maritalStatus') as HTMLSelectElement).value = this.patient.maritalStatus || '';
-    (form.elements.namedItem('preferredLanguage') as HTMLInputElement).value = this.patient.preferredLanguage || '';
+    (form.elements.namedItem("firstName") as HTMLInputElement).value =
+      this.patient.firstName;
+    (form.elements.namedItem("middleName") as HTMLInputElement).value =
+      this.patient.middleName || "";
+    (form.elements.namedItem("lastName") as HTMLInputElement).value =
+      this.patient.lastName;
+    (form.elements.namedItem("dateOfBirth") as HTMLInputElement).value =
+      new Date(this.patient.dateOfBirth).toISOString().split("T")[0];
+    (form.elements.namedItem("gender") as HTMLSelectElement).value =
+      this.patient.gender;
+    (form.elements.namedItem("bloodType") as HTMLSelectElement).value =
+      this.patient.bloodType || "";
+    (form.elements.namedItem("maritalStatus") as HTMLSelectElement).value =
+      this.patient.maritalStatus || "";
+    (form.elements.namedItem("preferredLanguage") as HTMLInputElement).value =
+      this.patient.preferredLanguage || "";
 
     // Contact info
-    (form.elements.namedItem('phone') as HTMLInputElement).value = this.patient.contact.phone;
-    (form.elements.namedItem('email') as HTMLInputElement).value = this.patient.contact.email || '';
-    (form.elements.namedItem('street') as HTMLInputElement).value = this.patient.address.street;
-    (form.elements.namedItem('city') as HTMLInputElement).value = this.patient.address.city;
-    (form.elements.namedItem('state') as HTMLInputElement).value = this.patient.address.state;
-    (form.elements.namedItem('zipCode') as HTMLInputElement).value = this.patient.address.zipCode;
+    (form.elements.namedItem("phone") as HTMLInputElement).value =
+      this.patient.contact.phone;
+    (form.elements.namedItem("email") as HTMLInputElement).value =
+      this.patient.contact.email || "";
+    (form.elements.namedItem("street") as HTMLInputElement).value =
+      this.patient.address.street;
+    (form.elements.namedItem("city") as HTMLInputElement).value =
+      this.patient.address.city;
+    (form.elements.namedItem("state") as HTMLInputElement).value =
+      this.patient.address.state;
+    (form.elements.namedItem("zipCode") as HTMLInputElement).value =
+      this.patient.address.zipCode;
 
     // Emergency contact
     if (this.patient.contact.emergencyContact) {
-      (form.elements.namedItem('emergencyName') as HTMLInputElement).value =
+      (form.elements.namedItem("emergencyName") as HTMLInputElement).value =
         this.patient.contact.emergencyContact.name;
-      (form.elements.namedItem('emergencyRelationship') as HTMLInputElement).value =
-        this.patient.contact.emergencyContact.relationship;
-      (form.elements.namedItem('emergencyPhone') as HTMLInputElement).value =
+      (
+        form.elements.namedItem("emergencyRelationship") as HTMLInputElement
+      ).value = this.patient.contact.emergencyContact.relationship;
+      (form.elements.namedItem("emergencyPhone") as HTMLInputElement).value =
         this.patient.contact.emergencyContact.phone;
     }
 
     // Clinical info
-    (form.elements.namedItem('allergies') as HTMLInputElement).value =
-      this.patient.allergies?.join(', ') || '';
-    (form.elements.namedItem('medications') as HTMLInputElement).value =
-      this.patient.medications?.join(', ') || '';
-    (form.elements.namedItem('conditions') as HTMLInputElement).value =
-      this.patient.conditions?.join(', ') || '';
+    (form.elements.namedItem("allergies") as HTMLInputElement).value =
+      this.patient.allergies?.join(", ") || "";
+    (form.elements.namedItem("medications") as HTMLInputElement).value =
+      this.patient.medications?.join(", ") || "";
+    (form.elements.namedItem("conditions") as HTMLInputElement).value =
+      this.patient.conditions?.join(", ") || "";
   }
 
   /**
    * Attach event listeners
    */
   private attachEventListeners(): void {
-    const form = this.container.querySelector('form') as HTMLFormElement;
-    const cancelBtn = this.container.querySelector('#cancelBtn') as HTMLButtonElement;
+    const form = this.container.querySelector("form") as HTMLFormElement;
+    const cancelBtn = this.container.querySelector(
+      "#cancelBtn",
+    ) as HTMLButtonElement;
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.handleSubmit();
     });
 
-    cancelBtn.addEventListener('click', () => {
+    cancelBtn.addEventListener("click", () => {
       if (this.onCancel) {
         this.onCancel();
       }
@@ -279,67 +295,80 @@ export class PatientForm {
    * Handle form submission
    */
   private async handleSubmit(): Promise<void> {
-    const form = this.container.querySelector('form') as HTMLFormElement;
+    const form = this.container.querySelector("form") as HTMLFormElement;
     const formData = new FormData(form);
-    const messageEl = this.container.querySelector('#formMessage') as HTMLElement;
+    const messageEl = this.container.querySelector(
+      "#formMessage",
+    ) as HTMLElement;
 
     try {
       const patientData: any = {
-        firstName: formData.get('firstName'),
-        middleName: formData.get('middleName'),
-        lastName: formData.get('lastName'),
-        dateOfBirth: new Date(formData.get('dateOfBirth') as string),
-        gender: formData.get('gender'),
-        bloodType: formData.get('bloodType') || undefined,
-        maritalStatus: formData.get('maritalStatus') || undefined,
-        preferredLanguage: formData.get('preferredLanguage') || undefined,
+        firstName: formData.get("firstName"),
+        middleName: formData.get("middleName"),
+        lastName: formData.get("lastName"),
+        dateOfBirth: new Date(formData.get("dateOfBirth") as string),
+        gender: formData.get("gender"),
+        bloodType: formData.get("bloodType") || undefined,
+        maritalStatus: formData.get("maritalStatus") || undefined,
+        preferredLanguage: formData.get("preferredLanguage") || undefined,
         contact: {
-          phone: formData.get('phone'),
-          email: formData.get('email') || undefined,
+          phone: formData.get("phone"),
+          email: formData.get("email") || undefined,
           emergencyContact: undefined,
         },
         address: {
-          street: formData.get('street'),
-          city: formData.get('city'),
-          state: formData.get('state'),
-          zipCode: formData.get('zipCode'),
-          country: 'USA',
+          street: formData.get("street"),
+          city: formData.get("city"),
+          state: formData.get("state"),
+          zipCode: formData.get("zipCode"),
+          country: "USA",
         },
-        allergies: this.parseCommaSeparated(formData.get('allergies') as string),
-        medications: this.parseCommaSeparated(formData.get('medications') as string),
-        conditions: this.parseCommaSeparated(formData.get('conditions') as string),
+        allergies: this.parseCommaSeparated(
+          formData.get("allergies") as string,
+        ),
+        medications: this.parseCommaSeparated(
+          formData.get("medications") as string,
+        ),
+        conditions: this.parseCommaSeparated(
+          formData.get("conditions") as string,
+        ),
         insurance: this.patient?.insurance || [],
       };
 
       // Emergency contact
-      if (formData.get('emergencyName')) {
+      if (formData.get("emergencyName")) {
         patientData.contact.emergencyContact = {
-          name: formData.get('emergencyName'),
-          relationship: formData.get('emergencyRelationship'),
-          phone: formData.get('emergencyPhone'),
+          name: formData.get("emergencyName"),
+          relationship: formData.get("emergencyRelationship"),
+          phone: formData.get("emergencyPhone"),
         };
       }
 
       let response;
       if (this.patient) {
-        response = await PatientService.updatePatient(this.patient.id, patientData);
+        response = await PatientService.updatePatient(
+          this.patient.id,
+          patientData,
+        );
       } else {
         response = await PatientService.createPatient(patientData);
       }
 
       if (response.success && response.data) {
-        messageEl.className = 'form-message success';
-        messageEl.textContent = response.message || 'Patient saved successfully';
+        messageEl.className = "form-message success";
+        messageEl.textContent =
+          response.message || "Patient saved successfully";
 
         if (this.onSubmit) {
           this.onSubmit(response.data);
         }
       } else {
-        throw new Error(response.error || 'Failed to save patient');
+        throw new Error(response.error || "Failed to save patient");
       }
     } catch (error) {
-      messageEl.className = 'form-message error';
-      messageEl.textContent = error instanceof Error ? error.message : 'An error occurred';
+      messageEl.className = "form-message error";
+      messageEl.textContent =
+        error instanceof Error ? error.message : "An error occurred";
     }
   }
 
@@ -348,7 +377,10 @@ export class PatientForm {
    */
   private parseCommaSeparated(value: string | null): string[] | undefined {
     if (!value) return undefined;
-    return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
   }
 
   /**
@@ -356,6 +388,6 @@ export class PatientForm {
    */
   public clear(): void {
     this.patient = null;
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { BillingService } from '../services/BillingService';
-import { EDIService } from '../services/EDIService';
+import { Request, Response } from "express";
+import { BillingService } from "../services/BillingService";
+import { EDIService } from "../services/EDIService";
 
 export class BillingController {
   private billingService: BillingService;
@@ -15,7 +15,16 @@ export class BillingController {
 
   async getPayments(req: Request, res: Response): Promise<Response> {
     try {
-      const { page = 1, limit = 20, status, paymentMethod, startDate, endDate, patientId, claimId } = req.query;
+      const {
+        page = 1,
+        limit = 20,
+        status,
+        paymentMethod,
+        startDate,
+        endDate,
+        patientId,
+        claimId,
+      } = req.query;
 
       const filters = {
         status: status as string,
@@ -23,27 +32,27 @@ export class BillingController {
         startDate: startDate as string,
         endDate: endDate as string,
         patientId: patientId as string,
-        claimId: claimId as string
+        claimId: claimId as string,
       };
 
       const result = await this.billingService.getPayments(
         parseInt(page as string),
         parseInt(limit as string),
-        filters
+        filters,
       );
 
       return res.status(200).json({
         success: true,
         data: result.payments,
         pagination: result.pagination,
-        summary: result.summary
+        summary: result.summary,
       });
     } catch (error) {
-      console.error('Error in getPayments:', error);
+      console.error("Error in getPayments:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve payments',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve payments",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -56,20 +65,20 @@ export class BillingController {
       if (!payment) {
         return res.status(404).json({
           success: false,
-          message: 'Payment not found'
+          message: "Payment not found",
         });
       }
 
       return res.status(200).json({
         success: true,
-        data: payment
+        data: payment,
       });
     } catch (error) {
-      console.error('Error in getPaymentById:', error);
+      console.error("Error in getPaymentById:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -79,19 +88,22 @@ export class BillingController {
       const paymentData = req.body;
       const userId = (req as any).user?.id;
 
-      const payment = await this.billingService.createPayment(paymentData, userId);
+      const payment = await this.billingService.createPayment(
+        paymentData,
+        userId,
+      );
 
       return res.status(201).json({
         success: true,
-        message: 'Payment created successfully',
-        data: payment
+        message: "Payment created successfully",
+        data: payment,
       });
     } catch (error) {
-      console.error('Error in createPayment:', error);
+      console.error("Error in createPayment:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to create payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -101,19 +113,22 @@ export class BillingController {
       const paymentData = req.body;
       const userId = (req as any).user?.id;
 
-      const result = await this.billingService.postPaymentToClaim(paymentData, userId);
+      const result = await this.billingService.postPaymentToClaim(
+        paymentData,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Payment posted successfully',
-        data: result
+        message: "Payment posted successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in postPayment:', error);
+      console.error("Error in postPayment:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to post payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to post payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -124,19 +139,23 @@ export class BillingController {
       const updates = req.body;
       const userId = (req as any).user?.id;
 
-      const payment = await this.billingService.updatePayment(id, updates, userId);
+      const payment = await this.billingService.updatePayment(
+        id,
+        updates,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Payment updated successfully',
-        data: payment
+        message: "Payment updated successfully",
+        data: payment,
       });
     } catch (error) {
-      console.error('Error in updatePayment:', error);
+      console.error("Error in updatePayment:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to update payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to update payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -151,14 +170,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        message: 'Payment voided successfully'
+        message: "Payment voided successfully",
       });
     } catch (error) {
-      console.error('Error in voidPayment:', error);
+      console.error("Error in voidPayment:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to void payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to void payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -166,18 +185,19 @@ export class BillingController {
   async getPaymentsByPatient(req: Request, res: Response): Promise<Response> {
     try {
       const { patientId } = req.params;
-      const payments = await this.billingService.getPaymentsByPatient(patientId);
+      const payments =
+        await this.billingService.getPaymentsByPatient(patientId);
 
       return res.status(200).json({
         success: true,
-        data: payments
+        data: payments,
       });
     } catch (error) {
-      console.error('Error in getPaymentsByPatient:', error);
+      console.error("Error in getPaymentsByPatient:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve patient payments',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve patient payments",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -189,14 +209,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: payments
+        data: payments,
       });
     } catch (error) {
-      console.error('Error in getPaymentsByClaim:', error);
+      console.error("Error in getPaymentsByClaim:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve claim payments',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve claim payments",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -206,19 +226,22 @@ export class BillingController {
       const { payments } = req.body;
       const userId = (req as any).user?.id;
 
-      const result = await this.billingService.postBatchPayments(payments, userId);
+      const result = await this.billingService.postBatchPayments(
+        payments,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Batch payments posted successfully',
-        data: result
+        message: "Batch payments posted successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in postBatchPayments:', error);
+      console.error("Error in postBatchPayments:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to post batch payments',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to post batch payments",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -229,14 +252,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: payments
+        data: payments,
       });
     } catch (error) {
-      console.error('Error in getUnappliedPayments:', error);
+      console.error("Error in getUnappliedPayments:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve unapplied payments',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve unapplied payments",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -247,19 +270,23 @@ export class BillingController {
       const { claimId } = req.body;
       const userId = (req as any).user?.id;
 
-      const result = await this.billingService.applyPayment(id, claimId, userId);
+      const result = await this.billingService.applyPayment(
+        id,
+        claimId,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Payment applied successfully',
-        data: result
+        message: "Payment applied successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in applyPayment:', error);
+      console.error("Error in applyPayment:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to apply payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to apply payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -270,19 +297,25 @@ export class BillingController {
       const { amount, reason, method } = req.body;
       const userId = (req as any).user?.id;
 
-      const refund = await this.billingService.refundPayment(id, amount, reason, method, userId);
+      const refund = await this.billingService.refundPayment(
+        id,
+        amount,
+        reason,
+        method,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Payment refunded successfully',
-        data: refund
+        message: "Payment refunded successfully",
+        data: refund,
       });
     } catch (error) {
-      console.error('Error in refundPayment:', error);
+      console.error("Error in refundPayment:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to refund payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to refund payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -292,19 +325,19 @@ export class BillingController {
       const { startDate, endDate } = req.query;
       const stats = await this.billingService.getPaymentStats(
         startDate as string,
-        endDate as string
+        endDate as string,
       );
 
       return res.status(200).json({
         success: true,
-        data: stats
+        data: stats,
       });
     } catch (error) {
-      console.error('Error in getPaymentStats:', error);
+      console.error("Error in getPaymentStats:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve payment statistics',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve payment statistics",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -313,32 +346,39 @@ export class BillingController {
 
   async getInvoices(req: Request, res: Response): Promise<Response> {
     try {
-      const { page = 1, limit = 20, status, patientId, startDate, endDate } = req.query;
+      const {
+        page = 1,
+        limit = 20,
+        status,
+        patientId,
+        startDate,
+        endDate,
+      } = req.query;
 
       const filters = {
         status: status as string,
         patientId: patientId as string,
         startDate: startDate as string,
-        endDate: endDate as string
+        endDate: endDate as string,
       };
 
       const result = await this.billingService.getInvoices(
         parseInt(page as string),
         parseInt(limit as string),
-        filters
+        filters,
       );
 
       return res.status(200).json({
         success: true,
         data: result.invoices,
-        pagination: result.pagination
+        pagination: result.pagination,
       });
     } catch (error) {
-      console.error('Error in getInvoices:', error);
+      console.error("Error in getInvoices:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve invoices',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve invoices",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -351,20 +391,20 @@ export class BillingController {
       if (!invoice) {
         return res.status(404).json({
           success: false,
-          message: 'Invoice not found'
+          message: "Invoice not found",
         });
       }
 
       return res.status(200).json({
         success: true,
-        data: invoice
+        data: invoice,
       });
     } catch (error) {
-      console.error('Error in getInvoiceById:', error);
+      console.error("Error in getInvoiceById:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve invoice',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve invoice",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -374,19 +414,22 @@ export class BillingController {
       const invoiceData = req.body;
       const userId = (req as any).user?.id;
 
-      const invoice = await this.billingService.createInvoice(invoiceData, userId);
+      const invoice = await this.billingService.createInvoice(
+        invoiceData,
+        userId,
+      );
 
       return res.status(201).json({
         success: true,
-        message: 'Invoice created successfully',
-        data: invoice
+        message: "Invoice created successfully",
+        data: invoice,
       });
     } catch (error) {
-      console.error('Error in createInvoice:', error);
+      console.error("Error in createInvoice:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create invoice',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to create invoice",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -396,19 +439,22 @@ export class BillingController {
       const { claimId, encounterId } = req.body;
       const userId = (req as any).user?.id;
 
-      const invoice = await this.billingService.generateInvoiceFromClaim(claimId || encounterId, userId);
+      const invoice = await this.billingService.generateInvoiceFromClaim(
+        claimId || encounterId,
+        userId,
+      );
 
       return res.status(201).json({
         success: true,
-        message: 'Invoice generated successfully',
-        data: invoice
+        message: "Invoice generated successfully",
+        data: invoice,
       });
     } catch (error) {
-      console.error('Error in generateInvoice:', error);
+      console.error("Error in generateInvoice:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to generate invoice',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to generate invoice",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -419,19 +465,23 @@ export class BillingController {
       const updates = req.body;
       const userId = (req as any).user?.id;
 
-      const invoice = await this.billingService.updateInvoice(id, updates, userId);
+      const invoice = await this.billingService.updateInvoice(
+        id,
+        updates,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Invoice updated successfully',
-        data: invoice
+        message: "Invoice updated successfully",
+        data: invoice,
       });
     } catch (error) {
-      console.error('Error in updateInvoice:', error);
+      console.error("Error in updateInvoice:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to update invoice',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to update invoice",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -445,14 +495,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        message: 'Invoice deleted successfully'
+        message: "Invoice deleted successfully",
       });
     } catch (error) {
-      console.error('Error in deleteInvoice:', error);
+      console.error("Error in deleteInvoice:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to delete invoice',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to delete invoice",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -467,14 +517,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        message: 'Invoice sent successfully'
+        message: "Invoice sent successfully",
       });
     } catch (error) {
-      console.error('Error in sendInvoice:', error);
+      console.error("Error in sendInvoice:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to send invoice',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to send invoice",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -484,15 +534,18 @@ export class BillingController {
       const { id } = req.params;
       const pdfBuffer = await this.billingService.generateInvoicePDF(id);
 
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename=invoice-${id}.pdf`);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=invoice-${id}.pdf`,
+      );
       return res.send(pdfBuffer);
     } catch (error) {
-      console.error('Error in generateInvoicePDF:', error);
+      console.error("Error in generateInvoicePDF:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to generate invoice PDF',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to generate invoice PDF",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -500,18 +553,19 @@ export class BillingController {
   async getInvoicesByPatient(req: Request, res: Response): Promise<Response> {
     try {
       const { patientId } = req.params;
-      const invoices = await this.billingService.getInvoicesByPatient(patientId);
+      const invoices =
+        await this.billingService.getInvoicesByPatient(patientId);
 
       return res.status(200).json({
         success: true,
-        data: invoices
+        data: invoices,
       });
     } catch (error) {
-      console.error('Error in getInvoicesByPatient:', error);
+      console.error("Error in getInvoicesByPatient:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve patient invoices',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve patient invoices",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -522,19 +576,23 @@ export class BillingController {
       const paymentData = req.body;
       const userId = (req as any).user?.id;
 
-      const payment = await this.billingService.recordInvoicePayment(id, paymentData, userId);
+      const payment = await this.billingService.recordInvoicePayment(
+        id,
+        paymentData,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Payment recorded successfully',
-        data: payment
+        message: "Payment recorded successfully",
+        data: payment,
       });
     } catch (error) {
-      console.error('Error in recordInvoicePayment:', error);
+      console.error("Error in recordInvoicePayment:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to record payment',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to record payment",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -545,14 +603,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: invoices
+        data: invoices,
       });
     } catch (error) {
-      console.error('Error in getOverdueInvoices:', error);
+      console.error("Error in getOverdueInvoices:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve overdue invoices',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve overdue invoices",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -562,19 +620,23 @@ export class BillingController {
       const { invoiceIds, method } = req.body;
       const userId = (req as any).user?.id;
 
-      const result = await this.billingService.sendBatchInvoices(invoiceIds, method, userId);
+      const result = await this.billingService.sendBatchInvoices(
+        invoiceIds,
+        method,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'Batch invoices sent successfully',
-        data: result
+        message: "Batch invoices sent successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in sendBatchInvoices:', error);
+      console.error("Error in sendBatchInvoices:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to send batch invoices',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to send batch invoices",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -584,19 +646,19 @@ export class BillingController {
       const { startDate, endDate } = req.query;
       const stats = await this.billingService.getInvoiceStats(
         startDate as string,
-        endDate as string
+        endDate as string,
       );
 
       return res.status(200).json({
         success: true,
-        data: stats
+        data: stats,
       });
     } catch (error) {
-      console.error('Error in getInvoiceStats:', error);
+      console.error("Error in getInvoiceStats:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve invoice statistics',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve invoice statistics",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -608,18 +670,23 @@ export class BillingController {
       const { patientId, insuranceId, serviceDate } = req.body;
       const userId = (req as any).user?.id;
 
-      const result = await this.billingService.checkEligibility(patientId, insuranceId, serviceDate, userId);
+      const result = await this.billingService.checkEligibility(
+        patientId,
+        insuranceId,
+        serviceDate,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        data: result
+        data: result,
       });
     } catch (error) {
-      console.error('Error in checkEligibility:', error);
+      console.error("Error in checkEligibility:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to check eligibility',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to check eligibility",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -634,19 +701,19 @@ export class BillingController {
         insuranceId,
         serviceType,
         procedureCodes,
-        userId
+        userId,
       );
 
       return res.status(200).json({
         success: true,
-        data: result
+        data: result,
       });
     } catch (error) {
-      console.error('Error in verifyBenefits:', error);
+      console.error("Error in verifyBenefits:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to verify benefits',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to verify benefits",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -654,18 +721,19 @@ export class BillingController {
   async getEligibilityHistory(req: Request, res: Response): Promise<Response> {
     try {
       const { patientId } = req.params;
-      const history = await this.billingService.getEligibilityHistory(patientId);
+      const history =
+        await this.billingService.getEligibilityHistory(patientId);
 
       return res.status(200).json({
         success: true,
-        data: history
+        data: history,
       });
     } catch (error) {
-      console.error('Error in getEligibilityHistory:', error);
+      console.error("Error in getEligibilityHistory:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve eligibility history',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve eligibility history",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -678,20 +746,20 @@ export class BillingController {
       if (!eligibility) {
         return res.status(404).json({
           success: false,
-          message: 'Eligibility record not found'
+          message: "Eligibility record not found",
         });
       }
 
       return res.status(200).json({
         success: true,
-        data: eligibility
+        data: eligibility,
       });
     } catch (error) {
-      console.error('Error in getEligibilityById:', error);
+      console.error("Error in getEligibilityById:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve eligibility',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve eligibility",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -701,23 +769,29 @@ export class BillingController {
       const { patients } = req.body;
       const userId = (req as any).user?.id;
 
-      const results = await this.billingService.batchEligibilityCheck(patients, userId);
+      const results = await this.billingService.batchEligibilityCheck(
+        patients,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        data: results
+        data: results,
       });
     } catch (error) {
-      console.error('Error in batchEligibilityCheck:', error);
+      console.error("Error in batchEligibilityCheck:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to perform batch eligibility check',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to perform batch eligibility check",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 
-  async estimatePatientResponsibility(req: Request, res: Response): Promise<Response> {
+  async estimatePatientResponsibility(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     try {
       const { patientId, insuranceId, procedureCodes, charges } = req.body;
 
@@ -725,38 +799,42 @@ export class BillingController {
         patientId,
         insuranceId,
         procedureCodes,
-        charges
+        charges,
       );
 
       return res.status(200).json({
         success: true,
-        data: estimate
+        data: estimate,
       });
     } catch (error) {
-      console.error('Error in estimatePatientResponsibility:', error);
+      console.error("Error in estimatePatientResponsibility:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to estimate patient responsibility',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to estimate patient responsibility",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 
-  async getPayerCoveredServices(req: Request, res: Response): Promise<Response> {
+  async getPayerCoveredServices(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     try {
       const { payerId } = req.params;
-      const services = await this.billingService.getPayerCoveredServices(payerId);
+      const services =
+        await this.billingService.getPayerCoveredServices(payerId);
 
       return res.status(200).json({
         success: true,
-        data: services
+        data: services,
       });
     } catch (error) {
-      console.error('Error in getPayerCoveredServices:', error);
+      console.error("Error in getPayerCoveredServices:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve covered services',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve covered services",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -770,15 +848,15 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        message: 'Eligibility refreshed successfully',
-        data: result
+        message: "Eligibility refreshed successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in refreshEligibility:', error);
+      console.error("Error in refreshEligibility:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to refresh eligibility',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to refresh eligibility",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -788,19 +866,19 @@ export class BillingController {
       const { startDate, endDate } = req.query;
       const stats = await this.billingService.getEligibilityStats(
         startDate as string,
-        endDate as string
+        endDate as string,
       );
 
       return res.status(200).json({
         success: true,
-        data: stats
+        data: stats,
       });
     } catch (error) {
-      console.error('Error in getEligibilityStats:', error);
+      console.error("Error in getEligibilityStats:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve eligibility statistics',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve eligibility statistics",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -813,19 +891,19 @@ export class BillingController {
       const codes = await this.billingService.searchCPTCodes(
         query as string,
         category as string,
-        parseInt(limit as string)
+        parseInt(limit as string),
       );
 
       return res.status(200).json({
         success: true,
-        data: codes
+        data: codes,
       });
     } catch (error) {
-      console.error('Error in searchCPTCodes:', error);
+      console.error("Error in searchCPTCodes:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to search CPT codes',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to search CPT codes",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -838,43 +916,43 @@ export class BillingController {
       if (!details) {
         return res.status(404).json({
           success: false,
-          message: 'CPT code not found'
+          message: "CPT code not found",
         });
       }
 
       return res.status(200).json({
         success: true,
-        data: details
+        data: details,
       });
     } catch (error) {
-      console.error('Error in getCPTCodeDetails:', error);
+      console.error("Error in getCPTCodeDetails:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve CPT code details',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve CPT code details",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 
   async searchICDCodes(req: Request, res: Response): Promise<Response> {
     try {
-      const { query, version = 'ICD-10', limit = 20 } = req.query;
+      const { query, version = "ICD-10", limit = 20 } = req.query;
       const codes = await this.billingService.searchICDCodes(
         query as string,
         version as string,
-        parseInt(limit as string)
+        parseInt(limit as string),
       );
 
       return res.status(200).json({
         success: true,
-        data: codes
+        data: codes,
       });
     } catch (error) {
-      console.error('Error in searchICDCodes:', error);
+      console.error("Error in searchICDCodes:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to search ICD codes',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to search ICD codes",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -887,39 +965,45 @@ export class BillingController {
       if (!details) {
         return res.status(404).json({
           success: false,
-          message: 'ICD code not found'
+          message: "ICD code not found",
         });
       }
 
       return res.status(200).json({
         success: true,
-        data: details
+        data: details,
       });
     } catch (error) {
-      console.error('Error in getICDCodeDetails:', error);
+      console.error("Error in getICDCodeDetails:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve ICD code details',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve ICD code details",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 
-  async validateCodeCombination(req: Request, res: Response): Promise<Response> {
+  async validateCodeCombination(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     try {
       const { cptCodes, icdCodes } = req.body;
-      const validation = await this.billingService.validateCodeCombination(cptCodes, icdCodes);
+      const validation = await this.billingService.validateCodeCombination(
+        cptCodes,
+        icdCodes,
+      );
 
       return res.status(200).json({
         success: true,
-        data: validation
+        data: validation,
       });
     } catch (error) {
-      console.error('Error in validateCodeCombination:', error);
+      console.error("Error in validateCodeCombination:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to validate code combination',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to validate code combination",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -927,18 +1011,22 @@ export class BillingController {
   async suggestCodes(req: Request, res: Response): Promise<Response> {
     try {
       const { encounterData, diagnosis, procedures } = req.body;
-      const suggestions = await this.billingService.suggestCodes(encounterData, diagnosis, procedures);
+      const suggestions = await this.billingService.suggestCodes(
+        encounterData,
+        diagnosis,
+        procedures,
+      );
 
       return res.status(200).json({
         success: true,
-        data: suggestions
+        data: suggestions,
       });
     } catch (error) {
-      console.error('Error in suggestCodes:', error);
+      console.error("Error in suggestCodes:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to suggest codes',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to suggest codes",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -949,14 +1037,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: modifiers
+        data: modifiers,
       });
     } catch (error) {
-      console.error('Error in getCPTModifiers:', error);
+      console.error("Error in getCPTModifiers:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve CPT modifiers',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve CPT modifiers",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -966,19 +1054,19 @@ export class BillingController {
       const { payerId, codes } = req.query;
       const feeSchedule = await this.billingService.getFeeSchedule(
         payerId as string,
-        codes as string
+        codes as string,
       );
 
       return res.status(200).json({
         success: true,
-        data: feeSchedule
+        data: feeSchedule,
       });
     } catch (error) {
-      console.error('Error in getFeeSchedule:', error);
+      console.error("Error in getFeeSchedule:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve fee schedule',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve fee schedule",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -986,18 +1074,22 @@ export class BillingController {
   async crosswalkCodes(req: Request, res: Response): Promise<Response> {
     try {
       const { code, fromVersion, toVersion } = req.body;
-      const crosswalked = await this.billingService.crosswalkCodes(code, fromVersion, toVersion);
+      const crosswalked = await this.billingService.crosswalkCodes(
+        code,
+        fromVersion,
+        toVersion,
+      );
 
       return res.status(200).json({
         success: true,
-        data: crosswalked
+        data: crosswalked,
       });
     } catch (error) {
-      console.error('Error in crosswalkCodes:', error);
+      console.error("Error in crosswalkCodes:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to crosswalk codes',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to crosswalk codes",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1005,18 +1097,21 @@ export class BillingController {
   async getNCCIEdits(req: Request, res: Response): Promise<Response> {
     try {
       const { code1, code2 } = req.query;
-      const edits = await this.billingService.getNCCIEdits(code1 as string, code2 as string);
+      const edits = await this.billingService.getNCCIEdits(
+        code1 as string,
+        code2 as string,
+      );
 
       return res.status(200).json({
         success: true,
-        data: edits
+        data: edits,
       });
     } catch (error) {
-      console.error('Error in getNCCIEdits:', error);
+      console.error("Error in getNCCIEdits:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve NCCI edits',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve NCCI edits",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1026,18 +1121,21 @@ export class BillingController {
       const { claimId, encounterId } = req.body;
       const userId = (req as any).user?.id;
 
-      const auditResult = await this.billingService.auditCoding(claimId || encounterId, userId);
+      const auditResult = await this.billingService.auditCoding(
+        claimId || encounterId,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        data: auditResult
+        data: auditResult,
       });
     } catch (error) {
-      console.error('Error in auditCoding:', error);
+      console.error("Error in auditCoding:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to audit coding',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to audit coding",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1045,18 +1143,21 @@ export class BillingController {
   async getCodeBundles(req: Request, res: Response): Promise<Response> {
     try {
       const { specialty, type } = req.query;
-      const bundles = await this.billingService.getCodeBundles(specialty as string, type as string);
+      const bundles = await this.billingService.getCodeBundles(
+        specialty as string,
+        type as string,
+      );
 
       return res.status(200).json({
         success: true,
-        data: bundles
+        data: bundles,
       });
     } catch (error) {
-      console.error('Error in getCodeBundles:', error);
+      console.error("Error in getCodeBundles:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve code bundles',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve code bundles",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1071,55 +1172,65 @@ export class BillingController {
       if (!file) {
         return res.status(400).json({
           success: false,
-          message: 'No file uploaded'
+          message: "No file uploaded",
         });
       }
 
-      const result = await this.ediService.parseERA835(file.buffer.toString('utf-8'), userId);
+      const result = await this.ediService.parseERA835(
+        file.buffer.toString("utf-8"),
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'ERA file uploaded and parsed successfully',
-        data: result
+        message: "ERA file uploaded and parsed successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in uploadERA:', error);
+      console.error("Error in uploadERA:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to upload ERA',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to upload ERA",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 
   async getERAs(req: Request, res: Response): Promise<Response> {
     try {
-      const { page = 1, limit = 20, status, payerId, startDate, endDate } = req.query;
+      const {
+        page = 1,
+        limit = 20,
+        status,
+        payerId,
+        startDate,
+        endDate,
+      } = req.query;
 
       const filters = {
         status: status as string,
         payerId: payerId as string,
         startDate: startDate as string,
-        endDate: endDate as string
+        endDate: endDate as string,
       };
 
       const result = await this.ediService.getERAs(
         parseInt(page as string),
         parseInt(limit as string),
-        filters
+        filters,
       );
 
       return res.status(200).json({
         success: true,
         data: result.eras,
-        pagination: result.pagination
+        pagination: result.pagination,
       });
     } catch (error) {
-      console.error('Error in getERAs:', error);
+      console.error("Error in getERAs:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve ERAs',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve ERAs",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1132,20 +1243,20 @@ export class BillingController {
       if (!era) {
         return res.status(404).json({
           success: false,
-          message: 'ERA not found'
+          message: "ERA not found",
         });
       }
 
       return res.status(200).json({
         success: true,
-        data: era
+        data: era,
       });
     } catch (error) {
-      console.error('Error in getERAById:', error);
+      console.error("Error in getERAById:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve ERA',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve ERA",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1159,15 +1270,15 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        message: 'ERA processed successfully',
-        data: result
+        message: "ERA processed successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in processERA:', error);
+      console.error("Error in processERA:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to process ERA',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to process ERA",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1178,19 +1289,23 @@ export class BillingController {
       const { autoResolveAdjustments } = req.body;
       const userId = (req as any).user?.id;
 
-      const result = await this.ediService.autoPostERA(id, autoResolveAdjustments, userId);
+      const result = await this.ediService.autoPostERA(
+        id,
+        autoResolveAdjustments,
+        userId,
+      );
 
       return res.status(200).json({
         success: true,
-        message: 'ERA auto-posted successfully',
-        data: result
+        message: "ERA auto-posted successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in autoPostERA:', error);
+      console.error("Error in autoPostERA:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to auto-post ERA',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to auto-post ERA",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1202,14 +1317,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: payments
+        data: payments,
       });
     } catch (error) {
-      console.error('Error in getERAPayments:', error);
+      console.error("Error in getERAPayments:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve ERA payments',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve ERA payments",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1221,14 +1336,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: adjustments
+        data: adjustments,
       });
     } catch (error) {
-      console.error('Error in getERAAdjustments:', error);
+      console.error("Error in getERAAdjustments:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve ERA adjustments',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve ERA adjustments",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1240,14 +1355,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: result
+        data: result,
       });
     } catch (error) {
-      console.error('Error in matchERAToClaims:', error);
+      console.error("Error in matchERAToClaims:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to match ERA to claims',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to match ERA to claims",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1259,14 +1374,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: denials
+        data: denials,
       });
     } catch (error) {
-      console.error('Error in getERADenials:', error);
+      console.error("Error in getERADenials:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve ERA denials',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve ERA denials",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1276,15 +1391,18 @@ export class BillingController {
       const { id } = req.params;
       const rawData = await this.ediService.getRawERA(id);
 
-      res.setHeader('Content-Type', 'text/plain');
-      res.setHeader('Content-Disposition', `attachment; filename=era-${id}.txt`);
+      res.setHeader("Content-Type", "text/plain");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=era-${id}.txt`,
+      );
       return res.send(rawData);
     } catch (error) {
-      console.error('Error in getRawERA:', error);
+      console.error("Error in getRawERA:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve raw ERA',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve raw ERA",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1295,14 +1413,14 @@ export class BillingController {
 
       return res.status(200).json({
         success: true,
-        data: eras
+        data: eras,
       });
     } catch (error) {
-      console.error('Error in getUnprocessedERAs:', error);
+      console.error("Error in getUnprocessedERAs:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve unprocessed ERAs',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve unprocessed ERAs",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1318,20 +1436,20 @@ export class BillingController {
         depositAmount,
         depositDate,
         bankAccount,
-        userId
+        userId,
       );
 
       return res.status(200).json({
         success: true,
-        message: 'ERA reconciled successfully',
-        data: result
+        message: "ERA reconciled successfully",
+        data: result,
       });
     } catch (error) {
-      console.error('Error in reconcileERA:', error);
+      console.error("Error in reconcileERA:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to reconcile ERA',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to reconcile ERA",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1341,19 +1459,19 @@ export class BillingController {
       const { startDate, endDate } = req.query;
       const stats = await this.ediService.getERAStats(
         startDate as string,
-        endDate as string
+        endDate as string,
       );
 
       return res.status(200).json({
         success: true,
-        data: stats
+        data: stats,
       });
     } catch (error) {
-      console.error('Error in getERAStats:', error);
+      console.error("Error in getERAStats:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to retrieve ERA statistics',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to retrieve ERA statistics",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 /**
  * API Documentation Page
  * Interactive Swagger UI for API documentation
  */
 
-import { useEffect, useRef } from 'react';
-import { openApiSpec } from '@/lib/openapi/spec';
+import { useEffect, useRef } from "react";
+import { openApiSpec } from "@/lib/openapi/spec";
 
 export default function APIDocsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -15,11 +15,11 @@ export default function APIDocsPage() {
     // Dynamically import Swagger UI
     const loadSwaggerUI = async () => {
       // @ts-ignore
-      if (typeof window !== 'undefined' && window.SwaggerUIBundle) {
+      if (typeof window !== "undefined" && window.SwaggerUIBundle) {
         // @ts-ignore
         window.SwaggerUIBundle({
           spec: openApiSpec,
-          dom_id: '#swagger-ui',
+          dom_id: "#swagger-ui",
           deepLinking: true,
           presets: [
             // @ts-ignore
@@ -31,7 +31,7 @@ export default function APIDocsPage() {
             // @ts-ignore
             window.SwaggerUIBundle.plugins.DownloadUrl,
           ],
-          layout: 'StandaloneLayout',
+          layout: "StandaloneLayout",
         });
       }
     };
@@ -39,17 +39,19 @@ export default function APIDocsPage() {
     // Load Swagger UI CSS and JS
     const loadResources = () => {
       // Load CSS
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui.css';
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui.css";
       document.head.appendChild(link);
 
       // Load JS
-      const script1 = document.createElement('script');
-      script1.src = 'https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui-bundle.js';
+      const script1 = document.createElement("script");
+      script1.src =
+        "https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui-bundle.js";
       script1.onload = () => {
-        const script2 = document.createElement('script');
-        script2.src = 'https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui-standalone-preset.js';
+        const script2 = document.createElement("script");
+        script2.src =
+          "https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui-standalone-preset.js";
         script2.onload = () => loadSwaggerUI();
         document.head.appendChild(script2);
       };
@@ -64,7 +66,9 @@ export default function APIDocsPage() {
       {/* Header */}
       <div className="border-b">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold">Lithic Healthcare API Documentation</h1>
+          <h1 className="text-3xl font-bold">
+            Lithic Healthcare API Documentation
+          </h1>
           <p className="mt-2 text-muted-foreground">
             Complete REST API, FHIR R4, and HL7 v2 integration documentation
           </p>
@@ -87,10 +91,7 @@ export default function APIDocsPage() {
             >
               FHIR R4 API
             </a>
-            <a
-              href="#tag/HL7"
-              className="text-sm text-primary hover:underline"
-            >
+            <a href="#tag/HL7" className="text-sm text-primary hover:underline">
               HL7 v2 API
             </a>
             <a
@@ -127,7 +128,8 @@ export default function APIDocsPage() {
           <div className="p-4 border rounded-lg bg-card">
             <h3 className="font-semibold mb-2">Authentication</h3>
             <p className="text-sm text-muted-foreground">
-              Use Bearer tokens or API keys for authentication. Include in Authorization header.
+              Use Bearer tokens or API keys for authentication. Include in
+              Authorization header.
             </p>
             <code className="text-xs mt-2 block bg-muted p-2 rounded">
               Authorization: Bearer YOUR_TOKEN
@@ -137,7 +139,8 @@ export default function APIDocsPage() {
           <div className="p-4 border rounded-lg bg-card">
             <h3 className="font-semibold mb-2">Rate Limits</h3>
             <p className="text-sm text-muted-foreground">
-              100 requests per minute for standard tier. Enterprise plans have higher limits.
+              100 requests per minute for standard tier. Enterprise plans have
+              higher limits.
             </p>
             <ul className="text-xs mt-2 space-y-1">
               <li>• Standard: 100 req/min</li>
@@ -166,7 +169,7 @@ export default function APIDocsPage() {
             <div className="p-4 border rounded-lg bg-card">
               <h3 className="font-semibold mb-2">Create Patient (FHIR)</h3>
               <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
-{`POST /api/fhir/Patient
+                {`POST /api/fhir/Patient
 Content-Type: application/fhir+json
 
 {
@@ -184,7 +187,7 @@ Content-Type: application/fhir+json
             <div className="p-4 border rounded-lg bg-card">
               <h3 className="font-semibold mb-2">Register Webhook</h3>
               <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
-{`POST /api/webhooks
+                {`POST /api/webhooks
 Content-Type: application/json
 
 {
@@ -208,18 +211,24 @@ Content-Type: application/json
         <div className="container mx-auto px-4 py-6">
           <div className="text-sm text-muted-foreground">
             <p>
-              For support, contact{' '}
-              <a href="mailto:support@lithic.health" className="text-primary hover:underline">
+              For support, contact{" "}
+              <a
+                href="mailto:support@lithic.health"
+                className="text-primary hover:underline"
+              >
                 support@lithic.health
               </a>
             </p>
             <p className="mt-2">
-              View our{' '}
+              View our{" "}
               <a href="/docs/guides" className="text-primary hover:underline">
                 integration guides
-              </a>
-              {' '}and{' '}
-              <a href="/docs/changelog" className="text-primary hover:underline">
+              </a>{" "}
+              and{" "}
+              <a
+                href="/docs/changelog"
+                className="text-primary hover:underline"
+              >
                 changelog
               </a>
             </p>

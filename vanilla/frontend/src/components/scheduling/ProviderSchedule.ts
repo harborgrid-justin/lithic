@@ -29,13 +29,13 @@ export class ProviderSchedule {
     // Mock implementation
     return {
       workingHours: [
-        { dayOfWeek: 1, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 2, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 3, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 4, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 5, startTime: '09:00', endTime: '17:00' }
+        { dayOfWeek: 1, startTime: "09:00", endTime: "17:00" },
+        { dayOfWeek: 2, startTime: "09:00", endTime: "17:00" },
+        { dayOfWeek: 3, startTime: "09:00", endTime: "17:00" },
+        { dayOfWeek: 4, startTime: "09:00", endTime: "17:00" },
+        { dayOfWeek: 5, startTime: "09:00", endTime: "17:00" },
       ],
-      appointments: []
+      appointments: [],
     };
   }
 
@@ -43,18 +43,30 @@ export class ProviderSchedule {
     return `
       <div class="working-hours">
         <h4>Working Hours</h4>
-        ${schedule.workingHours.map((wh: any) => `
+        ${schedule.workingHours
+          .map(
+            (wh: any) => `
           <div class="working-hours-row">
             <span>${this.getDayName(wh.dayOfWeek)}</span>
             <span>${wh.startTime} - ${wh.endTime}</span>
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
 
   private getDayName(dayOfWeek: number): string {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
     return days[dayOfWeek];
   }
 

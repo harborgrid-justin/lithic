@@ -1,4 +1,4 @@
-import { AuditLog } from '../../components/admin/AuditLog';
+import { AuditLog } from "../../components/admin/AuditLog";
 
 /**
  * AuditPage
@@ -24,7 +24,7 @@ export class AuditPage {
       </div>
     `;
 
-    const auditContainer = document.getElementById('audit-log-container');
+    const auditContainer = document.getElementById("audit-log-container");
     if (auditContainer) {
       this.auditLog = new AuditLog(auditContainer);
       await this.auditLog.render();
@@ -33,6 +33,6 @@ export class AuditPage {
 
   destroy(): void {
     this.auditLog?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

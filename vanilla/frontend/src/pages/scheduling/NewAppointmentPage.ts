@@ -3,9 +3,9 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
-import { AppointmentForm } from '../../components/scheduling/AppointmentForm';
-import { TimeSlotPicker } from '../../components/scheduling/TimeSlotPicker';
+import { SchedulingService } from "../../services/SchedulingService";
+import { AppointmentForm } from "../../components/scheduling/AppointmentForm";
+import { TimeSlotPicker } from "../../components/scheduling/TimeSlotPicker";
 
 export class NewAppointmentPage {
   private container: HTMLElement;
@@ -30,17 +30,17 @@ export class NewAppointmentPage {
       </div>
     `;
 
-    const formContainer = document.getElementById('formContainer')!;
+    const formContainer = document.getElementById("formContainer")!;
     this.appointmentForm = new AppointmentForm(formContainer, {
       onSubmit: async (data) => {
         try {
           await this.schedulingService.createAppointment(data);
-          window.location.hash = '/scheduling/appointments';
+          window.location.hash = "/scheduling/appointments";
         } catch (error) {
-          console.error('Error creating appointment:', error);
-          alert('Failed to create appointment. Please try again.');
+          console.error("Error creating appointment:", error);
+          alert("Failed to create appointment. Please try again.");
         }
-      }
+      },
     });
 
     await this.appointmentForm.render();

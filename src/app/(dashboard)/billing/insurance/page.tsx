@@ -1,14 +1,16 @@
-'use client';
+"use client";
 
-import EligibilityChecker from '@/components/billing/EligibilityChecker';
-import { Shield, CheckCircle } from 'lucide-react';
+import EligibilityChecker from "@/components/billing/EligibilityChecker";
+import { Shield, CheckCircle } from "lucide-react";
 
 export default function InsurancePage() {
   return (
     <div className="p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Insurance Verification</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Insurance Verification
+        </h1>
         <p className="text-gray-600 mt-2">
           Check insurance eligibility and benefits
         </p>
@@ -23,9 +25,9 @@ export default function InsurancePage() {
               About Insurance Verification
             </h3>
             <p className="text-sm text-blue-800">
-              Use this tool to verify patient insurance eligibility in real-time using EDI 270/271
-              transactions. This helps ensure coverage before providing services and reduces claim
-              denials.
+              Use this tool to verify patient insurance eligibility in real-time
+              using EDI 270/271 transactions. This helps ensure coverage before
+              providing services and reduces claim denials.
             </p>
             <ul className="mt-3 space-y-1 text-sm text-blue-800">
               <li className="flex items-center gap-2">

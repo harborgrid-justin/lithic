@@ -1,6 +1,6 @@
 // Encounter List Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import EncounterList from '../../components/clinical/EncounterList';
+import ClinicalService from "../../services/ClinicalService";
+import EncounterList from "../../components/clinical/EncounterList";
 
 export class EncounterListPage {
   private container: HTMLElement;
@@ -62,35 +62,44 @@ export class EncounterListPage {
 
   private async loadEncounters(): Promise<void> {
     try {
-      const encounters = await ClinicalService.getEncountersByPatient(this.patientId);
+      const encounters = await ClinicalService.getEncountersByPatient(
+        this.patientId,
+      );
       this.displayEncounters(encounters);
     } catch (error) {
-      console.error('Error loading encounters:', error);
-      this.showError('Failed to load encounters');
+      console.error("Error loading encounters:", error);
+      this.showError("Failed to load encounters");
     }
   }
 
   private displayEncounters(encounters: any[]): void {
-    this.encounterList = new EncounterList('encounter-list-container', (encounterId) => {
-      this.navigateToEncounter(encounterId);
-    });
+    this.encounterList = new EncounterList(
+      "encounter-list-container",
+      (encounterId) => {
+        this.navigateToEncounter(encounterId);
+      },
+    );
 
     this.encounterList.setEncounters(encounters);
   }
 
   private attachEventListeners(): void {
-    const newEncounterBtn = document.getElementById('new-encounter-btn');
-    newEncounterBtn?.addEventListener('click', () => {
+    const newEncounterBtn = document.getElementById("new-encounter-btn");
+    newEncounterBtn?.addEventListener("click", () => {
       this.navigateToNewEncounter();
     });
 
-    const statusFilter = document.getElementById('status-filter') as HTMLSelectElement;
-    statusFilter?.addEventListener('change', () => {
+    const statusFilter = document.getElementById(
+      "status-filter",
+    ) as HTMLSelectElement;
+    statusFilter?.addEventListener("change", () => {
       this.applyFilters();
     });
 
-    const typeFilter = document.getElementById('type-filter') as HTMLSelectElement;
-    typeFilter?.addEventListener('change', () => {
+    const typeFilter = document.getElementById(
+      "type-filter",
+    ) as HTMLSelectElement;
+    typeFilter?.addEventListener("change", () => {
       this.applyFilters();
     });
   }
@@ -105,11 +114,11 @@ export class EncounterListPage {
   }
 
   private navigateToNewEncounter(): void {
-    window.location.href = '/clinical/encounters/new';
+    window.location.href = "/clinical/encounters/new";
   }
 
   private showError(message: string): void {
-    const container = document.getElementById('encounter-list-container');
+    const container = document.getElementById("encounter-list-container");
     if (container) {
       container.innerHTML = `<div class="error-message">${message}</div>`;
     }
@@ -117,7 +126,7 @@ export class EncounterListPage {
 
   destroy(): void {
     this.encounterList?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

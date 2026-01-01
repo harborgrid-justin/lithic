@@ -1,6 +1,6 @@
 // Problems Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import ProblemList from '../../components/clinical/ProblemList';
+import ClinicalService from "../../services/ClinicalService";
+import ProblemList from "../../components/clinical/ProblemList";
 
 export class ProblemsPage {
   private container: HTMLElement;
@@ -102,89 +102,105 @@ export class ProblemsPage {
 
   private async loadProblems(): Promise<void> {
     try {
-      const activeOnly = (document.getElementById('active-only-checkbox') as HTMLInputElement)?.checked ?? true;
-      const problems = await ClinicalService.getProblemsByPatient(this.patientId, activeOnly);
+      const activeOnly =
+        (document.getElementById("active-only-checkbox") as HTMLInputElement)
+          ?.checked ?? true;
+      const problems = await ClinicalService.getProblemsByPatient(
+        this.patientId,
+        activeOnly,
+      );
 
-      this.problemList = new ProblemList('problem-list-container', async (problemId, status) => {
-        await this.updateProblemStatus(problemId, status);
-      });
+      this.problemList = new ProblemList(
+        "problem-list-container",
+        async (problemId, status) => {
+          await this.updateProblemStatus(problemId, status);
+        },
+      );
 
       this.problemList.setProblems(problems);
     } catch (error) {
-      console.error('Error loading problems:', error);
+      console.error("Error loading problems:", error);
     }
   }
 
-  private async updateProblemStatus(problemId: string, status: string): Promise<void> {
+  private async updateProblemStatus(
+    problemId: string,
+    status: string,
+  ): Promise<void> {
     try {
       await ClinicalService.updateProblem(problemId, {
         status,
-        resolvedDate: status === 'resolved' ? new Date().toISOString() : undefined
+        resolvedDate:
+          status === "resolved" ? new Date().toISOString() : undefined,
       });
       await this.loadProblems();
     } catch (error) {
-      console.error('Error updating problem:', error);
-      alert('Failed to update problem');
+      console.error("Error updating problem:", error);
+      alert("Failed to update problem");
     }
   }
 
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('back-btn');
-    backBtn?.addEventListener('click', () => {
+    const backBtn = document.getElementById("back-btn");
+    backBtn?.addEventListener("click", () => {
       window.history.back();
     });
 
-    const addProblemBtn = document.getElementById('add-problem-btn');
-    addProblemBtn?.addEventListener('click', () => {
+    const addProblemBtn = document.getElementById("add-problem-btn");
+    addProblemBtn?.addEventListener("click", () => {
       this.showModal();
     });
 
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    closeModalBtn?.addEventListener('click', () => {
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    closeModalBtn?.addEventListener("click", () => {
       this.hideModal();
     });
 
-    const activeOnlyCheckbox = document.getElementById('active-only-checkbox');
-    activeOnlyCheckbox?.addEventListener('change', async () => {
+    const activeOnlyCheckbox = document.getElementById("active-only-checkbox");
+    activeOnlyCheckbox?.addEventListener("change", async () => {
       await this.loadProblems();
     });
 
-    const icd10Search = document.getElementById('icd10-search') as HTMLInputElement;
-    icd10Search?.addEventListener('input', async (e) => {
+    const icd10Search = document.getElementById(
+      "icd10-search",
+    ) as HTMLInputElement;
+    icd10Search?.addEventListener("input", async (e) => {
       await this.searchICD10((e.target as HTMLInputElement).value);
     });
 
-    const addProblemForm = document.getElementById('add-problem-form') as HTMLFormElement;
-    addProblemForm?.addEventListener('submit', async (e) => {
+    const addProblemForm = document.getElementById(
+      "add-problem-form",
+    ) as HTMLFormElement;
+    addProblemForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.addProblem(addProblemForm);
     });
 
-    const cancelBtn = document.getElementById('cancel-btn');
-    cancelBtn?.addEventListener('click', () => {
+    const cancelBtn = document.getElementById("cancel-btn");
+    cancelBtn?.addEventListener("click", () => {
       this.hideModal();
     });
   }
 
   private showModal(): void {
-    const modal = document.getElementById('add-problem-modal');
+    const modal = document.getElementById("add-problem-modal");
     if (modal) {
-      modal.style.display = 'block';
+      modal.style.display = "block";
     }
   }
 
   private hideModal(): void {
-    const modal = document.getElementById('add-problem-modal');
+    const modal = document.getElementById("add-problem-modal");
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.display = "none";
     }
   }
 
   private async searchICD10(query: string): Promise<void> {
     if (query.length < 2) {
-      const resultsContainer = document.getElementById('icd10-results');
+      const resultsContainer = document.getElementById("icd10-results");
       if (resultsContainer) {
-        resultsContainer.innerHTML = '';
+        resultsContainer.innerHTML = "";
       }
       return;
     }
@@ -193,41 +209,52 @@ export class ProblemsPage {
       const codes = await ClinicalService.searchICD10(query);
       this.displayICD10Results(codes);
     } catch (error) {
-      console.error('Error searching ICD-10:', error);
+      console.error("Error searching ICD-10:", error);
     }
   }
 
   private displayICD10Results(codes: any[]): void {
-    const resultsContainer = document.getElementById('icd10-results');
+    const resultsContainer = document.getElementById("icd10-results");
     if (!resultsContainer) return;
 
     if (codes.length === 0) {
-      resultsContainer.innerHTML = '<div class="no-results">No codes found</div>';
+      resultsContainer.innerHTML =
+        '<div class="no-results">No codes found</div>';
       return;
     }
 
-    resultsContainer.innerHTML = codes.map(code => `
+    resultsContainer.innerHTML = codes
+      .map(
+        (code) => `
       <div class="search-result-item" data-code="${code.code}" data-description="${code.description}">
         <strong>${code.code}</strong> - ${code.description}
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
 
     // Attach click handlers to results
-    const resultItems = resultsContainer.querySelectorAll('.search-result-item');
-    resultItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const code = item.getAttribute('data-code');
-        const description = item.getAttribute('data-description');
-        this.selectICD10Code(code || '', description || '');
+    const resultItems = resultsContainer.querySelectorAll(
+      ".search-result-item",
+    );
+    resultItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const code = item.getAttribute("data-code");
+        const description = item.getAttribute("data-description");
+        this.selectICD10Code(code || "", description || "");
       });
     });
   }
 
   private selectICD10Code(code: string, description: string): void {
-    const selectedInput = document.getElementById('selected-icd10') as HTMLInputElement;
-    const codeInput = document.getElementById('icd10-code') as HTMLInputElement;
-    const problemNameInput = document.getElementById('problem-name') as HTMLInputElement;
-    const resultsContainer = document.getElementById('icd10-results');
+    const selectedInput = document.getElementById(
+      "selected-icd10",
+    ) as HTMLInputElement;
+    const codeInput = document.getElementById("icd10-code") as HTMLInputElement;
+    const problemNameInput = document.getElementById(
+      "problem-name",
+    ) as HTMLInputElement;
+    const resultsContainer = document.getElementById("icd10-results");
 
     if (selectedInput) {
       selectedInput.value = `${code} - ${description}`;
@@ -239,7 +266,7 @@ export class ProblemsPage {
       problemNameInput.value = description;
     }
     if (resultsContainer) {
-      resultsContainer.innerHTML = '';
+      resultsContainer.innerHTML = "";
     }
   }
 
@@ -248,27 +275,32 @@ export class ProblemsPage {
       const formData = new FormData(form);
       const data = {
         patientId: this.patientId,
-        icd10Code: (document.getElementById('icd10-code') as HTMLInputElement)?.value,
-        problemName: (document.getElementById('problem-name') as HTMLInputElement)?.value,
-        severity: (document.getElementById('severity') as HTMLSelectElement)?.value,
-        onsetDate: (document.getElementById('onset-date') as HTMLInputElement)?.value,
-        notes: (document.getElementById('notes') as HTMLTextAreaElement)?.value,
+        icd10Code: (document.getElementById("icd10-code") as HTMLInputElement)
+          ?.value,
+        problemName: (
+          document.getElementById("problem-name") as HTMLInputElement
+        )?.value,
+        severity: (document.getElementById("severity") as HTMLSelectElement)
+          ?.value,
+        onsetDate: (document.getElementById("onset-date") as HTMLInputElement)
+          ?.value,
+        notes: (document.getElementById("notes") as HTMLTextAreaElement)?.value,
       };
 
       await ClinicalService.createProblem(data);
-      alert('Problem added successfully');
+      alert("Problem added successfully");
       this.hideModal();
       form.reset();
       await this.loadProblems();
     } catch (error) {
-      console.error('Error adding problem:', error);
-      alert('Failed to add problem');
+      console.error("Error adding problem:", error);
+      alert("Failed to add problem");
     }
   }
 
   destroy(): void {
     this.problemList?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

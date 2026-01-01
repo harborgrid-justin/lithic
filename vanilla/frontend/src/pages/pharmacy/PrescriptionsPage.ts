@@ -3,15 +3,17 @@
  * List and manage all prescriptions
  */
 
-import pharmacyService, { type Prescription } from '../../services/PharmacyService';
+import pharmacyService, {
+  type Prescription,
+} from "../../services/PharmacyService";
 
 export class PrescriptionsPage {
   private container: HTMLElement;
   private prescriptions: Prescription[] = [];
   private filters = {
-    status: '',
-    priority: '',
-    isControlled: '',
+    status: "",
+    priority: "",
+    isControlled: "",
   };
 
   constructor(containerId: string) {
@@ -31,11 +33,12 @@ export class PrescriptionsPage {
       const filterParams: any = {};
       if (this.filters.status) filterParams.status = this.filters.status;
       if (this.filters.priority) filterParams.priority = this.filters.priority;
-      if (this.filters.isControlled) filterParams.isControlled = this.filters.isControlled === 'true';
+      if (this.filters.isControlled)
+        filterParams.isControlled = this.filters.isControlled === "true";
 
       this.prescriptions = await pharmacyService.getPrescriptions(filterParams);
     } catch (error) {
-      console.error('Failed to load prescriptions:', error);
+      console.error("Failed to load prescriptions:", error);
       this.prescriptions = [];
     }
   }
@@ -241,18 +244,20 @@ export class PrescriptionsPage {
           </tr>
         </thead>
         <tbody>
-          ${this.prescriptions.map(rx => `
+          ${this.prescriptions
+            .map(
+              (rx) => `
             <tr data-rx-id="${rx.id}">
               <td>
                 <span class="rx-number">${rx.rxNumber}</span>
-                ${rx.isControlled ? '<span class="controlled-indicator"> 🔒</span>' : ''}
+                ${rx.isControlled ? '<span class="controlled-indicator"> 🔒</span>' : ""}
               </td>
               <td>${rx.patientName || rx.patientId}</td>
               <td>${rx.medication?.name || rx.medicationId}</td>
               <td>${rx.quantity}</td>
               <td>
                 <span class="status-badge status-${rx.status}">
-                  ${rx.status.replace('_', ' ').toUpperCase()}
+                  ${rx.status.replace("_", " ").toUpperCase()}
                 </span>
               </td>
               <td class="priority-${rx.priority}">${rx.priority.toUpperCase()}</td>
@@ -261,7 +266,9 @@ export class PrescriptionsPage {
                 <button class="btn-link" data-action="view" data-id="${rx.id}">View</button>
               </td>
             </tr>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
     `;
@@ -269,17 +276,19 @@ export class PrescriptionsPage {
 
   private attachEventListeners(): void {
     // New prescription button
-    const newBtn = this.container.querySelector('[data-action="new-prescription"]');
+    const newBtn = this.container.querySelector(
+      '[data-action="new-prescription"]',
+    );
     if (newBtn) {
-      newBtn.addEventListener('click', () => {
-        window.location.hash = '#/pharmacy/prescriptions/new';
+      newBtn.addEventListener("click", () => {
+        window.location.hash = "#/pharmacy/prescriptions/new";
       });
     }
 
     // Filter changes
-    const filterSelects = this.container.querySelectorAll('[data-filter]');
-    filterSelects.forEach(select => {
-      select.addEventListener('change', async (e) => {
+    const filterSelects = this.container.querySelectorAll("[data-filter]");
+    filterSelects.forEach((select) => {
+      select.addEventListener("change", async (e) => {
         const target = e.target as HTMLSelectElement;
         const filterName = target.dataset.filter as keyof typeof this.filters;
         this.filters[filterName] = target.value;
@@ -291,8 +300,8 @@ export class PrescriptionsPage {
 
     // View prescription
     const viewButtons = this.container.querySelectorAll('[data-action="view"]');
-    viewButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    viewButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const target = e.target as HTMLElement;
         const id = target.dataset.id;
         window.location.hash = `#/pharmacy/prescriptions/${id}`;
@@ -300,11 +309,11 @@ export class PrescriptionsPage {
     });
 
     // Row click
-    const rxNumbers = this.container.querySelectorAll('.rx-number');
-    rxNumbers.forEach(rxNum => {
-      rxNum.addEventListener('click', (e) => {
+    const rxNumbers = this.container.querySelectorAll(".rx-number");
+    rxNumbers.forEach((rxNum) => {
+      rxNum.addEventListener("click", (e) => {
         const target = e.target as HTMLElement;
-        const row = target.closest('tr');
+        const row = target.closest("tr");
         const id = row?.dataset.rxId;
         if (id) {
           window.location.hash = `#/pharmacy/prescriptions/${id}`;
@@ -314,6 +323,6 @@ export class PrescriptionsPage {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

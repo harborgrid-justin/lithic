@@ -8,7 +8,8 @@ export class ImagingOrderList {
     this.orders = orders.data || [];
 
     if (this.orders.length === 0) {
-      container.innerHTML = '<div class="empty-state">No imaging orders found</div>';
+      container.innerHTML =
+        '<div class="empty-state">No imaging orders found</div>';
       return;
     }
 
@@ -28,24 +29,28 @@ export class ImagingOrderList {
             </tr>
           </thead>
           <tbody>
-            ${this.orders.map(order => this.createOrderRow(order)).join('')}
+            ${this.orders.map((order) => this.createOrderRow(order)).join("")}
           </tbody>
         </table>
       </div>
 
-      ${orders.pagination ? `
+      ${
+        orders.pagination
+          ? `
         <div class="pagination">
-          <button class="btn btn-sm" data-page="${orders.pagination.page - 1}" ${orders.pagination.page === 1 ? 'disabled' : ''}>
+          <button class="btn btn-sm" data-page="${orders.pagination.page - 1}" ${orders.pagination.page === 1 ? "disabled" : ""}>
             Previous
           </button>
           <span class="pagination-info">
             Page ${orders.pagination.page} of ${orders.pagination.totalPages}
           </span>
-          <button class="btn btn-sm" data-page="${orders.pagination.page + 1}" ${orders.pagination.page === orders.pagination.totalPages ? 'disabled' : ''}>
+          <button class="btn btn-sm" data-page="${orders.pagination.page + 1}" ${orders.pagination.page === orders.pagination.totalPages ? "disabled" : ""}>
             Next
           </button>
         </div>
-      ` : ''}
+      `
+          : ""
+      }
     `;
 
     this.attachEventListeners(container);
@@ -60,7 +65,7 @@ export class ImagingOrderList {
         <td>${order.procedureCode} - ${order.bodyPart}</td>
         <td><span class="badge badge-${this.getPriorityColor(order.priority)}">${order.priority}</span></td>
         <td><span class="badge badge-${this.getStatusColor(order.status)}">${order.status}</span></td>
-        <td>${order.scheduledDateTime ? this.formatDate(order.scheduledDateTime) : 'Not scheduled'}</td>
+        <td>${order.scheduledDateTime ? this.formatDate(order.scheduledDateTime) : "Not scheduled"}</td>
         <td>
           <button class="btn btn-sm btn-primary" data-action="view" data-order-id="${order.id}">View</button>
         </td>
@@ -69,10 +74,10 @@ export class ImagingOrderList {
   }
 
   private attachEventListeners(container: HTMLElement) {
-    container.addEventListener('click', (e) => {
+    container.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
 
-      if (target.dataset.action === 'view') {
+      if (target.dataset.action === "view") {
         const orderId = target.dataset.orderId;
         if (orderId) {
           window.location.href = `#/imaging/orders/${orderId}`;
@@ -83,7 +88,7 @@ export class ImagingOrderList {
         const page = parseInt(target.dataset.page);
         if (page > 0) {
           // TODO: Emit event to reload with new page
-          console.log('Load page:', page);
+          console.log("Load page:", page);
         }
       }
     });
@@ -91,45 +96,45 @@ export class ImagingOrderList {
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private getModalityColor(modality: string): string {
     const colors: Record<string, string> = {
-      'CT': 'blue',
-      'MRI': 'purple',
-      'XRAY': 'green',
-      'US': 'cyan',
-      'NM': 'orange',
-      'PET': 'red',
+      CT: "blue",
+      MRI: "purple",
+      XRAY: "green",
+      US: "cyan",
+      NM: "orange",
+      PET: "red",
     };
-    return colors[modality] || 'gray';
+    return colors[modality] || "gray";
   }
 
   private getPriorityColor(priority: string): string {
     const colors: Record<string, string> = {
-      'ROUTINE': 'secondary',
-      'URGENT': 'warning',
-      'STAT': 'danger',
-      'ASAP': 'danger',
+      ROUTINE: "secondary",
+      URGENT: "warning",
+      STAT: "danger",
+      ASAP: "danger",
     };
-    return colors[priority] || 'secondary';
+    return colors[priority] || "secondary";
   }
 
   private getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      'PENDING': 'warning',
-      'SCHEDULED': 'info',
-      'IN_PROGRESS': 'primary',
-      'COMPLETED': 'success',
-      'CANCELLED': 'danger',
+      PENDING: "warning",
+      SCHEDULED: "info",
+      IN_PROGRESS: "primary",
+      COMPLETED: "success",
+      CANCELLED: "danger",
     };
-    return colors[status] || 'secondary';
+    return colors[status] || "secondary";
   }
 }

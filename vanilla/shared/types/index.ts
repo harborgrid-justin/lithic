@@ -2,31 +2,31 @@
 // This allows easy imports: import { Patient, Appointment } from '@shared/types';
 
 // Authentication & Authorization
-export * from './auth.js';
+export * from "./auth.js";
 
 // Patient Management
-export * from './patient.js';
+export * from "./patient.js";
 
 // Clinical Documentation
-export * from './clinical.js';
+export * from "./clinical.js";
 
 // Scheduling & Appointments
-export * from './scheduling.js';
+export * from "./scheduling.js";
 
 // Billing & Claims
-export * from './billing.js';
+export * from "./billing.js";
 
 // Laboratory
-export * from './laboratory.js';
+export * from "./laboratory.js";
 
 // Pharmacy & Medications
-export * from './pharmacy.js';
+export * from "./pharmacy.js";
 
 // Imaging & Radiology
-export * from './imaging.js';
+export * from "./imaging.js";
 
 // Analytics & Reporting
-export * from './analytics.js';
+export * from "./analytics.js";
 
 // Common Response Types
 export interface ApiResponse<T> {
@@ -63,7 +63,7 @@ export interface PaginationParams {
   page?: number;
   limit?: number;
   sort?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
 }
 
 // Common Search Params
@@ -90,7 +90,7 @@ export interface AuditLog {
 }
 
 // Common Status Type
-export type Status = 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DELETED';
+export type Status = "ACTIVE" | "INACTIVE" | "PENDING" | "DELETED";
 
 // Common Date Range
 export interface DateRange {

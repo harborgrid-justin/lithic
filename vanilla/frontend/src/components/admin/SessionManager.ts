@@ -1,4 +1,4 @@
-import adminService from '../../services/AdminService';
+import adminService from "../../services/AdminService";
 
 /**
  * SessionManager Component
@@ -36,23 +36,26 @@ export class SessionManager {
   }
 
   private renderSessions(): void {
-    const listContainer = document.getElementById('sessions-list');
+    const listContainer = document.getElementById("sessions-list");
     if (!listContainer) return;
 
     if (this.sessions.length === 0) {
-      listContainer.innerHTML = '<div class="empty-state">No active sessions</div>';
+      listContainer.innerHTML =
+        '<div class="empty-state">No active sessions</div>';
       return;
     }
 
-    const sessionsHTML = this.sessions.map((session) => `
+    const sessionsHTML = this.sessions
+      .map(
+        (session) => `
       <div class="session-card" data-session-id="${session.id}">
         <div class="session-card__header">
-          <h4>${session.deviceInfo?.browser || 'Unknown Browser'} on ${session.deviceInfo?.os || 'Unknown OS'}</h4>
+          <h4>${session.deviceInfo?.browser || "Unknown Browser"} on ${session.deviceInfo?.os || "Unknown OS"}</h4>
           <span class="badge badge--success">Active</span>
         </div>
         <div class="session-card__body">
           <p><strong>IP Address:</strong> ${session.ipAddress}</p>
-          <p><strong>Device:</strong> ${session.deviceInfo?.device || 'Unknown'}</p>
+          <p><strong>Device:</strong> ${session.deviceInfo?.device || "Unknown"}</p>
           <p><strong>Created:</strong> ${new Date(session.createdAt).toLocaleString()}</p>
           <p><strong>Last Activity:</strong> ${new Date(session.lastActivityAt).toLocaleString()}</p>
         </div>
@@ -65,16 +68,18 @@ export class SessionManager {
           </button>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
 
     listContainer.innerHTML = sessionsHTML;
     this.attachSessionEventListeners();
   }
 
   private attachSessionEventListeners(): void {
-    const terminateButtons = document.querySelectorAll('.terminate-session');
+    const terminateButtons = document.querySelectorAll(".terminate-session");
     terminateButtons.forEach((btn) => {
-      btn.addEventListener('click', async (e) => {
+      btn.addEventListener("click", async (e) => {
         const sessionId = (e.target as HTMLElement).dataset.sessionId;
         if (sessionId) {
           await this.terminateSession(sessionId);
@@ -84,7 +89,7 @@ export class SessionManager {
   }
 
   private async terminateSession(sessionId: string): Promise<void> {
-    if (!confirm('Are you sure you want to terminate this session?')) {
+    if (!confirm("Are you sure you want to terminate this session?")) {
       return;
     }
 
@@ -97,7 +102,7 @@ export class SessionManager {
   }
 
   private showError(message: string): void {
-    const listContainer = document.getElementById('sessions-list');
+    const listContainer = document.getElementById("sessions-list");
     if (listContainer) {
       listContainer.innerHTML = `
         <div class="error-state">
@@ -108,6 +113,6 @@ export class SessionManager {
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

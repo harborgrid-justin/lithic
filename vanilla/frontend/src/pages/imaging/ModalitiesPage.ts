@@ -1,5 +1,5 @@
-import { ImagingService } from '../../services/ImagingService';
-import { ModalityStatus } from '../../components/imaging/ModalityStatus';
+import { ImagingService } from "../../services/ImagingService";
+import { ModalityStatus } from "../../components/imaging/ModalityStatus";
 
 export class ModalitiesPage {
   private container: HTMLElement;
@@ -13,10 +13,10 @@ export class ModalitiesPage {
   }
 
   async render() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'modalities-page';
+    const wrapper = document.createElement("div");
+    wrapper.className = "modalities-page";
     wrapper.innerHTML = `
       <div class="page-header">
         <h1>Imaging Modalities</h1>
@@ -61,10 +61,14 @@ export class ModalitiesPage {
 
   private attachEventListeners() {
     const refreshBtn = this.container.querySelector('[data-action="refresh"]');
-    refreshBtn?.addEventListener('click', () => this.loadModalities());
+    refreshBtn?.addEventListener("click", () => this.loadModalities());
 
-    const addModalityBtn = this.container.querySelector('[data-action="add-modality"]');
-    addModalityBtn?.addEventListener('click', () => this.showAddModalityDialog());
+    const addModalityBtn = this.container.querySelector(
+      '[data-action="add-modality"]',
+    );
+    addModalityBtn?.addEventListener("click", () =>
+      this.showAddModalityDialog(),
+    );
   }
 
   private async loadModalities() {
@@ -73,30 +77,33 @@ export class ModalitiesPage {
       this.renderModalities(modalities);
       this.updateStatistics(modalities);
     } catch (error) {
-      console.error('Error loading modalities:', error);
-      this.showError('Failed to load modalities');
+      console.error("Error loading modalities:", error);
+      this.showError("Failed to load modalities");
     }
   }
 
   private renderModalities(modalities: any[]) {
-    const container = document.getElementById('modalities-container');
+    const container = document.getElementById("modalities-container");
     if (!container) return;
 
     if (modalities.length === 0) {
-      container.innerHTML = '<div class="empty-state">No modalities configured</div>';
+      container.innerHTML =
+        '<div class="empty-state">No modalities configured</div>';
       return;
     }
 
-    container.innerHTML = modalities.map(modality => this.createModalityCard(modality)).join('');
+    container.innerHTML = modalities
+      .map((modality) => this.createModalityCard(modality))
+      .join("");
     this.attachModalityActions();
   }
 
   private createModalityCard(modality: any): string {
     const statusColors: Record<string, string> = {
-      'ONLINE': 'success',
-      'BUSY': 'warning',
-      'OFFLINE': 'danger',
-      'MAINTENANCE': 'secondary',
+      ONLINE: "success",
+      BUSY: "warning",
+      OFFLINE: "danger",
+      MAINTENANCE: "secondary",
     };
 
     return `
@@ -116,7 +123,7 @@ export class ModalitiesPage {
           </div>
           <div class="detail-row">
             <span class="label">AE Title:</span>
-            <span class="value">${modality.aeTitle || 'N/A'}</span>
+            <span class="value">${modality.aeTitle || "N/A"}</span>
           </div>
           <div class="detail-row">
             <span class="label">Station:</span>
@@ -124,15 +131,15 @@ export class ModalitiesPage {
           </div>
           <div class="detail-row">
             <span class="label">Location:</span>
-            <span class="value">${modality.location || 'N/A'}</span>
+            <span class="value">${modality.location || "N/A"}</span>
           </div>
           <div class="detail-row">
             <span class="label">IP Address:</span>
-            <span class="value">${modality.ipAddress || 'N/A'}</span>
+            <span class="value">${modality.ipAddress || "N/A"}</span>
           </div>
           <div class="detail-row">
             <span class="label">Port:</span>
-            <span class="value">${modality.port || 'N/A'}</span>
+            <span class="value">${modality.port || "N/A"}</span>
           </div>
         </div>
 
@@ -146,7 +153,7 @@ export class ModalitiesPage {
             <div class="stat-label">Queued</div>
           </div>
           <div class="stat">
-            <div class="stat-value">${modality.avgDuration || 'N/A'}</div>
+            <div class="stat-value">${modality.avgDuration || "N/A"}</div>
             <div class="stat-label">Avg Duration</div>
           </div>
         </div>
@@ -162,27 +169,29 @@ export class ModalitiesPage {
 
   private getModalityIcon(type: string): string {
     const icons: Record<string, string> = {
-      'CT': '🏥',
-      'MRI': '🧲',
-      'XRAY': '📷',
-      'US': '🔊',
-      'NM': '☢️',
-      'PET': '⚛️',
-      'MAMMO': '🎗️',
+      CT: "🏥",
+      MRI: "🧲",
+      XRAY: "📷",
+      US: "🔊",
+      NM: "☢️",
+      PET: "⚛️",
+      MAMMO: "🎗️",
     };
-    return icons[type] || '🔬';
+    return icons[type] || "🔬";
   }
 
   private updateStatistics(modalities: any[]) {
     const total = modalities.length;
-    const online = modalities.filter(m => m.status === 'ONLINE').length;
-    const busy = modalities.filter(m => m.status === 'BUSY').length;
-    const offline = modalities.filter(m => m.status === 'OFFLINE' || m.status === 'MAINTENANCE').length;
+    const online = modalities.filter((m) => m.status === "ONLINE").length;
+    const busy = modalities.filter((m) => m.status === "BUSY").length;
+    const offline = modalities.filter(
+      (m) => m.status === "OFFLINE" || m.status === "MAINTENANCE",
+    ).length;
 
-    const totalEl = document.getElementById('total-modalities');
-    const onlineEl = document.getElementById('online-modalities');
-    const busyEl = document.getElementById('busy-modalities');
-    const offlineEl = document.getElementById('offline-modalities');
+    const totalEl = document.getElementById("total-modalities");
+    const onlineEl = document.getElementById("online-modalities");
+    const busyEl = document.getElementById("busy-modalities");
+    const offlineEl = document.getElementById("offline-modalities");
 
     if (totalEl) totalEl.textContent = total.toString();
     if (onlineEl) onlineEl.textContent = online.toString();
@@ -191,18 +200,18 @@ export class ModalitiesPage {
   }
 
   private attachModalityActions() {
-    this.container.addEventListener('click', async (e) => {
+    this.container.addEventListener("click", async (e) => {
       const target = e.target as HTMLElement;
       const action = target.dataset.action;
       const modalityId = target.dataset.modalityId;
 
       if (!modalityId) return;
 
-      if (action === 'view-worklist') {
+      if (action === "view-worklist") {
         window.location.href = `#/imaging/worklist?modality=${modalityId}`;
-      } else if (action === 'test-connection') {
+      } else if (action === "test-connection") {
         await this.testConnection(modalityId);
-      } else if (action === 'edit') {
+      } else if (action === "edit") {
         this.editModality(modalityId);
       }
     });
@@ -210,15 +219,16 @@ export class ModalitiesPage {
 
   private async testConnection(modalityId: string) {
     try {
-      const result = await this.imagingService.testModalityConnection(modalityId);
+      const result =
+        await this.imagingService.testModalityConnection(modalityId);
       if (result.success) {
-        this.showSuccess('Connection successful');
+        this.showSuccess("Connection successful");
       } else {
         this.showError(`Connection failed: ${result.message}`);
       }
     } catch (error) {
-      console.error('Error testing connection:', error);
-      this.showError('Failed to test connection');
+      console.error("Error testing connection:", error);
+      this.showError("Failed to test connection");
     }
   }
 
@@ -229,7 +239,7 @@ export class ModalitiesPage {
 
   private showAddModalityDialog() {
     // TODO: Show add modality dialog
-    alert('Add new modality dialog');
+    alert("Add new modality dialog");
   }
 
   private showSuccess(message: string) {
@@ -241,6 +251,6 @@ export class ModalitiesPage {
   }
 
   destroy() {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

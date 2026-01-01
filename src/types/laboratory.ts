@@ -3,7 +3,7 @@
  * Agent 6: Laboratory
  */
 
-import type { BaseEntity } from './index';
+import type { BaseEntity } from "./index";
 
 // ============================================================================
 // Lab Order Types
@@ -39,21 +39,21 @@ export interface LabOrder extends BaseEntity {
 }
 
 export enum LabPriority {
-  ROUTINE = 'ROUTINE',
-  URGENT = 'URGENT',
-  STAT = 'STAT',
-  ASAP = 'ASAP',
+  ROUTINE = "ROUTINE",
+  URGENT = "URGENT",
+  STAT = "STAT",
+  ASAP = "ASAP",
 }
 
 export enum LabOrderStatus {
-  ORDERED = 'ORDERED',
-  SPECIMEN_COLLECTED = 'SPECIMEN_COLLECTED',
-  SPECIMEN_RECEIVED = 'SPECIMEN_RECEIVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  VERIFIED = 'VERIFIED',
-  CANCELLED = 'CANCELLED',
-  ON_HOLD = 'ON_HOLD',
+  ORDERED = "ORDERED",
+  SPECIMEN_COLLECTED = "SPECIMEN_COLLECTED",
+  SPECIMEN_RECEIVED = "SPECIMEN_RECEIVED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  VERIFIED = "VERIFIED",
+  CANCELLED = "CANCELLED",
+  ON_HOLD = "ON_HOLD",
 }
 
 // ============================================================================
@@ -80,38 +80,38 @@ export interface LabTest extends BaseEntity {
 }
 
 export enum LabCategory {
-  CHEMISTRY = 'CHEMISTRY',
-  HEMATOLOGY = 'HEMATOLOGY',
-  MICROBIOLOGY = 'MICROBIOLOGY',
-  IMMUNOLOGY = 'IMMUNOLOGY',
-  MOLECULAR = 'MOLECULAR',
-  PATHOLOGY = 'PATHOLOGY',
-  TOXICOLOGY = 'TOXICOLOGY',
-  URINALYSIS = 'URINALYSIS',
-  SEROLOGY = 'SEROLOGY',
-  BLOOD_BANK = 'BLOOD_BANK',
-  COAGULATION = 'COAGULATION',
-  ENDOCRINOLOGY = 'ENDOCRINOLOGY',
+  CHEMISTRY = "CHEMISTRY",
+  HEMATOLOGY = "HEMATOLOGY",
+  MICROBIOLOGY = "MICROBIOLOGY",
+  IMMUNOLOGY = "IMMUNOLOGY",
+  MOLECULAR = "MOLECULAR",
+  PATHOLOGY = "PATHOLOGY",
+  TOXICOLOGY = "TOXICOLOGY",
+  URINALYSIS = "URINALYSIS",
+  SEROLOGY = "SEROLOGY",
+  BLOOD_BANK = "BLOOD_BANK",
+  COAGULATION = "COAGULATION",
+  ENDOCRINOLOGY = "ENDOCRINOLOGY",
 }
 
 export enum SpecimenType {
-  BLOOD = 'BLOOD',
-  SERUM = 'SERUM',
-  PLASMA = 'PLASMA',
-  URINE = 'URINE',
-  STOOL = 'STOOL',
-  SPUTUM = 'SPUTUM',
-  CSF = 'CSF',
-  TISSUE = 'TISSUE',
-  SWAB = 'SWAB',
-  SALIVA = 'SALIVA',
-  OTHER = 'OTHER',
+  BLOOD = "BLOOD",
+  SERUM = "SERUM",
+  PLASMA = "PLASMA",
+  URINE = "URINE",
+  STOOL = "STOOL",
+  SPUTUM = "SPUTUM",
+  CSF = "CSF",
+  TISSUE = "TISSUE",
+  SWAB = "SWAB",
+  SALIVA = "SALIVA",
+  OTHER = "OTHER",
 }
 
 export interface ReferenceRange {
   ageMin: number | null;
   ageMax: number | null;
-  gender: 'M' | 'F' | 'ALL';
+  gender: "M" | "F" | "ALL";
   min: number | null;
   max: number | null;
   text: string | null;
@@ -155,18 +155,18 @@ export interface LabResult extends BaseEntity {
 }
 
 export enum AbnormalFlag {
-  LOW = 'LOW',
-  HIGH = 'HIGH',
-  ABNORMAL = 'ABNORMAL',
-  CRITICAL_LOW = 'CRITICAL_LOW',
-  CRITICAL_HIGH = 'CRITICAL_HIGH',
+  LOW = "LOW",
+  HIGH = "HIGH",
+  ABNORMAL = "ABNORMAL",
+  CRITICAL_LOW = "CRITICAL_LOW",
+  CRITICAL_HIGH = "CRITICAL_HIGH",
 }
 
 export enum ResultStatus {
-  PRELIMINARY = 'PRELIMINARY',
-  FINAL = 'FINAL',
-  CORRECTED = 'CORRECTED',
-  CANCELLED = 'CANCELLED',
+  PRELIMINARY = "PRELIMINARY",
+  FINAL = "FINAL",
+  CORRECTED = "CORRECTED",
+  CANCELLED = "CANCELLED",
 }
 
 export interface PreviousResult {
@@ -202,19 +202,19 @@ export interface Specimen extends BaseEntity {
 }
 
 export enum SpecimenStatus {
-  COLLECTED = 'COLLECTED',
-  IN_TRANSIT = 'IN_TRANSIT',
-  RECEIVED = 'RECEIVED',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-  REJECTED = 'REJECTED',
-  DISPOSED = 'DISPOSED',
+  COLLECTED = "COLLECTED",
+  IN_TRANSIT = "IN_TRANSIT",
+  RECEIVED = "RECEIVED",
+  PROCESSING = "PROCESSING",
+  COMPLETED = "COMPLETED",
+  REJECTED = "REJECTED",
+  DISPOSED = "DISPOSED",
 }
 
 export enum SpecimenQuality {
-  ACCEPTABLE = 'ACCEPTABLE',
-  SUBOPTIMAL = 'SUBOPTIMAL',
-  UNACCEPTABLE = 'UNACCEPTABLE',
+  ACCEPTABLE = "ACCEPTABLE",
+  SUBOPTIMAL = "SUBOPTIMAL",
+  UNACCEPTABLE = "UNACCEPTABLE",
 }
 
 // ============================================================================
@@ -239,24 +239,24 @@ export interface CriticalValueAlert extends BaseEntity {
 }
 
 export enum AlertSeverity {
-  WARNING = 'WARNING',
-  CRITICAL = 'CRITICAL',
-  PANIC = 'PANIC',
+  WARNING = "WARNING",
+  CRITICAL = "CRITICAL",
+  PANIC = "PANIC",
 }
 
 export enum NotificationMethod {
-  PHONE = 'PHONE',
-  SMS = 'SMS',
-  EMAIL = 'EMAIL',
-  IN_APP = 'IN_APP',
-  PAGE = 'PAGE',
+  PHONE = "PHONE",
+  SMS = "SMS",
+  EMAIL = "EMAIL",
+  IN_APP = "IN_APP",
+  PAGE = "PAGE",
 }
 
 export enum AlertStatus {
-  NEW = 'NEW',
-  NOTIFIED = 'NOTIFIED',
-  ACKNOWLEDGED = 'ACKNOWLEDGED',
-  RESOLVED = 'RESOLVED',
+  NEW = "NEW",
+  NOTIFIED = "NOTIFIED",
+  ACKNOWLEDGED = "ACKNOWLEDGED",
+  RESOLVED = "RESOLVED",
 }
 
 // ============================================================================
@@ -279,18 +279,18 @@ export interface QualityControl extends BaseEntity {
 }
 
 export enum ControlLevel {
-  LEVEL_1 = 'LEVEL_1',
-  LEVEL_2 = 'LEVEL_2',
-  LEVEL_3 = 'LEVEL_3',
-  LOW = 'LOW',
-  NORMAL = 'NORMAL',
-  HIGH = 'HIGH',
+  LEVEL_1 = "LEVEL_1",
+  LEVEL_2 = "LEVEL_2",
+  LEVEL_3 = "LEVEL_3",
+  LOW = "LOW",
+  NORMAL = "NORMAL",
+  HIGH = "HIGH",
 }
 
 export enum QCResult {
-  PASS = 'PASS',
-  FAIL = 'FAIL',
-  WARNING = 'WARNING',
+  PASS = "PASS",
+  FAIL = "FAIL",
+  WARNING = "WARNING",
 }
 
 // ============================================================================
@@ -312,32 +312,32 @@ export interface LabInterface extends BaseEntity {
 }
 
 export enum InterfaceType {
-  INSTRUMENT = 'INSTRUMENT',
-  LIS = 'LIS',
-  EMR = 'EMR',
-  REFERENCE_LAB = 'REFERENCE_LAB',
+  INSTRUMENT = "INSTRUMENT",
+  LIS = "LIS",
+  EMR = "EMR",
+  REFERENCE_LAB = "REFERENCE_LAB",
 }
 
 export enum InterfaceProtocol {
-  HL7_MLLP = 'HL7_MLLP',
-  HL7_HTTP = 'HL7_HTTP',
-  ASTM = 'ASTM',
-  FTP = 'FTP',
-  SFTP = 'SFTP',
-  API = 'API',
+  HL7_MLLP = "HL7_MLLP",
+  HL7_HTTP = "HL7_HTTP",
+  ASTM = "ASTM",
+  FTP = "FTP",
+  SFTP = "SFTP",
+  API = "API",
 }
 
 export enum InterfaceDirection {
-  INBOUND = 'INBOUND',
-  OUTBOUND = 'OUTBOUND',
-  BIDIRECTIONAL = 'BIDIRECTIONAL',
+  INBOUND = "INBOUND",
+  OUTBOUND = "OUTBOUND",
+  BIDIRECTIONAL = "BIDIRECTIONAL",
 }
 
 export enum InterfaceStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  ERROR = 'ERROR',
-  MAINTENANCE = 'MAINTENANCE',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  ERROR = "ERROR",
+  MAINTENANCE = "MAINTENANCE",
 }
 
 export interface HL7Message {
@@ -345,7 +345,7 @@ export interface HL7Message {
   interfaceId: string;
   messageType: string;
   messageControlId: string;
-  direction: 'INBOUND' | 'OUTBOUND';
+  direction: "INBOUND" | "OUTBOUND";
   rawMessage: string;
   parsedMessage: Record<string, any>;
   status: MessageStatus;
@@ -356,11 +356,11 @@ export interface HL7Message {
 }
 
 export enum MessageStatus {
-  RECEIVED = 'RECEIVED',
-  PROCESSING = 'PROCESSING',
-  PROCESSED = 'PROCESSED',
-  ERROR = 'ERROR',
-  REJECTED = 'REJECTED',
+  RECEIVED = "RECEIVED",
+  PROCESSING = "PROCESSING",
+  PROCESSED = "PROCESSED",
+  ERROR = "ERROR",
+  REJECTED = "REJECTED",
 }
 
 // ============================================================================

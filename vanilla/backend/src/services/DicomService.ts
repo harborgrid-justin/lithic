@@ -3,7 +3,7 @@ export class DicomService {
   private cache: Map<string, any>;
 
   constructor() {
-    this.storageUrl = process.env.DICOM_STORAGE_URL || '/var/dicom/storage';
+    this.storageUrl = process.env.DICOM_STORAGE_URL || "/var/dicom/storage";
     this.cache = new Map();
   }
 
@@ -17,50 +17,66 @@ export class DicomService {
     console.log(`Retrieving study: ${studyInstanceUID}`);
 
     // Mock implementation - return empty buffer
-    return Buffer.from('DICOM Study Data');
+    return Buffer.from("DICOM Study Data");
   }
 
-  async retrieveSeries(studyInstanceUID: string, seriesInstanceUID: string): Promise<Buffer> {
+  async retrieveSeries(
+    studyInstanceUID: string,
+    seriesInstanceUID: string,
+  ): Promise<Buffer> {
     // TODO: Implement actual series retrieval
-    console.log(`Retrieving series: ${seriesInstanceUID} from study: ${studyInstanceUID}`);
+    console.log(
+      `Retrieving series: ${seriesInstanceUID} from study: ${studyInstanceUID}`,
+    );
 
-    return Buffer.from('DICOM Series Data');
+    return Buffer.from("DICOM Series Data");
   }
 
   async retrieveInstance(
     studyInstanceUID: string,
     seriesInstanceUID: string,
-    sopInstanceUID: string
+    sopInstanceUID: string,
   ): Promise<Buffer> {
     // TODO: Implement actual instance retrieval
     // Read DICOM file from storage
-    const filePath = this.getDicomFilePath(studyInstanceUID, seriesInstanceUID, sopInstanceUID);
+    const filePath = this.getDicomFilePath(
+      studyInstanceUID,
+      seriesInstanceUID,
+      sopInstanceUID,
+    );
     console.log(`Retrieving instance from: ${filePath}`);
 
     // Mock - in production, read actual DICOM file
-    return Buffer.from('DICOM Instance Data');
+    return Buffer.from("DICOM Instance Data");
   }
 
   async retrieveFrame(
     studyInstanceUID: string,
     seriesInstanceUID: string,
     sopInstanceUID: string,
-    frameNumber: number
+    frameNumber: number,
   ): Promise<Buffer> {
     // TODO: Extract specific frame from multi-frame DICOM
-    console.log(`Retrieving frame ${frameNumber} from instance: ${sopInstanceUID}`);
+    console.log(
+      `Retrieving frame ${frameNumber} from instance: ${sopInstanceUID}`,
+    );
 
     // Mock - return JPEG frame
-    return Buffer.from('JPEG Frame Data');
+    return Buffer.from("JPEG Frame Data");
   }
 
-  async generateStudyThumbnail(studyInstanceUID: string, size: number = 200): Promise<Buffer> {
+  async generateStudyThumbnail(
+    studyInstanceUID: string,
+    size: number = 200,
+  ): Promise<Buffer> {
     // Get representative image from study (usually first series, middle slice)
     // TODO: Implement actual thumbnail generation
-    console.log(`Generating thumbnail for study: ${studyInstanceUID}, size: ${size}`);
+    console.log(
+      `Generating thumbnail for study: ${studyInstanceUID}, size: ${size}`,
+    );
 
     // Mock - return JPEG thumbnail
-    return Buffer.from('JPEG Thumbnail Data');
+    return Buffer.from("JPEG Thumbnail Data");
   }
 
   // ============================================
@@ -83,13 +99,17 @@ export class DicomService {
         if (!validation.valid) {
           results.failed.push({
             filename: file.originalname,
-            error: validation.errors.join(', '),
+            error: validation.errors.join(", "),
           });
           continue;
         }
 
         // Store the DICOM file
-        const stored = await this.storeDicomInstance(metadata, file.buffer, user);
+        const stored = await this.storeDicomInstance(
+          metadata,
+          file.buffer,
+          user,
+        );
         results.successful.push({
           filename: file.originalname,
           studyInstanceUID: metadata.StudyInstanceUID,
@@ -108,7 +128,7 @@ export class DicomService {
       } catch (error) {
         results.failed.push({
           filename: file.originalname,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
@@ -125,7 +145,7 @@ export class DicomService {
   async storeInstancesToStudy(
     studyInstanceUID: string,
     files: Express.Multer.File[],
-    user: any
+    user: any,
   ) {
     // Validate that all instances belong to the specified study
     const results = await this.storeInstances(files, user);
@@ -133,7 +153,8 @@ export class DicomService {
     // Filter out instances that don't match the study UID
     results.failed = [
       ...results.failed,
-      ...results.successful.filter((s: any) => s.studyInstanceUID !== studyInstanceUID)
+      ...results.successful
+        .filter((s: any) => s.studyInstanceUID !== studyInstanceUID)
         .map((s: any) => ({
           filename: s.filename,
           error: `Study UID mismatch: expected ${studyInstanceUID}, got ${s.studyInstanceUID}`,
@@ -141,7 +162,7 @@ export class DicomService {
     ];
 
     results.successful = results.successful.filter(
-      (s: any) => s.studyInstanceUID === studyInstanceUID
+      (s: any) => s.studyInstanceUID === studyInstanceUID,
     );
 
     return results;
@@ -155,15 +176,15 @@ export class DicomService {
     // TODO: Retrieve metadata from database or parse from DICOM files
     return {
       StudyInstanceUID: studyInstanceUID,
-      StudyDate: '20240101',
-      StudyTime: '143022',
-      AccessionNumber: 'ACC24010100001',
-      Modality: 'CT',
-      StudyDescription: 'CT Chest with Contrast',
-      PatientName: 'DOE^JOHN',
-      PatientID: 'PATIENT001',
-      PatientBirthDate: '19800101',
-      PatientSex: 'M',
+      StudyDate: "20240101",
+      StudyTime: "143022",
+      AccessionNumber: "ACC24010100001",
+      Modality: "CT",
+      StudyDescription: "CT Chest with Contrast",
+      PatientName: "DOE^JOHN",
+      PatientID: "PATIENT001",
+      PatientBirthDate: "19800101",
+      PatientSex: "M",
       NumberOfStudyRelatedSeries: 3,
       NumberOfStudyRelatedInstances: 450,
     };
@@ -175,27 +196,27 @@ export class DicomService {
       StudyInstanceUID: studyInstanceUID,
       SeriesInstanceUID: seriesInstanceUID,
       SeriesNumber: 1,
-      Modality: 'CT',
-      SeriesDescription: 'Chest CT Axial',
-      SeriesDate: '20240101',
-      SeriesTime: '143022',
+      Modality: "CT",
+      SeriesDescription: "Chest CT Axial",
+      SeriesDate: "20240101",
+      SeriesTime: "143022",
       NumberOfSeriesRelatedInstances: 150,
-      BodyPartExamined: 'CHEST',
-      ProtocolName: 'Chest CT Protocol',
+      BodyPartExamined: "CHEST",
+      ProtocolName: "Chest CT Protocol",
     };
   }
 
   async getInstanceMetadata(
     studyInstanceUID: string,
     seriesInstanceUID: string,
-    sopInstanceUID: string
+    sopInstanceUID: string,
   ) {
     // TODO: Retrieve instance metadata from DICOM file
     return {
       StudyInstanceUID: studyInstanceUID,
       SeriesInstanceUID: seriesInstanceUID,
       SOPInstanceUID: sopInstanceUID,
-      SOPClassUID: '1.2.840.10008.5.1.4.1.1.2', // CT Image Storage
+      SOPClassUID: "1.2.840.10008.5.1.4.1.1.2", // CT Image Storage
       InstanceNumber: 1,
       Rows: 512,
       Columns: 512,
@@ -204,7 +225,7 @@ export class DicomService {
       HighBit: 11,
       PixelRepresentation: 0,
       SamplesPerPixel: 1,
-      PhotometricInterpretation: 'MONOCHROME2',
+      PhotometricInterpretation: "MONOCHROME2",
       PixelSpacing: [0.5, 0.5],
       SliceThickness: 1.25,
       ImagePositionPatient: [0, 0, 0],
@@ -226,24 +247,26 @@ export class DicomService {
       windowCenter?: number;
       windowWidth?: number;
       quality?: number;
-    } = {}
+    } = {},
   ): Promise<Buffer> {
     // TODO: Implement DICOM to JPEG/PNG rendering with windowing
     const metadata = await this.getInstanceMetadata(
       studyInstanceUID,
       seriesInstanceUID,
-      sopInstanceUID
+      sopInstanceUID,
     );
 
     const windowCenter = options.windowCenter || metadata.WindowCenter;
     const windowWidth = options.windowWidth || metadata.WindowWidth;
     const quality = options.quality || 90;
 
-    console.log(`Rendering instance with WC: ${windowCenter}, WW: ${windowWidth}, Quality: ${quality}`);
+    console.log(
+      `Rendering instance with WC: ${windowCenter}, WW: ${windowWidth}, Quality: ${quality}`,
+    );
 
     // Mock - return JPEG image
     // In production, use sharp or canvas to render DICOM pixel data
-    return Buffer.from('JPEG Rendered Image');
+    return Buffer.from("JPEG Rendered Image");
   }
 
   // ============================================
@@ -271,7 +294,9 @@ export class DicomService {
     } catch (error) {
       return {
         valid: false,
-        errors: [error instanceof Error ? error.message : 'Failed to parse DICOM file'],
+        errors: [
+          error instanceof Error ? error.message : "Failed to parse DICOM file",
+        ],
       };
     }
   }
@@ -284,19 +309,21 @@ export class DicomService {
     // Tags to anonymize
     const anonymizedMetadata = {
       ...metadata,
-      PatientName: options.keepPatientName ? metadata.PatientName : 'ANONYMOUS',
-      PatientID: options.keepPatientID ? metadata.PatientID : this.generateAnonymousID(),
-      PatientBirthDate: options.keepBirthDate ? metadata.PatientBirthDate : '',
-      PatientSex: options.keepSex ? metadata.PatientSex : '',
-      PatientAge: options.keepAge ? metadata.PatientAge : '',
+      PatientName: options.keepPatientName ? metadata.PatientName : "ANONYMOUS",
+      PatientID: options.keepPatientID
+        ? metadata.PatientID
+        : this.generateAnonymousID(),
+      PatientBirthDate: options.keepBirthDate ? metadata.PatientBirthDate : "",
+      PatientSex: options.keepSex ? metadata.PatientSex : "",
+      PatientAge: options.keepAge ? metadata.PatientAge : "",
       // Remove other identifying tags
-      InstitutionName: '',
-      InstitutionAddress: '',
-      ReferringPhysicianName: '',
-      PerformingPhysicianName: '',
+      InstitutionName: "",
+      InstitutionAddress: "",
+      ReferringPhysicianName: "",
+      PerformingPhysicianName: "",
     };
 
-    console.log('Anonymizing DICOM file');
+    console.log("Anonymizing DICOM file");
 
     // TODO: Rebuild DICOM file with anonymized metadata
     return buffer; // Mock - return original for now
@@ -310,18 +337,18 @@ export class DicomService {
     // TODO: Use a DICOM parser library (e.g., dicom-parser, dcmjs)
     // This is a mock implementation
     return {
-      StudyInstanceUID: '1.2.840.113619.2.55.3.2831164482.456.1234567890.1',
-      SeriesInstanceUID: '1.2.840.113619.2.55.3.2831164482.456.1234567890.2',
-      SOPInstanceUID: '1.2.840.113619.2.55.3.2831164482.456.1234567890.3',
-      SOPClassUID: '1.2.840.10008.5.1.4.1.1.2',
-      Modality: 'CT',
-      PatientName: 'DOE^JOHN',
-      PatientID: 'PATIENT001',
-      PatientBirthDate: '19800101',
-      PatientSex: 'M',
-      StudyDate: '20240101',
-      StudyTime: '143022',
-      AccessionNumber: 'ACC24010100001',
+      StudyInstanceUID: "1.2.840.113619.2.55.3.2831164482.456.1234567890.1",
+      SeriesInstanceUID: "1.2.840.113619.2.55.3.2831164482.456.1234567890.2",
+      SOPInstanceUID: "1.2.840.113619.2.55.3.2831164482.456.1234567890.3",
+      SOPClassUID: "1.2.840.10008.5.1.4.1.1.2",
+      Modality: "CT",
+      PatientName: "DOE^JOHN",
+      PatientID: "PATIENT001",
+      PatientBirthDate: "19800101",
+      PatientSex: "M",
+      StudyDate: "20240101",
+      StudyTime: "143022",
+      AccessionNumber: "ACC24010100001",
       WindowCenter: 40,
       WindowWidth: 400,
     };
@@ -333,27 +360,27 @@ export class DicomService {
 
     // Check required DICOM tags
     if (!metadata.StudyInstanceUID) {
-      errors.push('Missing required tag: StudyInstanceUID');
+      errors.push("Missing required tag: StudyInstanceUID");
     }
     if (!metadata.SeriesInstanceUID) {
-      errors.push('Missing required tag: SeriesInstanceUID');
+      errors.push("Missing required tag: SeriesInstanceUID");
     }
     if (!metadata.SOPInstanceUID) {
-      errors.push('Missing required tag: SOPInstanceUID');
+      errors.push("Missing required tag: SOPInstanceUID");
     }
     if (!metadata.SOPClassUID) {
-      errors.push('Missing required tag: SOPClassUID');
+      errors.push("Missing required tag: SOPClassUID");
     }
 
     // Check optional but recommended tags
     if (!metadata.PatientName) {
-      warnings.push('Missing recommended tag: PatientName');
+      warnings.push("Missing recommended tag: PatientName");
     }
     if (!metadata.PatientID) {
-      warnings.push('Missing recommended tag: PatientID');
+      warnings.push("Missing recommended tag: PatientID");
     }
     if (!metadata.StudyDate) {
-      warnings.push('Missing recommended tag: StudyDate');
+      warnings.push("Missing recommended tag: StudyDate");
     }
 
     return {
@@ -367,7 +394,7 @@ export class DicomService {
     const filePath = this.getDicomFilePath(
       metadata.StudyInstanceUID,
       metadata.SeriesInstanceUID,
-      metadata.SOPInstanceUID
+      metadata.SOPInstanceUID,
     );
 
     // TODO: Store to file system or object storage (S3, etc.)
@@ -387,7 +414,7 @@ export class DicomService {
   private getDicomFilePath(
     studyInstanceUID: string,
     seriesInstanceUID: string,
-    sopInstanceUID: string
+    sopInstanceUID: string,
   ): string {
     // Organize files by study/series/instance hierarchy
     return `${this.storageUrl}/${studyInstanceUID}/${seriesInstanceUID}/${sopInstanceUID}.dcm`;
@@ -403,21 +430,21 @@ export class DicomService {
 
   generateStudyInstanceUID(): string {
     // TODO: Use proper DICOM UID generation with organization root
-    const orgRoot = '1.2.840.113619.2.55.3'; // Example org root
+    const orgRoot = "1.2.840.113619.2.55.3"; // Example org root
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000000);
     return `${orgRoot}.${timestamp}.${random}.1`;
   }
 
   generateSeriesInstanceUID(): string {
-    const orgRoot = '1.2.840.113619.2.55.3';
+    const orgRoot = "1.2.840.113619.2.55.3";
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000000);
     return `${orgRoot}.${timestamp}.${random}.2`;
   }
 
   generateSOPInstanceUID(): string {
-    const orgRoot = '1.2.840.113619.2.55.3';
+    const orgRoot = "1.2.840.113619.2.55.3";
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000000);
     return `${orgRoot}.${timestamp}.${random}.3`;
@@ -430,7 +457,7 @@ export class DicomService {
   async applyWindowLevel(
     pixelData: Uint16Array,
     windowCenter: number,
-    windowWidth: number
+    windowWidth: number,
   ): Promise<Uint8Array> {
     const output = new Uint8Array(pixelData.length);
     const windowMin = windowCenter - windowWidth / 2;
@@ -466,15 +493,23 @@ export class DicomService {
   // Image Format Conversions
   // ============================================
 
-  async convertToJPEG(pixelData: Uint8Array, width: number, height: number): Promise<Buffer> {
+  async convertToJPEG(
+    pixelData: Uint8Array,
+    width: number,
+    height: number,
+  ): Promise<Buffer> {
     // TODO: Use sharp or canvas to convert pixel data to JPEG
     console.log(`Converting ${width}x${height} image to JPEG`);
-    return Buffer.from('JPEG Image Data');
+    return Buffer.from("JPEG Image Data");
   }
 
-  async convertToPNG(pixelData: Uint8Array, width: number, height: number): Promise<Buffer> {
+  async convertToPNG(
+    pixelData: Uint8Array,
+    width: number,
+    height: number,
+  ): Promise<Buffer> {
     // TODO: Use sharp or canvas to convert pixel data to PNG
     console.log(`Converting ${width}x${height} image to PNG`);
-    return Buffer.from('PNG Image Data');
+    return Buffer.from("PNG Image Data");
   }
 }

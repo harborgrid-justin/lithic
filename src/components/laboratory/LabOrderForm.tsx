@@ -1,13 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { LabOrder, LabPanel, OrderPriority, SpecimenType } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ClipboardList, Save } from 'lucide-react';
-import LaboratoryService from '@/services/laboratory.service';
+import React, { useState, useEffect } from "react";
+import {
+  LabOrder,
+  LabPanel,
+  OrderPriority,
+  SpecimenType,
+} from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ClipboardList, Save } from "lucide-react";
+import LaboratoryService from "@/services/laboratory.service";
 
 interface LabOrderFormProps {
   patientId?: string;
@@ -15,22 +20,26 @@ interface LabOrderFormProps {
   onCancel?: () => void;
 }
 
-export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrderFormProps) {
+export default function LabOrderForm({
+  patientId,
+  onSuccess,
+  onCancel,
+}: LabOrderFormProps) {
   const [panels, setPanels] = useState<LabPanel[]>([]);
   const [selectedPanels, setSelectedPanels] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    patientName: '',
-    patientMRN: '',
-    patientDOB: '',
-    patientGender: 'M' as 'M' | 'F' | 'O' | 'U',
-    orderingPhysician: '',
-    orderingPhysicianNPI: '',
-    priority: 'ROUTINE' as OrderPriority,
-    specimenType: 'BLOOD' as SpecimenType,
-    diagnosis: '',
-    clinicalInfo: '',
+    patientName: "",
+    patientMRN: "",
+    patientDOB: "",
+    patientGender: "M" as "M" | "F" | "O" | "U",
+    orderingPhysician: "",
+    orderingPhysicianNPI: "",
+    priority: "ROUTINE" as OrderPriority,
+    specimenType: "BLOOD" as SpecimenType,
+    diagnosis: "",
+    clinicalInfo: "",
   });
 
   useEffect(() => {
@@ -42,7 +51,7 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
       const data = await LaboratoryService.getPanels();
       setPanels(data);
     } catch (error) {
-      console.error('Failed to load panels:', error);
+      console.error("Failed to load panels:", error);
     }
   };
 
@@ -52,14 +61,14 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
 
     try {
       const order = await LaboratoryService.createOrder({
-        patientId: patientId || 'PT001',
+        patientId: patientId || "PT001",
         patientName: formData.patientName,
         patientDOB: new Date(formData.patientDOB),
         patientGender: formData.patientGender,
         patientMRN: formData.patientMRN,
         orderingPhysician: formData.orderingPhysician,
         orderingPhysicianNPI: formData.orderingPhysicianNPI,
-        status: 'PENDING',
+        status: "PENDING",
         priority: formData.priority,
         tests: [],
         panels: selectedPanels,
@@ -71,8 +80,8 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
 
       onSuccess?.(order);
     } catch (error) {
-      console.error('Failed to create order:', error);
-      alert('Failed to create order');
+      console.error("Failed to create order:", error);
+      alert("Failed to create order");
     } finally {
       setLoading(false);
     }
@@ -82,7 +91,7 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
     setSelectedPanels((prev) =>
       prev.includes(panelCode)
         ? prev.filter((p) => p !== panelCode)
-        : [...prev, panelCode]
+        : [...prev, panelCode],
     );
   };
 
@@ -105,7 +114,9 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                 <Input
                   id="patientName"
                   value={formData.patientName}
-                  onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, patientName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -114,7 +125,9 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                 <Input
                   id="patientMRN"
                   value={formData.patientMRN}
-                  onChange={(e) => setFormData({ ...formData, patientMRN: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, patientMRN: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -124,7 +137,9 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                   id="patientDOB"
                   type="date"
                   value={formData.patientDOB}
-                  onChange={(e) => setFormData({ ...formData, patientDOB: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, patientDOB: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -134,7 +149,12 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                   id="patientGender"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={formData.patientGender}
-                  onChange={(e) => setFormData({ ...formData, patientGender: e.target.value as any })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      patientGender: e.target.value as any,
+                    })
+                  }
                   required
                 >
                   <option value="M">Male</option>
@@ -155,7 +175,12 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                 <Input
                   id="physician"
                   value={formData.orderingPhysician}
-                  onChange={(e) => setFormData({ ...formData, orderingPhysician: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      orderingPhysician: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -164,7 +189,12 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                 <Input
                   id="npi"
                   value={formData.orderingPhysicianNPI}
-                  onChange={(e) => setFormData({ ...formData, orderingPhysicianNPI: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      orderingPhysicianNPI: e.target.value,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -180,7 +210,12 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                   id="priority"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={formData.priority}
-                  onChange={(e) => setFormData({ ...formData, priority: e.target.value as OrderPriority })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      priority: e.target.value as OrderPriority,
+                    })
+                  }
                 >
                   <option value="ROUTINE">Routine</option>
                   <option value="URGENT">Urgent</option>
@@ -194,7 +229,12 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                   id="specimenType"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={formData.specimenType}
-                  onChange={(e) => setFormData({ ...formData, specimenType: e.target.value as SpecimenType })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      specimenType: e.target.value as SpecimenType,
+                    })
+                  }
                 >
                   <option value="BLOOD">Blood</option>
                   <option value="SERUM">Serum</option>
@@ -211,7 +251,9 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                 <Input
                   id="diagnosis"
                   value={formData.diagnosis}
-                  onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, diagnosis: e.target.value })
+                  }
                   placeholder="Enter diagnosis or ICD-10 code"
                 />
               </div>
@@ -221,7 +263,9 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                   id="clinicalInfo"
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={formData.clinicalInfo}
-                  onChange={(e) => setFormData({ ...formData, clinicalInfo: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, clinicalInfo: e.target.value })
+                  }
                   placeholder="Enter relevant clinical information"
                 />
               </div>
@@ -237,8 +281,8 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                   key={panel.id}
                   className={`border rounded-lg p-3 cursor-pointer transition-colors ${
                     selectedPanels.includes(panel.code)
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-primary/50'
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
                   }`}
                   onClick={() => togglePanel(panel.code)}
                 >
@@ -271,9 +315,12 @@ export default function LabOrderForm({ patientId, onSuccess, onCancel }: LabOrde
                 Cancel
               </Button>
             )}
-            <Button type="submit" disabled={loading || selectedPanels.length === 0}>
+            <Button
+              type="submit"
+              disabled={loading || selectedPanels.length === 0}
+            >
               <Save className="h-4 w-4 mr-2" />
-              {loading ? 'Creating...' : 'Create Order'}
+              {loading ? "Creating..." : "Create Order"}
             </Button>
           </div>
         </form>

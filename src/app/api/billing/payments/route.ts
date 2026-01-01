@@ -1,30 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { Payment } from '@/types/billing';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { Payment } from "@/types/billing";
 
 // GET /api/billing/payments - List all payments
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const patientId = searchParams.get('patientId');
-    const claimId = searchParams.get('claimId');
+    const patientId = searchParams.get("patientId");
+    const claimId = searchParams.get("claimId");
 
     let payments = await db.payments.findAll();
 
     // Apply filters
     if (patientId) {
-      payments = payments.filter(p => p.patientId === patientId);
+      payments = payments.filter((p) => p.patientId === patientId);
     }
     if (claimId) {
-      payments = payments.filter(p => p.claimId === claimId);
+      payments = payments.filter((p) => p.claimId === claimId);
     }
 
     return NextResponse.json(payments);
   } catch (error) {
-    console.error('Error fetching payments:', error);
+    console.error("Error fetching payments:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch payments' },
-      { status: 500 }
+      { error: "Failed to fetch payments" },
+      { status: 500 },
     );
   }
 }
@@ -34,13 +34,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const paymentData: Omit<Payment, 'id' | 'createdAt'> = {
+    const paymentData: Omit<Payment, "id" | "createdAt"> = {
       patientId: body.patientId,
       patientName: body.patientName,
       amount: body.amount,
       paymentMethod: body.paymentMethod,
       paymentDate: body.paymentDate || new Date().toISOString(),
-      postedBy: body.postedBy || 'system',
+      postedBy: body.postedBy || "system",
       claimId: body.claimId,
       invoiceId: body.invoiceId,
       referenceNumber: body.referenceNumber,
@@ -59,9 +59,9 @@ export async function POST(request: NextRequest) {
 
         let newStatus = claim.status;
         if (newPaidAmount >= totalAmount) {
-          newStatus = 'paid';
+          newStatus = "paid";
         } else if (newPaidAmount > 0) {
-          newStatus = 'partially_paid';
+          newStatus = "partially_paid";
         }
 
         await db.claims.update(payment.claimId, {
@@ -80,9 +80,9 @@ export async function POST(request: NextRequest) {
 
         let newStatus = invoice.status;
         if (balance === 0) {
-          newStatus = 'paid';
+          newStatus = "paid";
         } else if (newPaidAmount > 0) {
-          newStatus = 'partial';
+          newStatus = "partial";
         }
 
         await db.invoices.update(payment.invoiceId, {
@@ -95,10 +95,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(payment, { status: 201 });
   } catch (error) {
-    console.error('Error creating payment:', error);
+    console.error("Error creating payment:", error);
     return NextResponse.json(
-      { error: 'Failed to create payment' },
-      { status: 500 }
+      { error: "Failed to create payment" },
+      { status: 500 },
     );
   }
 }

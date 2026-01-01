@@ -1,39 +1,43 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 interface VoiceDictationProps {
   onTranscript?: (text: string) => void;
   onComplete?: (text: string) => void;
 }
 
-export default function VoiceDictation({ onTranscript, onComplete }: VoiceDictationProps) {
+export default function VoiceDictation({
+  onTranscript,
+  onComplete,
+}: VoiceDictationProps) {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const [interimTranscript, setInterimTranscript] = useState('');
+  const [transcript, setTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState("");
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     // Check if browser supports Web Speech API
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
       setIsSupported(true);
       const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
 
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
-      recognitionRef.current.language = 'en-US';
+      recognitionRef.current.language = "en-US";
 
       recognitionRef.current.onresult = (event: any) => {
-        let interim = '';
-        let final = '';
+        let interim = "";
+        let final = "";
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcriptPiece = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
-            final += transcriptPiece + ' ';
+            final += transcriptPiece + " ";
           } else {
             interim += transcriptPiece;
           }
@@ -49,7 +53,7 @@ export default function VoiceDictation({ onTranscript, onComplete }: VoiceDictat
       };
 
       recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
+        console.error("Speech recognition error:", event.error);
         setIsListening(false);
       };
 
@@ -70,8 +74,8 @@ export default function VoiceDictation({ onTranscript, onComplete }: VoiceDictat
 
   const startListening = () => {
     if (recognitionRef.current && !isListening) {
-      setTranscript('');
-      setInterimTranscript('');
+      setTranscript("");
+      setInterimTranscript("");
       recognitionRef.current.start();
       setIsListening(true);
     }
@@ -81,7 +85,7 @@ export default function VoiceDictation({ onTranscript, onComplete }: VoiceDictat
     if (recognitionRef.current && isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
-      setInterimTranscript('');
+      setInterimTranscript("");
       if (transcript) {
         onComplete?.(transcript);
       }
@@ -89,30 +93,35 @@ export default function VoiceDictation({ onTranscript, onComplete }: VoiceDictat
   };
 
   const clearTranscript = () => {
-    setTranscript('');
-    setInterimTranscript('');
+    setTranscript("");
+    setInterimTranscript("");
   };
 
   const insertMacro = (text: string) => {
-    const newTranscript = transcript + text + ' ';
+    const newTranscript = transcript + text + " ";
     setTranscript(newTranscript);
     onTranscript?.(newTranscript);
   };
 
   const macros = [
-    { label: 'Normal', text: 'The examination is within normal limits.' },
-    { label: 'No Acute', text: 'No acute findings.' },
-    { label: 'Correlate', text: 'Correlation with clinical findings is recommended.' },
-    { label: 'Follow-up', text: 'Follow-up imaging is recommended.' },
-    { label: 'Recommend', text: 'Further evaluation with' },
-    { label: 'Comparison', text: 'Compared to prior study dated' },
+    { label: "Normal", text: "The examination is within normal limits." },
+    { label: "No Acute", text: "No acute findings." },
+    {
+      label: "Correlate",
+      text: "Correlation with clinical findings is recommended.",
+    },
+    { label: "Follow-up", text: "Follow-up imaging is recommended." },
+    { label: "Recommend", text: "Further evaluation with" },
+    { label: "Comparison", text: "Compared to prior study dated" },
   ];
 
   if (!isSupported) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
         <div className="text-center text-gray-500">
-          <p className="mb-2">Voice dictation is not supported in this browser.</p>
+          <p className="mb-2">
+            Voice dictation is not supported in this browser.
+          </p>
           <p className="text-sm">
             Please use Chrome, Edge, or Safari for voice dictation features.
           </p>
@@ -201,9 +210,11 @@ export default function VoiceDictation({ onTranscript, onComplete }: VoiceDictat
 
       {/* Macros */}
       <div className="p-4 border-b border-gray-200">
-        <div className="text-sm font-medium text-gray-700 mb-2">Quick Phrases:</div>
+        <div className="text-sm font-medium text-gray-700 mb-2">
+          Quick Phrases:
+        </div>
         <div className="flex flex-wrap gap-2">
-          {macros.map(macro => (
+          {macros.map((macro) => (
             <button
               key={macro.label}
               onClick={() => insertMacro(macro.text)}
@@ -237,11 +248,9 @@ export default function VoiceDictation({ onTranscript, onComplete }: VoiceDictat
       <div className="p-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-600">
         <div className="flex justify-between items-center">
           <div>
-            Words: {transcript.split(' ').filter(w => w.length > 0).length}
+            Words: {transcript.split(" ").filter((w) => w.length > 0).length}
           </div>
-          <div>
-            Tip: Speak clearly and pause between sentences
-          </div>
+          <div>Tip: Speak clearly and pause between sentences</div>
         </div>
       </div>
     </div>

@@ -1,23 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Plus, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import ResourceSchedule from '@/components/scheduling/ResourceSchedule';
-import { schedulingService } from '@/services/scheduling.service';
-import type { Resource } from '@/types/scheduling';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import ResourceSchedule from "@/components/scheduling/ResourceSchedule";
+import { schedulingService } from "@/services/scheduling.service";
+import type { Resource } from "@/types/scheduling";
+import { toast } from "sonner";
 
 export default function ResourcesPage() {
   const [resources, setResources] = useState<Resource[]>([]);
-  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(
+    null,
+  );
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [filterType, setFilterType] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export default function ResourcesPage() {
         setSelectedResource(data[0]);
       }
     } catch (error) {
-      toast.error('Failed to load resources');
+      toast.error("Failed to load resources");
       console.error(error);
     } finally {
       setLoading(false);
@@ -41,9 +43,10 @@ export default function ResourcesPage() {
   };
 
   const filteredResources = resources.filter((resource) => {
-    const matchesType = filterType === 'all' || resource.type === filterType;
-    const matchesSearch = resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         resource.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterType === "all" || resource.type === filterType;
+    const matchesSearch =
+      resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resource.location.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesType && matchesSearch;
   });
 
@@ -53,7 +56,9 @@ export default function ResourcesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Resources</h1>
-          <p className="text-gray-600 mt-1">Manage rooms, equipment, and other resources</p>
+          <p className="text-gray-600 mt-1">
+            Manage rooms, equipment, and other resources
+          </p>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
@@ -67,7 +72,7 @@ export default function ResourcesPage() {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-primary-600">
-                {resources.filter((r) => r.type === 'room').length}
+                {resources.filter((r) => r.type === "room").length}
               </div>
               <div className="text-sm text-gray-500 mt-1">Rooms</div>
             </div>
@@ -78,7 +83,7 @@ export default function ResourcesPage() {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">
-                {resources.filter((r) => r.type === 'equipment').length}
+                {resources.filter((r) => r.type === "equipment").length}
               </div>
               <div className="text-sm text-gray-500 mt-1">Equipment</div>
             </div>
@@ -120,7 +125,10 @@ export default function ResourcesPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+          <Select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+          >
             <option value="all">All Types</option>
             <option value="room">Rooms</option>
             <option value="equipment">Equipment</option>
@@ -129,7 +137,7 @@ export default function ResourcesPage() {
           </Select>
           <Input
             type="date"
-            value={selectedDate.toISOString().split('T')[0]}
+            value={selectedDate.toISOString().split("T")[0]}
             onChange={(e) => setSelectedDate(new Date(e.target.value))}
           />
         </div>
@@ -139,19 +147,23 @@ export default function ResourcesPage() {
       <div className="grid grid-cols-4 gap-6">
         {/* Resource List */}
         <div className="col-span-1 space-y-2">
-          <h3 className="font-semibold text-lg mb-3">Resources ({filteredResources.length})</h3>
+          <h3 className="font-semibold text-lg mb-3">
+            Resources ({filteredResources.length})
+          </h3>
           {loading ? (
             <div className="text-center py-8 text-gray-500">Loading...</div>
           ) : filteredResources.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No resources found</div>
+            <div className="text-center py-8 text-gray-500">
+              No resources found
+            </div>
           ) : (
             filteredResources.map((resource) => (
               <Card
                 key={resource.id}
                 className={`cursor-pointer transition-all ${
                   selectedResource?.id === resource.id
-                    ? 'border-primary-600 bg-primary-50'
-                    : 'hover:bg-gray-50'
+                    ? "border-primary-600 bg-primary-50"
+                    : "hover:bg-gray-50"
                 }`}
                 onClick={() => setSelectedResource(resource)}
               >
@@ -159,13 +171,15 @@ export default function ResourcesPage() {
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-sm">{resource.name}</span>
                     <Badge
-                      variant={resource.isAvailable ? 'default' : 'secondary'}
+                      variant={resource.isAvailable ? "default" : "secondary"}
                       className="text-xs"
                     >
-                      {resource.isAvailable ? 'Available' : 'In Use'}
+                      {resource.isAvailable ? "Available" : "In Use"}
                     </Badge>
                   </div>
-                  <div className="text-xs text-gray-500">{resource.location}</div>
+                  <div className="text-xs text-gray-500">
+                    {resource.location}
+                  </div>
                   <Badge variant="outline" className="mt-2 text-xs capitalize">
                     {resource.type}
                   </Badge>

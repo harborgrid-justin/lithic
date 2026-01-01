@@ -1,4 +1,4 @@
-import { RoleManager } from '../../components/admin/RoleManager';
+import { RoleManager } from "../../components/admin/RoleManager";
 
 /**
  * RolesPage
@@ -24,7 +24,7 @@ export class RolesPage {
       </div>
     `;
 
-    const roleContainer = document.getElementById('role-manager-container');
+    const roleContainer = document.getElementById("role-manager-container");
     if (roleContainer) {
       this.roleManager = new RoleManager(roleContainer);
       await this.roleManager.render();
@@ -33,6 +33,6 @@ export class RolesPage {
 
   destroy(): void {
     this.roleManager?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

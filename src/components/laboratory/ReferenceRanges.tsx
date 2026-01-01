@@ -1,24 +1,31 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { ReferenceRange } from '@/types/laboratory';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { BookOpen, Search } from 'lucide-react';
-import { REFERENCE_RANGES } from '@/lib/reference-ranges';
+import React, { useEffect, useState } from "react";
+import { ReferenceRange } from "@/types/laboratory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { BookOpen, Search } from "lucide-react";
+import { REFERENCE_RANGES } from "@/lib/reference-ranges";
 
 export default function ReferenceRanges() {
   const [ranges, setRanges] = useState<ReferenceRange[]>(REFERENCE_RANGES);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (searchTerm) {
       const filtered = REFERENCE_RANGES.filter(
         (range) =>
           range.testName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          range.loincCode.includes(searchTerm)
+          range.loincCode.includes(searchTerm),
       );
       setRanges(filtered);
     } else {
@@ -35,7 +42,7 @@ export default function ReferenceRanges() {
     } else if (range.high !== undefined) {
       parts.push(`<${range.high}`);
     }
-    return parts.length > 0 ? `${parts[0]} ${range.unit}` : 'See text';
+    return parts.length > 0 ? `${parts[0]} ${range.unit}` : "See text";
   };
 
   const formatCritical = (range: ReferenceRange) => {
@@ -46,7 +53,7 @@ export default function ReferenceRanges() {
     if (range.criticalHigh !== undefined) {
       parts.push(`High: >${range.criticalHigh}`);
     }
-    return parts.length > 0 ? parts.join(', ') : 'N/A';
+    return parts.length > 0 ? parts.join(", ") : "N/A";
   };
 
   return (
@@ -84,23 +91,32 @@ export default function ReferenceRanges() {
           <TableBody>
             {ranges.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={7}
+                  className="text-center text-muted-foreground"
+                >
                   No reference ranges found
                 </TableCell>
               </TableRow>
             ) : (
               ranges.map((range) => (
                 <TableRow key={range.id}>
-                  <TableCell className="font-medium">{range.testName}</TableCell>
-                  <TableCell className="font-mono text-xs">{range.loincCode}</TableCell>
+                  <TableCell className="font-medium">
+                    {range.testName}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {range.loincCode}
+                  </TableCell>
                   <TableCell>{formatRange(range)}</TableCell>
                   <TableCell className="text-sm">
-                    <span className="text-destructive">{formatCritical(range)}</span>
+                    <span className="text-destructive">
+                      {formatCritical(range)}
+                    </span>
                   </TableCell>
                   <TableCell>
                     {range.gender ? (
                       <Badge variant="outline">
-                        {range.gender === 'M' ? 'Male' : 'Female'}
+                        {range.gender === "M" ? "Male" : "Female"}
                       </Badge>
                     ) : (
                       <span className="text-muted-foreground">All</span>
@@ -109,14 +125,14 @@ export default function ReferenceRanges() {
                   <TableCell className="text-sm">
                     {range.ageMin || range.ageMax ? (
                       <span>
-                        {range.ageMin || '0'}-{range.ageMax || '∞'} years
+                        {range.ageMin || "0"}-{range.ageMax || "∞"} years
                       </span>
                     ) : (
                       <span className="text-muted-foreground">All ages</span>
                     )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground max-w-xs">
-                    {range.text || range.condition || '-'}
+                    {range.text || range.condition || "-"}
                   </TableCell>
                 </TableRow>
               ))

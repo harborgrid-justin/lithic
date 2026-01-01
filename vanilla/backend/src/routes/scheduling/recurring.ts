@@ -3,12 +3,12 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response } from "express";
 
 const router = Router();
 
 export interface RecurrencePattern {
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  frequency: "daily" | "weekly" | "monthly" | "yearly";
   interval: number; // Every N days/weeks/months/years
   daysOfWeek?: number[]; // 0 = Sunday, 6 = Saturday (for weekly)
   dayOfMonth?: number; // 1-31 (for monthly)
@@ -42,11 +42,17 @@ export interface RecurringAppointment {
     resourceType: string;
     resourceName: string;
   }[];
-  status: 'active' | 'paused' | 'completed' | 'cancelled';
+  status: "active" | "paused" | "completed" | "cancelled";
   occurrences: {
     appointmentId: string;
     date: Date;
-    status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show' | 'rescheduled';
+    status:
+      | "scheduled"
+      | "confirmed"
+      | "completed"
+      | "cancelled"
+      | "no-show"
+      | "rescheduled";
     cancelledReason?: string;
     rescheduledTo?: Date;
   }[];
@@ -60,7 +66,7 @@ export interface RecurringAppointment {
   reminderSettings?: {
     daysBeforeMinutes: number;
     hoursBeforeMinutes: number;
-    methods: ('email' | 'sms' | 'push')[];
+    methods: ("email" | "sms" | "push")[];
   };
   exceptions: Date[]; // Dates to skip
   createdAt: Date;
@@ -88,14 +94,14 @@ export interface RecurrenceTemplate {
 }
 
 // GET /api/scheduling/recurring - Get all recurring appointments
-router.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const {
       patientId,
       providerId,
       status,
-      limit = '50',
-      offset = '0'
+      limit = "50",
+      offset = "0",
     } = req.query;
 
     // TODO: Implement database query
@@ -107,20 +113,20 @@ router.get('/', async (req: Request, res: Response) => {
       pagination: {
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
-        total: 0
-      }
+        total: 0,
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch recurring appointments',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch recurring appointments",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/recurring/:id - Get recurring appointment by ID
-router.get('/:id', async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -130,50 +136,58 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (!recurring) {
       return res.status(404).json({
         success: false,
-        error: 'Recurring appointment not found'
+        error: "Recurring appointment not found",
       });
     }
 
     res.json({
       success: true,
-      data: recurring
+      data: recurring,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch recurring appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch recurring appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/recurring - Create recurring appointment
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const recurringData = req.body;
 
     // Validate required fields
-    if (!recurringData.patientId || !recurringData.providerId || !recurringData.startDate || !recurringData.recurrencePattern) {
+    if (
+      !recurringData.patientId ||
+      !recurringData.providerId ||
+      !recurringData.startDate ||
+      !recurringData.recurrencePattern
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: patientId, providerId, startDate, recurrencePattern'
+        error:
+          "Missing required fields: patientId, providerId, startDate, recurrencePattern",
       });
     }
 
     // Validate recurrence pattern
-    const { frequency, interval, count, endDate } = recurringData.recurrencePattern;
+    const { frequency, interval, count, endDate } =
+      recurringData.recurrencePattern;
 
     if (!frequency || !interval || interval < 1) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid recurrence pattern: frequency and interval (>= 1) are required'
+        error:
+          "Invalid recurrence pattern: frequency and interval (>= 1) are required",
       });
     }
 
     if (!count && !endDate) {
       return res.status(400).json({
         success: false,
-        error: 'Recurrence pattern must have either count or endDate'
+        error: "Recurrence pattern must have either count or endDate",
       });
     }
 
@@ -187,7 +201,7 @@ router.post('/', async (req: Request, res: Response) => {
       id: `rec-${Date.now()}`,
       templateId: recurringData.templateId || `tpl-${Date.now()}`,
       ...recurringData,
-      status: 'active',
+      status: "active",
       occurrences,
       totalOccurrences: occurrences.length,
       completedOccurrences: 0,
@@ -198,8 +212,8 @@ router.post('/', async (req: Request, res: Response) => {
       exceptions: recurringData.exceptions || [],
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'system', // TODO: Get from auth
-      updatedBy: 'system'
+      createdBy: "system", // TODO: Get from auth
+      updatedBy: "system",
     };
 
     // TODO: Save to database and create individual appointments
@@ -207,19 +221,19 @@ router.post('/', async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       data: newRecurring,
-      message: `Recurring appointment created with ${occurrences.length} occurrences`
+      message: `Recurring appointment created with ${occurrences.length} occurrences`,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to create recurring appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to create recurring appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // PUT /api/scheduling/recurring/:id - Update recurring appointment
-router.put('/:id', async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -231,7 +245,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     if (!existingRecurring) {
       return res.status(404).json({
         success: false,
-        error: 'Recurring appointment not found'
+        error: "Recurring appointment not found",
       });
     }
 
@@ -240,7 +254,7 @@ router.put('/:id', async (req: Request, res: Response) => {
       ...existingRecurring,
       ...updateData,
       updatedAt: new Date(),
-      updatedBy: 'system' // TODO: Get from auth
+      updatedBy: "system", // TODO: Get from auth
     };
 
     // If updateFuture is true, update all future occurrences
@@ -251,19 +265,21 @@ router.put('/:id', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: updatedRecurring,
-      message: updateFuture ? 'Recurring appointment and future occurrences updated' : 'Recurring appointment updated'
+      message: updateFuture
+        ? "Recurring appointment and future occurrences updated"
+        : "Recurring appointment updated",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to update recurring appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to update recurring appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // DELETE /api/scheduling/recurring/:id - Cancel recurring appointment
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { reason, cancelFuture = true } = req.body;
@@ -274,19 +290,19 @@ router.delete('/:id', async (req: Request, res: Response) => {
     if (!existingRecurring) {
       return res.status(404).json({
         success: false,
-        error: 'Recurring appointment not found'
+        error: "Recurring appointment not found",
       });
     }
 
     // Cancel recurring appointment
     const cancelledRecurring: RecurringAppointment = {
       ...existingRecurring,
-      status: 'cancelled',
+      status: "cancelled",
       cancelledAt: new Date(),
-      cancelledBy: 'system', // TODO: Get from auth
+      cancelledBy: "system", // TODO: Get from auth
       cancellationReason: reason,
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // If cancelFuture is true, cancel all future occurrences
@@ -297,19 +313,21 @@ router.delete('/:id', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: cancelledRecurring,
-      message: cancelFuture ? 'Recurring appointment and all future occurrences cancelled' : 'Recurring appointment cancelled'
+      message: cancelFuture
+        ? "Recurring appointment and all future occurrences cancelled"
+        : "Recurring appointment cancelled",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to cancel recurring appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to cancel recurring appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/recurring/:id/pause - Pause recurring appointment
-router.post('/:id/pause', async (req: Request, res: Response) => {
+router.post("/:id/pause", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
@@ -320,26 +338,26 @@ router.post('/:id/pause', async (req: Request, res: Response) => {
     if (!existingRecurring) {
       return res.status(404).json({
         success: false,
-        error: 'Recurring appointment not found'
+        error: "Recurring appointment not found",
       });
     }
 
-    if (existingRecurring.status !== 'active') {
+    if (existingRecurring.status !== "active") {
       return res.status(400).json({
         success: false,
-        error: 'Can only pause active recurring appointments'
+        error: "Can only pause active recurring appointments",
       });
     }
 
     // Pause recurring appointment
     const pausedRecurring: RecurringAppointment = {
       ...existingRecurring,
-      status: 'paused',
+      status: "paused",
       pausedAt: new Date(),
-      pausedBy: 'system', // TODO: Get from auth
+      pausedBy: "system", // TODO: Get from auth
       pausedReason: reason,
       updatedAt: new Date(),
-      updatedBy: 'system'
+      updatedBy: "system",
     };
 
     // TODO: Save to database
@@ -347,19 +365,19 @@ router.post('/:id/pause', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: pausedRecurring,
-      message: 'Recurring appointment paused successfully'
+      message: "Recurring appointment paused successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to pause recurring appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to pause recurring appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/recurring/:id/resume - Resume paused recurring appointment
-router.post('/:id/resume', async (req: Request, res: Response) => {
+router.post("/:id/resume", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -369,26 +387,26 @@ router.post('/:id/resume', async (req: Request, res: Response) => {
     if (!existingRecurring) {
       return res.status(404).json({
         success: false,
-        error: 'Recurring appointment not found'
+        error: "Recurring appointment not found",
       });
     }
 
-    if (existingRecurring.status !== 'paused') {
+    if (existingRecurring.status !== "paused") {
       return res.status(400).json({
         success: false,
-        error: 'Can only resume paused recurring appointments'
+        error: "Can only resume paused recurring appointments",
       });
     }
 
     // Resume recurring appointment
     const resumedRecurring: RecurringAppointment = {
       ...existingRecurring,
-      status: 'active',
+      status: "active",
       pausedAt: undefined,
       pausedBy: undefined,
       pausedReason: undefined,
       updatedAt: new Date(),
-      updatedBy: 'system' // TODO: Get from auth
+      updatedBy: "system", // TODO: Get from auth
     };
 
     // TODO: Save to database
@@ -396,19 +414,19 @@ router.post('/:id/resume', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: resumedRecurring,
-      message: 'Recurring appointment resumed successfully'
+      message: "Recurring appointment resumed successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to resume recurring appointment',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to resume recurring appointment",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // POST /api/scheduling/recurring/:id/skip - Skip specific occurrence
-router.post('/:id/skip', async (req: Request, res: Response) => {
+router.post("/:id/skip", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { date } = req.body;
@@ -416,7 +434,7 @@ router.post('/:id/skip', async (req: Request, res: Response) => {
     if (!date) {
       return res.status(400).json({
         success: false,
-        error: 'Date is required'
+        error: "Date is required",
       });
     }
 
@@ -426,7 +444,7 @@ router.post('/:id/skip', async (req: Request, res: Response) => {
     if (!existingRecurring) {
       return res.status(404).json({
         success: false,
-        error: 'Recurring appointment not found'
+        error: "Recurring appointment not found",
       });
     }
 
@@ -435,7 +453,7 @@ router.post('/:id/skip', async (req: Request, res: Response) => {
       ...existingRecurring,
       exceptions: [...existingRecurring.exceptions, new Date(date)],
       updatedAt: new Date(),
-      updatedBy: 'system' // TODO: Get from auth
+      updatedBy: "system", // TODO: Get from auth
     };
 
     // TODO: Save to database and cancel the specific appointment
@@ -443,19 +461,19 @@ router.post('/:id/skip', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: updatedRecurring,
-      message: 'Occurrence skipped successfully'
+      message: "Occurrence skipped successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to skip occurrence',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to skip occurrence",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/recurring/:id/occurrences - Get all occurrences
-router.get('/:id/occurrences', async (req: Request, res: Response) => {
+router.get("/:id/occurrences", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status, startDate, endDate } = req.query;
@@ -465,78 +483,78 @@ router.get('/:id/occurrences', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      data: occurrences
+      data: occurrences,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch occurrences',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch occurrences",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
 
 // GET /api/scheduling/recurring/templates - Get recurrence templates
-router.get('/templates', async (req: Request, res: Response) => {
+router.get("/templates", async (req: Request, res: Response) => {
   try {
     // TODO: Fetch templates from database
     const templates: RecurrenceTemplate[] = [
       {
-        id: 'tpl-weekly',
-        name: 'Weekly',
-        description: 'Repeats every week on the same day',
-        appointmentType: 'follow-up',
+        id: "tpl-weekly",
+        name: "Weekly",
+        description: "Repeats every week on the same day",
+        appointmentType: "follow-up",
         duration: 30,
         recurrencePattern: {
-          frequency: 'weekly',
+          frequency: "weekly",
           interval: 1,
-          count: 12
+          count: 12,
         },
         isActive: true,
         createdAt: new Date(),
-        createdBy: 'system'
+        createdBy: "system",
       },
       {
-        id: 'tpl-biweekly',
-        name: 'Bi-weekly',
-        description: 'Repeats every 2 weeks',
-        appointmentType: 'therapy',
+        id: "tpl-biweekly",
+        name: "Bi-weekly",
+        description: "Repeats every 2 weeks",
+        appointmentType: "therapy",
         duration: 60,
         recurrencePattern: {
-          frequency: 'weekly',
+          frequency: "weekly",
           interval: 2,
-          count: 8
+          count: 8,
         },
         isActive: true,
         createdAt: new Date(),
-        createdBy: 'system'
+        createdBy: "system",
       },
       {
-        id: 'tpl-monthly',
-        name: 'Monthly',
-        description: 'Repeats monthly on the same day',
-        appointmentType: 'follow-up',
+        id: "tpl-monthly",
+        name: "Monthly",
+        description: "Repeats monthly on the same day",
+        appointmentType: "follow-up",
         duration: 30,
         recurrencePattern: {
-          frequency: 'monthly',
+          frequency: "monthly",
           interval: 1,
-          count: 6
+          count: 6,
         },
         isActive: true,
         createdAt: new Date(),
-        createdBy: 'system'
-      }
+        createdBy: "system",
+      },
     ];
 
     res.json({
       success: true,
-      data: templates
+      data: templates,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch templates',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      error: "Failed to fetch templates",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -557,21 +575,21 @@ function calculateOccurrences(recurringData: any): any[] {
     occurrences.push({
       appointmentId: `apt-${Date.now()}-${i}`,
       date: new Date(currentDate),
-      status: 'scheduled'
+      status: "scheduled",
     });
 
     // Calculate next occurrence based on frequency
     switch (frequency) {
-      case 'daily':
+      case "daily":
         currentDate.setDate(currentDate.getDate() + interval);
         break;
-      case 'weekly':
-        currentDate.setDate(currentDate.getDate() + (interval * 7));
+      case "weekly":
+        currentDate.setDate(currentDate.getDate() + interval * 7);
         break;
-      case 'monthly':
+      case "monthly":
         currentDate.setMonth(currentDate.getMonth() + interval);
         break;
-      case 'yearly':
+      case "yearly":
         currentDate.setFullYear(currentDate.getFullYear() + interval);
         break;
     }

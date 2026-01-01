@@ -4,7 +4,7 @@
  * Build HL7v2 messages programmatically with proper encoding
  */
 
-import { HL7Delimiters } from './parser';
+import { HL7Delimiters } from "./parser";
 
 // Builder Configuration
 export interface HL7BuilderConfig {
@@ -27,7 +27,7 @@ export class SegmentBuilder {
    */
   addField(value: string | string[] | null | undefined): this {
     if (value === null || value === undefined) {
-      this.fields.push(['']);
+      this.fields.push([""]);
     } else if (Array.isArray(value)) {
       this.fields.push(value);
     } else {
@@ -63,10 +63,12 @@ export class SegmentBuilder {
    */
   build(delimiters: HL7Delimiters): string {
     const fieldStrings = this.fields.map((field) =>
-      field.map((comp) => this.escape(comp, delimiters)).join(delimiters.component)
+      field
+        .map((comp) => this.escape(comp, delimiters))
+        .join(delimiters.component),
     );
 
-    if (this.segmentName === 'MSH') {
+    if (this.segmentName === "MSH") {
       // MSH segment has special encoding
       const encodingChars =
         delimiters.component +
@@ -84,15 +86,30 @@ export class SegmentBuilder {
    * Escape special characters
    */
   private escape(value: string, delimiters: HL7Delimiters): string {
-    if (!value) return '';
+    if (!value) return "";
 
     const escapeChar = delimiters.escape;
     return value
-      .replace(new RegExp(`\\${delimiters.escape}`, 'g'), `${escapeChar}E${escapeChar}`)
-      .replace(new RegExp(`\\${delimiters.field}`, 'g'), `${escapeChar}F${escapeChar}`)
-      .replace(new RegExp(`\\${delimiters.component}`, 'g'), `${escapeChar}S${escapeChar}`)
-      .replace(new RegExp(`\\${delimiters.subcomponent}`, 'g'), `${escapeChar}T${escapeChar}`)
-      .replace(new RegExp(`\\${delimiters.repetition}`, 'g'), `${escapeChar}R${escapeChar}`);
+      .replace(
+        new RegExp(`\\${delimiters.escape}`, "g"),
+        `${escapeChar}E${escapeChar}`,
+      )
+      .replace(
+        new RegExp(`\\${delimiters.field}`, "g"),
+        `${escapeChar}F${escapeChar}`,
+      )
+      .replace(
+        new RegExp(`\\${delimiters.component}`, "g"),
+        `${escapeChar}S${escapeChar}`,
+      )
+      .replace(
+        new RegExp(`\\${delimiters.subcomponent}`, "g"),
+        `${escapeChar}T${escapeChar}`,
+      )
+      .replace(
+        new RegExp(`\\${delimiters.repetition}`, "g"),
+        `${escapeChar}R${escapeChar}`,
+      );
   }
 }
 
@@ -106,19 +123,19 @@ export class HL7Builder {
 
   constructor(config: HL7BuilderConfig = {}) {
     this.delimiters = config.delimiters || {
-      field: '|',
-      component: '^',
-      repetition: '~',
-      escape: '\\',
-      subcomponent: '&',
+      field: "|",
+      component: "^",
+      repetition: "~",
+      escape: "\\",
+      subcomponent: "&",
     };
 
     this.config = {
-      sendingApplication: config.sendingApplication || 'LITHIC',
-      sendingFacility: config.sendingFacility || 'LITHIC_FACILITY',
-      receivingApplication: config.receivingApplication || 'RECEIVER',
-      receivingFacility: config.receivingFacility || 'RECEIVER_FACILITY',
-      version: config.version || '2.5',
+      sendingApplication: config.sendingApplication || "LITHIC",
+      sendingFacility: config.sendingFacility || "LITHIC_FACILITY",
+      receivingApplication: config.receivingApplication || "RECEIVER",
+      receivingFacility: config.receivingFacility || "RECEIVER_FACILITY",
+      version: config.version || "2.5",
       ...config,
     };
   }
@@ -126,22 +143,26 @@ export class HL7Builder {
   /**
    * Add MSH segment
    */
-  addMSH(messageType: string, triggerEvent: string, messageControlId: string): this {
-    const msh = new SegmentBuilder('MSH');
+  addMSH(
+    messageType: string,
+    triggerEvent: string,
+    messageControlId: string,
+  ): this {
+    const msh = new SegmentBuilder("MSH");
     const timestamp = this.formatTimestamp(new Date());
 
     msh.addFields(
-      '', // Field separator (handled specially)
+      "", // Field separator (handled specially)
       this.config.sendingApplication,
       this.config.sendingFacility,
       this.config.receivingApplication,
       this.config.receivingFacility,
       timestamp,
-      '',
+      "",
       [messageType, triggerEvent],
       messageControlId,
-      'P', // Processing ID
-      this.config.version
+      "P", // Processing ID
+      this.config.version,
     );
 
     this.segments.push(msh);
@@ -167,14 +188,16 @@ export class HL7Builder {
     };
     phone?: string;
   }): this {
-    const pid = new SegmentBuilder('PID');
+    const pid = new SegmentBuilder("PID");
 
     pid.addFields(
-      '1', // Set ID
+      "1", // Set ID
       null, // Patient ID (external)
       patient.id, // Patient ID (internal)
       null, // Alternate Patient ID
-      [patient.lastName, patient.firstName, patient.middleName || ''].filter(Boolean),
+      [patient.lastName, patient.firstName, patient.middleName || ""].filter(
+        Boolean,
+      ),
       null, // Mother's Maiden Name
       this.formatDate(patient.dateOfBirth),
       patient.gender,
@@ -183,7 +206,7 @@ export class HL7Builder {
       patient.address
         ? [
             patient.address.street,
-            '',
+            "",
             patient.address.city,
             patient.address.state,
             patient.address.zipCode,
@@ -196,7 +219,7 @@ export class HL7Builder {
       null, // Marital Status
       null, // Religion
       null, // Patient Account Number
-      patient.ssn
+      patient.ssn,
     );
 
     this.segments.push(pid);
@@ -212,17 +235,21 @@ export class HL7Builder {
     attendingDoctor?: { id: string; lastName: string; firstName: string };
     admitDateTime?: string;
   }): this {
-    const pv1 = new SegmentBuilder('PV1');
+    const pv1 = new SegmentBuilder("PV1");
 
     pv1.addFields(
-      '1', // Set ID
+      "1", // Set ID
       visit.patientClass,
       visit.assignedLocation || null,
       null, // Admission Type
       null, // Preadmit Number
       null, // Prior Patient Location
       visit.attendingDoctor
-        ? [visit.attendingDoctor.id, visit.attendingDoctor.lastName, visit.attendingDoctor.firstName]
+        ? [
+            visit.attendingDoctor.id,
+            visit.attendingDoctor.lastName,
+            visit.attendingDoctor.firstName,
+          ]
         : null,
       null, // Referring Doctor
       null, // Consulting Doctor
@@ -260,7 +287,9 @@ export class HL7Builder {
       null, // Account Status
       null, // Pending Location
       null, // Prior Temporary Location
-      visit.admitDateTime ? this.formatTimestamp(new Date(visit.admitDateTime)) : null
+      visit.admitDateTime
+        ? this.formatTimestamp(new Date(visit.admitDateTime))
+        : null,
     );
 
     this.segments.push(pv1);
@@ -278,24 +307,30 @@ export class HL7Builder {
     orderDateTime?: string;
     orderingProvider?: { id: string; lastName: string; firstName: string };
   }): this {
-    const orc = new SegmentBuilder('ORC');
+    const orc = new SegmentBuilder("ORC");
 
     orc.addFields(
       order.orderControl,
       order.placerOrderNumber,
       order.fillerOrderNumber || null,
       null, // Placer Group Number
-      order.orderStatus || 'NW',
+      order.orderStatus || "NW",
       null, // Response Flag
       null, // Quantity/Timing
       null, // Parent
-      order.orderDateTime ? this.formatTimestamp(new Date(order.orderDateTime)) : null,
+      order.orderDateTime
+        ? this.formatTimestamp(new Date(order.orderDateTime))
+        : null,
       null, // Transaction Date/Time
       null, // Entered By
       null, // Verified By
       order.orderingProvider
-        ? [order.orderingProvider.id, order.orderingProvider.lastName, order.orderingProvider.firstName]
-        : null
+        ? [
+            order.orderingProvider.id,
+            order.orderingProvider.lastName,
+            order.orderingProvider.firstName,
+          ]
+        : null,
     );
 
     this.segments.push(orc);
@@ -314,7 +349,7 @@ export class HL7Builder {
     observationDateTime?: string;
     priority?: string;
   }): this {
-    const obr = new SegmentBuilder('OBR');
+    const obr = new SegmentBuilder("OBR");
 
     obr.addFields(
       observation.setId,
@@ -322,7 +357,9 @@ export class HL7Builder {
       observation.fillerOrderNumber || null,
       [observation.universalServiceId, observation.universalServiceName],
       null, // Priority (old)
-      observation.observationDateTime ? this.formatTimestamp(new Date(observation.observationDateTime)) : null,
+      observation.observationDateTime
+        ? this.formatTimestamp(new Date(observation.observationDateTime))
+        : null,
       null, // Observation Date/Time
       null, // Observation End Date/Time
       null, // Collection Volume
@@ -344,7 +381,7 @@ export class HL7Builder {
       null, // Result Status
       null, // Parent Result
       null, // Quantity/Timing
-      observation.priority || 'R'
+      observation.priority || "R",
     );
 
     this.segments.push(obr);
@@ -366,7 +403,7 @@ export class HL7Builder {
     resultStatus?: string;
     observationDateTime?: string;
   }): this {
-    const obx = new SegmentBuilder('OBX');
+    const obx = new SegmentBuilder("OBX");
 
     obx.addFields(
       result.setId,
@@ -379,10 +416,12 @@ export class HL7Builder {
       result.abnormalFlags || null,
       null, // Probability
       null, // Nature of Abnormal Test
-      result.resultStatus || 'F',
+      result.resultStatus || "F",
       null, // Effective Date of Reference Range
       null, // User Defined Access Checks
-      result.observationDateTime ? this.formatTimestamp(new Date(result.observationDateTime)) : null
+      result.observationDateTime
+        ? this.formatTimestamp(new Date(result.observationDateTime))
+        : null,
     );
 
     this.segments.push(obx);
@@ -401,18 +440,20 @@ export class HL7Builder {
    * Build the complete HL7 message
    */
   build(): string {
-    const segmentStrings = this.segments.map((segment) => segment.build(this.delimiters));
-    return segmentStrings.join('\r');
+    const segmentStrings = this.segments.map((segment) =>
+      segment.build(this.delimiters),
+    );
+    return segmentStrings.join("\r");
   }
 
   /**
    * Format date for HL7 (YYYYMMDD)
    */
   private formatDate(date: string | Date): string {
-    const d = typeof date === 'string' ? new Date(date) : date;
+    const d = typeof date === "string" ? new Date(date) : date;
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
     return `${year}${month}${day}`;
   }
 
@@ -421,11 +462,11 @@ export class HL7Builder {
    */
   private formatTimestamp(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
   }
 }
@@ -434,20 +475,24 @@ export class HL7Builder {
  * Create ACK message
  */
 export function createACK(
-  originalMessage: { messageControlId: string; messageType: string; triggerEvent: string },
-  acknowledgmentCode: 'AA' | 'AE' | 'AR' = 'AA',
-  config?: HL7BuilderConfig
+  originalMessage: {
+    messageControlId: string;
+    messageType: string;
+    triggerEvent: string;
+  },
+  acknowledgmentCode: "AA" | "AE" | "AR" = "AA",
+  config?: HL7BuilderConfig,
 ): string {
   const builder = new HL7Builder(config);
   const messageControlId = `ACK${Date.now()}`;
 
-  builder.addMSH('ACK', originalMessage.triggerEvent, messageControlId);
+  builder.addMSH("ACK", originalMessage.triggerEvent, messageControlId);
 
-  const msa = new SegmentBuilder('MSA');
+  const msa = new SegmentBuilder("MSA");
   msa.addFields(
     acknowledgmentCode,
     originalMessage.messageControlId,
-    acknowledgmentCode === 'AA' ? 'Message accepted' : 'Message rejected'
+    acknowledgmentCode === "AA" ? "Message accepted" : "Message rejected",
   );
 
   builder.addSegment(msa);
@@ -460,15 +505,12 @@ export function createACK(
 export function createADTA01(
   patient: any,
   visit: any,
-  config?: HL7BuilderConfig
+  config?: HL7BuilderConfig,
 ): string {
   const builder = new HL7Builder(config);
   const messageControlId = `ADT${Date.now()}`;
 
-  builder
-    .addMSH('ADT', 'A01', messageControlId)
-    .addPID(patient)
-    .addPV1(visit);
+  builder.addMSH("ADT", "A01", messageControlId).addPID(patient).addPV1(visit);
 
   return builder.build();
 }
@@ -479,18 +521,18 @@ export function createADTA01(
 export function createORUR01(
   patient: any,
   observations: any[],
-  config?: HL7BuilderConfig
+  config?: HL7BuilderConfig,
 ): string {
   const builder = new HL7Builder(config);
   const messageControlId = `ORU${Date.now()}`;
 
-  builder.addMSH('ORU', 'R01', messageControlId).addPID(patient);
+  builder.addMSH("ORU", "R01", messageControlId).addPID(patient);
 
   // Add OBR segment
   builder.addOBR({
-    setId: '1',
-    universalServiceId: 'PANEL',
-    universalServiceName: 'Laboratory Panel',
+    setId: "1",
+    universalServiceId: "PANEL",
+    universalServiceName: "Laboratory Panel",
     observationDateTime: new Date().toISOString(),
   });
 
@@ -498,7 +540,7 @@ export function createORUR01(
   observations.forEach((obs, index) => {
     builder.addOBX({
       setId: String(index + 1),
-      valueType: 'NM',
+      valueType: "NM",
       ...obs,
     });
   });

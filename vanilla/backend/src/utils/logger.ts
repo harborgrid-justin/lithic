@@ -1,29 +1,29 @@
-import winston from 'winston';
-import { config } from '../config/env.js';
+import winston from "winston";
+import { config } from "../config/env.js";
 
 const logFormat = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   winston.format.errors({ stack: true }),
   winston.format.splat(),
-  winston.format.json()
+  winston.format.json(),
 );
 
 const consoleFormat = winston.format.combine(
   winston.format.colorize(),
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   winston.format.printf(({ timestamp, level, message, ...meta }) => {
     let msg = `${timestamp} [${level}]: ${message}`;
     if (Object.keys(meta).length > 0) {
       msg += ` ${JSON.stringify(meta)}`;
     }
     return msg;
-  })
+  }),
 );
 
 export const logger = winston.createLogger({
   level: config.logLevel,
   format: logFormat,
-  defaultMeta: { service: 'lithic-backend' },
+  defaultMeta: { service: "lithic-backend" },
   transports: [
     // Console transport
     new winston.transports.Console({
@@ -31,12 +31,12 @@ export const logger = winston.createLogger({
     }),
     // File transport for errors
     new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
+      filename: "logs/error.log",
+      level: "error",
     }),
     // File transport for all logs
     new winston.transports.File({
-      filename: 'logs/combined.log',
+      filename: "logs/combined.log",
     }),
   ],
 });
@@ -48,9 +48,9 @@ export const auditLog = (
   resourceType: string,
   resourceId: string,
   ipAddress: string,
-  details?: any
+  details?: any,
 ) => {
-  logger.info('AUDIT', {
+  logger.info("AUDIT", {
     userId,
     action,
     resourceType,

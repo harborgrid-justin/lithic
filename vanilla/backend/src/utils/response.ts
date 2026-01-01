@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Response } from "express";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -23,9 +23,9 @@ export interface ApiResponse<T = any> {
 export const sendSuccess = <T>(
   res: Response,
   data?: T,
-  message: string = 'Success',
+  message: string = "Success",
   statusCode: number = 200,
-  meta?: any
+  meta?: any,
 ): Response => {
   const response: ApiResponse<T> = {
     success: true,
@@ -45,9 +45,9 @@ export const sendSuccess = <T>(
  */
 export const sendError = (
   res: Response,
-  message: string = 'An error occurred',
+  message: string = "An error occurred",
   statusCode: number = 500,
-  errors?: any[]
+  errors?: any[],
 ): Response => {
   const response: ApiResponse = {
     success: false,
@@ -64,11 +64,8 @@ export const sendError = (
 /**
  * Send validation error response
  */
-export const sendValidationError = (
-  res: Response,
-  errors: any[]
-): Response => {
-  return sendError(res, 'Validation failed', 400, errors);
+export const sendValidationError = (res: Response, errors: any[]): Response => {
+  return sendError(res, "Validation failed", 400, errors);
 };
 
 /**
@@ -76,7 +73,7 @@ export const sendValidationError = (
  */
 export const sendUnauthorized = (
   res: Response,
-  message: string = 'Unauthorized'
+  message: string = "Unauthorized",
 ): Response => {
   return sendError(res, message, 401);
 };
@@ -86,7 +83,7 @@ export const sendUnauthorized = (
  */
 export const sendForbidden = (
   res: Response,
-  message: string = 'Forbidden'
+  message: string = "Forbidden",
 ): Response => {
   return sendError(res, message, 403);
 };
@@ -96,7 +93,7 @@ export const sendForbidden = (
  */
 export const sendNotFound = (
   res: Response,
-  message: string = 'Resource not found'
+  message: string = "Resource not found",
 ): Response => {
   return sendError(res, message, 404);
 };
@@ -110,24 +107,18 @@ export const sendPaginated = <T>(
   page: number,
   pageSize: number,
   totalItems: number,
-  message: string = 'Success'
+  message: string = "Success",
 ): Response => {
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  return sendSuccess(
-    res,
-    data,
-    message,
-    200,
-    {
-      pagination: {
-        page,
-        pageSize,
-        totalPages,
-        totalItems,
-      },
-    }
-  );
+  return sendSuccess(res, data, message, 200, {
+    pagination: {
+      page,
+      pageSize,
+      totalPages,
+      totalItems,
+    },
+  });
 };
 
 /**
@@ -136,7 +127,7 @@ export const sendPaginated = <T>(
 export const sendCreated = <T>(
   res: Response,
   data: T,
-  message: string = 'Resource created successfully'
+  message: string = "Resource created successfully",
 ): Response => {
   return sendSuccess(res, data, message, 201);
 };

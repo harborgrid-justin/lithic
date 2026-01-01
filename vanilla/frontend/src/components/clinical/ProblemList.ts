@@ -4,7 +4,10 @@ export class ProblemList {
   private problems: any[] = [];
   private onUpdate?: (problemId: string, status: string) => void;
 
-  constructor(containerId: string, onUpdate?: (problemId: string, status: string) => void) {
+  constructor(
+    containerId: string,
+    onUpdate?: (problemId: string, status: string) => void,
+  ) {
     const element = document.getElementById(containerId);
     if (!element) throw new Error(`Element with id ${containerId} not found`);
     this.container = element;
@@ -18,11 +21,14 @@ export class ProblemList {
 
   private render(): void {
     if (this.problems.length === 0) {
-      this.container.innerHTML = '<div class="empty-state">No problems recorded</div>';
+      this.container.innerHTML =
+        '<div class="empty-state">No problems recorded</div>';
       return;
     }
 
-    const problemsHTML = this.problems.map(problem => this.renderProblem(problem)).join('');
+    const problemsHTML = this.problems
+      .map((problem) => this.renderProblem(problem))
+      .join("");
 
     this.container.innerHTML = `
       <div class="problem-list">
@@ -52,34 +58,40 @@ export class ProblemList {
         </div>
         <div class="problem-details">
           <div><strong>Onset:</strong> ${onsetDate}</div>
-          ${problem.resolvedDate ? `<div><strong>Resolved:</strong> ${new Date(problem.resolvedDate).toLocaleDateString()}</div>` : ''}
-          ${problem.notes ? `<div class="problem-notes">${problem.notes}</div>` : ''}
+          ${problem.resolvedDate ? `<div><strong>Resolved:</strong> ${new Date(problem.resolvedDate).toLocaleDateString()}</div>` : ""}
+          ${problem.notes ? `<div class="problem-notes">${problem.notes}</div>` : ""}
         </div>
-        ${problem.status === 'active' ? `
+        ${
+          problem.status === "active"
+            ? `
           <div class="problem-actions">
             <button class="btn btn-sm resolve-btn" data-problem-id="${problem.id}">
               Mark Resolved
             </button>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
     `;
   }
 
   private attachEventListeners(): void {
-    const resolveButtons = this.container.querySelectorAll('.resolve-btn');
-    resolveButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        const problemId = (e.target as HTMLElement).getAttribute('data-problem-id');
+    const resolveButtons = this.container.querySelectorAll(".resolve-btn");
+    resolveButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const problemId = (e.target as HTMLElement).getAttribute(
+          "data-problem-id",
+        );
         if (problemId && this.onUpdate) {
-          this.onUpdate(problemId, 'resolved');
+          this.onUpdate(problemId, "resolved");
         }
       });
     });
   }
 
   destroy(): void {
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

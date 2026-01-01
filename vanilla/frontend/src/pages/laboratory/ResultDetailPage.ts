@@ -3,9 +3,9 @@
  * View detailed result and trend analysis
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { TrendChart } from '../../components/laboratory/TrendChart';
-import { LabReport } from '../../components/laboratory/LabReport';
+import { labService } from "../../services/LaboratoryService";
+import { TrendChart } from "../../components/laboratory/TrendChart";
+import { LabReport } from "../../components/laboratory/LabReport";
 
 export class ResultDetailPage {
   private container: HTMLElement;
@@ -47,7 +47,7 @@ export class ResultDetailPage {
       const result = results.find((r: any) => r.id === this.resultId);
 
       if (!result) {
-        throw new Error('Result not found');
+        throw new Error("Result not found");
       }
 
       const order = await labService.getOrder(result.orderId);
@@ -55,19 +55,20 @@ export class ResultDetailPage {
       // Get historical results for trend
       const historicalResults = await labService.searchResults({
         patientId: order.patientId,
-        loincCode: result.loincCode
+        loincCode: result.loincCode,
       });
 
-      const resultContent = this.container.querySelector('#resultContent');
+      const resultContent = this.container.querySelector("#resultContent");
       if (resultContent) {
         resultContent.innerHTML = this.renderResultContent(result, order);
         this.initializeComponents(result, historicalResults);
       }
     } catch (error) {
-      console.error('Error loading result:', error);
-      const resultContent = this.container.querySelector('#resultContent');
+      console.error("Error loading result:", error);
+      const resultContent = this.container.querySelector("#resultContent");
       if (resultContent) {
-        resultContent.innerHTML = '<p class="error">Error loading result details</p>';
+        resultContent.innerHTML =
+          '<p class="error">Error loading result details</p>';
       }
     }
   }
@@ -95,13 +96,17 @@ export class ResultDetailPage {
           </div>
         </div>
 
-        <div class="detail-section ${result.critical ? 'critical-result-section' : ''}">
-          <h2>Result Value ${result.critical ? '<span class="critical-badge">CRITICAL</span>' : ''}</h2>
+        <div class="detail-section ${result.critical ? "critical-result-section" : ""}">
+          <h2>Result Value ${result.critical ? '<span class="critical-badge">CRITICAL</span>' : ""}</h2>
           <div class="result-display">
-            <div class="result-value-large">${result.value} ${result.unit || ''}</div>
-            ${result.abnormalFlag && result.abnormalFlag !== 'N' ? `
+            <div class="result-value-large">${result.value} ${result.unit || ""}</div>
+            ${
+              result.abnormalFlag && result.abnormalFlag !== "N"
+                ? `
               <div class="abnormal-flag">${result.abnormalFlag}</div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
           <div class="reference-info">
             <strong>Reference Range:</strong> ${this.formatReferenceRange(result.referenceRange)}
@@ -131,47 +136,67 @@ export class ResultDetailPage {
             </div>
             <div class="detail-item">
               <span class="label">Performed By:</span>
-              <span class="value">${result.performedBy || '-'}</span>
+              <span class="value">${result.performedBy || "-"}</span>
             </div>
-            ${result.verifiedDateTime ? `
+            ${
+              result.verifiedDateTime
+                ? `
               <div class="detail-item">
                 <span class="label">Verified:</span>
                 <span class="value">${this.formatDateTime(result.verifiedDateTime)}</span>
               </div>
               <div class="detail-item">
                 <span class="label">Verified By:</span>
-                <span class="value">${result.verifiedBy || '-'}</span>
+                <span class="value">${result.verifiedBy || "-"}</span>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
         </div>
 
-        ${result.instrument || result.method ? `
+        ${
+          result.instrument || result.method
+            ? `
           <div class="detail-section">
             <h2>Technical Information</h2>
             <div class="detail-grid">
-              ${result.instrument ? `
+              ${
+                result.instrument
+                  ? `
                 <div class="detail-item">
                   <span class="label">Instrument:</span>
                   <span class="value">${result.instrument}</span>
                 </div>
-              ` : ''}
-              ${result.method ? `
+              `
+                  : ""
+              }
+              ${
+                result.method
+                  ? `
                 <div class="detail-item">
                   <span class="label">Method:</span>
                   <span class="value">${result.method}</span>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${result.comments ? `
+        ${
+          result.comments
+            ? `
           <div class="detail-section">
             <h2>Comments</h2>
             <p>${result.comments}</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div class="detail-section">
           <h2>Trend Analysis</h2>
@@ -182,7 +207,7 @@ export class ResultDetailPage {
   }
 
   private initializeComponents(result: any, historicalResults: any[]): void {
-    const trendContainer = this.container.querySelector('#trendChartContainer');
+    const trendContainer = this.container.querySelector("#trendChartContainer");
     if (trendContainer && historicalResults.length > 0) {
       this.trendChart = new TrendChart(trendContainer as HTMLElement);
       this.trendChart.setData(historicalResults, result.testName);
@@ -190,58 +215,58 @@ export class ResultDetailPage {
   }
 
   private formatReferenceRange(range?: any): string {
-    if (!range) return 'N/A';
+    if (!range) return "N/A";
     if (range.text) return range.text;
     if (range.min !== undefined && range.max !== undefined) {
       return `${range.min} - ${range.max}`;
     }
     if (range.max !== undefined) return `< ${range.max}`;
     if (range.min !== undefined) return `> ${range.min}`;
-    return 'N/A';
+    return "N/A";
   }
 
   private formatDateTime(date: Date | string): string {
     const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   private attachEventListeners(): void {
-    const backBtn = this.container.querySelector('#backBtn');
-    const verifyBtn = this.container.querySelector('#verifyBtn');
-    const printBtn = this.container.querySelector('#printBtn');
+    const backBtn = this.container.querySelector("#backBtn");
+    const verifyBtn = this.container.querySelector("#verifyBtn");
+    const printBtn = this.container.querySelector("#printBtn");
 
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
+      backBtn.addEventListener("click", () => {
         window.history.back();
       });
     }
 
     if (verifyBtn) {
-      verifyBtn.addEventListener('click', () => this.handleVerify());
+      verifyBtn.addEventListener("click", () => this.handleVerify());
     }
 
     if (printBtn) {
-      printBtn.addEventListener('click', () => window.print());
+      printBtn.addEventListener("click", () => window.print());
     }
   }
 
   private async handleVerify(): Promise<void> {
-    const verifiedBy = prompt('Enter your name to verify this result:');
+    const verifiedBy = prompt("Enter your name to verify this result:");
     if (!verifiedBy) return;
 
     try {
       await labService.verifyResult(this.resultId, verifiedBy);
-      alert('Result verified successfully');
+      alert("Result verified successfully");
       this.loadResult();
     } catch (error) {
-      console.error('Error verifying result:', error);
-      alert('Error verifying result');
+      console.error("Error verifying result:", error);
+      alert("Error verifying result");
     }
   }
 
@@ -252,6 +277,6 @@ export class ResultDetailPage {
     if (this.labReport) {
       this.labReport.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

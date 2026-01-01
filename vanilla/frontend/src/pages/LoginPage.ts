@@ -3,14 +3,14 @@
  * Login Page Component
  */
 
-import { Component } from '../components/base/Component';
-import { createElement } from '../utils/dom';
-import { Card } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
-import { toast } from '../components/ui/Toast';
-import { authService as auth } from '../services/auth';
-import { isValidEmail } from '../utils/validation';
+import { Component } from "../components/base/Component";
+import { createElement } from "../utils/dom";
+import { Card } from "../components/ui/Card";
+import { Input } from "../components/ui/Input";
+import { Button } from "../components/ui/Button";
+import { toast } from "../components/ui/Toast";
+import { authService as auth } from "../services/auth";
+import { isValidEmail } from "../utils/validation";
 
 export interface LoginPageProps {
   onLoginSuccess?: () => void;
@@ -34,8 +34,8 @@ export class LoginPage extends Component<LoginPageProps, LoginPageState> {
 
   constructor(props: LoginPageProps) {
     super(props, {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       loading: false,
       errors: {},
     });
@@ -44,22 +44,22 @@ export class LoginPage extends Component<LoginPageProps, LoginPageState> {
   }
 
   protected getClassName(): string {
-    return 'login-page';
+    return "login-page";
   }
 
   protected render(): void {
-    this.element.innerHTML = '';
+    this.element.innerHTML = "";
     this.element.className = this.getClassName();
     this.removeAllChildren();
 
-    const container = createElement('div', {
-      className: 'login-container',
+    const container = createElement("div", {
+      className: "login-container",
     });
 
     const card = new Card({
-      title: 'Login to Lithic Healthcare',
-      subtitle: 'Enter your credentials to access your account',
-      className: 'login-card',
+      title: "Login to Lithic Healthcare",
+      subtitle: "Enter your credentials to access your account",
+      className: "login-card",
       shadow: true,
     });
 
@@ -71,53 +71,53 @@ export class LoginPage extends Component<LoginPageProps, LoginPageState> {
   }
 
   private createCardContent(): HTMLElement {
-    const content = createElement('div', {
-      className: 'login-form',
+    const content = createElement("div", {
+      className: "login-form",
     });
 
     // Email input
     this.emailInput = new Input({
-      type: 'email',
-      label: 'Email Address',
-      placeholder: 'Enter your email',
+      type: "email",
+      label: "Email Address",
+      placeholder: "Enter your email",
       required: true,
-      icon: '📧',
+      icon: "📧",
       error: this.state.errors.email,
       onChange: (value) => this.handleEmailChange(value),
     });
 
-    const emailContainer = createElement('div', { className: 'form-group' });
+    const emailContainer = createElement("div", { className: "form-group" });
     this.addChild(this.emailInput, emailContainer);
     content.appendChild(emailContainer);
 
     // Password input
     this.passwordInput = new Input({
-      type: 'password',
-      label: 'Password',
-      placeholder: 'Enter your password',
+      type: "password",
+      label: "Password",
+      placeholder: "Enter your password",
       required: true,
-      icon: '🔒',
+      icon: "🔒",
       error: this.state.errors.password,
       onChange: (value) => this.handlePasswordChange(value),
     });
 
-    const passwordContainer = createElement('div', { className: 'form-group' });
+    const passwordContainer = createElement("div", { className: "form-group" });
     this.addChild(this.passwordInput, passwordContainer);
     content.appendChild(passwordContainer);
 
     // Forgot password link
-    const forgotPassword = createElement('div', {
-      className: 'login-forgot',
+    const forgotPassword = createElement("div", {
+      className: "login-forgot",
     });
 
-    const forgotLink = createElement('a', {
-      className: 'login-forgot-link',
-      textContent: 'Forgot password?',
-      attributes: { href: '#' },
+    const forgotLink = createElement("a", {
+      className: "login-forgot-link",
+      textContent: "Forgot password?",
+      attributes: { href: "#" },
       events: {
         click: (e) => {
           e.preventDefault();
-          toast.info('Password reset feature coming soon!');
+          toast.info("Password reset feature coming soon!");
         },
       },
     });
@@ -127,30 +127,30 @@ export class LoginPage extends Component<LoginPageProps, LoginPageState> {
 
     // Submit button
     this.submitButton = new Button({
-      label: 'Sign In',
-      variant: 'primary',
+      label: "Sign In",
+      variant: "primary",
       fullWidth: true,
       loading: this.state.loading,
       onClick: this.handleLogin,
     });
 
-    const buttonContainer = createElement('div', { className: 'form-group' });
+    const buttonContainer = createElement("div", { className: "form-group" });
     this.addChild(this.submitButton, buttonContainer);
     content.appendChild(buttonContainer);
 
     // Register link
-    const registerSection = createElement('div', {
-      className: 'login-register',
+    const registerSection = createElement("div", {
+      className: "login-register",
     });
 
-    const registerText = createElement('span', {
+    const registerText = createElement("span", {
       textContent: "Don't have an account? ",
     });
 
-    const registerLink = createElement('a', {
-      className: 'login-register-link',
-      textContent: 'Sign up',
-      attributes: { href: '#' },
+    const registerLink = createElement("a", {
+      className: "login-register-link",
+      textContent: "Sign up",
+      attributes: { href: "#" },
       events: {
         click: (e) => {
           e.preventDefault();
@@ -185,17 +185,17 @@ export class LoginPage extends Component<LoginPageProps, LoginPageState> {
   private validateEmail(email: string): boolean {
     if (!email) {
       this.setState({
-        errors: { ...this.state.errors, email: 'Email is required' },
+        errors: { ...this.state.errors, email: "Email is required" },
       });
-      this.emailInput?.setError('Email is required');
+      this.emailInput?.setError("Email is required");
       return false;
     }
 
     if (!isValidEmail(email)) {
       this.setState({
-        errors: { ...this.state.errors, email: 'Invalid email address' },
+        errors: { ...this.state.errors, email: "Invalid email address" },
       });
-      this.emailInput?.setError('Invalid email address');
+      this.emailInput?.setError("Invalid email address");
       return false;
     }
 
@@ -209,9 +209,9 @@ export class LoginPage extends Component<LoginPageProps, LoginPageState> {
   private validatePassword(password: string): boolean {
     if (!password) {
       this.setState({
-        errors: { ...this.state.errors, password: 'Password is required' },
+        errors: { ...this.state.errors, password: "Password is required" },
       });
-      this.passwordInput?.setError('Password is required');
+      this.passwordInput?.setError("Password is required");
       return false;
     }
 
@@ -236,13 +236,13 @@ export class LoginPage extends Component<LoginPageProps, LoginPageState> {
     try {
       await auth.login(this.state.email, this.state.password);
 
-      toast.success('Login successful!');
+      toast.success("Login successful!");
 
       if (this.props.onLoginSuccess) {
         this.props.onLoginSuccess();
       }
     } catch (error: any) {
-      toast.error(error.message || 'Login failed. Please try again.');
+      toast.error(error.message || "Login failed. Please try again.");
     } finally {
       this.setState({ loading: false });
       this.submitButton?.setLoading(false);

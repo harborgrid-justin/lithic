@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Save, X, FileText, Plus, Trash2, GripVertical } from 'lucide-react';
-import { Report, ReportSchedule } from '@/services/reporting.service';
-import { AnalyticsQuery } from '@/services/analytics.service';
+import { useState } from "react";
+import { Save, X, FileText, Plus, Trash2, GripVertical } from "lucide-react";
+import { Report, ReportSchedule } from "@/services/reporting.service";
+import { AnalyticsQuery } from "@/services/analytics.service";
 
 interface ReportBuilderProps {
   report?: Report;
@@ -11,53 +11,69 @@ interface ReportBuilderProps {
   onCancel: () => void;
 }
 
-export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) {
-  const [name, setName] = useState(report?.name || '');
-  const [description, setDescription] = useState(report?.description || '');
-  const [type, setType] = useState<Report['type']>(report?.type || 'custom');
-  const [format, setFormat] = useState<Report['format']>(report?.format || 'pdf');
+export function ReportBuilder({
+  report,
+  onSave,
+  onCancel,
+}: ReportBuilderProps) {
+  const [name, setName] = useState(report?.name || "");
+  const [description, setDescription] = useState(report?.description || "");
+  const [type, setType] = useState<Report["type"]>(report?.type || "custom");
+  const [format, setFormat] = useState<Report["format"]>(
+    report?.format || "pdf",
+  );
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(
-    report?.query.metrics || []
+    report?.query.metrics || [],
   );
   const [selectedDimensions, setSelectedDimensions] = useState<string[]>(
-    report?.query.dimensions || []
+    report?.query.dimensions || [],
   );
   const [scheduleEnabled, setScheduleEnabled] = useState(!!report?.schedule);
   const [schedule, setSchedule] = useState<ReportSchedule>(
     report?.schedule || {
-      frequency: 'weekly',
-      time: '09:00',
+      frequency: "weekly",
+      time: "09:00",
       dayOfWeek: 1,
-    }
+    },
   );
-  const [recipients, setRecipients] = useState<string[]>(report?.recipients || []);
-  const [newRecipient, setNewRecipient] = useState('');
+  const [recipients, setRecipients] = useState<string[]>(
+    report?.recipients || [],
+  );
+  const [newRecipient, setNewRecipient] = useState("");
 
   // Available metrics (in real app, this would come from API)
   const availableMetrics = [
-    { id: 'patient_volume', name: 'Patient Volume', category: 'operational' },
-    { id: 'readmission_rate', name: 'Readmission Rate', category: 'quality' },
-    { id: 'patient_satisfaction', name: 'Patient Satisfaction', category: 'quality' },
-    { id: 'total_revenue', name: 'Total Revenue', category: 'financial' },
-    { id: 'net_revenue', name: 'Net Revenue', category: 'financial' },
-    { id: 'collection_rate', name: 'Collection Rate', category: 'financial' },
-    { id: 'bed_occupancy', name: 'Bed Occupancy', category: 'operational' },
-    { id: 'average_length_of_stay', name: 'Average Length of Stay', category: 'operational' },
+    { id: "patient_volume", name: "Patient Volume", category: "operational" },
+    { id: "readmission_rate", name: "Readmission Rate", category: "quality" },
+    {
+      id: "patient_satisfaction",
+      name: "Patient Satisfaction",
+      category: "quality",
+    },
+    { id: "total_revenue", name: "Total Revenue", category: "financial" },
+    { id: "net_revenue", name: "Net Revenue", category: "financial" },
+    { id: "collection_rate", name: "Collection Rate", category: "financial" },
+    { id: "bed_occupancy", name: "Bed Occupancy", category: "operational" },
+    {
+      id: "average_length_of_stay",
+      name: "Average Length of Stay",
+      category: "operational",
+    },
   ];
 
   const availableDimensions = [
-    { id: 'date', name: 'Date' },
-    { id: 'department', name: 'Department' },
-    { id: 'provider', name: 'Provider' },
-    { id: 'location', name: 'Location' },
-    { id: 'payor', name: 'Payor' },
+    { id: "date", name: "Date" },
+    { id: "department", name: "Department" },
+    { id: "provider", name: "Provider" },
+    { id: "location", name: "Location" },
+    { id: "payor", name: "Payor" },
   ];
 
   const handleMetricToggle = (metricId: string) => {
     setSelectedMetrics((prev) =>
       prev.includes(metricId)
         ? prev.filter((m) => m !== metricId)
-        : [...prev, metricId]
+        : [...prev, metricId],
     );
   };
 
@@ -65,14 +81,14 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
     setSelectedDimensions((prev) =>
       prev.includes(dimensionId)
         ? prev.filter((d) => d !== dimensionId)
-        : [...prev, dimensionId]
+        : [...prev, dimensionId],
     );
   };
 
   const handleAddRecipient = () => {
     if (newRecipient && !recipients.includes(newRecipient)) {
       setRecipients([...recipients, newRecipient]);
-      setNewRecipient('');
+      setNewRecipient("");
     }
   };
 
@@ -82,18 +98,19 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
 
   const handleSave = () => {
     if (!name.trim()) {
-      alert('Please enter a report name');
+      alert("Please enter a report name");
       return;
     }
 
     if (selectedMetrics.length === 0) {
-      alert('Please select at least one metric');
+      alert("Please select at least one metric");
       return;
     }
 
     const query: AnalyticsQuery = {
       metrics: selectedMetrics,
-      dimensions: selectedDimensions.length > 0 ? selectedDimensions : undefined,
+      dimensions:
+        selectedDimensions.length > 0 ? selectedDimensions : undefined,
     };
 
     const reportData: Partial<Report> = {
@@ -104,8 +121,8 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
       query,
       schedule: scheduleEnabled ? schedule : undefined,
       recipients: recipients.length > 0 ? recipients : undefined,
-      status: 'active',
-      createdBy: 'current-user', // In real app, get from auth
+      status: "active",
+      createdBy: "current-user", // In real app, get from auth
     };
 
     if (report) {
@@ -125,7 +142,7 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
               <FileText className="w-6 h-6 text-blue-600" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  {report ? 'Edit Report' : 'Create Report'}
+                  {report ? "Edit Report" : "Create Report"}
                 </h1>
                 <p className="text-sm text-gray-500">
                   Configure report settings and schedule
@@ -157,7 +174,9 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Settings */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Settings</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Basic Settings
+              </h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -192,7 +211,9 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                     </label>
                     <select
                       value={type}
-                      onChange={(e) => setType(e.target.value as Report['type'])}
+                      onChange={(e) =>
+                        setType(e.target.value as Report["type"])
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="custom">Custom</option>
@@ -210,7 +231,9 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                     </label>
                     <select
                       value={format}
-                      onChange={(e) => setFormat(e.target.value as Report['format'])}
+                      onChange={(e) =>
+                        setFormat(e.target.value as Report["format"])
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="pdf">PDF</option>
@@ -225,7 +248,9 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
 
             {/* Metrics Selection */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Metrics *</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Metrics *
+              </h2>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {availableMetrics.map((metric) => (
                   <label
@@ -239,8 +264,12 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900">{metric.name}</div>
-                      <div className="text-xs text-gray-500 capitalize">{metric.category}</div>
+                      <div className="font-medium text-gray-900">
+                        {metric.name}
+                      </div>
+                      <div className="text-xs text-gray-500 capitalize">
+                        {metric.category}
+                      </div>
                     </div>
                   </label>
                 ))}
@@ -249,7 +278,9 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
 
             {/* Dimensions Selection */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Group By (Optional)</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Group By (Optional)
+              </h2>
               <div className="space-y-2">
                 {availableDimensions.map((dimension) => (
                   <label
@@ -262,7 +293,9 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                       onChange={() => handleDimensionToggle(dimension.id)}
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
-                    <span className="font-medium text-gray-900">{dimension.name}</span>
+                    <span className="font-medium text-gray-900">
+                      {dimension.name}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -274,7 +307,9 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
             {/* Schedule */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Schedule</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Schedule
+                </h2>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -295,7 +330,11 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                     <select
                       value={schedule.frequency}
                       onChange={(e) =>
-                        setSchedule({ ...schedule, frequency: e.target.value as ReportSchedule['frequency'] })
+                        setSchedule({
+                          ...schedule,
+                          frequency: e.target
+                            .value as ReportSchedule["frequency"],
+                        })
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                     >
@@ -314,12 +353,14 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                     <input
                       type="time"
                       value={schedule.time}
-                      onChange={(e) => setSchedule({ ...schedule, time: e.target.value })}
+                      onChange={(e) =>
+                        setSchedule({ ...schedule, time: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                     />
                   </div>
 
-                  {schedule.frequency === 'weekly' && (
+                  {schedule.frequency === "weekly" && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Day of Week
@@ -327,7 +368,10 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                       <select
                         value={schedule.dayOfWeek}
                         onChange={(e) =>
-                          setSchedule({ ...schedule, dayOfWeek: Number(e.target.value) })
+                          setSchedule({
+                            ...schedule,
+                            dayOfWeek: Number(e.target.value),
+                          })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                       >
@@ -342,7 +386,7 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                     </div>
                   )}
 
-                  {schedule.frequency === 'monthly' && (
+                  {schedule.frequency === "monthly" && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Day of Month
@@ -353,7 +397,10 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
                         max={31}
                         value={schedule.dayOfMonth}
                         onChange={(e) =>
-                          setSchedule({ ...schedule, dayOfMonth: Number(e.target.value) })
+                          setSchedule({
+                            ...schedule,
+                            dayOfMonth: Number(e.target.value),
+                          })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                       />
@@ -365,14 +412,18 @@ export function ReportBuilder({ report, onSave, onCancel }: ReportBuilderProps) 
 
             {/* Recipients */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recipients</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Recipients
+              </h2>
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <input
                     type="email"
                     value={newRecipient}
                     onChange={(e) => setNewRecipient(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddRecipient()}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && handleAddRecipient()
+                    }
                     placeholder="email@example.com"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />

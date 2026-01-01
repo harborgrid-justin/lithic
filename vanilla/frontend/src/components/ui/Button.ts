@@ -3,19 +3,25 @@
  * Button Component
  */
 
-import { Component } from '../base/Component';
-import { createElement } from '../../utils/dom';
+import { Component } from "../base/Component";
+import { createElement } from "../../utils/dom";
 
 export interface ButtonProps {
   label?: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?:
+    | "primary"
+    | "secondary"
+    | "success"
+    | "danger"
+    | "warning"
+    | "ghost";
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
   icon?: string;
-  iconPosition?: 'left' | 'right';
-  type?: 'button' | 'submit' | 'reset';
+  iconPosition?: "left" | "right";
+  type?: "button" | "submit" | "reset";
   onClick?: (e: MouseEvent) => void;
 }
 
@@ -35,36 +41,36 @@ export class Button extends Component<ButtonProps, ButtonState> {
   }
 
   protected createElement(): HTMLElement {
-    return createElement('button', {
+    return createElement("button", {
       className: this.getClassName(),
       attributes: {
-        type: this.props.type || 'button',
+        type: this.props.type || "button",
       },
     });
   }
 
   protected getClassName(): string {
-    const classes = ['btn'];
+    const classes = ["btn"];
 
-    const variant = this.props.variant || 'primary';
+    const variant = this.props.variant || "primary";
     classes.push(`btn-${variant}`);
 
-    const size = this.props.size || 'md';
+    const size = this.props.size || "md";
     classes.push(`btn-${size}`);
 
     if (this.props.fullWidth) {
-      classes.push('btn-full');
+      classes.push("btn-full");
     }
 
     if (this.state.loading) {
-      classes.push('btn-loading');
+      classes.push("btn-loading");
     }
 
     if (this.state.disabled) {
-      classes.push('btn-disabled');
+      classes.push("btn-disabled");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   protected render(): void {
@@ -77,12 +83,12 @@ export class Button extends Component<ButtonProps, ButtonState> {
     button.disabled = this.state.disabled || this.state.loading;
 
     // Clear content
-    button.innerHTML = '';
+    button.innerHTML = "";
 
     // Add icon (left)
-    if (this.props.icon && this.props.iconPosition !== 'right') {
-      const icon = createElement('span', {
-        className: 'btn-icon btn-icon-left',
+    if (this.props.icon && this.props.iconPosition !== "right") {
+      const icon = createElement("span", {
+        className: "btn-icon btn-icon-left",
         innerHTML: this.props.icon,
       });
       button.appendChild(icon);
@@ -90,8 +96,8 @@ export class Button extends Component<ButtonProps, ButtonState> {
 
     // Add loading spinner
     if (this.state.loading) {
-      const spinner = createElement('span', {
-        className: 'btn-spinner',
+      const spinner = createElement("span", {
+        className: "btn-spinner",
         innerHTML: '<span class="spinner"></span>',
       });
       button.appendChild(spinner);
@@ -99,17 +105,17 @@ export class Button extends Component<ButtonProps, ButtonState> {
 
     // Add label
     if (this.props.label) {
-      const label = createElement('span', {
-        className: 'btn-label',
+      const label = createElement("span", {
+        className: "btn-label",
         textContent: this.props.label,
       });
       button.appendChild(label);
     }
 
     // Add icon (right)
-    if (this.props.icon && this.props.iconPosition === 'right') {
-      const icon = createElement('span', {
-        className: 'btn-icon btn-icon-right',
+    if (this.props.icon && this.props.iconPosition === "right") {
+      const icon = createElement("span", {
+        className: "btn-icon btn-icon-right",
         innerHTML: this.props.icon,
       });
       button.appendChild(icon);
@@ -117,11 +123,11 @@ export class Button extends Component<ButtonProps, ButtonState> {
   }
 
   protected onMount(): void {
-    this.addEventListener('click', this.handleClick);
+    this.addEventListener("click", this.handleClick);
   }
 
   protected onUnmount(): void {
-    this.removeEventListener('click', this.handleClick);
+    this.removeEventListener("click", this.handleClick);
   }
 
   private handleClick(e: Event): void {

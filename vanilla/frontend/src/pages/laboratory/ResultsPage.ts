@@ -3,8 +3,8 @@
  * View and search laboratory results
  */
 
-import { labService } from '../../services/LaboratoryService';
-import { ResultViewer } from '../../components/laboratory/ResultViewer';
+import { labService } from "../../services/LaboratoryService";
+import { ResultViewer } from "../../components/laboratory/ResultViewer";
 
 export class ResultsPage {
   private container: HTMLElement;
@@ -66,61 +66,81 @@ export class ResultsPage {
 
   private async searchResults(): Promise<void> {
     try {
-      const patientId = (this.container.querySelector('#patientIdFilter') as HTMLInputElement)?.value;
-      const loincCode = (this.container.querySelector('#loincCodeFilter') as HTMLInputElement)?.value;
-      const dateFrom = (this.container.querySelector('#dateFromFilter') as HTMLInputElement)?.value;
-      const dateTo = (this.container.querySelector('#dateToFilter') as HTMLInputElement)?.value;
-      const critical = (this.container.querySelector('#criticalFilter') as HTMLSelectElement)?.value;
+      const patientId = (
+        this.container.querySelector("#patientIdFilter") as HTMLInputElement
+      )?.value;
+      const loincCode = (
+        this.container.querySelector("#loincCodeFilter") as HTMLInputElement
+      )?.value;
+      const dateFrom = (
+        this.container.querySelector("#dateFromFilter") as HTMLInputElement
+      )?.value;
+      const dateTo = (
+        this.container.querySelector("#dateToFilter") as HTMLInputElement
+      )?.value;
+      const critical = (
+        this.container.querySelector("#criticalFilter") as HTMLSelectElement
+      )?.value;
 
       const criteria: any = {};
       if (patientId) criteria.patientId = patientId;
       if (loincCode) criteria.loincCode = loincCode;
       if (dateFrom) criteria.dateFrom = new Date(dateFrom);
       if (dateTo) criteria.dateTo = new Date(dateTo);
-      if (critical) criteria.critical = critical === 'true';
+      if (critical) criteria.critical = critical === "true";
 
       const results = await labService.searchResults(criteria);
 
-      const resultsContainer = this.container.querySelector('#resultsContainer');
+      const resultsContainer =
+        this.container.querySelector("#resultsContainer");
       if (resultsContainer) {
         this.resultViewer = new ResultViewer(resultsContainer as HTMLElement);
         this.resultViewer.setResults(results);
       }
     } catch (error) {
-      console.error('Error searching results:', error);
+      console.error("Error searching results:", error);
     }
   }
 
   private clearFilters(): void {
-    (this.container.querySelector('#patientIdFilter') as HTMLInputElement).value = '';
-    (this.container.querySelector('#loincCodeFilter') as HTMLInputElement).value = '';
-    (this.container.querySelector('#dateFromFilter') as HTMLInputElement).value = '';
-    (this.container.querySelector('#dateToFilter') as HTMLInputElement).value = '';
-    (this.container.querySelector('#criticalFilter') as HTMLSelectElement).value = '';
+    (
+      this.container.querySelector("#patientIdFilter") as HTMLInputElement
+    ).value = "";
+    (
+      this.container.querySelector("#loincCodeFilter") as HTMLInputElement
+    ).value = "";
+    (
+      this.container.querySelector("#dateFromFilter") as HTMLInputElement
+    ).value = "";
+    (this.container.querySelector("#dateToFilter") as HTMLInputElement).value =
+      "";
+    (
+      this.container.querySelector("#criticalFilter") as HTMLSelectElement
+    ).value = "";
 
-    const resultsContainer = this.container.querySelector('#resultsContainer');
+    const resultsContainer = this.container.querySelector("#resultsContainer");
     if (resultsContainer) {
-      resultsContainer.innerHTML = '';
+      resultsContainer.innerHTML = "";
     }
   }
 
   private attachEventListeners(): void {
-    const enterResultBtn = this.container.querySelector('#enterResultBtn');
-    const searchBtn = this.container.querySelector('#searchBtn');
-    const clearBtn = this.container.querySelector('#clearBtn');
+    const enterResultBtn = this.container.querySelector("#enterResultBtn");
+    const searchBtn = this.container.querySelector("#searchBtn");
+    const clearBtn = this.container.querySelector("#clearBtn");
 
     if (enterResultBtn) {
-      enterResultBtn.addEventListener('click', () => {
-        window.location.href = '/laboratory/results/entry';
+      enterResultBtn.addEventListener("click", () => {
+        window.location.href = "/laboratory/results/entry";
       });
     }
 
     if (searchBtn) {
-      searchBtn.addEventListener('click', () => this.searchResults());
+      searchBtn.addEventListener("click", () => this.searchResults());
     }
 
     if (clearBtn) {
-      clearBtn.addEventListener('click', () => this.clearFilters());
+      clearBtn.addEventListener("click", () => this.clearFilters());
     }
   }
 
@@ -128,6 +148,6 @@ export class ResultsPage {
     if (this.resultViewer) {
       this.resultViewer.destroy();
     }
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }

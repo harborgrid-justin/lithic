@@ -3,12 +3,12 @@
  * Pre-defined job types and processors for common tasks
  */
 
-import { createQueue } from './processor';
-import { db } from '@/lib/db';
-import { fhirClient } from '@/lib/fhir/client';
-import { clearinghouseClient } from '@/lib/integrations/clearinghouse';
-import { eligibilityClient } from '@/lib/integrations/eligibility';
-import { webhookManager } from '@/lib/webhooks/manager';
+import { createQueue } from "./processor";
+import { db } from "@/lib/db";
+import { fhirClient } from "@/lib/fhir/client";
+import { clearinghouseClient } from "@/lib/integrations/clearinghouse";
+import { eligibilityClient } from "@/lib/integrations/eligibility";
+import { webhookManager } from "@/lib/webhooks/manager";
 
 /**
  * Email notification job
@@ -21,7 +21,7 @@ interface EmailJob {
   data?: Record<string, any>;
 }
 
-export const emailQueue = createQueue<EmailJob>('email', async (job) => {
+export const emailQueue = createQueue<EmailJob>("email", async (job) => {
   console.log(`Sending email to ${job.data.to}: ${job.data.subject}`);
 
   // Implement email sending (e.g., using nodemailer, SendGrid, etc.)
@@ -36,10 +36,10 @@ export const emailQueue = createQueue<EmailJob>('email', async (job) => {
 interface SMSJob {
   to: string;
   message: string;
-  priority?: 'high' | 'normal' | 'low';
+  priority?: "high" | "normal" | "low";
 }
 
-export const smsQueue = createQueue<SMSJob>('sms', async (job) => {
+export const smsQueue = createQueue<SMSJob>("sms", async (job) => {
   console.log(`Sending SMS to ${job.data.to}`);
 
   // Implement SMS sending (e.g., using Twilio)
@@ -58,28 +58,31 @@ export const smsQueue = createQueue<SMSJob>('sms', async (job) => {
 interface FHIRSyncJob {
   resourceType: string;
   resourceId: string;
-  action: 'create' | 'update' | 'delete';
+  action: "create" | "update" | "delete";
   data?: any;
 }
 
-export const fhirSyncQueue = createQueue<FHIRSyncJob>('fhir-sync', async (job) => {
-  const { resourceType, resourceId, action, data } = job.data;
+export const fhirSyncQueue = createQueue<FHIRSyncJob>(
+  "fhir-sync",
+  async (job) => {
+    const { resourceType, resourceId, action, data } = job.data;
 
-  switch (action) {
-    case 'create':
-      return await fhirClient.create(resourceType, data);
+    switch (action) {
+      case "create":
+        return await fhirClient.create(resourceType, data);
 
-    case 'update':
-      return await fhirClient.update(resourceType, resourceId, data);
+      case "update":
+        return await fhirClient.update(resourceType, resourceId, data);
 
-    case 'delete':
-      await fhirClient.delete(resourceType, resourceId);
-      return { deleted: true };
+      case "delete":
+        await fhirClient.delete(resourceType, resourceId);
+        return { deleted: true };
 
-    default:
-      throw new Error(`Unknown action: ${action}`);
-  }
-});
+      default:
+        throw new Error(`Unknown action: ${action}`);
+    }
+  },
+);
 
 /**
  * Claims submission job
@@ -89,7 +92,7 @@ interface ClaimSubmissionJob {
 }
 
 export const claimSubmissionQueue = createQueue<ClaimSubmissionJob>(
-  'claim-submission',
+  "claim-submission",
   async (job) => {
     const claim = await db.claim.findUnique({
       where: { id: job.data.claimId },
@@ -108,27 +111,27 @@ export const claimSubmissionQueue = createQueue<ClaimSubmissionJob>(
     const result = await clearinghouseClient.submitClaim({
       claimId: claim.id,
       patientInfo: {
-        memberId: claim.patient.insuranceMemberId || '',
+        memberId: claim.patient.insuranceMemberId || "",
         firstName: claim.patient.firstName,
         lastName: claim.patient.lastName,
         dateOfBirth: claim.patient.dateOfBirth,
-        gender: claim.patient.gender as 'M' | 'F',
+        gender: claim.patient.gender as "M" | "F",
       },
       providerInfo: {
-        npi: claim.provider.npi || '',
-        taxId: claim.provider.taxId || '',
-        name: claim.provider.name || '',
-        address: claim.provider.address || '',
-        city: claim.provider.city || '',
-        state: claim.provider.state || '',
-        zipCode: claim.provider.zipCode || '',
+        npi: claim.provider.npi || "",
+        taxId: claim.provider.taxId || "",
+        name: claim.provider.name || "",
+        address: claim.provider.address || "",
+        city: claim.provider.city || "",
+        state: claim.provider.state || "",
+        zipCode: claim.provider.zipCode || "",
       },
       payerInfo: {
-        payerId: claim.payerId || '',
-        name: claim.payerName || '',
+        payerId: claim.payerId || "",
+        name: claim.payerName || "",
       },
       claimInfo: {
-        claimType: 'Professional',
+        claimType: "Professional",
         serviceDate: claim.serviceDate,
         diagnosisCodes: claim.diagnosisCodes || [],
         serviceLin: claim.serviceLines.map((line: any) => ({
@@ -146,14 +149,14 @@ export const claimSubmissionQueue = createQueue<ClaimSubmissionJob>(
     await db.claim.update({
       where: { id: claim.id },
       data: {
-        status: 'SUBMITTED',
+        status: "SUBMITTED",
         submittedAt: new Date(),
         submissionId: result.submissionId,
       },
     });
 
     return result;
-  }
+  },
 );
 
 /**
@@ -166,7 +169,7 @@ interface EligibilityCheckJob {
 }
 
 export const eligibilityCheckQueue = createQueue<EligibilityCheckJob>(
-  'eligibility-check',
+  "eligibility-check",
   async (job) => {
     const patient = await db.patient.findUnique({
       where: { id: job.data.patientId },
@@ -178,14 +181,14 @@ export const eligibilityCheckQueue = createQueue<EligibilityCheckJob>(
 
     const result = await eligibilityClient.checkEligibility({
       patient: {
-        memberId: patient.insuranceMemberId || '',
+        memberId: patient.insuranceMemberId || "",
         firstName: patient.firstName,
         lastName: patient.lastName,
         dateOfBirth: patient.dateOfBirth,
-        gender: patient.gender as 'M' | 'F',
+        gender: patient.gender as "M" | "F",
       },
       provider: {
-        npi: process.env.PROVIDER_NPI || '',
+        npi: process.env.PROVIDER_NPI || "",
       },
       payer: {
         payerId: job.data.payerId,
@@ -206,7 +209,7 @@ export const eligibilityCheckQueue = createQueue<EligibilityCheckJob>(
     });
 
     return result;
-  }
+  },
 );
 
 /**
@@ -219,7 +222,7 @@ interface ReportGenerationJob {
 }
 
 export const reportGenerationQueue = createQueue<ReportGenerationJob>(
-  'report-generation',
+  "report-generation",
   async (job) => {
     console.log(`Generating report: ${job.data.reportType}`);
 
@@ -239,7 +242,7 @@ export const reportGenerationQueue = createQueue<ReportGenerationJob>(
         type: job.data.reportType,
         userId: job.data.userId,
         parameters: job.data.parameters,
-        status: 'COMPLETED',
+        status: "COMPLETED",
         generatedAt: new Date(),
         data: reportData as any,
       } as any,
@@ -247,13 +250,13 @@ export const reportGenerationQueue = createQueue<ReportGenerationJob>(
 
     // Send notification
     await emailQueue.add({
-      to: job.data.parameters.email || '',
+      to: job.data.parameters.email || "",
       subject: `Your ${job.data.reportType} report is ready`,
       body: `Your report has been generated and is ready for download.`,
     });
 
     return { reportId: report.id };
-  }
+  },
 );
 
 /**
@@ -262,12 +265,12 @@ export const reportGenerationQueue = createQueue<ReportGenerationJob>(
 interface DataExportJob {
   resourceType: string;
   filters: Record<string, any>;
-  format: 'json' | 'csv' | 'excel';
+  format: "json" | "csv" | "excel";
   userId: string;
 }
 
 export const dataExportQueue = createQueue<DataExportJob>(
-  'data-export',
+  "data-export",
   async (job) => {
     console.log(`Exporting ${job.data.resourceType} data`);
 
@@ -279,7 +282,7 @@ export const dataExportQueue = createQueue<DataExportJob>(
       exportId: `export_${Date.now()}`,
       downloadUrl: `/api/exports/download/${Date.now()}`,
     };
-  }
+  },
 );
 
 /**
@@ -287,12 +290,12 @@ export const dataExportQueue = createQueue<DataExportJob>(
  */
 interface AppointmentReminderJob {
   appointmentId: string;
-  reminderType: 'email' | 'sms' | 'both';
+  reminderType: "email" | "sms" | "both";
   hoursBefore: number;
 }
 
 export const appointmentReminderQueue = createQueue<AppointmentReminderJob>(
-  'appointment-reminder',
+  "appointment-reminder",
   async (job) => {
     const appointment = await db.appointment.findUnique({
       where: { id: job.data.appointmentId },
@@ -308,17 +311,17 @@ export const appointmentReminderQueue = createQueue<AppointmentReminderJob>(
 
     const message = `Reminder: You have an appointment with ${appointment.provider.name} on ${appointment.startTime.toLocaleDateString()} at ${appointment.startTime.toLocaleTimeString()}.`;
 
-    if (job.data.reminderType === 'email' || job.data.reminderType === 'both') {
+    if (job.data.reminderType === "email" || job.data.reminderType === "both") {
       await emailQueue.add({
-        to: appointment.patient.email || '',
-        subject: 'Appointment Reminder',
+        to: appointment.patient.email || "",
+        subject: "Appointment Reminder",
         body: message,
       });
     }
 
-    if (job.data.reminderType === 'sms' || job.data.reminderType === 'both') {
+    if (job.data.reminderType === "sms" || job.data.reminderType === "both") {
       await smsQueue.add({
-        to: appointment.patient.phone || '',
+        to: appointment.patient.phone || "",
         message,
       });
     }
@@ -334,7 +337,7 @@ export const appointmentReminderQueue = createQueue<AppointmentReminderJob>(
     });
 
     return { sent: true };
-  }
+  },
 );
 
 /**
@@ -346,7 +349,7 @@ interface WebhookDeliveryJob {
 }
 
 export const webhookDeliveryQueue = createQueue<WebhookDeliveryJob>(
-  'webhook-delivery',
+  "webhook-delivery",
   async (job) => {
     const eventId = await webhookManager.emit({
       type: job.data.eventType,
@@ -354,7 +357,7 @@ export const webhookDeliveryQueue = createQueue<WebhookDeliveryJob>(
     });
 
     return { eventId };
-  }
+  },
 );
 
 /**
@@ -367,7 +370,7 @@ interface BatchProcessingJob {
 }
 
 export const batchProcessingQueue = createQueue<BatchProcessingJob>(
-  'batch-processing',
+  "batch-processing",
   async (job) => {
     const results = [];
     const errors = [];
@@ -377,10 +380,10 @@ export const batchProcessingQueue = createQueue<BatchProcessingJob>(
         // Process item based on processor type
         let result;
         switch (job.data.processor) {
-          case 'eligibility':
+          case "eligibility":
             // Process eligibility checks
             break;
-          case 'claims':
+          case "claims":
             // Process claims
             break;
           default:
@@ -390,7 +393,7 @@ export const batchProcessingQueue = createQueue<BatchProcessingJob>(
       } catch (error) {
         errors.push({
           item,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           success: false,
         });
       }
@@ -403,7 +406,7 @@ export const batchProcessingQueue = createQueue<BatchProcessingJob>(
       results,
       errors,
     };
-  }
+  },
 );
 
 /**
@@ -412,19 +415,21 @@ export const batchProcessingQueue = createQueue<BatchProcessingJob>(
 export async function scheduleAppointmentReminder(
   appointmentId: string,
   appointmentTime: Date,
-  hoursBefore: number = 24
+  hoursBefore: number = 24,
 ): Promise<void> {
-  const reminderTime = new Date(appointmentTime.getTime() - hoursBefore * 60 * 60 * 1000);
+  const reminderTime = new Date(
+    appointmentTime.getTime() - hoursBefore * 60 * 60 * 1000,
+  );
   const delay = reminderTime.getTime() - Date.now();
 
   if (delay > 0) {
     await appointmentReminderQueue.add(
       {
         appointmentId,
-        reminderType: 'both',
+        reminderType: "both",
         hoursBefore,
       },
-      { delay }
+      { delay },
     );
   }
 }

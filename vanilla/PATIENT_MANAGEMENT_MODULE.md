@@ -1,4 +1,5 @@
 # Lithic Patient Management Module
+
 ## Enterprise Healthcare SaaS - Vanilla TypeScript Implementation
 
 **Version:** 1.0.0
@@ -16,12 +17,14 @@ Complete Patient Management module built with **Express.js backend** and **Vanil
 ## Architecture
 
 ### Backend (Express + TypeScript)
+
 - **Framework:** Express.js
 - **Language:** TypeScript
 - **Architecture:** MVC Pattern (Model-View-Controller)
 - **Data Layer:** In-memory storage (easily replaceable with database)
 
 ### Frontend (Vanilla TypeScript)
+
 - **Framework:** None (Pure Vanilla TypeScript)
 - **DOM Manipulation:** Native JavaScript
 - **Build Tool:** Webpack
@@ -32,6 +35,7 @@ Complete Patient Management module built with **Express.js backend** and **Vanil
 ## Features
 
 ### Core Patient Management
+
 - ✅ **CRUD Operations** - Create, Read, Update, Delete patients
 - ✅ **Medical Record Numbers (MRN)** - Auto-generated with Luhn check digit
 - ✅ **Demographics Management** - Complete patient information
@@ -39,6 +43,7 @@ Complete Patient Management module built with **Express.js backend** and **Vanil
 - ✅ **Clinical Data** - Blood type, allergies, medications, conditions
 
 ### Advanced Features
+
 - ✅ **Duplicate Detection** - Fuzzy matching algorithm with scoring
 - ✅ **Patient Merging** - Merge duplicate records with audit trail
 - ✅ **Advanced Search** - Multi-field search with filters
@@ -102,6 +107,7 @@ Complete Patient Management module built with **Express.js backend** and **Vanil
 ## API Endpoints
 
 ### Patient CRUD
+
 ```
 GET    /api/patients              # List all patients (paginated)
 GET    /api/patients/:id          # Get patient by ID
@@ -113,6 +119,7 @@ GET    /api/patients/:id/audit    # Get patient audit log
 ```
 
 ### Search
+
 ```
 GET    /api/patients/search       # Search patients with filters
 POST   /api/patients/search       # Advanced search
@@ -120,16 +127,19 @@ POST   /api/patients/search/duplicates  # Find duplicate patients
 ```
 
 ### Merge
+
 ```
 POST   /api/patients/merge        # Merge two patient records
 ```
 
 ### Documents
+
 ```
 POST   /api/patients/documents/:id  # Add document to patient
 ```
 
 ### Insurance
+
 ```
 POST   /api/patients/insurance/:id  # Add/update insurance
 PUT    /api/patients/insurance/:id  # Update insurance
@@ -140,6 +150,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
 ## Frontend Pages
 
 ### 1. Patient List Page (`/patients`)
+
 - **File:** `PatientListPage.ts`
 - **Features:**
   - Paginated patient list
@@ -148,6 +159,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
   - Click to view patient details
 
 ### 2. Patient Detail Page (`/patients/:id`)
+
 - **File:** `PatientDetailPage.ts`
 - **Features:**
   - Patient card with demographics
@@ -156,6 +168,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
   - Edit, Merge, Delete actions
 
 ### 3. New Patient Page (`/patients/new`)
+
 - **File:** `PatientNewPage.ts`
 - **Features:**
   - Comprehensive patient form
@@ -164,6 +177,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
   - Auto-redirect to patient detail on success
 
 ### 4. Merge Patients Page (`/patients/:id/merge`)
+
 - **File:** `PatientMergePage.ts`
 - **Features:**
   - Source/Target patient comparison
@@ -172,6 +186,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
   - Irreversible merge with confirmation
 
 ### 5. Demographics Page (`/patients/:id/demographics`)
+
 - **File:** `PatientDemographicsPage.ts`
 - **Features:**
   - View complete demographic information
@@ -179,6 +194,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
   - Edit link to main patient form
 
 ### 6. Insurance Page (`/patients/:id/insurance`)
+
 - **File:** `PatientInsurancePage.ts`
 - **Features:**
   - Primary/Secondary insurance cards
@@ -187,6 +203,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
   - Copay and deductible tracking
 
 ### 7. Documents Page (`/patients/:id/documents`)
+
 - **File:** `PatientDocumentsPage.ts`
 - **Features:**
   - Document grid view
@@ -196,6 +213,7 @@ PUT    /api/patients/insurance/:id  # Update insurance
   - Encryption status badges
 
 ### 8. History Page (`/patients/:id/history`)
+
 - **File:** `PatientHistoryPage.ts`
 - **Features:**
   - Complete audit timeline
@@ -208,40 +226,52 @@ PUT    /api/patients/insurance/:id  # Update insurance
 ## Components
 
 ### PatientList
+
 Renders a table of patients with MRN, name, DOB, gender, phone, status.
 
 ### PatientCard
+
 Displays patient summary with avatar, basic info, alerts (allergies), and action buttons.
 
 ### PatientForm
+
 Full patient creation/edit form with:
+
 - Personal information
 - Contact details
 - Emergency contact
 - Clinical information (allergies, medications, conditions)
 
 ### PatientSearch
+
 Advanced search with quick search bar and expandable advanced filters:
+
 - Name, MRN, DOB
 - Phone, Email
 - Status filter
 
 ### PatientTimeline
+
 Visual activity timeline showing:
+
 - Action type icons
 - Timestamps
 - User attribution
 - Change details (expandable)
 
 ### InsuranceCard
+
 Insurance management with:
+
 - Primary/Secondary badges
 - Policy details
 - Verification status
 - Inline editing
 
 ### MergePatients
+
 Duplicate merge interface with:
+
 - Side-by-side patient comparison
 - Match score visualization
 - Duplicate suggestions
@@ -252,6 +282,7 @@ Duplicate merge interface with:
 ## Data Models
 
 ### Patient
+
 ```typescript
 interface Patient {
   id: string;
@@ -260,7 +291,7 @@ interface Patient {
   middleName?: string;
   lastName: string;
   dateOfBirth: Date;
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  gender: "male" | "female" | "other" | "prefer_not_to_say";
   ssn?: string;
   address: Address;
   contact: ContactInfo;
@@ -269,7 +300,7 @@ interface Patient {
   allergies?: string[];
   medications?: string[];
   conditions?: string[];
-  status: 'active' | 'inactive' | 'deceased' | 'merged';
+  status: "active" | "inactive" | "deceased" | "merged";
   preferredLanguage?: string;
   race?: string;
   ethnicity?: string;
@@ -285,6 +316,7 @@ interface Patient {
 ```
 
 ### Insurance
+
 ```typescript
 interface Insurance {
   id: string;
@@ -293,7 +325,7 @@ interface Insurance {
   groupNumber?: string;
   subscriberName: string;
   subscriberId: string;
-  relationship: 'self' | 'spouse' | 'child' | 'other';
+  relationship: "self" | "spouse" | "child" | "other";
   effectiveDate: Date;
   expirationDate?: Date;
   isPrimary: boolean;
@@ -306,11 +338,19 @@ interface Insurance {
 ```
 
 ### Document
+
 ```typescript
 interface Document {
   id: string;
   patientId: string;
-  type: 'consent' | 'insurance_card' | 'id' | 'medical_records' | 'lab_results' | 'imaging' | 'other';
+  type:
+    | "consent"
+    | "insurance_card"
+    | "id"
+    | "medical_records"
+    | "lab_results"
+    | "imaging"
+    | "other";
   name: string;
   description?: string;
   fileUrl: string;
@@ -318,16 +358,17 @@ interface Document {
   size: number;
   uploadedBy: string;
   uploadedAt: Date;
-  encryptionStatus: 'encrypted' | 'not_encrypted';
+  encryptionStatus: "encrypted" | "not_encrypted";
 }
 ```
 
 ### AuditLog
+
 ```typescript
 interface AuditLog {
   id: string;
   patientId: string;
-  action: 'created' | 'updated' | 'viewed' | 'merged' | 'deleted' | 'exported';
+  action: "created" | "updated" | "viewed" | "merged" | "deleted" | "exported";
   performedBy: string;
   performedAt: Date;
   changes?: Record<string, any>;
@@ -341,14 +382,18 @@ interface AuditLog {
 ## Services
 
 ### MRNGenerator
+
 Generates unique Medical Record Numbers with:
+
 - Configurable prefix (default: "MRN")
 - Sequence number generation
 - Luhn check digit validation
 - Format: `MRN-XXXXXXXX-C`
 
 ### DuplicateDetector
+
 Advanced fuzzy matching algorithm with:
+
 - **SSN matching** (40% weight)
 - **Name + DOB matching** (30% weight)
 - **Phone number matching** (15% weight)
@@ -358,7 +403,9 @@ Advanced fuzzy matching algorithm with:
 - Match classification (High ≥80%, Medium ≥60%)
 
 ### PatientService
+
 Core business logic:
+
 - Patient CRUD operations
 - Search and filtering
 - Duplicate detection integration
@@ -372,6 +419,7 @@ Core business logic:
 ## Running the Application
 
 ### Backend
+
 ```bash
 cd /home/user/lithic/vanilla/backend
 
@@ -389,6 +437,7 @@ npm start
 Server runs on `http://localhost:3001`
 
 ### Frontend
+
 ```bash
 cd /home/user/lithic/vanilla/frontend
 
@@ -449,12 +498,14 @@ Frontend runs on `http://localhost:8080`
 ## Testing
 
 ### Backend Tests
+
 ```bash
 npm test                 # Run tests
 npm run test:coverage    # Coverage report
 ```
 
 ### Frontend Tests
+
 ```bash
 npm test                 # Run component tests
 npm run test:coverage    # Coverage report
@@ -472,6 +523,7 @@ All rights reserved.
 ## Support
 
 For technical support or questions:
+
 - Email: support@lithic.health
 - Documentation: https://docs.lithic.health
 - Issue Tracker: Internal JIRA
@@ -481,6 +533,7 @@ For technical support or questions:
 ## Version History
 
 ### v1.0.0 (2026-01-01)
+
 - Initial production release
 - Complete patient management system
 - Duplicate detection and merging

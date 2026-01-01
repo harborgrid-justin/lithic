@@ -4,7 +4,7 @@
  * Comprehensive HL7v2 message parsing with support for multiple message types
  */
 
-import { logger } from '../../utils/logger';
+import { logger } from "../../utils/logger";
 
 // HL7v2 Delimiters
 export interface HL7Delimiters {
@@ -35,15 +35,15 @@ export interface HL7Message {
 
 // Common HL7 Message Types
 export type HL7MessageType =
-  | 'ADT' // Admission, Discharge, Transfer
-  | 'ORM' // Order Message
-  | 'ORU' // Observation Result
-  | 'SIU' // Scheduling Information Unsolicited
-  | 'MDM' // Medical Document Management
-  | 'DFT' // Detailed Financial Transaction
-  | 'BAR' // Add/Change Billing Account
-  | 'RDE' // Pharmacy/Treatment Encoded Order
-  | 'ACK'; // General Acknowledgment
+  | "ADT" // Admission, Discharge, Transfer
+  | "ORM" // Order Message
+  | "ORU" // Observation Result
+  | "SIU" // Scheduling Information Unsolicited
+  | "MDM" // Medical Document Management
+  | "DFT" // Detailed Financial Transaction
+  | "BAR" // Add/Change Billing Account
+  | "RDE" // Pharmacy/Treatment Encoded Order
+  | "ACK"; // General Acknowledgment
 
 /**
  * HL7v2 Parser
@@ -55,29 +55,34 @@ export class HL7Parser {
   static parse(message: string): HL7Message {
     try {
       // Clean message
-      const cleaned = message.trim().replace(/\r\n/g, '\r').replace(/\n/g, '\r');
+      const cleaned = message
+        .trim()
+        .replace(/\r\n/g, "\r")
+        .replace(/\n/g, "\r");
 
       // Extract delimiters from MSH segment
       const delimiters = this.extractDelimiters(cleaned);
 
       // Split into segments
-      const segmentLines = cleaned.split('\r').filter((line) => line.length > 0);
+      const segmentLines = cleaned
+        .split("\r")
+        .filter((line) => line.length > 0);
 
       // Parse segments
       const segments: HL7Segment[] = segmentLines.map((line) =>
-        this.parseSegment(line, delimiters)
+        this.parseSegment(line, delimiters),
       );
 
       // Extract message header info
-      const msh = segments.find((s) => s.name === 'MSH');
+      const msh = segments.find((s) => s.name === "MSH");
       if (!msh) {
-        throw new Error('Missing MSH segment');
+        throw new Error("Missing MSH segment");
       }
 
-      const messageType = this.getField(msh, 9, 1) || '';
-      const triggerEvent = this.getField(msh, 9, 2) || '';
-      const messageControlId = this.getField(msh, 10, 1) || '';
-      const version = this.getField(msh, 12, 1) || '2.5';
+      const messageType = this.getField(msh, 9, 1) || "";
+      const triggerEvent = this.getField(msh, 9, 2) || "";
+      const messageControlId = this.getField(msh, 10, 1) || "";
+      const version = this.getField(msh, 12, 1) || "2.5";
 
       return {
         messageType,
@@ -89,7 +94,7 @@ export class HL7Parser {
         raw: message,
       };
     } catch (error: any) {
-      logger.error('HL7 Parse Error', { error: error.message });
+      logger.error("HL7 Parse Error", { error: error.message });
       throw new HL7ParseError(`Failed to parse HL7 message: ${error.message}`);
     }
   }
@@ -98,8 +103,8 @@ export class HL7Parser {
    * Extract delimiters from MSH segment
    */
   private static extractDelimiters(message: string): HL7Delimiters {
-    if (!message.startsWith('MSH')) {
-      throw new Error('Message must start with MSH segment');
+    if (!message.startsWith("MSH")) {
+      throw new Error("Message must start with MSH segment");
     }
 
     // MSH|^~\&|...
@@ -108,22 +113,25 @@ export class HL7Parser {
 
     return {
       field,
-      component: encodingChars[0] || '^',
-      repetition: encodingChars[1] || '~',
-      escape: encodingChars[2] || '\\',
-      subcomponent: encodingChars[3] || '&',
+      component: encodingChars[0] || "^",
+      repetition: encodingChars[1] || "~",
+      escape: encodingChars[2] || "\\",
+      subcomponent: encodingChars[3] || "&",
     };
   }
 
   /**
    * Parse a single segment
    */
-  private static parseSegment(line: string, delimiters: HL7Delimiters): HL7Segment {
+  private static parseSegment(
+    line: string,
+    delimiters: HL7Delimiters,
+  ): HL7Segment {
     const segmentName = line.substring(0, 3);
     let fieldData = line.substring(3);
 
     // Special handling for MSH segment
-    if (segmentName === 'MSH') {
+    if (segmentName === "MSH") {
       // MSH has encoding characters as field 1
       fieldData = delimiters.field + fieldData.substring(5);
     }
@@ -143,8 +151,11 @@ export class HL7Parser {
   /**
    * Parse a field into components
    */
-  private static parseField(field: string, delimiters: HL7Delimiters): string[] {
-    if (!field) return [''];
+  private static parseField(
+    field: string,
+    delimiters: HL7Delimiters,
+  ): string[] {
+    if (!field) return [""];
 
     // Handle repetitions
     const repetitions = field.split(delimiters.repetition);
@@ -170,17 +181,33 @@ export class HL7Parser {
 
     const escapeChar = delimiters.escape;
     return value
-      .replace(new RegExp(`${escapeChar}F${escapeChar}`, 'g'), delimiters.field)
-      .replace(new RegExp(`${escapeChar}S${escapeChar}`, 'g'), delimiters.component)
-      .replace(new RegExp(`${escapeChar}T${escapeChar}`, 'g'), delimiters.subcomponent)
-      .replace(new RegExp(`${escapeChar}R${escapeChar}`, 'g'), delimiters.repetition)
-      .replace(new RegExp(`${escapeChar}E${escapeChar}`, 'g'), delimiters.escape);
+      .replace(new RegExp(`${escapeChar}F${escapeChar}`, "g"), delimiters.field)
+      .replace(
+        new RegExp(`${escapeChar}S${escapeChar}`, "g"),
+        delimiters.component,
+      )
+      .replace(
+        new RegExp(`${escapeChar}T${escapeChar}`, "g"),
+        delimiters.subcomponent,
+      )
+      .replace(
+        new RegExp(`${escapeChar}R${escapeChar}`, "g"),
+        delimiters.repetition,
+      )
+      .replace(
+        new RegExp(`${escapeChar}E${escapeChar}`, "g"),
+        delimiters.escape,
+      );
   }
 
   /**
    * Get a specific field value from a segment
    */
-  static getField(segment: HL7Segment, fieldIndex: number, componentIndex: number = 1): string | undefined {
+  static getField(
+    segment: HL7Segment,
+    fieldIndex: number,
+    componentIndex: number = 1,
+  ): string | undefined {
     if (fieldIndex >= segment.fields.length) {
       return undefined;
     }
@@ -196,7 +223,10 @@ export class HL7Parser {
   /**
    * Get all fields from a segment
    */
-  static getFields(segment: HL7Segment, fieldIndex: number): string[] | undefined {
+  static getFields(
+    segment: HL7Segment,
+    fieldIndex: number,
+  ): string[] | undefined {
     if (fieldIndex >= segment.fields.length) {
       return undefined;
     }
@@ -207,7 +237,10 @@ export class HL7Parser {
   /**
    * Find segment by name
    */
-  static findSegment(message: HL7Message, segmentName: string): HL7Segment | undefined {
+  static findSegment(
+    message: HL7Message,
+    segmentName: string,
+  ): HL7Segment | undefined {
     return message.segments.find((s) => s.name === segmentName);
   }
 
@@ -225,18 +258,18 @@ export class HL7Parser {
     const errors: string[] = [];
 
     // Check for required MSH segment
-    if (!this.findSegment(message, 'MSH')) {
-      errors.push('Missing required MSH segment');
+    if (!this.findSegment(message, "MSH")) {
+      errors.push("Missing required MSH segment");
     }
 
     // Check message type
     if (!message.messageType) {
-      errors.push('Missing message type');
+      errors.push("Missing message type");
     }
 
     // Check message control ID
     if (!message.messageControlId) {
-      errors.push('Missing message control ID');
+      errors.push("Missing message control ID");
     }
 
     // Validate segment structure
@@ -256,7 +289,7 @@ export class HL7Parser {
    * Extract patient information from ADT message
    */
   static extractPatient(message: HL7Message): any {
-    const pid = this.findSegment(message, 'PID');
+    const pid = this.findSegment(message, "PID");
     if (!pid) {
       return null;
     }
@@ -283,8 +316,8 @@ export class HL7Parser {
    * Extract order information from ORM message
    */
   static extractOrder(message: HL7Message): any {
-    const orc = this.findSegment(message, 'ORC');
-    const obr = this.findSegment(message, 'OBR');
+    const orc = this.findSegment(message, "ORC");
+    const obr = this.findSegment(message, "OBR");
 
     if (!orc || !obr) {
       return null;
@@ -312,7 +345,7 @@ export class HL7Parser {
    * Extract observation results from ORU message
    */
   static extractObservations(message: HL7Message): any[] {
-    const obxSegments = this.findSegments(message, 'OBX');
+    const obxSegments = this.findSegments(message, "OBX");
 
     return obxSegments.map((obx) => ({
       setId: this.getField(obx, 1, 1),
@@ -351,7 +384,7 @@ export class HL7Parser {
 export class HL7ParseError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'HL7ParseError';
+    this.name = "HL7ParseError";
   }
 }
 
@@ -365,6 +398,9 @@ export function parseHL7(message: string): HL7Message {
 /**
  * Validate HL7 message helper
  */
-export function validateHL7(message: HL7Message): { valid: boolean; errors: string[] } {
+export function validateHL7(message: HL7Message): {
+  valid: boolean;
+  errors: string[];
+} {
   return HL7Parser.validate(message);
 }

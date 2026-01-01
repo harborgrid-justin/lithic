@@ -2,8 +2,8 @@
  * PatientTimeline Component - Displays patient activity timeline
  */
 
-import { AuditLog } from '../../types/Patient';
-import PatientService from '../../services/PatientService';
+import { AuditLog } from "../../types/Patient";
+import PatientService from "../../services/PatientService";
 
 export class PatientTimeline {
   private container: HTMLElement;
@@ -30,12 +30,12 @@ export class PatientTimeline {
         this.auditLogs = response.data;
         this.render();
       } else {
-        throw new Error(response.error || 'Failed to load timeline');
+        throw new Error(response.error || "Failed to load timeline");
       }
     } catch (error) {
       this.container.innerHTML = `
         <div class="error-message">
-          Failed to load timeline: ${error instanceof Error ? error.message : 'Unknown error'}
+          Failed to load timeline: ${error instanceof Error ? error.message : "Unknown error"}
         </div>
       `;
     }
@@ -46,20 +46,23 @@ export class PatientTimeline {
    */
   private render(): void {
     if (this.auditLogs.length === 0) {
-      this.container.innerHTML = '<div class="no-timeline">No activity recorded</div>';
+      this.container.innerHTML =
+        '<div class="no-timeline">No activity recorded</div>';
       return;
     }
 
     // Sort logs by date descending
     const sortedLogs = [...this.auditLogs].sort((a, b) => {
-      return new Date(b.performedAt).getTime() - new Date(a.performedAt).getTime();
+      return (
+        new Date(b.performedAt).getTime() - new Date(a.performedAt).getTime()
+      );
     });
 
     this.container.innerHTML = `
       <div class="patient-timeline">
         <h3>Activity Timeline</h3>
         <div class="timeline-items">
-          ${sortedLogs.map(log => this.renderTimelineItem(log)).join('')}
+          ${sortedLogs.map((log) => this.renderTimelineItem(log)).join("")}
         </div>
       </div>
     `;
@@ -89,7 +92,7 @@ export class PatientTimeline {
           <div class="timeline-meta">
             <span class="timeline-user">By: ${log.performedBy}</span>
           </div>
-          ${log.changes ? this.renderChanges(log.changes) : ''}
+          ${log.changes ? this.renderChanges(log.changes) : ""}
         </div>
       </div>
     `;
@@ -98,16 +101,16 @@ export class PatientTimeline {
   /**
    * Get icon for action type
    */
-  private getActionIcon(action: AuditLog['action']): string {
+  private getActionIcon(action: AuditLog["action"]): string {
     const icons: Record<string, string> = {
-      created: '➕',
-      updated: '✏️',
-      viewed: '👁️',
-      merged: '🔀',
-      deleted: '🗑️',
-      exported: '📤',
+      created: "➕",
+      updated: "✏️",
+      viewed: "👁️",
+      merged: "🔀",
+      deleted: "🗑️",
+      exported: "📤",
     };
-    return icons[action] || '•';
+    return icons[action] || "•";
   }
 
   /**
@@ -115,12 +118,12 @@ export class PatientTimeline {
    */
   private getActionText(log: AuditLog): string {
     const actions: Record<string, string> = {
-      created: 'Patient record created',
-      updated: 'Patient record updated',
-      viewed: 'Patient record viewed',
-      merged: 'Patient record merged',
-      deleted: 'Patient record deleted',
-      exported: 'Patient data exported',
+      created: "Patient record created",
+      updated: "Patient record updated",
+      viewed: "Patient record viewed",
+      merged: "Patient record merged",
+      deleted: "Patient record deleted",
+      exported: "Patient data exported",
     };
     return actions[log.action] || log.action;
   }
@@ -132,7 +135,7 @@ export class PatientTimeline {
     const changeEntries = Object.entries(changes);
 
     if (changeEntries.length === 0) {
-      return '';
+      return "";
     }
 
     return `
@@ -140,9 +143,10 @@ export class PatientTimeline {
         <details>
           <summary>View changes</summary>
           <ul class="changes-list">
-            ${changeEntries.map(([field, change]) => {
-              if (typeof change === 'object' && change.from !== undefined) {
-                return `
+            ${changeEntries
+              .map(([field, change]) => {
+                if (typeof change === "object" && change.from !== undefined) {
+                  return `
                   <li>
                     <strong>${this.formatFieldName(field)}:</strong>
                     <span class="change-from">${this.formatValue(change.from)}</span>
@@ -150,15 +154,16 @@ export class PatientTimeline {
                     <span class="change-to">${this.formatValue(change.to)}</span>
                   </li>
                 `;
-              } else {
-                return `
+                } else {
+                  return `
                   <li>
                     <strong>${this.formatFieldName(field)}:</strong>
                     ${this.formatValue(change)}
                   </li>
                 `;
-              }
-            }).join('')}
+                }
+              })
+              .join("")}
           </ul>
         </details>
       </div>
@@ -170,8 +175,8 @@ export class PatientTimeline {
    */
   private formatFieldName(field: string): string {
     return field
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, str => str.toUpperCase())
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase())
       .trim();
   }
 
@@ -180,9 +185,9 @@ export class PatientTimeline {
    */
   private formatValue(value: any): string {
     if (value === null || value === undefined) {
-      return '(empty)';
+      return "(empty)";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value);
     }
     return String(value);

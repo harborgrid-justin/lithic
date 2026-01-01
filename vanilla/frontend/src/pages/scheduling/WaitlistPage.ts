@@ -3,8 +3,8 @@
  * Lithic Healthcare Platform - Vanilla TypeScript
  */
 
-import { SchedulingService } from '../../services/SchedulingService';
-import { WaitlistManager } from '../../components/scheduling/WaitlistManager';
+import { SchedulingService } from "../../services/SchedulingService";
+import { WaitlistManager } from "../../components/scheduling/WaitlistManager";
 
 export class WaitlistPage {
   private container: HTMLElement;
@@ -28,7 +28,7 @@ export class WaitlistPage {
       </div>
     `;
 
-    const container = document.getElementById('waitlistContainer')!;
+    const container = document.getElementById("waitlistContainer")!;
     this.waitlistManager = new WaitlistManager(container);
     await this.waitlistManager.render();
   }

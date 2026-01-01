@@ -1,7 +1,7 @@
 // Notes Page - Vanilla TypeScript
-import ClinicalService from '../../services/ClinicalService';
-import SOAPNote from '../../components/clinical/SOAPNote';
-import NoteEditor from '../../components/clinical/NoteEditor';
+import ClinicalService from "../../services/ClinicalService";
+import SOAPNote from "../../components/clinical/SOAPNote";
+import NoteEditor from "../../components/clinical/NoteEditor";
 
 export class NotesPage {
   private container: HTMLElement;
@@ -9,7 +9,7 @@ export class NotesPage {
   private patientId: string;
   private soapNote: SOAPNote | null = null;
   private noteEditor: NoteEditor | null = null;
-  private selectedTemplate: string = '';
+  private selectedTemplate: string = "";
 
   constructor(containerId: string, encounterId: string, patientId: string) {
     const element = document.getElementById(containerId);
@@ -68,73 +68,82 @@ export class NotesPage {
   }
 
   private initializeEditor(): void {
-    const noteType = (document.getElementById('note-type') as HTMLSelectElement)?.value;
+    const noteType = (document.getElementById("note-type") as HTMLSelectElement)
+      ?.value;
 
-    if (noteType === 'soap') {
-      this.soapNote = new SOAPNote('note-editor-container');
+    if (noteType === "soap") {
+      this.soapNote = new SOAPNote("note-editor-container");
     } else {
-      this.noteEditor = new NoteEditor('note-editor-container');
+      this.noteEditor = new NoteEditor("note-editor-container");
     }
   }
 
   private async loadTemplates(): Promise<void> {
     try {
-      const templates = await ClinicalService.getTemplates('note');
-      const templateSelect = document.getElementById('template-select') as HTMLSelectElement;
+      const templates = await ClinicalService.getTemplates("note");
+      const templateSelect = document.getElementById(
+        "template-select",
+      ) as HTMLSelectElement;
 
       if (templateSelect) {
         templates.forEach((template: any) => {
-          const option = document.createElement('option');
+          const option = document.createElement("option");
           option.value = template.id;
           option.textContent = template.name;
           templateSelect.appendChild(option);
         });
       }
     } catch (error) {
-      console.error('Error loading templates:', error);
+      console.error("Error loading templates:", error);
     }
   }
 
   private attachEventListeners(): void {
-    const backBtn = document.getElementById('back-btn');
-    backBtn?.addEventListener('click', () => {
+    const backBtn = document.getElementById("back-btn");
+    backBtn?.addEventListener("click", () => {
       window.history.back();
     });
 
-    const noteTypeSelect = document.getElementById('note-type') as HTMLSelectElement;
-    noteTypeSelect?.addEventListener('change', () => {
+    const noteTypeSelect = document.getElementById(
+      "note-type",
+    ) as HTMLSelectElement;
+    noteTypeSelect?.addEventListener("change", () => {
       this.initializeEditor();
     });
 
-    const templateSelect = document.getElementById('template-select') as HTMLSelectElement;
-    templateSelect?.addEventListener('change', (e) => {
+    const templateSelect = document.getElementById(
+      "template-select",
+    ) as HTMLSelectElement;
+    templateSelect?.addEventListener("change", (e) => {
       this.selectedTemplate = (e.target as HTMLSelectElement).value;
       // Load template content if needed
     });
 
-    const saveDraftBtn = document.getElementById('save-draft-btn');
-    saveDraftBtn?.addEventListener('click', async () => {
+    const saveDraftBtn = document.getElementById("save-draft-btn");
+    saveDraftBtn?.addEventListener("click", async () => {
       await this.saveNote(false);
     });
 
-    const signNoteBtn = document.getElementById('sign-note-btn');
-    signNoteBtn?.addEventListener('click', async () => {
+    const signNoteBtn = document.getElementById("sign-note-btn");
+    signNoteBtn?.addEventListener("click", async () => {
       await this.saveNote(true);
     });
   }
 
   private async saveNote(shouldSign: boolean): Promise<void> {
     try {
-      const noteType = (document.getElementById('note-type') as HTMLSelectElement)?.value;
+      const noteType = (
+        document.getElementById("note-type") as HTMLSelectElement
+      )?.value;
       let noteData: any = {
         encounterId: this.encounterId,
         patientId: this.patientId,
-        providerId: 'current-provider',
+        providerId: "current-provider",
         noteType,
         template: this.selectedTemplate || undefined,
       };
 
-      if (noteType === 'soap' && this.soapNote) {
+      if (noteType === "soap" && this.soapNote) {
         const soapData = this.soapNote.getData();
         noteData = {
           ...noteData,
@@ -148,29 +157,29 @@ export class NotesPage {
       const note = await ClinicalService.createNote(noteData);
 
       if (shouldSign) {
-        const password = prompt('Enter password to sign note:');
+        const password = prompt("Enter password to sign note:");
         if (password) {
           await ClinicalService.signNote(note.id, {
-            userId: 'current-provider',
+            userId: "current-provider",
             password,
           });
-          alert('Note signed successfully');
+          alert("Note signed successfully");
         }
       } else {
-        alert('Note saved as draft');
+        alert("Note saved as draft");
       }
 
       window.history.back();
     } catch (error) {
-      console.error('Error saving note:', error);
-      alert('Failed to save note');
+      console.error("Error saving note:", error);
+      alert("Failed to save note");
     }
   }
 
   destroy(): void {
     this.soapNote?.destroy();
     this.noteEditor?.destroy();
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
   }
 }
 

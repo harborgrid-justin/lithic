@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { authOptions, getServerSession } from '@/lib/auth';
-import { prisma } from '@/lib/db';
-import { checkPermission } from '@/lib/permissions';
-import { registerUser } from '@/services/auth.service';
-import { logAudit } from '@/lib/audit';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { authOptions, getServerSession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { checkPermission } from "@/lib/permissions";
+import { registerUser } from "@/services/auth.service";
+import { logAudit } from "@/lib/audit";
+import { z } from "zod";
 
 // GET /api/admin/users - List all users
 export async function GET(request: NextRequest) {
@@ -13,31 +13,31 @@ export async function GET(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     // Check permission
     const hasPermission = await checkPermission({
       userId: session.user.id,
-      resource: 'user',
-      action: 'read',
+      resource: "user",
+      action: "read",
       organizationId: (session.user as any).organizationId,
     });
 
     if (!hasPermission) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: "Forbidden" },
+        { status: 403 },
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const status = searchParams.get('status') || undefined;
-    const search = searchParams.get('search') || undefined;
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const status = searchParams.get("status") || undefined;
+    const search = searchParams.get("search") || undefined;
 
     const where: any = {
       organizationId: (session.user as any).organizationId,
@@ -47,9 +47,9 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       where.OR = [
-        { email: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: "insensitive" } },
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
       ];
     }
 
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -81,10 +81,11 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch users';
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch users";
     return NextResponse.json(
       { success: false, error: message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -96,23 +97,23 @@ export async function POST(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     // Check permission
     const hasPermission = await checkPermission({
       userId: session.user.id,
-      resource: 'user',
-      action: 'write',
+      resource: "user",
+      action: "write",
       organizationId: (session.user as any).organizationId,
     });
 
     if (!hasPermission) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: "Forbidden" },
+        { status: 403 },
       );
     }
 
@@ -140,24 +141,25 @@ export async function POST(request: NextRequest) {
         success: true,
         data: user,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Validation error',
+          error: "Validation error",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const message = error instanceof Error ? error.message : 'Failed to create user';
+    const message =
+      error instanceof Error ? error.message : "Failed to create user";
     return NextResponse.json(
       { success: false, error: message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

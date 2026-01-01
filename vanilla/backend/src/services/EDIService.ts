@@ -45,7 +45,7 @@ export class EDIService {
       billing_provider: this.buildBillingProvider(claim),
       subscriber: this.buildSubscriber(claim),
       patient: this.buildPatient(claim),
-      claims: [this.buildClaimSegment(claim)]
+      claims: [this.buildClaimSegment(claim)],
     };
 
     // Convert to EDI X12 format
@@ -61,7 +61,7 @@ export class EDIService {
     const batchEDI = {
       isaHeader: this.buildISAHeader(),
       gsHeader: this.buildGSHeader(),
-      claims: claims.map(claim => this.buildClaimSegment(claim))
+      claims: claims.map((claim) => this.buildClaimSegment(claim)),
     };
 
     return this.formatEDI837Batch(batchEDI);
@@ -75,25 +75,27 @@ export class EDIService {
     const warnings: string[] = [];
 
     // Parse and validate segments
-    const segments = ediContent.split('~');
+    const segments = ediContent.split("~");
 
     // Check required segments
-    if (!segments.some(s => s.startsWith('ISA'))) {
-      errors.push('Missing ISA segment');
+    if (!segments.some((s) => s.startsWith("ISA"))) {
+      errors.push("Missing ISA segment");
     }
-    if (!segments.some(s => s.startsWith('GS'))) {
-      errors.push('Missing GS segment');
+    if (!segments.some((s) => s.startsWith("GS"))) {
+      errors.push("Missing GS segment");
     }
-    if (!segments.some(s => s.startsWith('ST'))) {
-      errors.push('Missing ST segment');
+    if (!segments.some((s) => s.startsWith("ST"))) {
+      errors.push("Missing ST segment");
     }
 
     // Validate segment structure
     segments.forEach((segment, index) => {
       if (segment && segment.length > 0) {
-        const elements = segment.split('*');
-        if (elements[0] === 'ISA' && elements.length !== 17) {
-          errors.push(`ISA segment invalid: expected 17 elements, got ${elements.length}`);
+        const elements = segment.split("*");
+        if (elements[0] === "ISA" && elements.length !== 17) {
+          errors.push(
+            `ISA segment invalid: expected 17 elements, got ${elements.length}`,
+          );
         }
       }
     });
@@ -102,7 +104,7 @@ export class EDIService {
       isValid: errors.length === 0,
       errors,
       warnings,
-      segmentCount: segments.length
+      segmentCount: segments.length,
     };
   }
 
@@ -112,44 +114,44 @@ export class EDIService {
    * Parse EDI 835 ERA file
    */
   async parseERA835(ediContent: string, userId: string): Promise<any> {
-    const segments = ediContent.split('~').filter(s => s.trim());
+    const segments = ediContent.split("~").filter((s) => s.trim());
 
     const eraData: any = {
       id: `ERA${Date.now()}`,
       rawContent: ediContent,
       parsedAt: new Date().toISOString(),
       parsedBy: userId,
-      status: 'parsed',
+      status: "parsed",
       payer: {},
       payee: {},
       checkInfo: {},
       claims: [],
       totalAmount: 0,
-      claimCount: 0
+      claimCount: 0,
     };
 
     let currentClaim: any = null;
     let currentService: any = null;
 
-    segments.forEach(segment => {
-      const elements = segment.split('*');
+    segments.forEach((segment) => {
+      const elements = segment.split("*");
       const segmentId = elements[0];
 
       switch (segmentId) {
-        case 'ISA':
+        case "ISA":
           // Interchange control header
           break;
 
-        case 'GS':
+        case "GS":
           // Functional group header
           break;
 
-        case 'ST':
+        case "ST":
           // Transaction set header
           eraData.transactionSetControlNumber = elements[2];
           break;
 
-        case 'BPR':
+        case "BPR":
           // Financial Information
           eraData.checkInfo = {
             transactionHandlingCode: elements[1],
@@ -157,44 +159,44 @@ export class EDIService {
             creditDebit: elements[3],
             paymentMethod: elements[4],
             paymentFormat: elements[5],
-            checkNumber: elements[7] || '',
-            date: this.parseEDIDate(elements[16])
+            checkNumber: elements[7] || "",
+            date: this.parseEDIDate(elements[16]),
           };
           eraData.totalAmount = parseFloat(elements[2]);
           break;
 
-        case 'TRN':
+        case "TRN":
           // Trace number
           eraData.traceNumber = elements[2];
           eraData.originatingCompanyId = elements[3];
           break;
 
-        case 'N1':
+        case "N1":
           // Name - Payer/Payee
           const entityCode = elements[1];
           const name = elements[2];
           const idQualifier = elements[3];
           const id = elements[4];
 
-          if (entityCode === 'PR') {
+          if (entityCode === "PR") {
             // Payer
             eraData.payer = { name, idQualifier, id };
-          } else if (entityCode === 'PE') {
+          } else if (entityCode === "PE") {
             // Payee
             eraData.payee = { name, idQualifier, id };
           }
           break;
 
-        case 'N3':
+        case "N3":
           // Address
           // Store address for current entity
           break;
 
-        case 'N4':
+        case "N4":
           // Geographic location
           break;
 
-        case 'LX':
+        case "LX":
           // Header number - starts new claim
           if (currentClaim) {
             eraData.claims.push(currentClaim);
@@ -203,12 +205,12 @@ export class EDIService {
             headerNumber: elements[1],
             services: [],
             claimPayment: 0,
-            patientResponsibility: 0
+            patientResponsibility: 0,
           };
           eraData.claimCount++;
           break;
 
-        case 'CLP':
+        case "CLP":
           // Claim payment information
           if (currentClaim) {
             currentClaim.claimId = elements[1];
@@ -221,57 +223,57 @@ export class EDIService {
           }
           break;
 
-        case 'NM1':
+        case "NM1":
           // Individual or organizational name
           const entityTypeCode = elements[1];
           if (currentClaim) {
-            if (entityTypeCode === 'QC') {
+            if (entityTypeCode === "QC") {
               // Patient
               currentClaim.patient = {
                 lastName: elements[3],
                 firstName: elements[4],
                 middleName: elements[5],
-                memberId: elements[9]
+                memberId: elements[9],
               };
-            } else if (entityTypeCode === 'IL') {
+            } else if (entityTypeCode === "IL") {
               // Insured
               currentClaim.insured = {
                 lastName: elements[3],
                 firstName: elements[4],
-                memberId: elements[9]
+                memberId: elements[9],
               };
             }
           }
           break;
 
-        case 'SVC':
+        case "SVC":
           // Service payment information
           currentService = {
             procedureCode: this.parseProcedureCode(elements[1]),
             charge: parseFloat(elements[2]),
             payment: parseFloat(elements[3]),
             units: parseFloat(elements[5]) || 1,
-            adjustments: []
+            adjustments: [],
           };
           if (currentClaim) {
             currentClaim.services.push(currentService);
           }
           break;
 
-        case 'CAS':
+        case "CAS":
           // Claim/Service adjustment
           const adjustment = {
             groupCode: elements[1],
             reasonCode: elements[2],
             amount: parseFloat(elements[3]),
-            quantity: elements[4] ? parseFloat(elements[4]) : null
+            quantity: elements[4] ? parseFloat(elements[4]) : null,
           };
 
           // Additional adjustments in same segment
           for (let i = 5; i < elements.length; i += 3) {
             if (elements[i]) {
               adjustment.reasonCode += `, ${elements[i]}`;
-              adjustment.amount += parseFloat(elements[i + 1] || '0');
+              adjustment.amount += parseFloat(elements[i + 1] || "0");
             }
           }
 
@@ -283,35 +285,35 @@ export class EDIService {
           }
           break;
 
-        case 'DTM':
+        case "DTM":
           // Date/time reference
           const dateQualifier = elements[1];
           const date = this.parseEDIDate(elements[2]);
 
           if (currentClaim) {
-            if (dateQualifier === '232') {
+            if (dateQualifier === "232") {
               currentClaim.serviceDate = date;
-            } else if (dateQualifier === '050') {
+            } else if (dateQualifier === "050") {
               currentClaim.receivedDate = date;
             }
           }
           break;
 
-        case 'AMT':
+        case "AMT":
           // Monetary amount
           const amtQualifier = elements[1];
           const amount = parseFloat(elements[2]);
 
           if (currentClaim) {
-            if (amtQualifier === 'AU') {
+            if (amtQualifier === "AU") {
               currentClaim.coverageAmount = amount;
-            } else if (amtQualifier === 'D') {
+            } else if (amtQualifier === "D") {
               currentClaim.discountAmount = amount;
             }
           }
           break;
 
-        case 'SE':
+        case "SE":
           // Transaction set trailer
           if (currentClaim) {
             eraData.claims.push(currentClaim);
@@ -322,7 +324,7 @@ export class EDIService {
     });
 
     // Save ERA to database
-    console.log('Parsed ERA:', eraData);
+    console.log("Parsed ERA:", eraData);
 
     return eraData;
   }
@@ -340,7 +342,7 @@ export class EDIService {
       paymentsCreated: 0,
       adjustmentsCreated: 0,
       denialsIdentified: 0,
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     // Process each claim in ERA
@@ -351,10 +353,10 @@ export class EDIService {
         // Post adjustments
         // Handle denials
 
-        if (claim.status === '1') {
+        if (claim.status === "1") {
           // Processed as primary
           results.paymentsCreated++;
-        } else if (claim.status === '4') {
+        } else if (claim.status === "4") {
           // Denied
           results.denialsIdentified++;
         }
@@ -366,7 +368,7 @@ export class EDIService {
     }
 
     // Update ERA status
-    console.log('ERA processing results:', results);
+    console.log("ERA processing results:", results);
 
     return results;
   }
@@ -374,7 +376,11 @@ export class EDIService {
   /**
    * Auto-post ERA payments
    */
-  async autoPostERA(eraId: string, autoResolveAdjustments: boolean, userId: string): Promise<any> {
+  async autoPostERA(
+    eraId: string,
+    autoResolveAdjustments: boolean,
+    userId: string,
+  ): Promise<any> {
     const era = await this.getERAById(eraId);
 
     const results = {
@@ -382,7 +388,7 @@ export class EDIService {
       autoPosted: 0,
       requiresReview: 0,
       totalPosted: 0,
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     for (const claim of era.claims || []) {
@@ -413,15 +419,15 @@ export class EDIService {
   async getERAs(page: number, limit: number, filters: any) {
     const eras = [
       {
-        id: 'ERA001',
-        checkNumber: '1234567',
-        checkDate: '2025-12-15',
-        payerName: 'Blue Cross Blue Shield',
-        totalAmount: 5000.00,
+        id: "ERA001",
+        checkNumber: "1234567",
+        checkDate: "2025-12-15",
+        payerName: "Blue Cross Blue Shield",
+        totalAmount: 5000.0,
         claimCount: 15,
-        status: 'processed',
-        receivedAt: '2025-12-15T08:00:00Z'
-      }
+        status: "processed",
+        receivedAt: "2025-12-15T08:00:00Z",
+      },
     ];
 
     return {
@@ -430,8 +436,8 @@ export class EDIService {
         page,
         limit,
         total: eras.length,
-        totalPages: Math.ceil(eras.length / limit)
-      }
+        totalPages: Math.ceil(eras.length / limit),
+      },
     };
   }
 
@@ -441,44 +447,44 @@ export class EDIService {
   async getERAById(id: string) {
     return {
       id,
-      checkNumber: '1234567',
-      checkDate: '2025-12-15',
-      checkAmount: 5000.00,
+      checkNumber: "1234567",
+      checkDate: "2025-12-15",
+      checkAmount: 5000.0,
       payer: {
-        name: 'Blue Cross Blue Shield',
-        id: 'BCBS001',
-        address: '456 Insurance Ave'
+        name: "Blue Cross Blue Shield",
+        id: "BCBS001",
+        address: "456 Insurance Ave",
       },
       payee: {
-        name: 'City Medical Center',
-        npi: '0987654321'
+        name: "City Medical Center",
+        npi: "0987654321",
       },
       claims: [
         {
-          claimId: 'CLM001',
-          status: '1',
-          totalCharge: 200.00,
-          claimPayment: 160.00,
-          patientResponsibility: 40.00,
+          claimId: "CLM001",
+          status: "1",
+          totalCharge: 200.0,
+          claimPayment: 160.0,
+          patientResponsibility: 40.0,
           services: [
             {
-              procedureCode: '99213',
-              charge: 150.00,
-              payment: 120.00,
+              procedureCode: "99213",
+              charge: 150.0,
+              payment: 120.0,
               adjustments: [
                 {
-                  groupCode: 'CO',
-                  reasonCode: '45',
-                  amount: 30.00
-                }
-              ]
-            }
-          ]
-        }
+                  groupCode: "CO",
+                  reasonCode: "45",
+                  amount: 30.0,
+                },
+              ],
+            },
+          ],
+        },
       ],
-      status: 'processed',
-      receivedAt: '2025-12-15T08:00:00Z',
-      processedAt: '2025-12-15T09:00:00Z'
+      status: "processed",
+      receivedAt: "2025-12-15T08:00:00Z",
+      processedAt: "2025-12-15T09:00:00Z",
     };
   }
 
@@ -488,14 +494,14 @@ export class EDIService {
   async getERAPayments(eraId: string) {
     return [
       {
-        claimId: 'CLM001',
-        claimNumber: 'CLM-2025-001',
-        patientName: 'John Doe',
-        totalCharge: 200.00,
-        payment: 160.00,
-        adjustments: 40.00,
-        status: 'paid'
-      }
+        claimId: "CLM001",
+        claimNumber: "CLM-2025-001",
+        patientName: "John Doe",
+        totalCharge: 200.0,
+        payment: 160.0,
+        adjustments: 40.0,
+        status: "paid",
+      },
     ];
   }
 
@@ -505,12 +511,12 @@ export class EDIService {
   async getERAAdjustments(eraId: string) {
     return [
       {
-        claimId: 'CLM001',
-        groupCode: 'CO',
-        reasonCode: '45',
-        description: 'Charge exceeds fee schedule',
-        amount: 40.00
-      }
+        claimId: "CLM001",
+        groupCode: "CO",
+        reasonCode: "45",
+        description: "Charge exceeds fee schedule",
+        amount: 40.0,
+      },
     ];
   }
 
@@ -531,7 +537,7 @@ export class EDIService {
           eraClaimId: eraClaim.claimId,
           matchedClaimId: match.claimId,
           confidence: match.confidence,
-          matchMethod: match.method
+          matchMethod: match.method,
         });
       } else {
         unmatched.push(eraClaim);
@@ -541,7 +547,7 @@ export class EDIService {
     return {
       matched: matches,
       unmatched,
-      matchRate: (matches.length / era.claims.length) * 100
+      matchRate: (matches.length / era.claims.length) * 100,
     };
   }
 
@@ -551,13 +557,13 @@ export class EDIService {
   async getERADenials(eraId: string) {
     return [
       {
-        claimId: 'CLM002',
-        claimNumber: 'CLM-2025-002',
-        denialCode: 'CO-16',
-        denialReason: 'Claim lacks information',
-        amount: 350.00,
-        appealDeadline: '2026-04-15'
-      }
+        claimId: "CLM002",
+        claimNumber: "CLM-2025-002",
+        denialCode: "CO-16",
+        denialReason: "Claim lacks information",
+        amount: 350.0,
+        appealDeadline: "2026-04-15",
+      },
     ];
   }
 
@@ -567,13 +573,15 @@ export class EDIService {
   async getRawERA(eraId: string): Promise<string> {
     const era = await this.getERAById(eraId);
     // In real implementation, fetch from storage
-    return 'ISA*00*          *00*          *ZZ*SENDER         *ZZ*RECEIVER       *251215*0800*^*00501*000000001*0*P*:~\n' +
-           'GS*HP*SENDER*RECEIVER*20251215*0800*1*X*005010X221A1~\n' +
-           'ST*835*0001~\n' +
-           'BPR*I*5000.00*C*ACH*CTX***01*123456789*DA*987654321**01*987654321*20251215~\n' +
-           'SE*25*0001~\n' +
-           'GE*1*1~\n' +
-           'IEA*1*000000001~';
+    return (
+      "ISA*00*          *00*          *ZZ*SENDER         *ZZ*RECEIVER       *251215*0800*^*00501*000000001*0*P*:~\n" +
+      "GS*HP*SENDER*RECEIVER*20251215*0800*1*X*005010X221A1~\n" +
+      "ST*835*0001~\n" +
+      "BPR*I*5000.00*C*ACH*CTX***01*123456789*DA*987654321**01*987654321*20251215~\n" +
+      "SE*25*0001~\n" +
+      "GE*1*1~\n" +
+      "IEA*1*000000001~"
+    );
   }
 
   /**
@@ -582,15 +590,15 @@ export class EDIService {
   async getUnprocessedERAs() {
     return [
       {
-        id: 'ERA002',
-        checkNumber: '9876543',
-        checkDate: '2025-12-20',
-        payerName: 'Aetna',
-        totalAmount: 3500.00,
+        id: "ERA002",
+        checkNumber: "9876543",
+        checkDate: "2025-12-20",
+        payerName: "Aetna",
+        totalAmount: 3500.0,
         claimCount: 10,
-        status: 'uploaded',
-        receivedAt: '2025-12-20T10:00:00Z'
-      }
+        status: "uploaded",
+        receivedAt: "2025-12-20T10:00:00Z",
+      },
     ];
   }
 
@@ -602,7 +610,7 @@ export class EDIService {
     depositAmount: number,
     depositDate: string,
     bankAccount: string,
-    userId: string
+    userId: string,
   ) {
     const era = await this.getERAById(eraId);
 
@@ -615,10 +623,10 @@ export class EDIService {
       variance: depositAmount - era.checkAmount,
       isReconciled: Math.abs(depositAmount - era.checkAmount) < 0.01,
       reconciledAt: new Date().toISOString(),
-      reconciledBy: userId
+      reconciledBy: userId,
     };
 
-    console.log('ERA reconciliation:', reconciliation);
+    console.log("ERA reconciliation:", reconciliation);
 
     return reconciliation;
   }
@@ -629,29 +637,29 @@ export class EDIService {
   async getERAStats(startDate: string, endDate: string) {
     return {
       totalERAs: 50,
-      totalAmount: 150000.00,
+      totalAmount: 150000.0,
       totalClaims: 500,
       processed: 45,
       unprocessed: 5,
-      averageAmount: 3000.00,
+      averageAmount: 3000.0,
       averageClaimsPerERA: 10,
       byPayer: [
         {
-          payerName: 'Blue Cross Blue Shield',
+          payerName: "Blue Cross Blue Shield",
           count: 20,
-          amount: 60000.00
+          amount: 60000.0,
         },
         {
-          payerName: 'Aetna',
+          payerName: "Aetna",
           count: 15,
-          amount: 45000.00
-        }
+          amount: 45000.0,
+        },
       ],
       processingTime: {
         average: 2.5,
         min: 0.5,
-        max: 8.0
-      }
+        max: 8.0,
+      },
     };
   }
 
@@ -659,57 +667,57 @@ export class EDIService {
 
   private buildISAHeader() {
     return {
-      authorizationInformationQualifier: '00',
-      authorizationInformation: '          ',
-      securityInformationQualifier: '00',
-      securityInformation: '          ',
-      interchangeIdQualifierSender: 'ZZ',
-      interchangeSenderId: 'SENDER         ',
-      interchangeIdQualifierReceiver: 'ZZ',
-      interchangeReceiverId: 'RECEIVER       ',
+      authorizationInformationQualifier: "00",
+      authorizationInformation: "          ",
+      securityInformationQualifier: "00",
+      securityInformation: "          ",
+      interchangeIdQualifierSender: "ZZ",
+      interchangeSenderId: "SENDER         ",
+      interchangeIdQualifierReceiver: "ZZ",
+      interchangeReceiverId: "RECEIVER       ",
       interchangeDate: this.formatEDIDate(new Date()),
       interchangeTime: this.formatEDITime(new Date()),
-      repetitionSeparator: '^',
-      interchangeControlVersionNumber: '00501',
-      interchangeControlNumber: '000000001',
-      acknowledgmentRequested: '0',
-      usageIndicator: 'P',
-      componentElementSeparator: ':'
+      repetitionSeparator: "^",
+      interchangeControlVersionNumber: "00501",
+      interchangeControlNumber: "000000001",
+      acknowledgmentRequested: "0",
+      usageIndicator: "P",
+      componentElementSeparator: ":",
     };
   }
 
   private buildGSHeader() {
     return {
-      functionalIdentifierCode: 'HC',
-      applicationSenderCode: 'SENDER',
-      applicationReceiverCode: 'RECEIVER',
+      functionalIdentifierCode: "HC",
+      applicationSenderCode: "SENDER",
+      applicationReceiverCode: "RECEIVER",
       date: this.formatEDIDate(new Date()),
       time: this.formatEDITime(new Date()),
-      groupControlNumber: '1',
-      responsibleAgencyCode: 'X',
-      versionReleaseIndustryIdentifierCode: '005010X222A1'
+      groupControlNumber: "1",
+      responsibleAgencyCode: "X",
+      versionReleaseIndustryIdentifierCode: "005010X222A1",
     };
   }
 
   private buildSTHeader() {
     return {
-      transactionSetIdentifierCode: '837',
-      transactionSetControlNumber: '0001'
+      transactionSetIdentifierCode: "837",
+      transactionSetControlNumber: "0001",
     };
   }
 
   private buildSubmitter() {
     return {
-      organizationName: 'City Medical Center',
-      npi: '0987654321',
-      taxId: '12-3456789'
+      organizationName: "City Medical Center",
+      npi: "0987654321",
+      taxId: "12-3456789",
     };
   }
 
   private buildReceiver(payerId: string) {
     return {
-      organizationName: 'Blue Cross Blue Shield',
-      payerId: payerId
+      organizationName: "Blue Cross Blue Shield",
+      payerId: payerId,
     };
   }
 
@@ -718,7 +726,7 @@ export class EDIService {
       npi: claim.billingProviderNPI,
       taxId: claim.billingProviderTaxId,
       name: claim.billingProviderName,
-      address: claim.billingProviderAddress
+      address: claim.billingProviderAddress,
     };
   }
 
@@ -728,16 +736,16 @@ export class EDIService {
       firstName: claim.subscriberFirstName,
       lastName: claim.subscriberLastName,
       dateOfBirth: claim.subscriberDOB,
-      gender: claim.subscriberGender
+      gender: claim.subscriberGender,
     };
   }
 
   private buildPatient(claim: any) {
     return {
-      firstName: claim.patientName?.split(' ')[0],
-      lastName: claim.patientName?.split(' ')[1],
+      firstName: claim.patientName?.split(" ")[0],
+      lastName: claim.patientName?.split(" ")[1],
       dateOfBirth: claim.patientDOB,
-      gender: claim.patientGender
+      gender: claim.patientGender,
     };
   }
 
@@ -747,14 +755,14 @@ export class EDIService {
       totalCharge: claim.totalCharge,
       placeOfService: claim.placeOfService,
       serviceLines: claim.lineItems,
-      diagnosisCodes: claim.diagnosisCodes
+      diagnosisCodes: claim.diagnosisCodes,
     };
   }
 
   private formatEDI837(data: EDI837Data): string {
     // Simplified EDI 837 generation
     // In production, use proper EDI library
-    let edi = '';
+    let edi = "";
     edi += `ISA*00*          *00*          *ZZ*${data.submitter}*ZZ*${data.receiver}*${this.formatEDIDate(new Date())}*${this.formatEDITime(new Date())}*^*00501*000000001*0*P*:~\n`;
     edi += `GS*HC*SENDER*RECEIVER*${this.formatEDIDate(new Date())}*${this.formatEDITime(new Date())}*1*X*005010X222A1~\n`;
     edi += `ST*837*0001~\n`;
@@ -767,24 +775,24 @@ export class EDIService {
   }
 
   private formatEDI837Batch(data: any): string {
-    return 'BATCH EDI 837 CONTENT';
+    return "BATCH EDI 837 CONTENT";
   }
 
   private formatEDIDate(date: Date): string {
     const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
     return `${year}${month}${day}`;
   }
 
   private formatEDITime(date: Date): string {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}${minutes}`;
   }
 
   private parseEDIDate(ediDate: string): string {
-    if (!ediDate || ediDate.length !== 8) return '';
+    if (!ediDate || ediDate.length !== 8) return "";
 
     const year = ediDate.substring(0, 4);
     const month = ediDate.substring(4, 6);
@@ -795,20 +803,24 @@ export class EDIService {
 
   private parseProcedureCode(procedureString: string): string {
     // Format: HC:99213 or just 99213
-    const parts = procedureString.split(':');
+    const parts = procedureString.split(":");
     return parts.length > 1 ? parts[1] : parts[0];
   }
 
   private async matchClaimToERA(eraClaim: any): Promise<any> {
     // Matching logic based on claim number, patient, dates, amounts
     return {
-      claimId: 'CLM001',
+      claimId: "CLM001",
       confidence: 0.95,
-      method: 'claim_number'
+      method: "claim_number",
     };
   }
 
-  private async postERAPayment(eraClaim: any, claimId: string, userId: string): Promise<any> {
+  private async postERAPayment(
+    eraClaim: any,
+    claimId: string,
+    userId: string,
+  ): Promise<any> {
     console.log(`Posting ERA payment for claim ${claimId}`);
     return { success: true };
   }
