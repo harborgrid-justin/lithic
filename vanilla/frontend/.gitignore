@@ -1,0 +1,30 @@
+# Frontend .gitignore
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Testing
+coverage/
+
+# Vite
+.vite/
+
+# OS
+.DS_Store
+Thumbs.db

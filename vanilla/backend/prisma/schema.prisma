@@ -1,0 +1,1132 @@
+// Lithic Enterprise Healthcare SaaS Platform
+// Prisma Schema - HIPAA Compliant
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// AUTHENTICATION & AUTHORIZATION
+// ============================================================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String   // bcrypt hashed
+  firstName String
+  lastName  String
+  
+  role      Role     @default(FRONT_DESK)
+  status    UserStatus @default(ACTIVE)
+  
+  // MFA
+  mfaEnabled Boolean @default(false)
+  mfaSecret  String?
+  
+  // Password policy
+  lastPasswordChange DateTime @default(now())
+  passwordExpiresAt  DateTime?
+  failedLoginAttempts Int @default(0)
+  lockedUntil        DateTime?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  sessions       Session[]
+  auditLogs      AuditLog[]
+  createdPatients Patient[] @relation("CreatedBy")
+  appointments   Appointment[]
+  clinicalNotes  ClinicalNote[]
+  prescriptions  Prescription[]
+  labOrders      LabOrder[]
+  imagingOrders  ImagingOrder[]
+  
+  @@index([email])
+  @@index([username])
+  @@map("users")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ORG_ADMIN
+  PHYSICIAN
+  NURSE
+  FRONT_DESK
+  BILLING
+  LAB_TECH
+  PHARMACIST
+  RADIOLOGIST
+  PATIENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  LOCKED
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  ipAddress String
+  userAgent String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  lastActivityAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+model Permission {
+  id          String @id @default(cuid())
+  role        Role
+  resource    String
+  action      String
+  conditions  Json?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([role, resource, action])
+  @@map("permissions")
+}
+
+// ============================================================================
+// PATIENT MANAGEMENT
+// ============================================================================
+
+model Patient {
+  id  String @id @default(cuid())
+  mrn String @unique // Medical Record Number
+  
+  // Demographics
+  firstName    String
+  middleName   String?
+  lastName     String
+  dateOfBirth  DateTime
+  gender       Gender
+  ssn          String? // Encrypted
+  
+  // Contact Information
+  email        String?
+  phone        String?
+  address      String?
+  city         String?
+  state        String?
+  zipCode      String?
+  country      String @default("USA")
+  
+  // Emergency Contact
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?
+  
+  // Insurance
+  primaryInsuranceId   String?
+  secondaryInsuranceId String?
+  
+  // Clinical
+  bloodType    String?
+  allergies    String[] // JSON array
+  language     String @default("English")
+  maritalStatus MaritalStatus?
+  
+  // Portal Access
+  portalEnabled Boolean @default(false)
+  portalUserId  String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  creator           User @relation("CreatedBy", fields: [createdBy], references: [id])
+  primaryInsurance  Insurance? @relation("PrimaryInsurance", fields: [primaryInsuranceId], references: [id])
+  secondaryInsurance Insurance? @relation("SecondaryInsurance", fields: [secondaryInsuranceId], references: [id])
+  
+  appointments     Appointment[]
+  clinicalNotes    ClinicalNote[]
+  diagnoses        Diagnosis[]
+  procedures       Procedure[]
+  vitalSigns       VitalSigns[]
+  medications      MedicationOrder[]
+  prescriptions    Prescription[]
+  labOrders        LabOrder[]
+  imagingOrders    ImagingOrder[]
+  claims           Claim[]
+  payments         Payment[]
+  
+  @@index([mrn])
+  @@index([lastName, firstName])
+  @@index([dateOfBirth])
+  @@map("patients")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  UNKNOWN
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+  SEPARATED
+}
+
+model Insurance {
+  id String @id @default(cuid())
+  
+  // Insurance Company
+  payerName    String
+  payerId      String
+  planName     String
+  planType     InsurancePlanType
+  
+  // Policy Details
+  policyNumber String
+  groupNumber  String?
+  subscriberId String
+  
+  // Subscriber Information
+  subscriberName      String
+  subscriberDob       DateTime
+  relationToPatient   String
+  
+  // Coverage
+  effectiveDate DateTime
+  expirationDate DateTime?
+  copay         Float?
+  deductible    Float?
+  outOfPocketMax Float?
+  
+  // Status
+  status InsuranceStatus @default(ACTIVE)
+  verifiedAt DateTime?
+  verifiedBy String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  // Relations
+  primaryPatients   Patient[] @relation("PrimaryInsurance")
+  secondaryPatients Patient[] @relation("SecondaryInsurance")
+  claims            Claim[]
+  
+  @@index([policyNumber])
+  @@index([subscriberId])
+  @@map("insurance")
+}
+
+enum InsurancePlanType {
+  HMO
+  PPO
+  EPO
+  POS
+  MEDICARE
+  MEDICAID
+  TRICARE
+  COMMERCIAL
+  SELF_PAY
+}
+
+enum InsuranceStatus {
+  ACTIVE
+  INACTIVE
+  PENDING_VERIFICATION
+  EXPIRED
+}
+
+// ============================================================================
+// CLINICAL DOCUMENTATION
+// ============================================================================
+
+model ClinicalNote {
+  id String @id @default(cuid())
+  
+  patientId  String
+  providerId String
+  appointmentId String?
+  
+  noteType   ClinicalNoteType
+  
+  // SOAP Note Format
+  subjective String? // Patient's description
+  objective  String? // Provider's observations
+  assessment String? // Provider's diagnosis/assessment
+  plan       String? // Treatment plan
+  
+  // Additional Fields
+  chiefComplaint String?
+  historyOfPresentIllness String?
+  reviewOfSystems Json?
+  
+  // Status
+  status NoteStatus @default(DRAFT)
+  signedAt DateTime?
+  signedBy String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient     Patient @relation(fields: [patientId], references: [id])
+  provider    User @relation(fields: [providerId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+  
+  @@index([patientId])
+  @@index([providerId])
+  @@index([appointmentId])
+  @@map("clinical_notes")
+}
+
+enum ClinicalNoteType {
+  SOAP
+  PROGRESS
+  CONSULTATION
+  ADMISSION
+  DISCHARGE
+  PROCEDURE
+  TELEPHONE
+  FOLLOWUP
+}
+
+enum NoteStatus {
+  DRAFT
+  SIGNED
+  AMENDED
+  DELETED
+}
+
+model Diagnosis {
+  id String @id @default(cuid())
+  
+  patientId String
+  
+  // ICD-10 Coding
+  icd10Code String
+  description String
+  
+  // Clinical Details
+  diagnosisType DiagnosisType
+  status DiagnosisStatus @default(ACTIVE)
+  onsetDate DateTime?
+  resolvedDate DateTime?
+  severity String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+  
+  @@index([patientId])
+  @@index([icd10Code])
+  @@map("diagnoses")
+}
+
+enum DiagnosisType {
+  PRIMARY
+  SECONDARY
+  ADMITTING
+  DISCHARGE
+  RULE_OUT
+}
+
+enum DiagnosisStatus {
+  ACTIVE
+  INACTIVE
+  RESOLVED
+  CHRONIC
+}
+
+model Procedure {
+  id String @id @default(cuid())
+  
+  patientId  String
+  providerId String?
+  
+  // CPT Coding
+  cptCode     String
+  description String
+  
+  // Procedure Details
+  procedureDate DateTime
+  location      String?
+  duration      Int? // minutes
+  notes         String?
+  
+  // Status
+  status ProcedureStatus @default(SCHEDULED)
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+  
+  @@index([patientId])
+  @@index([cptCode])
+  @@map("procedures")
+}
+
+enum ProcedureStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model VitalSigns {
+  id String @id @default(cuid())
+  
+  patientId String
+  
+  // Vitals
+  temperature    Float?
+  bloodPressureSystolic  Int?
+  bloodPressureDiastolic Int?
+  heartRate      Int?
+  respiratoryRate Int?
+  oxygenSaturation Float?
+  weight         Float?
+  height         Float?
+  bmi            Float?
+  
+  // Pain Scale
+  painLevel Int?
+  
+  // Timestamp
+  recordedAt DateTime @default(now())
+  recordedBy String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+  
+  @@index([patientId])
+  @@index([recordedAt])
+  @@map("vital_signs")
+}
+
+// ============================================================================
+// SCHEDULING & APPOINTMENTS
+// ============================================================================
+
+model Appointment {
+  id String @id @default(cuid())
+  
+  patientId  String
+  providerId String
+  
+  // Scheduling
+  startTime  DateTime
+  endTime    DateTime
+  duration   Int // minutes
+  
+  // Details
+  appointmentType AppointmentType
+  reason          String?
+  notes           String?
+  
+  // Location
+  locationId String?
+  roomNumber String?
+  
+  // Status
+  status AppointmentStatus @default(SCHEDULED)
+  checkedInAt DateTime?
+  checkedOutAt DateTime?
+  
+  // Reminders
+  reminderSentAt DateTime?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  cancelledAt DateTime?
+  cancelReason String?
+  
+  // Relations
+  patient       Patient @relation(fields: [patientId], references: [id])
+  provider      User @relation(fields: [providerId], references: [id])
+  clinicalNotes ClinicalNote[]
+  
+  @@index([patientId])
+  @@index([providerId])
+  @@index([startTime])
+  @@index([status])
+  @@map("appointments")
+}
+
+enum AppointmentType {
+  INITIAL_CONSULTATION
+  FOLLOWUP
+  ROUTINE_CHECKUP
+  URGENT_CARE
+  PROCEDURE
+  TELEMEDICINE
+  VACCINATION
+  LAB_WORK
+  IMAGING
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  CHECKED_IN
+  IN_PROGRESS
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+  RESCHEDULED
+}
+
+// ============================================================================
+// BILLING & CLAIMS
+// ============================================================================
+
+model Claim {
+  id String @id @default(cuid())
+  
+  patientId    String
+  insuranceId  String
+  
+  // Claim Details
+  claimNumber  String @unique
+  claimType    ClaimType
+  totalAmount  Float
+  paidAmount   Float @default(0)
+  
+  // Dates
+  serviceDate  DateTime
+  submittedAt  DateTime?
+  processedAt  DateTime?
+  paidAt       DateTime?
+  
+  // Status
+  status ClaimStatus @default(DRAFT)
+  
+  // Denial/Rejection
+  denialReason String?
+  denialCode   String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient   Patient @relation(fields: [patientId], references: [id])
+  insurance Insurance @relation(fields: [insuranceId], references: [id])
+  claimLines ClaimLine[]
+  
+  @@index([patientId])
+  @@index([insuranceId])
+  @@index([claimNumber])
+  @@index([status])
+  @@map("claims")
+}
+
+enum ClaimType {
+  CMS1500
+  UB04
+  DENTAL
+  PHARMACY
+}
+
+enum ClaimStatus {
+  DRAFT
+  SUBMITTED
+  PENDING
+  APPROVED
+  PARTIALLY_PAID
+  PAID
+  DENIED
+  REJECTED
+  APPEALED
+}
+
+model ClaimLine {
+  id String @id @default(cuid())
+  
+  claimId String
+  
+  // Service Details
+  serviceDate DateTime
+  cptCode     String
+  description String
+  quantity    Int @default(1)
+  unitPrice   Float
+  totalAmount Float
+  
+  // Modifiers
+  modifier1 String?
+  modifier2 String?
+  modifier3 String?
+  modifier4 String?
+  
+  // Diagnosis Pointers
+  diagnosisPointers String[]
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  // Relations
+  claim Claim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  
+  @@index([claimId])
+  @@map("claim_lines")
+}
+
+model Payment {
+  id String @id @default(cuid())
+  
+  patientId String
+  
+  // Payment Details
+  amount        Float
+  paymentMethod PaymentMethod
+  referenceNumber String?
+  
+  // Status
+  status PaymentStatus @default(PENDING)
+  
+  // Processing
+  processedAt DateTime?
+  processedBy String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+  
+  @@index([patientId])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  CREDIT_CARD
+  DEBIT_CARD
+  INSURANCE
+  WIRE_TRANSFER
+  ACH
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// ============================================================================
+// LABORATORY
+// ============================================================================
+
+model LabOrder {
+  id String @id @default(cuid())
+  
+  patientId  String
+  providerId String
+  
+  // Order Details
+  orderNumber String @unique
+  priority    OrderPriority @default(ROUTINE)
+  
+  // Clinical Info
+  clinicalInfo String?
+  icd10Codes   String[]
+  
+  // Status
+  status LabOrderStatus @default(PENDING)
+  orderedAt DateTime @default(now())
+  collectedAt DateTime?
+  receivedAt DateTime?
+  completedAt DateTime?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+  provider User @relation(fields: [providerId], references: [id])
+  tests   LabTest[]
+  results LabResult[]
+  
+  @@index([patientId])
+  @@index([providerId])
+  @@index([orderNumber])
+  @@index([status])
+  @@map("lab_orders")
+}
+
+enum OrderPriority {
+  STAT
+  URGENT
+  ROUTINE
+}
+
+enum LabOrderStatus {
+  PENDING
+  COLLECTED
+  RECEIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model LabTest {
+  id String @id @default(cuid())
+  
+  labOrderId String
+  
+  // Test Details
+  loincCode   String
+  testName    String
+  description String?
+  
+  // Specimen
+  specimenType String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  // Relations
+  labOrder LabOrder @relation(fields: [labOrderId], references: [id], onDelete: Cascade)
+  
+  @@index([labOrderId])
+  @@index([loincCode])
+  @@map("lab_tests")
+}
+
+model LabResult {
+  id String @id @default(cuid())
+  
+  labOrderId String
+  
+  // Result Details
+  loincCode   String
+  testName    String
+  value       String
+  unit        String?
+  referenceRange String?
+  
+  // Flags
+  abnormalFlag String?
+  criticalFlag Boolean @default(false)
+  
+  // Status
+  status ResultStatus @default(PRELIMINARY)
+  resultedAt DateTime?
+  verifiedAt DateTime?
+  verifiedBy String?
+  
+  // Notes
+  comments String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  // Relations
+  labOrder LabOrder @relation(fields: [labOrderId], references: [id])
+  
+  @@index([labOrderId])
+  @@index([loincCode])
+  @@map("lab_results")
+}
+
+enum ResultStatus {
+  PRELIMINARY
+  FINAL
+  CORRECTED
+  CANCELLED
+}
+
+// ============================================================================
+// PHARMACY & MEDICATIONS
+// ============================================================================
+
+model MedicationOrder {
+  id String @id @default(cuid())
+  
+  patientId String
+  
+  // Medication
+  medicationName String
+  rxnormCode     String?
+  strength       String
+  form           String
+  route          String
+  
+  // Dosing
+  dosage         String
+  frequency      String
+  duration       String?
+  quantity       Int?
+  refills        Int @default(0)
+  
+  // Instructions
+  instructions   String?
+  indication     String?
+  
+  // Status
+  status MedicationStatus @default(ACTIVE)
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+  
+  @@index([patientId])
+  @@index([status])
+  @@map("medication_orders")
+}
+
+enum MedicationStatus {
+  ACTIVE
+  COMPLETED
+  DISCONTINUED
+  ON_HOLD
+}
+
+model Prescription {
+  id String @id @default(cuid())
+  
+  patientId  String
+  providerId String
+  
+  // Rx Number
+  rxNumber String @unique
+  
+  // Medication
+  medicationName String
+  rxnormCode     String?
+  strength       String
+  form           String
+  route          String
+  
+  // Dosing
+  dosage         String
+  frequency      String
+  quantity       Int
+  refills        Int @default(0)
+  refillsRemaining Int @default(0)
+  daysSupply     Int?
+  
+  // Instructions
+  instructions String?
+  indication   String?
+  
+  // DEA Schedule (controlled substances)
+  deaSchedule String?
+  
+  // Status
+  status PrescriptionStatus @default(PENDING)
+  prescribedAt DateTime @default(now())
+  dispensedAt  DateTime?
+  
+  // Pharmacy
+  pharmacyName String?
+  pharmacyNPI  String?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient  Patient @relation(fields: [patientId], references: [id])
+  provider User @relation(fields: [providerId], references: [id])
+  
+  @@index([patientId])
+  @@index([providerId])
+  @@index([rxNumber])
+  @@index([status])
+  @@map("prescriptions")
+}
+
+enum PrescriptionStatus {
+  PENDING
+  SENT
+  DISPENSED
+  CANCELLED
+  EXPIRED
+}
+
+// ============================================================================
+// IMAGING & RADIOLOGY
+// ============================================================================
+
+model ImagingOrder {
+  id String @id @default(cuid())
+  
+  patientId  String
+  providerId String
+  
+  // Order Details
+  orderNumber String @unique
+  modality    ImagingModality
+  bodyPart    String
+  priority    OrderPriority @default(ROUTINE)
+  
+  // Clinical Info
+  clinicalInfo String?
+  icd10Codes   String[]
+  
+  // Status
+  status ImagingOrderStatus @default(PENDING)
+  orderedAt   DateTime @default(now())
+  scheduledAt DateTime?
+  performedAt DateTime?
+  reportedAt  DateTime?
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+  provider User @relation(fields: [providerId], references: [id])
+  studies  ImagingStudy[]
+  
+  @@index([patientId])
+  @@index([providerId])
+  @@index([orderNumber])
+  @@index([status])
+  @@map("imaging_orders")
+}
+
+enum ImagingModality {
+  XRAY
+  CT
+  MRI
+  ULTRASOUND
+  MAMMOGRAPHY
+  FLUOROSCOPY
+  PET
+  NUCLEAR_MEDICINE
+}
+
+enum ImagingOrderStatus {
+  PENDING
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  REPORTED
+  CANCELLED
+}
+
+model ImagingStudy {
+  id String @id @default(cuid())
+  
+  imagingOrderId String
+  
+  // DICOM Details
+  studyInstanceUID String @unique
+  accessionNumber  String?
+  seriesCount      Int @default(0)
+  instanceCount    Int @default(0)
+  
+  // Study Details
+  studyDescription String?
+  performedAt      DateTime?
+  
+  // Report
+  reportText       String?
+  reportedBy       String?
+  reportedAt       DateTime?
+  
+  // Status
+  status ImagingStudyStatus @default(PENDING)
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  // Relations
+  imagingOrder ImagingOrder @relation(fields: [imagingOrderId], references: [id])
+  
+  @@index([imagingOrderId])
+  @@index([studyInstanceUID])
+  @@map("imaging_studies")
+}
+
+enum ImagingStudyStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  REPORTED
+}
+
+// ============================================================================
+// AUDIT LOGGING (HIPAA Compliance)
+// ============================================================================
+
+model AuditLog {
+  id String @id @default(cuid())
+  
+  // Who
+  userId String
+  userRole Role
+  
+  // What
+  action String
+  resourceType String
+  resourceId String
+  
+  // When
+  timestamp DateTime @default(now())
+  
+  // Where
+  ipAddress String
+  userAgent String?
+  
+  // How
+  method String?
+  path   String?
+  
+  // Details
+  changes Json?
+  metadata Json?
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([resourceType, resourceId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+// ============================================================================
+// ORGANIZATION & CONFIGURATION
+// ============================================================================
+
+model Organization {
+  id String @id @default(cuid())
+  
+  name     String
+  npi      String? @unique
+  taxId    String?
+  
+  // Contact
+  phone    String?
+  email    String?
+  website  String?
+  
+  // Address
+  address  String?
+  city     String?
+  state    String?
+  zipCode  String?
+  country  String @default("USA")
+  
+  // Settings
+  settings Json?
+  
+  // Status
+  status   OrgStatus @default(ACTIVE)
+  
+  // HIPAA Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  @@map("organizations")
+}
+
+enum OrgStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model SystemConfiguration {
+  id String @id @default(cuid())
+  
+  key   String @unique
+  value Json
+  description String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("system_configuration")
+}
