@@ -59,10 +59,10 @@ export default function TemplatesPage() {
 
     try {
       // Apply template to provider schedule
-      const startDate = new Date().toISOString().split("T")[0];
+      const startDate = new Date().toISOString().split("T")[0] || "";
       const endDate = new Date();
       endDate.setMonth(endDate.getMonth() + 1);
-      const endDateStr = endDate.toISOString().split("T")[0];
+      const endDateStr = endDate.toISOString().split("T")[0] || "";
 
       await schedulingService.applyScheduleTemplate(
         template.id,

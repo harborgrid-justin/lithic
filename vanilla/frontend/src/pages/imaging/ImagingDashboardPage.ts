@@ -115,7 +115,7 @@ export class ImagingDashboardPage {
       const worklistContainer = document.getElementById("worklist-container");
       if (worklistContainer) {
         this.worklist.render(worklistContainer, {
-          date: new Date().toISOString().split("T")[0],
+          date: new Date().toISOString().split("T")[0] || "",
         });
       }
 

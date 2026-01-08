@@ -126,8 +126,8 @@ export class DuplicateDetector {
     // Date of birth
     if (patient1.dateOfBirth && patient2.dateOfBirth) {
       checks++;
-      const dob1 = new Date(patient1.dateOfBirth).toISOString().split("T")[0];
-      const dob2 = new Date(patient2.dateOfBirth).toISOString().split("T")[0];
+      const dob1 = new Date(patient1.dateOfBirth).toISOString().split("T")[0] || "";
+      const dob2 = new Date(patient2.dateOfBirth).toISOString().split("T")[0] || "";
       if (dob1 === dob2) {
         score += 100;
       }
@@ -230,8 +230,8 @@ export class DuplicateDetector {
     }
 
     if (patient1.dateOfBirth && patient2.dateOfBirth) {
-      const dob1 = new Date(patient1.dateOfBirth).toISOString().split("T")[0];
-      const dob2 = new Date(patient2.dateOfBirth).toISOString().split("T")[0];
+      const dob1 = new Date(patient1.dateOfBirth).toISOString().split("T")[0] || "";
+      const dob2 = new Date(patient2.dateOfBirth).toISOString().split("T")[0] || "";
       if (dob1 === dob2) {
         matched.push("Date of Birth");
       }

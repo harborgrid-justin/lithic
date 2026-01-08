@@ -227,13 +227,13 @@ export class InsuranceCard {
             <div class="form-group">
               <label for="effectiveDate">Effective Date *</label>
               <input type="date" id="effectiveDate" name="effectiveDate" required
-                value="${insurance ? new Date(insurance.effectiveDate).toISOString().split("T")[0] : ""}">
+                value="${insurance ? new Date(insurance.effectiveDate).toISOString().split("T")[0] || "" : ""}">
             </div>
 
             <div class="form-group">
               <label for="expirationDate">Expiration Date</label>
               <input type="date" id="expirationDate" name="expirationDate"
-                value="${insurance?.expirationDate ? new Date(insurance.expirationDate).toISOString().split("T")[0] : ""}">
+                value="${insurance?.expirationDate ? new Date(insurance.expirationDate).toISOString().split("T")[0] || "" : ""}">
             </div>
           </div>
 

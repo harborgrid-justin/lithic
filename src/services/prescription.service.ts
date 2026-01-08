@@ -469,7 +469,7 @@ class PrescriptionService {
     const lastFilled = new Date(lastFilledDate);
     const nextRefill = new Date(lastFilled);
     nextRefill.setDate(nextRefill.getDate() + daysSupply - allowedRefillDays);
-    return nextRefill.toISOString().split("T")[0];
+    return nextRefill.toISOString().split("T")[0] || "";
   }
 
   calculateExpirationDate(
@@ -487,7 +487,7 @@ class PrescriptionService {
       expiration.setFullYear(expiration.getFullYear() + 1);
     }
 
-    return expiration.toISOString().split("T")[0];
+    return expiration.toISOString().split("T")[0] || "";
   }
 
   generateRxNumber(): string {

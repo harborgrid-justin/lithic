@@ -41,7 +41,7 @@ export default function CheckInKiosk({ onCheckInComplete }: CheckInKioskProps) {
     setLoading(true);
     try {
       // Search for today's appointments by patient name
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split("T")[0] || "";
       const results = await schedulingService.getAppointments({
         startDate: today,
         endDate: today,

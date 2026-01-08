@@ -31,7 +31,7 @@ export default function PaymentPosting({
     patientName,
     amount: 0,
     paymentMethod: "cash",
-    paymentDate: new Date().toISOString().split("T")[0],
+    paymentDate: new Date().toISOString().split("T")[0] || "",
     referenceNumber: "",
     notes: "",
   });

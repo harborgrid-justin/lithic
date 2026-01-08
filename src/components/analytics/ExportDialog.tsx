@@ -44,7 +44,7 @@ export function ExportDialog({
   const [exporting, setExporting] = useState(false);
   const [config, setConfig] = useState<Partial<ExportConfig>>({
     format: "excel",
-    filename: `${reportType}_report_${new Date().toISOString().split("T")[0]}`,
+    filename: `${reportType}_report_${new Date().toISOString().split("T")[0] || ""}`,
     dateRange: defaultDateRange || {
       start: new Date(new Date().setDate(new Date().getDate() - 30)),
       end: new Date(),
@@ -210,7 +210,7 @@ export function ExportDialog({
                   type="date"
                   value={
                     config.dateRange?.start
-                      ? config.dateRange.start.toISOString().split("T")[0]
+                      ? config.dateRange.start.toISOString().split("T")[0] || ""
                       : ""
                   }
                   onChange={(e) => handleDateChange("start", e.target.value)}
@@ -226,7 +226,7 @@ export function ExportDialog({
                   type="date"
                   value={
                     config.dateRange?.end
-                      ? config.dateRange.end.toISOString().split("T")[0]
+                      ? config.dateRange.end.toISOString().split("T")[0] || ""
                       : ""
                   }
                   onChange={(e) => handleDateChange("end", e.target.value)}

@@ -1,0 +1,159 @@
+{
+  "patient": {
+    "demographics": "Demographics",
+    "medical_history": "Medical History",
+    "allergies": "Allergies",
+    "medications": "Current Medications",
+    "vital_signs": "Vital Signs",
+    "insurance": "Insurance Information",
+    "emergency_contact": "Emergency Contact"
+  },
+  "vitals": {
+    "blood_pressure": "Blood Pressure",
+    "systolic": "Systolic",
+    "diastolic": "Diastolic",
+    "heart_rate": "Heart Rate",
+    "respiratory_rate": "Respiratory Rate",
+    "temperature": "Temperature",
+    "oxygen_saturation": "Oxygen Saturation (SpO2)",
+    "weight": "Weight",
+    "height": "Height",
+    "bmi": "Body Mass Index (BMI)",
+    "pain_level": "Pain Level"
+  },
+  "diagnosis": {
+    "primary": "Primary Diagnosis",
+    "secondary": "Secondary Diagnosis",
+    "differential": "Differential Diagnosis",
+    "icd_code": "ICD-10 Code",
+    "date_diagnosed": "Date Diagnosed",
+    "status": "Status",
+    "notes": "Clinical Notes"
+  },
+  "medications": {
+    "name": "Medication Name",
+    "dosage": "Dosage",
+    "route": "Route of Administration",
+    "frequency": "Frequency",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "prescriber": "Prescriber",
+    "pharmacy": "Pharmacy",
+    "refills": "Refills Remaining",
+    "instructions": "Instructions",
+    "side_effects": "Potential Side Effects",
+    "interactions": "Drug Interactions"
+  },
+  "lab": {
+    "test_name": "Test Name",
+    "result": "Result",
+    "reference_range": "Reference Range",
+    "status": "Status",
+    "ordered_by": "Ordered By",
+    "collected_date": "Collection Date",
+    "resulted_date": "Result Date",
+    "specimen_type": "Specimen Type",
+    "abnormal": "Abnormal",
+    "critical": "Critical",
+    "normal": "Normal",
+    "pending": "Pending"
+  },
+  "imaging": {
+    "study_type": "Study Type",
+    "body_part": "Body Part",
+    "ordered_date": "Ordered Date",
+    "performed_date": "Performed Date",
+    "radiologist": "Radiologist",
+    "findings": "Findings",
+    "impression": "Impression",
+    "images_available": "Images Available"
+  },
+  "appointments": {
+    "type": "Appointment Type",
+    "reason": "Reason for Visit",
+    "provider": "Provider",
+    "location": "Location",
+    "date_time": "Date & Time",
+    "duration": "Duration",
+    "status": "Status",
+    "notes": "Notes",
+    "follow_up": "Follow-up Required"
+  },
+  "procedures": {
+    "name": "Procedure Name",
+    "cpt_code": "CPT Code",
+    "scheduled_date": "Scheduled Date",
+    "performed_date": "Performed Date",
+    "provider": "Performing Provider",
+    "location": "Location",
+    "anesthesia": "Anesthesia Type",
+    "consent_obtained": "Consent Obtained",
+    "complications": "Complications",
+    "outcome": "Outcome"
+  },
+  "allergies": {
+    "allergen": "Allergen",
+    "reaction": "Reaction",
+    "severity": "Severity",
+    "onset_date": "Onset Date",
+    "verified": "Verified",
+    "mild": "Mild",
+    "moderate": "Moderate",
+    "severe": "Severe",
+    "life_threatening": "Life Threatening"
+  },
+  "immunizations": {
+    "vaccine": "Vaccine",
+    "date_administered": "Date Administered",
+    "dose": "Dose Number",
+    "site": "Administration Site",
+    "lot_number": "Lot Number",
+    "manufacturer": "Manufacturer",
+    "expiration_date": "Expiration Date",
+    "administered_by": "Administered By",
+    "next_due": "Next Dose Due"
+  },
+  "clinical_notes": {
+    "chief_complaint": "Chief Complaint",
+    "history_present_illness": "History of Present Illness",
+    "review_of_systems": "Review of Systems",
+    "physical_exam": "Physical Examination",
+    "assessment": "Assessment",
+    "plan": "Plan",
+    "progress_note": "Progress Note",
+    "discharge_summary": "Discharge Summary"
+  },
+  "orders": {
+    "lab_orders": "Laboratory Orders",
+    "imaging_orders": "Imaging Orders",
+    "medication_orders": "Medication Orders",
+    "referral": "Referral",
+    "consult": "Consultation",
+    "priority": "Priority",
+    "routine": "Routine",
+    "urgent": "Urgent",
+    "stat": "STAT"
+  },
+  "billing": {
+    "cpt_code": "CPT Code",
+    "icd_code": "ICD-10 Code",
+    "charge": "Charge",
+    "insurance_claim": "Insurance Claim",
+    "patient_responsibility": "Patient Responsibility",
+    "copay": "Copay",
+    "deductible": "Deductible",
+    "coinsurance": "Coinsurance"
+  },
+  "terms": {
+    "acute": "Acute",
+    "chronic": "Chronic",
+    "benign": "Benign",
+    "malignant": "Malignant",
+    "stable": "Stable",
+    "improving": "Improving",
+    "worsening": "Worsening",
+    "resolved": "Resolved",
+    "recurrent": "Recurrent",
+    "progressive": "Progressive"
+  }
+}

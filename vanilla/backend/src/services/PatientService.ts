@@ -212,9 +212,9 @@ export class PatientService {
     if (params.dateOfBirth) {
       const searchDob = new Date(params.dateOfBirth)
         .toISOString()
-        .split("T")[0];
+        .split("T")[0] || "";
       results = results.filter((p) => {
-        const patientDob = new Date(p.dateOfBirth).toISOString().split("T")[0];
+        const patientDob = new Date(p.dateOfBirth).toISOString().split("T")[0] || "";
         return patientDob === searchDob;
       });
     }

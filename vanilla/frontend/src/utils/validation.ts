@@ -153,7 +153,7 @@ export const isValidCreditCard = (cardNumber: string): boolean => {
   let isEven = false;
 
   for (let i = cleaned.length - 1; i >= 0; i--) {
-    let digit = parseInt(cleaned[i]);
+    let digit = parseInt(cleaned[i] || "0");
 
     if (isEven) {
       digit *= 2;
@@ -182,6 +182,10 @@ export const validateForm = (
     const fieldRules = rules[field];
     const fieldValue = data[field];
     const fieldErrors: string[] = [];
+
+    if (!fieldRules) {
+      return;
+    }
 
     fieldRules.forEach((rule) => {
       if (!rule.validate(fieldValue)) {

@@ -31,7 +31,7 @@ export class WorklistPage {
         <div class="filters-group">
           <div class="filter-item">
             <label>Date</label>
-            <input type="date" id="filter-date" class="form-input" value="${new Date().toISOString().split("T")[0]}">
+            <input type="date" id="filter-date" class="form-input" value="${new Date().toISOString().split("T")[0] || ""}">
           </div>
 
           <div class="filter-item">
@@ -209,7 +209,7 @@ export class WorklistPage {
 
   private clearFilters() {
     (document.getElementById("filter-date") as HTMLInputElement).value =
-      new Date().toISOString().split("T")[0];
+      new Date().toISOString().split("T")[0] || "";
     (document.getElementById("filter-modality") as HTMLSelectElement).value =
       "";
     (document.getElementById("filter-status") as HTMLSelectElement).value = "";

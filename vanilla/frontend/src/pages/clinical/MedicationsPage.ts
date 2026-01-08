@@ -243,7 +243,7 @@ export class MedicationsPage {
         "start-date",
       ) as HTMLInputElement;
       if (startDateInput) {
-        startDateInput.value = new Date().toISOString().split("T")[0];
+        startDateInput.value = new Date().toISOString().split("T")[0] || "";
       }
     }
   }

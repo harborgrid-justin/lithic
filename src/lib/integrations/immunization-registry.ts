@@ -165,7 +165,7 @@ export class ImmunizationRegistryClient {
       const queryParams = new URLSearchParams({
         firstName: params.firstName,
         lastName: params.lastName,
-        dateOfBirth: params.dateOfBirth.toISOString().split("T")[0],
+        dateOfBirth: params.dateOfBirth.toISOString().split("T")[0] || "",
         ...(params.gender && { gender: params.gender }),
       });
 
@@ -200,11 +200,11 @@ export class ImmunizationRegistryClient {
     const queryParams = new URLSearchParams({
       firstName: params.firstName,
       lastName: params.lastName,
-      dateOfBirth: params.dateOfBirth.toISOString().split("T")[0],
+      dateOfBirth: params.dateOfBirth.toISOString().split("T")[0] || "",
       gender: params.gender,
       evaluationDate: (params.evaluationDate || new Date())
         .toISOString()
-        .split("T")[0],
+        .split("T")[0] || "",
     });
 
     const response = await this.request(

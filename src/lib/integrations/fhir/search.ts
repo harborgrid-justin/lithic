@@ -576,7 +576,7 @@ function transformToFHIR(resourceType: string, resource: any): Resource {
           },
         ],
         gender: resource.gender,
-        birthDate: resource.dateOfBirth?.toISOString().split("T")[0],
+        birthDate: resource.dateOfBirth?.toISOString().split("T")[0] || "",
       };
 
     case "Observation":

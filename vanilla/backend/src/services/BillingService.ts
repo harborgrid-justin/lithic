@@ -693,7 +693,7 @@ export class BillingService {
     const refreshed = await this.checkEligibility(
       existing.patientId,
       existing.insuranceId,
-      new Date().toISOString().split("T")[0],
+      new Date().toISOString().split("T")[0] || "",
       userId,
     );
 

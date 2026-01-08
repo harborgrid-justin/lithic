@@ -29,7 +29,7 @@ export function formatDate(
         day: "numeric",
       });
     case "iso":
-      return d.toISOString().split("T")[0];
+      return d.toISOString().split("T")[0] || "";
     case "medical":
       // MM/DD/YYYY format commonly used in US medical records
       const month = String(d.getMonth() + 1).padStart(2, "0");

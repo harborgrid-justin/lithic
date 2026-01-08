@@ -61,8 +61,8 @@ export class ComplianceReport {
     ) as HTMLInputElement;
 
     if (startInput && endInput) {
-      startInput.value = firstDay.toISOString().split("T")[0];
-      endInput.value = lastDay.toISOString().split("T")[0];
+      startInput.value = firstDay.toISOString().split("T")[0] || "";
+      endInput.value = lastDay.toISOString().split("T")[0] || "";
     }
   }
 

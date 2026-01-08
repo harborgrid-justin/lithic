@@ -591,6 +591,6 @@ export class ClaimsService {
     const daysToAdd = level === 1 ? 120 : level === 2 ? 180 : 60;
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + daysToAdd);
-    return dueDate.toISOString().split("T")[0];
+    return dueDate.toISOString().split("T")[0] || "";
   }
 }

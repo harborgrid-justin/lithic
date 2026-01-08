@@ -147,7 +147,7 @@ export default function DashboardsPage() {
                     {dashboard.shared && (
                       <Share2
                         className="w-4 h-4 text-gray-400"
-                        title="Shared"
+                        aria-label="Shared"
                       />
                     )}
                   </div>

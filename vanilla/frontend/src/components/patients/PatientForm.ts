@@ -226,7 +226,7 @@ export class PatientForm {
     (form.elements.namedItem("lastName") as HTMLInputElement).value =
       this.patient.lastName;
     (form.elements.namedItem("dateOfBirth") as HTMLInputElement).value =
-      new Date(this.patient.dateOfBirth).toISOString().split("T")[0];
+      new Date(this.patient.dateOfBirth).toISOString().split("T")[0] || "";
     (form.elements.namedItem("gender") as HTMLSelectElement).value =
       this.patient.gender;
     (form.elements.namedItem("bloodType") as HTMLSelectElement).value =

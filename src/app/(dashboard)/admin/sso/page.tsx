@@ -74,6 +74,7 @@ export default function SSOAdminPage() {
     scopes: "openid email profile",
     pkceEnabled: true,
     enabled: true,
+    authorizationEndpoint: "",
   });
 
   useEffect(() => {
@@ -232,6 +233,7 @@ export default function SSOAdminPage() {
       scopes: "openid email profile",
       pkceEnabled: true,
       enabled: true,
+      authorizationEndpoint: "",
     });
   };
 

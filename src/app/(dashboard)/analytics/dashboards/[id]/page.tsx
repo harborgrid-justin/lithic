@@ -176,7 +176,7 @@ export default function DashboardDetailPage() {
                     {dashboard.type}
                   </span>
                   {dashboard.shared && (
-                    <Share2 className="w-5 h-5 text-gray-400" title="Shared" />
+                    <Share2 className="w-5 h-5 text-gray-400" aria-label="Shared" />
                   )}
                 </div>
                 {dashboard.description && (

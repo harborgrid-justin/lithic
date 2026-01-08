@@ -180,7 +180,7 @@ export function patientToFHIR(patient: InternalPatient): Patient {
     active: patient.active,
     name: [name],
     gender: genderMap[patient.gender] || "unknown",
-    birthDate: patient.dateOfBirth.toISOString().split("T")[0],
+    birthDate: patient.dateOfBirth.toISOString().split("T")[0] || "",
   };
 
   // Add optional fields

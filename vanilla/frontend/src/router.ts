@@ -66,6 +66,10 @@ export class Router {
       const routePart = routeParts[i];
       const pathPart = pathParts[i];
 
+      if (!routePart || !pathPart) {
+        return null;
+      }
+
       if (routePart.startsWith(":")) {
         // This is a parameter
         const paramName = routePart.slice(1);

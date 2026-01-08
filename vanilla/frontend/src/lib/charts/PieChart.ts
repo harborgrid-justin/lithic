@@ -313,6 +313,7 @@ export class PieChart extends ChartBase {
 
     if (
       this.config.series.length === 0 ||
+      !this.config.series[0] ||
       this.config.series[0].data.length === 0
     ) {
       return;
@@ -331,7 +332,7 @@ export class PieChart extends ChartBase {
     this.ctx.font = "11px Arial, sans-serif";
 
     series.data.forEach((point, index) => {
-      const color = this.colors[index % this.colors.length];
+      const color = this.colors[index % this.colors.length] || "#000000";
       const currentY = y + index * itemHeight;
 
       // Draw color box

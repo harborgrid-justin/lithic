@@ -299,7 +299,7 @@ export class SurescriptsClient {
               Identification: {
                 FirstName: params.patientFirstName,
                 LastName: params.patientLastName,
-                DateOfBirth: params.dateOfBirth.toISOString().split("T")[0],
+                DateOfBirth: params.dateOfBirth.toISOString().split("T")[0] || "",
                 Gender: params.gender,
                 ZipCode: params.zipCode,
               },
@@ -349,7 +349,7 @@ export class SurescriptsClient {
                 LastName: prescription.patient.lastName,
                 DateOfBirth: prescription.patient.dateOfBirth
                   .toISOString()
-                  .split("T")[0],
+                  .split("T")[0] || "",
                 Gender: prescription.patient.gender,
               },
               Address: {
@@ -419,7 +419,7 @@ export class SurescriptsClient {
         Patient: {
           FirstName: params.patientFirstName,
           LastName: params.patientLastName,
-          DateOfBirth: params.dateOfBirth.toISOString().split("T")[0],
+          DateOfBirth: params.dateOfBirth.toISOString().split("T")[0] || "",
         },
       },
     };

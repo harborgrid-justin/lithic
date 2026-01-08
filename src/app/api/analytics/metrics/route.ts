@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
         if (dimensions?.includes("date")) {
           const date = new Date();
           date.setDate(date.getDate() - (numRecords - i));
-          record.date = date.toISOString().split("T")[0];
+          record.date = date.toISOString().split("T")[0] || "";
         }
         if (dimensions?.includes("department")) {
           const departments = [

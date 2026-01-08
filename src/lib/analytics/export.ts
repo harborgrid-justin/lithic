@@ -522,7 +522,7 @@ export async function batchExport(
         sheetName: firstExport.name,
       });
 
-      const filename = `batch_export_${new Date().toISOString().split("T")[0]}.xlsx`;
+      const filename = `batch_export_${new Date().toISOString().split("T")[0] || ""}.xlsx`;
       downloadFile(blob, filename);
 
       return {
