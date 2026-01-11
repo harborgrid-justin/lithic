@@ -41,8 +41,8 @@ export default function SchedulingPage() {
 
       const [appointmentsData, providersData] = await Promise.all([
         schedulingService.getAppointments({
-          startDate: today.toISOString().split("T")[0],
-          endDate: endDate.toISOString().split("T")[0],
+          startDate: today.toISOString().split("T")[0] || "",
+          endDate: endDate.toISOString().split("T")[0] || "",
         }),
         schedulingService.getProviders(),
       ]);
@@ -51,9 +51,9 @@ export default function SchedulingPage() {
       setProviders(providersData);
 
       // Calculate stats
-      const todayStr = today.toISOString().split("T")[0];
+      const todayStr = today.toISOString().split("T")[0] || "";
       const todayAppts = appointmentsData.filter(
-        (apt) => apt.startTime.split("T")[0] === todayStr,
+        (apt) => apt.startTime.split("T")[0] || "" === todayStr,
       );
       const confirmed = appointmentsData.filter(
         (apt) => apt.status === "confirmed",
@@ -81,7 +81,7 @@ export default function SchedulingPage() {
   };
 
   const handleTimeSlotClick = (date: Date, time: string) => {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = date.toISOString().split("T")[0] || "";
     router.push(`/scheduling/appointments/new?date=${dateStr}&time=${time}`);
   };
 

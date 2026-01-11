@@ -1,0 +1,159 @@
+{
+  "patient": {
+    "demographics": "Demografía",
+    "medical_history": "Historia Médica",
+    "allergies": "Alergias",
+    "medications": "Medicamentos Actuales",
+    "vital_signs": "Signos Vitales",
+    "insurance": "Información de Seguro",
+    "emergency_contact": "Contacto de Emergencia"
+  },
+  "vitals": {
+    "blood_pressure": "Presión Arterial",
+    "systolic": "Sistólica",
+    "diastolic": "Diastólica",
+    "heart_rate": "Frecuencia Cardíaca",
+    "respiratory_rate": "Frecuencia Respiratoria",
+    "temperature": "Temperatura",
+    "oxygen_saturation": "Saturación de Oxígeno (SpO2)",
+    "weight": "Peso",
+    "height": "Altura",
+    "bmi": "Índice de Masa Corporal (IMC)",
+    "pain_level": "Nivel de Dolor"
+  },
+  "diagnosis": {
+    "primary": "Diagnóstico Primario",
+    "secondary": "Diagnóstico Secundario",
+    "differential": "Diagnóstico Diferencial",
+    "icd_code": "Código CIE-10",
+    "date_diagnosed": "Fecha de Diagnóstico",
+    "status": "Estado",
+    "notes": "Notas Clínicas"
+  },
+  "medications": {
+    "name": "Nombre del Medicamento",
+    "dosage": "Dosis",
+    "route": "Vía de Administración",
+    "frequency": "Frecuencia",
+    "start_date": "Fecha de Inicio",
+    "end_date": "Fecha de Fin",
+    "prescriber": "Prescriptor",
+    "pharmacy": "Farmacia",
+    "refills": "Recargas Restantes",
+    "instructions": "Instrucciones",
+    "side_effects": "Efectos Secundarios Potenciales",
+    "interactions": "Interacciones Medicamentosas"
+  },
+  "lab": {
+    "test_name": "Nombre de la Prueba",
+    "result": "Resultado",
+    "reference_range": "Rango de Referencia",
+    "status": "Estado",
+    "ordered_by": "Ordenado Por",
+    "collected_date": "Fecha de Recolección",
+    "resulted_date": "Fecha de Resultado",
+    "specimen_type": "Tipo de Muestra",
+    "abnormal": "Anormal",
+    "critical": "Crítico",
+    "normal": "Normal",
+    "pending": "Pendiente"
+  },
+  "imaging": {
+    "study_type": "Tipo de Estudio",
+    "body_part": "Parte del Cuerpo",
+    "ordered_date": "Fecha de Orden",
+    "performed_date": "Fecha de Realización",
+    "radiologist": "Radiólogo",
+    "findings": "Hallazgos",
+    "impression": "Impresión",
+    "images_available": "Imágenes Disponibles"
+  },
+  "appointments": {
+    "type": "Tipo de Cita",
+    "reason": "Motivo de la Visita",
+    "provider": "Proveedor",
+    "location": "Ubicación",
+    "date_time": "Fecha y Hora",
+    "duration": "Duración",
+    "status": "Estado",
+    "notes": "Notas",
+    "follow_up": "Seguimiento Requerido"
+  },
+  "procedures": {
+    "name": "Nombre del Procedimiento",
+    "cpt_code": "Código CPT",
+    "scheduled_date": "Fecha Programada",
+    "performed_date": "Fecha Realizada",
+    "provider": "Proveedor Ejecutante",
+    "location": "Ubicación",
+    "anesthesia": "Tipo de Anestesia",
+    "consent_obtained": "Consentimiento Obtenido",
+    "complications": "Complicaciones",
+    "outcome": "Resultado"
+  },
+  "allergies": {
+    "allergen": "Alérgeno",
+    "reaction": "Reacción",
+    "severity": "Gravedad",
+    "onset_date": "Fecha de Inicio",
+    "verified": "Verificado",
+    "mild": "Leve",
+    "moderate": "Moderado",
+    "severe": "Grave",
+    "life_threatening": "Potencialmente Mortal"
+  },
+  "immunizations": {
+    "vaccine": "Vacuna",
+    "date_administered": "Fecha de Administración",
+    "dose": "Número de Dosis",
+    "site": "Sitio de Administración",
+    "lot_number": "Número de Lote",
+    "manufacturer": "Fabricante",
+    "expiration_date": "Fecha de Vencimiento",
+    "administered_by": "Administrado Por",
+    "next_due": "Próxima Dosis Pendiente"
+  },
+  "clinical_notes": {
+    "chief_complaint": "Queja Principal",
+    "history_present_illness": "Historia de la Enfermedad Actual",
+    "review_of_systems": "Revisión de Sistemas",
+    "physical_exam": "Examen Físico",
+    "assessment": "Evaluación",
+    "plan": "Plan",
+    "progress_note": "Nota de Progreso",
+    "discharge_summary": "Resumen de Alta"
+  },
+  "orders": {
+    "lab_orders": "Órdenes de Laboratorio",
+    "imaging_orders": "Órdenes de Imágenes",
+    "medication_orders": "Órdenes de Medicamentos",
+    "referral": "Referencia",
+    "consult": "Consulta",
+    "priority": "Prioridad",
+    "routine": "Rutina",
+    "urgent": "Urgente",
+    "stat": "STAT"
+  },
+  "billing": {
+    "cpt_code": "Código CPT",
+    "icd_code": "Código CIE-10",
+    "charge": "Cargo",
+    "insurance_claim": "Reclamo de Seguro",
+    "patient_responsibility": "Responsabilidad del Paciente",
+    "copay": "Copago",
+    "deductible": "Deducible",
+    "coinsurance": "Coseguro"
+  },
+  "terms": {
+    "acute": "Agudo",
+    "chronic": "Crónico",
+    "benign": "Benigno",
+    "malignant": "Maligno",
+    "stable": "Estable",
+    "improving": "Mejorando",
+    "worsening": "Empeorando",
+    "resolved": "Resuelto",
+    "recurrent": "Recurrente",
+    "progressive": "Progresivo"
+  }
+}

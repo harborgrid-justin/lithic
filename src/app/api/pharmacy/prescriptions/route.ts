@@ -88,9 +88,9 @@ export async function POST(request: NextRequest) {
       id: `rx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       rxNumber,
       ...data,
-      expirationDate: expirationDate.toISOString().split("T")[0],
+      expirationDate: expirationDate.toISOString().split("T")[0] || "",
       nextRefillDate: nextRefillDate
-        ? nextRefillDate.toISOString().split("T")[0]
+        ? nextRefillDate.toISOString().split("T")[0] || ""
         : null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

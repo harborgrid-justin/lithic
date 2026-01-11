@@ -85,10 +85,10 @@ class TimeUtil {
    * Check if date is a holiday
    */
   static isHoliday(date: Date, holidays: Holiday[]): Holiday | null {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = date.toISOString().split("T")[0] || "";
     return (
       holidays.find((h) => {
-        const holidayStr = new Date(h.date).toISOString().split("T")[0];
+        const holidayStr = new Date(h.date).toISOString().split("T")[0] || "";
         return holidayStr === dateStr;
       }) || null
     );

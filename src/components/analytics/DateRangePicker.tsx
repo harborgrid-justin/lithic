@@ -55,8 +55,8 @@ export function DateRangePicker({
     }
 
     onChange({
-      start: start.toISOString().split("T")[0],
-      end: end.toISOString().split("T")[0],
+      start: start.toISOString().split("T")[0] || "",
+      end: end.toISOString().split("T")[0] || "",
       preset: presetId as DateRange["preset"],
     });
   };

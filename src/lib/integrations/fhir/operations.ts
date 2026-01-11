@@ -455,7 +455,7 @@ function calculateMatchScore(searchPatient: Patient, candidatePatient: any): num
     const weight = 0.4;
     totalWeight += weight;
 
-    if (searchPatient.birthDate === candidatePatient.dateOfBirth.toISOString().split("T")[0]) {
+    if (searchPatient.birthDate === candidatePatient.dateOfBirth.toISOString().split("T")[0] || "") {
       score += weight;
     }
   }
@@ -508,7 +508,7 @@ function transformPatientToFHIR(patient: any): Patient {
       },
     ],
     gender: patient.gender as any,
-    birthDate: patient.dateOfBirth?.toISOString().split("T")[0],
+    birthDate: patient.dateOfBirth?.toISOString().split("T")[0] || "",
     telecom: patient.phone ? [{ system: "phone", value: patient.phone }] : [],
     address: patient.address ? [{ text: patient.address }] : [],
   };

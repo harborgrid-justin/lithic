@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       id: `inv_${Date.now()}`,
       ...data,
       status: "in-stock",
-      lastRestocked: new Date().toISOString().split("T")[0],
+      lastRestocked: new Date().toISOString().split("T")[0] || "",
     };
 
     inventory.push(newItem);

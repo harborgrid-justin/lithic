@@ -55,7 +55,7 @@ export default function PharmacyPage() {
       const [prescriptions, inventory, queue, refills, eprescribe] =
         await Promise.all([
           prescriptionService.getPrescriptions({
-            startDate: new Date().toISOString().split("T")[0],
+            startDate: new Date().toISOString().split("T")[0] || "",
           }),
           pharmacyService.getInventory({ lowStock: true }),
           prescriptionService.getDispensingQueue({ status: "queued" }),

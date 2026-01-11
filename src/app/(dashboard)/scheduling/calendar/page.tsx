@@ -31,8 +31,8 @@ export default function CalendarPage() {
 
       const [appointmentsData, providersData] = await Promise.all([
         schedulingService.getAppointments({
-          startDate: startDate.toISOString().split("T")[0],
-          endDate: endDate.toISOString().split("T")[0],
+          startDate: startDate.toISOString().split("T")[0] || "",
+          endDate: endDate.toISOString().split("T")[0] || "",
         }),
         schedulingService.getProviders(),
       ]);
@@ -63,7 +63,7 @@ export default function CalendarPage() {
   };
 
   const handleTimeSlotClick = (date: Date, time: string) => {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = date.toISOString().split("T")[0] || "";
     router.push(`/scheduling/appointments/new?date=${dateStr}&time=${time}`);
   };
 

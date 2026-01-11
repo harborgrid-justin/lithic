@@ -400,3 +400,481 @@ npm run build      # 7 page failures (unchanged)
 ### Coordination Mission: ✅ SUCCESS
 All deployment agents completed successfully. Platform ready for error resolution phase.
 Agent 14 has fulfilled all coordination responsibilities and created comprehensive documentation.
+
+---
+
+# ============================================================================
+# LITHIC HEALTHCARE PLATFORM v0.5 - AGENT 13 COORDINATION HUB
+# ============================================================================
+
+**Coordination Date:** 2026-01-08
+**Agent 13 Status:** ✅ ACTIVE - Coordinating v0.5 Development
+**Mission:** Create shared infrastructure and coordinate all v0.5 agent work
+
+## v0.5 Agent Assignment Matrix
+
+| Agent # | Role | Module(s) | Status | Priority |
+|---------|------|-----------|--------|----------|
+| 15 | Mobile Application Lead | Mobile App, PWA, Offline Mode | READY | HIGH |
+| 16 | Notification Hub Lead | Notification System, Templates, Preferences | READY | HIGH |
+| 17 | AI Integration Lead | AI Models, ML Pipeline, Insights | READY | HIGH |
+| 18 | Voice Integration Lead | Voice Recognition, Commands, Transcription | READY | MEDIUM |
+| 19 | RPM Lead | Remote Patient Monitoring, Devices, Readings | READY | HIGH |
+| 20 | SDOH Lead | Social Determinants, Assessments, Resources | READY | MEDIUM |
+| 21 | Clinical Research Lead | Trials, Participants, Adverse Events | READY | MEDIUM |
+| 22 | Patient Engagement Lead | Programs, Activities, Rewards | READY | MEDIUM |
+| 23 | Document Management Lead | Documents, Versions, Sharing | READY | HIGH |
+| 24 | E-Signature Lead | Signature Requests, Digital Signing | READY | HIGH |
+| 25 | i18n Lead | Translations, Locales, RTL Support | READY | LOW |
+
+## Shared Infrastructure Files Created by Agent 13
+
+### ✅ Core Shared Files
+1. **`/src/types/shared.ts`** (1,800+ lines)
+   - Complete type definitions for all v0.5 modules
+   - Mobile, Notifications, AI, Voice, RPM, SDOH, Research, Engagement, Documents, E-Signature, i18n
+   - Enums, interfaces, and type utilities
+
+2. **`/src/lib/shared/constants.ts`** (800+ lines)
+   - Application constants and configuration
+   - Module-specific constants
+   - Error codes, HTTP status codes
+   - Feature flags and integration points
+
+3. **`/src/lib/shared/utils.ts`** (700+ lines)
+   - String, date, number, array, object utilities
+   - Validation helpers
+   - Medical calculations (BMI, BP categories)
+   - Async utilities (debounce, throttle, retry)
+   - Color and file utilities
+
+4. **`/src/lib/shared/validators.ts`** (600+ lines)
+   - Zod validation schemas for all modules
+   - Common field validators (email, phone, URL, etc.)
+   - Module-specific validators
+   - Type inference exports
+
+5. **`/src/lib/shared/api-helpers.ts`** (700+ lines)
+   - ApiClient class with retry logic
+   - Request/response handling
+   - Pagination helpers
+   - File upload/download utilities
+   - Batch operations
+   - Caching and WebSocket support
+
+6. **`/src/lib/shared/error-handling.ts`** (700+ lines)
+   - Custom error classes (AppError, ValidationError, etc.)
+   - Module-specific error types
+   - Error logging and recovery
+   - Circuit breaker pattern
+   - Try-catch wrappers
+
+7. **`/src/lib/shared/event-bus.ts`** (600+ lines)
+   - Centralized event bus for inter-module communication
+   - Module-specific event types
+   - Middleware support (logging, validation, transformation)
+   - Event history and subscriptions
+
+## Shared Interface Contracts
+
+### Mobile ↔ Notification Hub
+```typescript
+interface MobileNotificationContract {
+  // Mobile sends device registration
+  MobileDevice → NotificationService.registerDevice()
+
+  // Notifications pushes to mobile
+  NotificationService.send() → MobileDevice (via FCM/APNS)
+
+  // Events
+  eventBus.on(MobileEvents.DEVICE_REGISTERED) → NotificationService
+  eventBus.on(NotificationEvents.SENT) → MobileApp
+}
+```
+
+### AI ↔ Voice ↔ Clinical
+```typescript
+interface AIVoiceClinicalContract {
+  // Voice sends transcription to AI
+  VoiceSession → AIService.processTranscription()
+
+  // AI analyzes clinical data
+  AIService.analyzeClinicalData() → ClinicalService
+
+  // Events
+  eventBus.on(VoiceEvents.TRANSCRIPTION_UPDATED) → AIService
+  eventBus.on(AIEvents.INSIGHT_GENERATED) → ClinicalService
+}
+```
+
+### RPM ↔ Patient Engagement ↔ Notifications
+```typescript
+interface RPMEngagementContract {
+  // RPM readings trigger engagement
+  RPMReading → EngagementService.recordActivity()
+
+  // RPM alerts trigger notifications
+  RPMAlert → NotificationService.send()
+
+  // Events
+  eventBus.on(RPMEvents.READING_RECEIVED) → EngagementService
+  eventBus.on(RPMEvents.ALERT_TRIGGERED) → NotificationService
+}
+```
+
+### SDOH ↔ Patient Data
+```typescript
+interface SDOHPatientContract {
+  // SDOH assessment links to patient
+  SDOHAssessment → PatientService.updateSocialDeterminants()
+
+  // Patient data used for SDOH screening
+  PatientService.getProfile() → SDOHService.screenForRisks()
+}
+```
+
+### Research ↔ Clinical
+```typescript
+interface ResearchClinicalContract {
+  // Research uses clinical data
+  ClinicalService.getEncounters() → ResearchService.recordVisit()
+
+  // Research findings update clinical knowledge
+  ResearchService.getFindings() → ClinicalService.updateGuidelines()
+}
+```
+
+### Document Management ↔ E-Signature
+```typescript
+interface DocumentESignatureContract {
+  // Documents require signatures
+  Document → ESignatureService.createRequest()
+
+  // Signatures attach to documents
+  ESignature → DocumentService.attachSignature()
+
+  // Events
+  eventBus.on(DocumentEvents.UPLOADED) → ESignatureService
+  eventBus.on(ESignatureEvents.DOCUMENT_SIGNED) → DocumentService
+}
+```
+
+### i18n ↔ All UI Components
+```typescript
+interface I18nContract {
+  // All modules use translation service
+  useTranslation() → i18nService.translate()
+
+  // Locale changes propagate everywhere
+  i18nService.setLocale() → eventBus.emit(I18nEvents.LOCALE_CHANGED)
+
+  // All modules listen for locale changes
+  eventBus.on(I18nEvents.LOCALE_CHANGED) → Module.updateTranslations()
+}
+```
+
+## Integration Dependencies
+
+### Module Dependency Graph
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     i18n (Layer 0)                           │
+│                  (Used by all modules)                       │
+└─────────────────────────────────────────────────────────────┘
+                            ▲
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│              Core Services (Layer 1)                         │
+│   Auth, Patient, Clinical, Scheduling, Billing              │
+└─────────────────────────────────────────────────────────────┘
+                            ▲
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│              Enhanced Services (Layer 2)                     │
+│         AI, Voice, Notifications, Documents                  │
+└─────────────────────────────────────────────────────────────┘
+                            ▲
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│           Specialized Services (Layer 3)                     │
+│      RPM, SDOH, Research, Engagement, E-Signature           │
+└─────────────────────────────────────────────────────────────┘
+                            ▲
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│              Client Applications (Layer 4)                   │
+│              Mobile App, PWA, Web Portal                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Build Order Recommendations
+
+**Phase 1: Foundation (Agents 13, 25)**
+1. ✅ Agent 13: Shared infrastructure (COMPLETE)
+2. Agent 25: i18n implementation (translations, locales)
+
+**Phase 2: Core Enhancements (Agents 16, 23, 24)**
+3. Agent 16: Notification Hub (templates, channels, preferences)
+4. Agent 23: Document Management (upload, versioning, sharing)
+5. Agent 24: E-Signature (requests, signing, verification)
+
+**Phase 3: AI & Voice (Agents 17, 18)**
+6. Agent 17: AI Integration (models, insights, predictions)
+7. Agent 18: Voice Integration (transcription, commands)
+
+**Phase 4: Patient Monitoring (Agents 19, 20, 22)**
+8. Agent 19: RPM (devices, readings, alerts)
+9. Agent 20: SDOH (assessments, resources, interventions)
+10. Agent 22: Patient Engagement (programs, activities, rewards)
+
+**Phase 5: Research & Mobile (Agents 21, 15)**
+11. Agent 21: Clinical Research (trials, participants, adverse events)
+12. Agent 15: Mobile Application (PWA, offline mode, sync)
+
+## API Contract Requirements
+
+### RESTful Endpoints Pattern
+All modules should follow this pattern:
+
+```typescript
+// Base CRUD Operations
+GET    /api/v1/{module}/{resource}           # List with pagination
+GET    /api/v1/{module}/{resource}/{id}      # Get by ID
+POST   /api/v1/{module}/{resource}           # Create
+PUT    /api/v1/{module}/{resource}/{id}      # Update
+PATCH  /api/v1/{module}/{resource}/{id}      # Partial update
+DELETE /api/v1/{module}/{resource}/{id}      # Delete
+
+// Batch Operations
+POST   /api/v1/{module}/{resource}/batch     # Batch create
+PUT    /api/v1/{module}/{resource}/batch     # Batch update
+DELETE /api/v1/{module}/{resource}/batch     # Batch delete
+
+// Search & Filter
+GET    /api/v1/{module}/{resource}/search    # Advanced search
+POST   /api/v1/{module}/{resource}/query     # Complex queries
+
+// Module-Specific Actions
+POST   /api/v1/{module}/{resource}/{id}/{action}
+```
+
+### Response Format
+All API responses must follow this format:
+
+```typescript
+{
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: any;
+    field?: string;
+  };
+  meta?: {
+    page?: number;
+    limit?: number;
+    total?: number;
+    totalPages?: number;
+    hasMore?: boolean;
+  };
+}
+```
+
+### Authentication & Authorization
+All endpoints (except public) require:
+- Authorization header: `Bearer {token}`
+- Token validation via NextAuth
+- Permission checks via RBAC system
+
+## Known Conflicts to Resolve
+
+### 1. Type Export Conflicts (HIGH PRIORITY)
+**Issue:** Some types from v0.3 may conflict with v0.5 shared types
+**Resolution:**
+- Agent 13 created `/src/types/shared.ts` with all v0.5 types
+- Agents should import from `@/types/shared` for v0.5 types
+- Existing types remain in their original locations
+
+### 2. Event Naming Collisions (MEDIUM PRIORITY)
+**Issue:** Multiple modules may emit similar events
+**Resolution:**
+- All events use module prefix (e.g., `mobile:`, `rpm:`, `ai:`)
+- Event bus provides namespace isolation
+- Use constants from `/src/lib/shared/event-bus.ts`
+
+### 3. API Route Conflicts (MEDIUM PRIORITY)
+**Issue:** New v0.5 routes may conflict with v0.3 routes
+**Resolution:**
+- All v0.5 routes use `/api/v1/{module}/` prefix
+- Document all new routes in module README
+- Test for conflicts before deployment
+
+### 4. Database Schema Changes (HIGH PRIORITY)
+**Issue:** New v0.5 features require database schema updates
+**Resolution:**
+- Use Prisma migrations for all schema changes
+- Test migrations in development before production
+- Coordinate with Agent 11 for migration testing
+
+### 5. State Management Overlaps (LOW PRIORITY)
+**Issue:** Multiple modules may need to manage similar state
+**Resolution:**
+- Use Zustand stores with module prefixes
+- Create separate stores per module
+- Use event bus for cross-module state sync
+
+## Status Tracking for Each Agent
+
+### Agent 15: Mobile Application
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE), Agent 16 (notifications)
+- **Files to Create:**
+  - `/src/lib/mobile/sync.ts`
+  - `/src/lib/mobile/offline-queue.ts`
+  - `/src/lib/pwa/service-worker.ts`
+  - `/src/components/mobile/MobileNav.tsx`
+  - `/src/app/api/mobile/*/route.ts`
+- **Integration Points:** Notifications, Sync Engine, Offline Storage
+
+### Agent 16: Notification Hub
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE)
+- **Files to Create:**
+  - `/src/lib/notifications/hub.ts`
+  - `/src/lib/notifications/channels/*`
+  - `/src/lib/notifications/templates.ts`
+  - `/src/components/notifications/NotificationCenter.tsx`
+  - `/src/app/api/notifications/*/route.ts`
+- **Integration Points:** Mobile, Email, SMS, Push, Voice
+
+### Agent 17: AI Integration
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE)
+- **Files to Create:**
+  - `/src/lib/ai/models.ts`
+  - `/src/lib/ai/inference.ts`
+  - `/src/lib/ai/insights.ts`
+  - `/src/components/ai/AIAssistant.tsx`
+  - `/src/app/api/ai/*/route.ts`
+- **Integration Points:** Clinical, Voice, Diagnostics, Risk Assessment
+
+### Agent 18: Voice Integration
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE), Agent 17 (AI)
+- **Files to Create:**
+  - `/src/lib/voice/recognition.ts`
+  - `/src/lib/voice/commands.ts`
+  - `/src/lib/voice/transcription.ts`
+  - `/src/components/voice/VoiceInput.tsx`
+  - `/src/app/api/voice/*/route.ts`
+- **Integration Points:** AI, Clinical Notes, Commands
+
+### Agent 19: RPM
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE), Agent 16 (notifications)
+- **Files to Create:**
+  - `/src/lib/rpm/devices.ts`
+  - `/src/lib/rpm/readings.ts`
+  - `/src/lib/rpm/alerts.ts`
+  - `/src/components/rpm/DeviceMonitor.tsx`
+  - `/src/app/api/rpm/*/route.ts`
+- **Integration Points:** Notifications, Patient, Engagement
+
+### Agent 20: SDOH
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE)
+- **Files to Create:**
+  - `/src/lib/sdoh/assessments.ts`
+  - `/src/lib/sdoh/resources.ts`
+  - `/src/lib/sdoh/interventions.ts`
+  - `/src/components/sdoh/AssessmentForm.tsx`
+  - `/src/app/api/sdoh/*/route.ts`
+- **Integration Points:** Patient, Clinical, Community Resources
+
+### Agent 21: Clinical Research
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE), Agent 24 (e-signature for consent)
+- **Files to Create:**
+  - `/src/lib/research/trials.ts`
+  - `/src/lib/research/participants.ts`
+  - `/src/lib/research/adverse-events.ts`
+  - `/src/components/research/TrialManagement.tsx`
+  - `/src/app/api/research/*/route.ts`
+- **Integration Points:** Clinical, E-Signature, Patient
+
+### Agent 22: Patient Engagement
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE), Agent 16 (notifications)
+- **Files to Create:**
+  - `/src/lib/engagement/programs.ts`
+  - `/src/lib/engagement/activities.ts`
+  - `/src/lib/engagement/rewards.ts`
+  - `/src/components/engagement/ProgramDashboard.tsx`
+  - `/src/app/api/engagement/*/route.ts`
+- **Integration Points:** Notifications, RPM, Patient Portal
+
+### Agent 23: Document Management
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE)
+- **Files to Create:**
+  - `/src/lib/documents/storage.ts`
+  - `/src/lib/documents/versions.ts`
+  - `/src/lib/documents/sharing.ts`
+  - `/src/components/documents/DocumentViewer.tsx`
+  - `/src/app/api/documents/*/route.ts`
+- **Integration Points:** E-Signature, Clinical, Patient
+
+### Agent 24: E-Signature
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE), Agent 23 (documents)
+- **Files to Create:**
+  - `/src/lib/esignature/requests.ts`
+  - `/src/lib/esignature/signing.ts`
+  - `/src/lib/esignature/verification.ts`
+  - `/src/components/esignature/SignatureCanvas.tsx`
+  - `/src/app/api/esignature/*/route.ts`
+- **Integration Points:** Documents, Research (consent), Legal
+
+### Agent 25: i18n
+- **Status:** READY TO START
+- **Dependencies:** Agent 13 (COMPLETE)
+- **Files to Create:**
+  - `/src/lib/i18n/translations.ts`
+  - `/src/lib/i18n/locales.ts`
+  - `/src/lib/i18n/rtl.ts`
+  - `/src/hooks/useTranslation.ts`
+  - `/src/locales/*/*.json`
+- **Integration Points:** ALL MODULES (used everywhere)
+
+## Coordination Status Summary
+
+**Date:** 2026-01-08
+**Coordinator:** Agent 13
+**Status:** ✅ INFRASTRUCTURE COMPLETE
+
+### Completed Tasks
+- ✅ Shared type definitions (`/src/types/shared.ts`)
+- ✅ Shared constants (`/src/lib/shared/constants.ts`)
+- ✅ Shared utilities (`/src/lib/shared/utils.ts`)
+- ✅ Shared validators (`/src/lib/shared/validators.ts`)
+- ✅ API helpers (`/src/lib/shared/api-helpers.ts`)
+- ✅ Error handling (`/src/lib/shared/error-handling.ts`)
+- ✅ Event bus (`/src/lib/shared/event-bus.ts`)
+- ✅ Integration contracts documented
+- ✅ Module dependencies mapped
+- ✅ Build order defined
+- ✅ API contracts specified
+
+### Ready for Deployment
+All shared infrastructure is in place. Agents 15-25 can now begin their work.
+
+### Next Steps
+1. Agent 25 should start first (i18n foundation)
+2. Agents 16, 23, 24 can work in parallel (Phase 2)
+3. Agents 17, 18 can work in parallel (Phase 3)
+4. Agents 19, 20, 22 can work in parallel (Phase 4)
+5. Agents 21, 15 complete the implementation (Phase 5)
+
+---
+**Agent 13 Coordination Complete** ✅

@@ -8,7 +8,7 @@ export default function RadiologyWorklist() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     modality: "",
-    date: new Date().toISOString().split("T")[0],
+    date: new Date().toISOString().split("T")[0] || "",
     status: "",
   });
 

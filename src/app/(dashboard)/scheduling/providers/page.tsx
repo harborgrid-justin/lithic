@@ -157,7 +157,7 @@ export default function ProvidersPage() {
                   </label>
                   <Input
                     type="date"
-                    value={selectedDate.toISOString().split("T")[0]}
+                    value={selectedDate.toISOString().split("T")[0] || ""}
                     onChange={(e) => setSelectedDate(new Date(e.target.value))}
                     className="mt-1"
                   />

@@ -176,7 +176,7 @@ export function ClaimEditor({ claim, onSave, onCancel }: ClaimEditorProps) {
                 type="date"
                 value={
                   formData.serviceDate
-                    ? new Date(formData.serviceDate).toISOString().split("T")[0]
+                    ? new Date(formData.serviceDate).toISOString().split("T")[0] || ""
                     : ""
                 }
                 onChange={(e) =>

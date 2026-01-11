@@ -1,4 +1,4 @@
-# Lithic Enterprise Healthcare Platform v0.3
+# Lithic Enterprise Healthcare Platform v0.5
 
 > The Ultimate Epic Competitor - Enterprise-Grade Healthcare SaaS Platform
 

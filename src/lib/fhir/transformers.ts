@@ -160,7 +160,7 @@ export function patientToFHIR(patient: InternalPatient): Patient {
     name: [name],
     telecom: telecom.length > 0 ? telecom : undefined,
     gender: genderMap[patient.gender] || "unknown",
-    birthDate: patient.dateOfBirth.toISOString().split("T")[0],
+    birthDate: patient.dateOfBirth.toISOString().split("T")[0] || "",
     address: address.length > 0 ? address : undefined,
     maritalStatus: patient.maritalStatus
       ? createCodeableConcept(

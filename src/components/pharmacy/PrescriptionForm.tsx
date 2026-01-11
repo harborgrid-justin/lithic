@@ -56,7 +56,7 @@ export function PrescriptionForm({
 
     // Dates
     writtenDate:
-      prescription?.writtenDate || new Date().toISOString().split("T")[0],
+      prescription?.writtenDate || new Date().toISOString().split("T")[0] || "",
 
     // Additional
     indication: prescription?.indication || "",

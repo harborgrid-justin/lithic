@@ -137,7 +137,7 @@ export default function ResourcesPage() {
           </Select>
           <Input
             type="date"
-            value={selectedDate.toISOString().split("T")[0]}
+            value={selectedDate.toISOString().split("T")[0] || ""}
             onChange={(e) => setSelectedDate(new Date(e.target.value))}
           />
         </div>

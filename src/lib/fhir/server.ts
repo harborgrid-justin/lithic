@@ -265,7 +265,7 @@ export class FHIRServer {
       software: {
         name: "Lithic Healthcare Platform",
         version: this.config.version,
-        releaseDate: new Date().toISOString().split("T")[0],
+        releaseDate: new Date().toISOString().split("T")[0] || "",
       },
       implementation: {
         description:

@@ -348,7 +348,7 @@ export class ImagingController {
   }
 
   async getTodayWorklist(modality?: string) {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split("T")[0] || "";
     return await this.imagingService.getWorklist({
       scheduledDate: today,
       modality,

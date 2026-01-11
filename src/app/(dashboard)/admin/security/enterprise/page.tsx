@@ -51,7 +51,7 @@ export default function SecurityDashboardPage() {
           </p>
         </div>
         <Badge
-          variant={securityPosture.score >= 80 ? "default" : "destructive"}
+          variant={securityPosture.score >= 80 ? "default" : "danger"}
           className="text-lg px-4 py-2"
         >
           Security Score: {securityPosture.score}/100 ({securityPosture.grade})
@@ -145,7 +145,7 @@ export default function SecurityDashboardPage() {
                         variant={
                           threat.severity === "CRITICAL" ||
                           threat.severity === "HIGH"
-                            ? "destructive"
+                            ? "danger"
                             : "secondary"
                         }
                       >

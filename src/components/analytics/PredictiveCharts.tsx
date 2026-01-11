@@ -45,7 +45,7 @@ export function PredictiveCharts({
       const randomVariation = (Math.random() - 0.5) * 100;
       const trend = i * 3;
       data.push({
-        date: date.toISOString().split("T")[0],
+        date: date.toISOString().split("T")[0] || "",
         actual: baseValue + trend + randomVariation,
         type: "historical",
       });
@@ -58,8 +58,8 @@ export function PredictiveCharts({
     const forecastData = forecasts.map((f) => ({
       date:
         typeof f.timestamp === "string"
-          ? f.timestamp.split("T")[0]
-          : f.timestamp.toISOString().split("T")[0],
+          ? f.timestamp.split("T")[0] || ""
+          : f.timestamp.toISOString().split("T")[0] || "",
       predicted: f.predicted,
       lowerBound: f.lowerBound,
       upperBound: f.upperBound,
@@ -76,8 +76,8 @@ export function PredictiveCharts({
       .map((a) => ({
         date:
           typeof a.timestamp === "string"
-            ? a.timestamp.split("T")[0]
-            : a.timestamp.toISOString().split("T")[0],
+            ? a.timestamp.split("T")[0] || ""
+            : a.timestamp.toISOString().split("T")[0] || "",
         value: a.value,
         severity: a.severity,
       }));

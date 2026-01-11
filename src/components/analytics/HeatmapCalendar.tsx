@@ -26,7 +26,7 @@ export function HeatmapCalendar({
   // Calculate weeks to display
   const weeks = getWeeks(start, end);
   const dataMap = new Map(
-    data.map((d) => [d.date.toISOString().split("T")[0], d])
+    data.map((d) => [d.date.toISOString().split("T")[0] || "", d])
   );
 
   // Get max value for scaling
@@ -61,7 +61,7 @@ export function HeatmapCalendar({
               {weeks.map((week, weekIndex) => (
                 <div key={weekIndex} className="flex flex-col gap-1">
                   {week.map((day, dayIndex) => {
-                    const dateKey = day.toISOString().split("T")[0];
+                    const dateKey = day.toISOString().split("T")[0] || "";
                     const dayData = dataMap.get(dateKey);
                     const intensity = dayData
                       ? Math.ceil((dayData.value / maxValue) * 4)
