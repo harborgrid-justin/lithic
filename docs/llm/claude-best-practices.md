@@ -137,7 +137,24 @@ When a service needs JSON (e.g. coding suggestions, diagnosis lists):
 - Optionally prefill the assistant turn with the opening `{` to suppress preamble.
 - Validate every parsed payload server-side; never trust shape blindly.
 
-## 7. Streaming
+## 7. Evaluate and ground (don't ship on vibes)
+
+In a clinical setting, "looks good" is not a quality bar. Two practices matter most:
+
+- **Eval-driven development.** Build a small, versioned set of representative cases with
+  expected outputs *before* tuning prompts or choosing a model. Re-run it on every prompt
+  edit and before bumping a model ID. This is how you justify Sonnet-vs-Opus per feature
+  (see [`token-optimization.md`](./token-optimization.md)) and catch regressions. The
+  [Batch API](https://platform.claude.com/docs/en/build-with-claude/batch-processing) runs
+  large evals cheaply.
+- **Ground outputs in sources.** For anything fact-bearing (guideline adherence, coding
+  rules, drug data), give Claude the source text and require it to cite or quote what it
+  used — and to say "not documented" rather than guess. Anthropic's
+  [Citations](https://platform.claude.com/docs/en/build-with-claude/citations) feature
+  returns source-linked claims, which reduces hallucination and gives clinicians a
+  verifiable trail. Never let the model invent clinical facts.
+
+## 8. Streaming
 
 For user-facing latency (the AI assistant panel, documentation helper), stream responses.
 The provider already implements SSE streaming; the React hooks consume it. Streaming does

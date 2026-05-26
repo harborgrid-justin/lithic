@@ -25,6 +25,10 @@ yarn-error.log*
 # Local env files
 .env*.local
 
+# Claude Code — keep shared config (settings.json, agents, commands) tracked,
+# ignore machine-local overrides
+.claude/settings.local.json
+
 # Vercel
 .vercel
 
