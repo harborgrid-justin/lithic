@@ -7,6 +7,16 @@
 
 ---
 
+> **Canonical guidance has moved.** This report is the original implementation record.
+> For current, enterprise-grade LLM guidance — Claude model selection, prompting, agent
+> architecture, folder structure, token optimization, and HIPAA/compliance — see
+> [`docs/llm/`](./docs/llm/). Where this report and `docs/llm/` differ, **`docs/llm/`
+> and the [Anthropic documentation](https://platform.claude.com/docs/en/about-claude/models/overview)
+> are authoritative.** The model names and cost figures below have been refreshed to the
+> current Claude lineup.
+
+---
+
 ## Executive Summary
 
 Successfully implemented a complete, production-ready AI/LLM integration system for the Lithic Healthcare Platform. The system provides multi-provider support (OpenAI, Anthropic, Azure), comprehensive clinical AI services, React components, and secure API endpoints. All code follows HIPAA compliance guidelines with PHI protection, audit logging, and rate limiting.
@@ -72,7 +82,7 @@ Successfully implemented a complete, production-ready AI/LLM integration system 
 - **Lines**: 290+
 - **Description**: Anthropic Claude provider implementation
 - **Features**:
-  - Claude 3 (Opus, Sonnet, Haiku) support
+  - Current Claude support: Opus 4.7 (`claude-opus-4-7`), Sonnet 4.6 (`claude-sonnet-4-6`), Haiku 4.5 (`claude-haiku-4-5`)
   - System message handling
   - Streaming with proper event parsing
   - Token usage tracking
@@ -502,13 +512,13 @@ Successfully implemented a complete, production-ready AI/LLM integration system 
 ## Environment Variables Required
 
 ```env
-# LLM Provider Configuration
-AI_PROVIDER=openai                    # or 'anthropic' or 'azure-openai'
-AI_MODEL=gpt-4-turbo-preview         # or model of choice
+# LLM Provider Configuration (recommended: Claude — see docs/llm/)
+AI_PROVIDER=anthropic                 # or 'openai' or 'azure-openai'
+AI_MODEL=claude-sonnet-4-6            # default; escalate to claude-opus-4-7, or use claude-haiku-4-5
 
 # API Keys
-OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
+OPENAI_API_KEY=sk-...
 AZURE_OPENAI_API_KEY=...
 AZURE_OPENAI_ENDPOINT=https://...
 AZURE_OPENAI_API_VERSION=2024-02-15-preview
@@ -701,18 +711,21 @@ const response = await fetch('/api/ai/summarize', {
 ## Cost Management
 
 ### Optimization Strategies
-1. **Caching**: Reduce duplicate API calls
-2. **Rate Limiting**: Control usage spikes
-3. **Token Limits**: Daily caps per user
-4. **Model Selection**: Use appropriate model sizes
-5. **Prompt Optimization**: Minimize token usage
-6. **Batch Operations**: Group similar requests
+See [`docs/llm/token-optimization.md`](./docs/llm/token-optimization.md) for the full playbook.
+1. **Prompt caching**: cache the stable system/guideline prefix (~0.1x read cost) — the biggest lever
+2. **Model right-sizing**: Sonnet 4.6 default, Opus 4.7 only where needed, Haiku 4.5 for bulk
+3. **Output budgeting**: set realistic `max_tokens` (output is ~5x input cost)
+4. **Batch API**: 50% discount for non-interactive/overnight jobs
+5. **Response caching**: skip identical calls entirely (already in `llm-service.ts`)
+6. **Rate / token limits**: control usage spikes and per-user daily caps
 
-### Estimated Costs (based on GPT-4 pricing)
-- **Clinical Summarization**: ~$0.01-0.03 per note
-- **Coding Suggestions**: ~$0.02-0.05 per encounter
-- **Differential Diagnosis**: ~$0.03-0.06 per analysis
-- **Documentation Assistance**: ~$0.005-0.01 per suggestion
+### Estimated Costs (Claude pricing, per MTok: Sonnet 4.6 $3 in / $15 out; Opus 4.7 $5 / $25; Haiku 4.5 $1 / $5)
+Verify against the [pricing page](https://platform.claude.com/docs/en/about-claude/pricing).
+Effective cost drops sharply once prompt caching is enabled on the stable prefix.
+- **Clinical Summarization** (Sonnet 4.6): ~$0.005-0.02 per note
+- **Coding Suggestions** (Sonnet 4.6): ~$0.01-0.03 per encounter
+- **Differential Diagnosis** (Opus 4.7): ~$0.03-0.08 per analysis
+- **Documentation Assistance** (Sonnet 4.6 / Haiku 4.5): ~$0.002-0.01 per suggestion
 
 ---
 

@@ -285,11 +285,11 @@ graph LR
 Add the following to `.env`:
 
 ```env
-# AI/LLM Configuration
-AI_PROVIDER=openai
-AI_MODEL=gpt-4-turbo-preview
-OPENAI_API_KEY=sk-...
+# AI/LLM Configuration (recommended: Claude — see docs/llm/)
+AI_PROVIDER=anthropic
+AI_MODEL=claude-sonnet-4-6
 ANTHROPIC_API_KEY=sk-ant-...
+OPENAI_API_KEY=sk-...
 
 # Voice Services
 VOICE_SERVICE_PROVIDER=web
