@@ -1,8 +1,11 @@
 /**
  * Anthropic Claude Provider Implementation
- * Supports Claude 3 Opus, Sonnet, and Haiku models
+ * Supports current Claude models: Opus 4.7 (claude-opus-4-7),
+ * Sonnet 4.6 (claude-sonnet-4-6), and Haiku 4.5 (claude-haiku-4-5).
+ * See https://platform.claude.com/docs/en/about-claude/models/overview
+ * and docs/llm/ for model selection, prompt caching, and token guidance.
  *
- * HIPAA Compliant: Uses Anthropic's Enterprise API with BAA
+ * HIPAA Compliant: Uses Anthropic's Enterprise API under a BAA (ZDR where required).
  */
 
 import {

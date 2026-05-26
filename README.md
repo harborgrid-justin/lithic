@@ -321,6 +321,14 @@ All API endpoints require authentication via JWT or session tokens.
 - `POST /api/workflow/instances` - Start workflow
 - `POST /api/workflow/approvals` - Approve task
 
+#### AI / LLM (Claude)
+- `POST /api/ai/summarize` - Clinical note summarization
+- `POST /api/ai/suggest-codes` - ICD-10 / CPT coding suggestions
+- `POST /api/ai/assist` - General clinical AI assistance (routed by mode)
+
+AI features run on Anthropic Claude. See [`docs/llm/`](./docs/llm/) for model selection,
+prompting, agent architecture, token optimization, and HIPAA/enterprise guidance.
+
 ### FHIR API
 RESTful FHIR R4 API available at `/api/fhir`
 
@@ -414,7 +422,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ### v0.4 (Planned)
 - Mobile applications (iOS/Android)
-- Advanced AI features (GPT-4 integration)
+- Advanced AI features (Claude integration — see [`docs/llm/`](./docs/llm/))
 - Enhanced interoperability (USCDI v3)
 - Value-based care analytics
 - Patient engagement platform
