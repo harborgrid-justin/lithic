@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from '@/lib/auth';
 import AdvancedSearchEngine from '@/lib/search/advanced-search';
 
 export async function POST(request: NextRequest) {

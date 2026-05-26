@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { deviceManager } from "@/lib/rpm/device-manager";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/auth";
 import type { CreateDeviceDto } from "@/types/rpm";
 
 export async function GET(request: NextRequest) {

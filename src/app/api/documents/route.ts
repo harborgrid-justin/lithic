@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from '@/lib/auth';
 import DocumentManager from '@/lib/documents/document-manager';
 
 export async function GET(request: NextRequest) {

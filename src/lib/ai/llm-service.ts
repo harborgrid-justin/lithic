@@ -529,10 +529,21 @@ export function getLLMService(): LLMService {
       provider === 'azure-openai' ? process.env.AZURE_OPENAI_API_KEY :
       '';
 
+    // Default to a model that matches the selected provider, so an Anthropic
+    // deployment without AI_MODEL doesn't send an OpenAI model name to Claude.
+    const defaultModelByProvider: Record<LLMProvider, string> = {
+      anthropic: 'claude-sonnet-4-6',
+      openai: 'gpt-4-turbo-preview',
+      'azure-openai': 'gpt-4-turbo-preview',
+    };
+
     serviceInstance = LLMService.create({
       provider,
       apiKey: apiKey || '',
-      model: process.env.AI_MODEL || 'gpt-4-turbo-preview',
+      model:
+        process.env.AI_MODEL ||
+        defaultModelByProvider[provider] ||
+        'claude-sonnet-4-6',
     });
   }
   return serviceInstance;
