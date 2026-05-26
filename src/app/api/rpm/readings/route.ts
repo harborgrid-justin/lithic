@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { vitalSignsCollector } from "@/lib/rpm/vital-signs-collector";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/auth";
 import type { CreateReadingDto, ReadingType } from "@/types/rpm";
 
 export async function GET(request: NextRequest) {

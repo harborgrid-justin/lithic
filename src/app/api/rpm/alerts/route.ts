@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { alertEngine } from "@/lib/rpm/alert-engine";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/auth";
 import type { AlertSeverity, AlertStatus } from "@/types/rpm";
 
 export async function GET(request: NextRequest) {

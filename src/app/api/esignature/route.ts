@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from '@/lib/auth';
 import SignatureService from '@/lib/esignature/signature-service';
 
 export async function GET(request: NextRequest) {

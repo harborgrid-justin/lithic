@@ -4,8 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession, authOptions } from "@/lib/auth";
 import { logAuditEvent } from "@/lib/audit-logger";
 import { getCommandProcessor, VOICE_COMMANDS } from "@/lib/voice/command-processor";
 import {
